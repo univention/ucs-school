@@ -1,3 +1,9 @@
+ucs-school-umc-distribution (18.0.9) stable; urgency=medium
+
+  * Bug #52719: Added UCRV to toggle distribution for other teachers.
+
+ -- Alexander Steffen <steffen@univention.de>  Fri, 06 Sep 2024 14:22:22 +0200
+
 ucs-school-umc-distribution (18.0.8) unstable; urgency=medium
 
   * Bug #56390: replace deprecated UMC/python-notifier APIs with public

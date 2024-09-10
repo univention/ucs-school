@@ -38,7 +38,8 @@ univention-config-registry set \
 	ucsschool/datadistribution/datadir/sender?Unterrichtsmaterial \
 	ucsschool/datadistribution/datadir/recipient?Unterrichtsmaterial \
 	ucsschool/datadistribution/debug/level?2 \
-	ucsschool/datadistribution/cache?/var/lib/ucs-school-umc-distribution
+	ucsschool/datadistribution/cache?/var/lib/ucs-school-umc-distribution \
+	ucsschool/datadistribution/exclude_teachers?False
 
 # make sure that the upload limit as at least 10 MB when the package is
 # installed for the first time

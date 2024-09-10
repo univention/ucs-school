@@ -23,6 +23,10 @@ Source package *ucs-school-import-lusd* in version ``1.0.0``:
 
 * New package for LUSD import (:uv:bug:`57547`).
 
+Source package *ucs-school-umc-distribution* in version ``18.0.9``:
+
+* Added an UCR variable to toggle the distribution to other teachers
+  within the same class or workgroup (:uv:bug:`52712`).
 
 .. _changelog-ucsschool-2024-08-15:
 

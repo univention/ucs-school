@@ -1,0 +1,29 @@
+[ucsschool/datadistribution/datadir/sender]
+Description[de]=Verzeichnisname des erstellenden Benutzers.
+Description[en]=Directory name of the creating user.
+Type=str
+Categories=management-umc
+
+[ucsschool/datadistribution/datadir/recipient]
+Description[de]=Verzeichnisname der empfangenden Benutzer.
+Description[en]=Directory name of the receiving users.
+Type=str
+Categories=management-umc
+
+[ucsschool/datadistribution/debug/level]
+Description[de]=Ebene der Protokollierung.
+Description[en]=Logging level.
+Type=str
+Categories=management-umc
+
+[ucsschool/datadistribution/cache]
+Description[de]=Pfad zum Speichern der Caches.
+Description[en]=Path to save caches.
+Type=str
+Categories=management-umc
+
+[ucsschool/datadistribution/exclude_teachers]
+Description[de]=Boolescher Wert, um die Verteilung von Materialien an andere Lehrer innerhalb derselben Klasse oder Arbeitsgruppe umzuschalten.
+Description[en]=Boolean value to toggle the distribution of materials to other teachers within the same class or workgroup.
+Type=bool
+Categories=management-umc

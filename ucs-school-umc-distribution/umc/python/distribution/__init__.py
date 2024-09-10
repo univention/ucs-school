@@ -46,7 +46,11 @@ from ucsschool.lib.school_umc_ldap_connection import LDAP_Connection
 from univention.lib.i18n import Translation
 from univention.management.console.log import MODULE
 from univention.management.console.modules import UMC_Error
-from univention.management.console.modules.decorators import file_upload, sanitize, simple_response
+from univention.management.console.modules.decorators import (
+    file_upload,
+    sanitize,
+    simple_response,
+)
 from univention.management.console.modules.distribution import util
 from univention.management.console.modules.sanitizers import (
     ChoicesSanitizer,
@@ -86,7 +90,10 @@ class Instance(SchoolBaseModule):
     @file_upload
     @sanitize(
         DictSanitizer(
-            {"filename": StringSanitizer(required=True), "tmpfile": StringSanitizer(required=True)},
+            {
+                "filename": StringSanitizer(required=True),
+                "tmpfile": StringSanitizer(required=True),
+            },
             required=True,
         )
     )
@@ -132,7 +139,11 @@ class Instance(SchoolBaseModule):
         result = []
         for ifile in filenames:
             # check whether file has already been upload in this session
-            iresult = {"sessionDuplicate": False, "projectDuplicate": False, "distributed": False}
+            iresult = {
+                "sessionDuplicate": False,
+                "projectDuplicate": False,
+                "distributed": False,
+            }
             iresult["filename"] = ifile
             iresult["sessionDuplicate"] = self._tmpDir is not None and os.path.exists(
                 os.path.join(self._tmpDir, ifile)
@@ -233,7 +244,10 @@ class Instance(SchoolBaseModule):
                     if jtype == "automatic":
                         try:
                             # try to parse the given time parameters
-                            strtime = "%s %s" % (iprops["%sDate" % jsuffix], iprops["%sTime" % jsuffix])
+                            strtime = "%s %s" % (
+                                iprops["%sDate" % jsuffix],
+                                iprops["%sTime" % jsuffix],
+                            )
                             jdate = datetime.strptime(strtime, "%Y-%m-%d %H:%M")
                             setattr(project, jprop, jdate)
                         except ValueError:
@@ -521,7 +535,8 @@ class Instance(SchoolBaseModule):
             # to see the content of a project
             if request.flavor == "teacher" and not compare_dn(iproject.sender.dn, request.user_dn):
                 raise UMC_Error(
-                    _("Only the owner himself or an administrator may delete a project."), status=403
+                    _("Only the owner himself or an administrator may delete a project."),
+                    status=403,
                 )
 
             # purge the project

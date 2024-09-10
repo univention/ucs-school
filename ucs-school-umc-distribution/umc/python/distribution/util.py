@@ -46,6 +46,8 @@ from six import iteritems, string_types
 
 import ucsschool.lib.models
 import univention.admin.uexceptions as udm_exceptions
+from ucsschool.lib.models.user import User as SchoolLibUser
+from univention.admin.uldap import getMachineConnection
 from univention.lib import atjobs
 from univention.lib.i18n import Translation
 from univention.management.console.config import ucr
@@ -57,6 +59,9 @@ DISTRIBUTION_CMD = "/usr/lib/ucs-school-umc-distribution/umc-distribution"
 DISTRIBUTION_DATA_PATH = ucr.get(
     "ucsschool/datadistribution/cache", "/var/lib/ucs-school-umc-distribution"
 )
+
+DISTRIBUTION_EXCLUDE_OTHER_TEACHERS = ucr.is_true("ucsschool/datadistribution/exclude_teachers", False)
+
 POSTFIX_DATADIR_SENDER = ucr.get("ucsschool/datadistribution/datadir/sender", "Unterrichtsmaterial")
 POSTFIX_DATADIR_SENDER_PROJECT_SUFFIX = ucr.get(
     "ucsschool/datadistribution/datadir/sender/project/suffix", "-Ergebnisse"
@@ -65,6 +70,7 @@ POSTFIX_DATADIR_RECIPIENT = ucr.get(
     "ucsschool/datadistribution/datadir/recipient", "Unterrichtsmaterial"
 )
 PAM_HOMEDIR_SESSION = ucr.is_true("homedir/create", True)
+
 
 TYPE_USER = "USER"
 TYPE_GROUP = "GROUP"
@@ -205,6 +211,9 @@ class User(_Dict):
     def homedir(self):
         return self.unixhome
 
+    def school_lib_user(self, lo):
+        return SchoolLibUser.from_dn(self.dn, None, lo)
+
 
 class Group(_Dict):
     def __init__(self, *args, **_props):
@@ -283,7 +292,7 @@ class Project(_Dict):
     @staticmethod
     def _get_directory_size(src):
         needed_space = 0
-        for path, _dirs, files in os.walk(src):
+        for (path, _dirs, files) in os.walk(src):
             for file in files:
                 filename = os.path.join(path, file)
                 needed_space += os.path.getsize(filename)
@@ -556,12 +565,21 @@ class Project(_Dict):
                 ijob.rm()
 
     def getRecipients(self):
+
+        lo, _ = getMachineConnection()
         users = []
         for item in self.recipients:
             if item.type == TYPE_USER:
-                users.append(item)
+                if not (DISTRIBUTION_EXCLUDE_OTHER_TEACHERS and item.school_lib_user(lo).is_teacher(lo)):
+                    users.append(item)
             elif item.type == TYPE_GROUP:
-                users.extend(item.members)
+                for member in item.members:
+                    if not (
+                        DISTRIBUTION_EXCLUDE_OTHER_TEACHERS and member.school_lib_user(lo).is_teacher(lo)
+                    ):
+                        users.append(member)
+        if self.sender not in users:
+            users.append(self.sender)
 
         return users
 
