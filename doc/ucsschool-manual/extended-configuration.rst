@@ -404,6 +404,20 @@ Zuordnung durch Kommata zu trennen, z.B. ``firstname Vorname,lastname
 Nachname,Class Klasse,username Username``. Für ``Class`` wird dabei die
 ausgewählte Klasse eingesetzt.
 
+.. _school-setup-generic-configure-material-distribution:
+
+Konfiguration der Materialverteilung
+====================================
+
+.. versionadded:: 5.0v5
+
+   Ab |UCSUAS| 5.0v5 ist es möglich Lehrer bei der Materialverteilung und -Einsammlung auszuschließen.
+
+Um diese Einstellung zu aktivieren, muss die |UCSUCRV| :envvar:`ucsschool/datadistribution/exclude_teachers`
+auf ``True`` gesetzt werden.
+Dadurch werden Lehrkräfte, die sich in Klassen oder Arbeitsgruppen befinden, bei der Verteilung und dem Einsammeln
+der Materialien ignoriert.
+
 .. _school-setup-generic-configure-workgroup-emails:
 
 Konfiguration von Email-Adressen für Arbeitsgruppen
