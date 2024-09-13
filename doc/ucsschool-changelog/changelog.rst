@@ -9,12 +9,6 @@ Changelog
 *********
 
 ..
-  Source package *ucs-school-import* in version ``18.0.50``:
-
-  * Fix for LUSD import (:uv:bug:`57547`).
-
-  * Fix SiSoPi missing :code:`ucsschoolPurgeTimestamp` for "deleted" users (:uv:bug:`50848`).
-
   Source package *ucs-school-import-lusd* in version ``1.0.0``:
 
   * New package for LUSD import (:uv:bug:`57547`).
@@ -30,7 +24,11 @@ Source package *ucs-school-umc-distribution* in version ``18.0.9``:
 * Added an UCR variable to toggle the distribution to other teachers
   within the same class or workgroup (:uv:bug:`52712`).
 
-Source package *ucs-school-import* in version ``18.0.48``:
+Source package *ucs-school-import* in version ``18.0.50``:
+
+* Fix that the filename argument was not passed to the :code:`BaseReader` class (:uv:bug:`57600`).
+
+* Fix SiSoPi missing :code:`ucsschoolPurgeTimestamp` for "deleted" users (:uv:bug:`50848`).
 
 * Fixed a bug that would lead to a faulty configuration if there
   was a user with the role ``teacher_and_staff`` (:uv:bug:`57208`).

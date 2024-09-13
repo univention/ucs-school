@@ -30,8 +30,10 @@ msgid "Source package *ucs-school-import* in version ``18.0.50``:"
 msgstr "Quellpaket *ucs-school-import* in Version ``18.0.50``:"
 
 #: ../../changelog.rst:18
-msgid "Fix for LUSD import (:uv:bug:`57547`)."
-msgstr "Es wurde ein Fehler für den LUSD Import behoben (:uv:bug:`57547`)."
+msgid "Fix that the filename argument was not passed to the :code:`BaseReader` class (:uv:bug:`57600`)."
+msgstr ""
+"Es wurde ein Fehler behoben bei dem der Dateiname des Importes nicht "
+"der :code:`BaseReader` Klasse übergeben wurde (:uv:bug:`57547`)."
 
 #: ../../changelog.rst:20
 msgid ""
