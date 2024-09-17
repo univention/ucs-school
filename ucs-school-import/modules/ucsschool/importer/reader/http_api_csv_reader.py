@@ -38,7 +38,7 @@ from .csv_reader import CsvReader
 
 
 class HttpApiCsvReader(CsvReader):
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         # __init__() cannot have arguments, as it has replaced
         # DefaultUserImportFactory.make_reader() and is instantiated from
         # UserImport.__init__() without arguments.

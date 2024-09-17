@@ -13,7 +13,6 @@ Changelog
 
   * New package for LUSD import (:uv:bug:`57547`).
 
-
 .. _changelog-ucsschool-2024-09-18:
 
 Released on 2024-09-17
@@ -27,6 +26,10 @@ Source package *ucs-school-umc-computerroom* in version ``12.0.18``:
 Source package *ucs-school-veyon-client* in version ``2.0.6``:
 
 * Internal improvements (:uv:bug:`57604`).
+
+Source package *ucs-school-import* in version ``18.0.51``:
+
+* Fixed: The graphical user import was failing due to the filename argument now getting always passed to reader classes (:uv:bug:`57606`).
 
 .. _changelog-ucsschool-2024-09-13:
 
