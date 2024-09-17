@@ -23,7 +23,7 @@ Source package *ucs-school-umc-computerroom* in version ``12.0.18``:
 * Keep the computer room responsive even if the Veyon Proxy is unstable.
   This will ensure that exams can be started and finished, even if Veyon functionality does not work (:uv:bug:`57604`).
 
-Source package *ucs-school-veyon-client* in version ``2.0.6``:
+Source package *ucs-school-veyon-client* in version ``2.0.7``:
 
 * Internal improvements (:uv:bug:`57604`).
 

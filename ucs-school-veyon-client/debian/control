@@ -8,6 +8,7 @@ Build-Depends:
  python-requests,
  python3-requests,
  python-typing,
+ python-enum34,
  ucslint,
  univention-unittests,
 Standards-Version: 3.7.2

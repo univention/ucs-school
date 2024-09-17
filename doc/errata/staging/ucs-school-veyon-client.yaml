@@ -3,5 +3,5 @@ release: "5.0"
 version: [0]
 scope: ucs_5.0-0-ucs-school-5.0
 src: ucs-school-veyon-client
-fix: 2.0.6
+fix: 2.0.7
 bug: [57604]

@@ -41,8 +41,8 @@ msgstr ""
 "(:uv:bug:`57604`)."
 
 #: ../../changelog.rst:26
-msgid "Source package *ucs-school-veyon-client* in version ``2.0.6``:"
-msgstr "Quellpaket *ucs-school-veyon-client* in Version ``2.0.6``:"
+msgid "Source package *ucs-school-veyon-client* in version ``2.0.7``:"
+msgstr "Quellpaket *ucs-school-veyon-client* in Version ``2.0.7``:"
 
 #: ../../changelog.rst:28
 msgid "Internal improvements (:uv:bug:`57604`)."
