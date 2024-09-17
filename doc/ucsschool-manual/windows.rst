@@ -349,8 +349,9 @@ Konfiguration der App :program:`UCS\@school Veyon Proxy`
 
 .. caution::
    Dieser Abschnitt beschreibt ausschließlich Experteneinstellungen zur Optimierung und kann
-   bei einer regulären Installation übersprungen werden. Die weiter unten beschriebenen Einstellung werden
-   ohne Verifikation direkt an den im Docker-Container enthaltenen Veyon Master weitergereicht.
+   bei einer regulären Installation übersprungen werden. Die weiter unten beschriebenen Einstellung zum
+   :program:`UCS\@school Veyon Proxy` werden ohne Verifikation direkt an den im Docker-Container
+   enthaltenen Veyon Master weitergereicht.
 
 
 Ab Version *4.8.3.8-ucs1* des :program:`UCS\@school Veyon Proxy` stehen drei neue App-Einstellungen
@@ -371,6 +372,21 @@ bis 4 (niedrigste Qualität) begrenzt.
 Die Einstellung :envvar:`veyon/WebAPI/ConnectionIdleTimeout` definiert die Zeit in Sekunden,
 nach der eine inaktive VNC-Verbindung zwischen dem :program:`UCS\@school Veyon Proxy` und einem Windows-Client
 geschlossen wird.
+
+Auch das Computerraum Modul bietet einige Einstellungen zur Optimierung.
+Dabei zielen alle Einstellungen darauf ab den :program:`UCS\@school Veyon Proxy` zu entlasten,
+indem die Anzahl von Anfragen an den Proxy reduziert werden:
+
+- :envvar:`ucsschool/umc/computerroom/update-interval`
+- :envvar:`ucsschool/umc/computerroom/screenshot/interval`
+
+Die Einstellung :envvar:`ucsschool/umc/computerroom/update-interval` steuert das Intervall in Sekunden, mit dem der Computerraum
+Informationen zum eingeloggten Benutzer, sowie dem Sperrzustand von Monitor und Eingabegeräten abfragt.
+
+Die Einstellung :envvar:`ucsschool/umc/computerroom/screenshot/interval` steuert das Intervall in Sekunden, mit dem der Computerraum
+den Bildschirminhalt der Computer abfragt.
+
+
 
 
 .. _school-windows-veyon-clients-teachers:

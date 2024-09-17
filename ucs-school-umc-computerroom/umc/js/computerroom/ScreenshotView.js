@@ -39,6 +39,7 @@ define([
 	"dijit/layout/ContentPane",
 	"dijit/_Contained",
 	"dijit/Tooltip",
+	"umc/tools",
 	"umc/widgets/ComboBox",
 	"umc/widgets/ContainerWidget",
 	"umc/widgets/Button",
@@ -47,7 +48,7 @@ define([
 	"umc/widgets/Text",
 	"put-selector/put",
 	"umc/i18n!umc/modules/computerroom"
-], function(declare, lang, array, aspect, dom, domClass, entities, ContentPane, _Contained, Tooltip,
+], function(declare, lang, array, aspect, dom, domClass, entities, ContentPane, _Contained, Tooltip, tools,
 		ComboBox, ContainerWidget, Button, Page, StandbyMixin, Text, put, _) {
 
 	// README: This is an alternative view
@@ -131,15 +132,13 @@ define([
 		image: null,
 
 		// random extension to the URL to avoid caching
-		random: null,
+		random: Math.random(),
 
 		// pattern for the image URI
-		_pattern: '/univention/command/computerroom/screenshot?computer={computer}&random={random}',
+		_pattern: '/univention/command/computerroom/screenshot?computer={computer}&random={random}&size={size}',
 
-		// tiemr to update the iamges
+		// timer to update the images
 		_timer: null,
-
-		_currentURI: null,
 
 		uninitialize: function() {
 			this.inherited(arguments);
@@ -148,15 +147,16 @@ define([
 			}
 		},
 
-		_createURI: function() {
-			this.random = Math.random();
+		_createURI: function(size) {
 			return lang.replace(this._pattern, {
 				computer: encodeURIComponent(this.computer),
-				random: encodeURIComponent(this.random)
+				random: encodeURIComponent(this.random),
+				size: encodeURIComponent(size),
 			});
 		},
 
 		_updateImage: function() {
+			this.random = Math.random();
 			var img = dom.byId(lang.replace('img-{computer}', this));
 			var userTag = dom.byId(lang.replace('userTag-{computer}', this));
 
@@ -164,14 +164,12 @@ define([
 				userTag.innerHTML = entities.encode(this.username) || '<i>' + entities.encode(_('No user logged in')) + '</i>';
 			}
 			if (img) {
-				var new_uri = this._createURI();
+				var new_uri = this._createURI(dijit.byId("screenShotViewSize").value);
 				img.src = new_uri;
-				this._currentURI = new_uri;
 			}
 			if (this._timer) {
 				window.clearTimeout(this._timer);
 			}
-			this._timer = window.setTimeout(lang.hitch(this, '_updateImage'), 5000);
 		},
 
 		buildRendering: function() {
@@ -186,35 +184,44 @@ define([
 					}))
 				})
 			});
-			this.startup();
-
 			// use dijit.Tooltip here to not hide screenshot tooltips if set up in user preferences
 			var tooltip = new Tooltip({
-				label: lang.replace('<div class="screenShotView__imgTooltip"><img class="screenShotView__img" alt="{1}" id="screenshotTooltip-{0}" src="" /></div>', [
+				label: lang.replace('<div class="screenShotView__imgTooltip"><img class="screenShotView__img" alt="{1}" id="screenshotTooltip-{0}" src="{2}" /></div>', [
 					entities.encode(this.computer),
-					entities.encode(_('Currently there is no screenshot available. Wait a few seconds.'))
+					entities.encode(_('Currently there is no screenshot available. Wait a few seconds.')),
+					require.toUrl(lang.replace('dijit/themes/umc/icons/scalable/{image}', {
+						image: _('screenshot_notready.svg')
+					}))
 				]),
 				connectId: [this.domNode],
 				onShow: lang.hitch(this, function() {
-					console.log('show tooltip');
 					var image = dom.byId('img-' + this.computer);
 					var imageTooltip = dom.byId('screenshotTooltip-' + this.computer);
 					if (!image || !imageTooltip) {
 						return;
 					}
-					if (image.clientWidth > 320) {
+					if (image.clientWidth / window.innerWidth > 0.66) {
 						tooltip.close();
 						return;
 					}
-					imageTooltip.src = this._currentURI ? this._currentURI: this._createURI();
+					imageTooltip.src = this._createURI(1);
 				})
 			});
-
 			// destroy the tooltip when this widget is destroyed
 			aspect.after(this, 'destroy', function() { tooltip.destroy(); });
+		},
+		startup: function(){
+		    this.inherited(arguments);
+		    var getUCR = tools.ucr(['ucsschool/umc/computerroom/screenshot/interval']);
+		    getUCR.then(lang.hitch(this, function(result) {
+			var img = dom.byId(lang.replace('img-{computer}', this));
+			var updateInterval = result['ucsschool/umc/computerroom/screenshot/interval'] || 5;
+			img.addEventListener('load', () => this._timer = window.setTimeout(lang.hitch(this, '_updateImage'), updateInterval * 1000));
+			img.addEventListener('error', () => this._timer = window.setTimeout(lang.hitch(this, '_updateImage'), updateInterval * 1000));
+			this._updateImage();
+		    }));
+		},
 
-			this._timer = window.setTimeout(lang.hitch(this, '_updateImage'), 500);
-		}
 	} );
 
 	return declare("umc.modules.computerroom.ScreenshotView", [ Page, StandbyMixin ], {
@@ -270,6 +277,7 @@ define([
 					{ id: 1, label: _('Large') }
 				],
 				value: 3,
+				id: "screenShotViewSize",
 				onChange: lang.hitch(this, function(newValue) {
 					put(this._container.domNode, `[style="--local-columns-count: ${newValue}"]`);
 				} )

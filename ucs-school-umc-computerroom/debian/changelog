@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (12.0.18) unstable; urgency=medium
+
+  * Bug #57604: Keep computerroom responsive even if Veyon Proxy is unstable.
+
+ -- Jürn Brodersen <brodersen@univention.de>  Tue, 17 Sep 2024 11:01:00 +0200
+
 ucs-school-umc-computerroom (12.0.17) unstable; urgency=medium
 
   * Issue #1240: Added screenshot dimension support in computer room module.

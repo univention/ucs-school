@@ -45,3 +45,17 @@ Description[de]=Bei einem Wert >0 werden gesperrte Rechner in Computerräumen re
 Description[en]=If the value is >0, locked computers in computer rooms are locked again periodically. The set value is the interval time in seconds (default: 5).
 Type=int
 Categories=management-umc
+
+[ucsschool/umc/computerroom/update-interval]
+Description[de]=Dieser Wert steuert wie oft die Daten eines Computers in einem Computerraum aktualisiert werden (Standard: 1).
+Description[en]=This value controls how often the data of computer in a computerroom is updated (default: 1).
+Type=int
+Categories=management-umc
+Default=1
+
+[ucsschool/umc/computerroom/screenshot/interval]
+Description[de]=Dieser Wert in Sekunden gibt an, wie oft die Screenshots auf der UMC aktualisiert werden (Standard: 5).
+Description[en]=This value is the update interval in seconds for screenshots on the UMC (default: 5).
+Type=int
+Categories=management-umc
+Default=5

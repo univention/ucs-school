@@ -55,6 +55,7 @@ from ucsschool.veyon_client.models import (
     Dimension,
     Feature,
     ScreenshotFormat,
+    VeyonConnectionError,
     VeyonError,
 )
 from univention.admin.uexceptions import noObject
@@ -322,7 +323,7 @@ class ComputerRoomManager(dict):
                 key_data = fp.read().strip()
 
             self._veyon_client = VeyonClient(
-                "http://localhost:11080/api/v1",
+                "http://localhost:8888/api/v1",
                 credentials={"keyname": "teacher", "keydata": key_data},
                 auth_method=AuthenticationMethod.AUTH_KEYS,
             )
@@ -462,6 +463,7 @@ class VeyonComputer(threading.Thread):
         self._ip_addresses = self._computer.info.get("ip", [])  # type: List[str]
         self._reachable_ip = None
         self._username = LockableAttribute()
+        self._update_successful = LockableAttribute(initial_value=True)
         self._state = LockableAttribute(initial_value="disconnected")
         self._teacher = LockableAttribute(initial_value=False)
         self._screen_lock = LockableAttribute(initial_value=None)
@@ -469,13 +471,27 @@ class VeyonComputer(threading.Thread):
         self._demo_server = LockableAttribute(initial_value=None)
         self._demo_client = LockableAttribute(initial_value=None)
         self._timer = None
+        self._update_interval = None
         self.should_run = True
         self.screenshot_dimension = screenshot_dimension
 
     def run(self):
         while self.should_run:
             self.update()
-            time.sleep(1.0 + random.uniform(0, 1))  # nosec
+            time.sleep(self.update_interval + random.uniform(0, 1))  # nosec
+
+    @property
+    def update_interval(self):
+        if not self._update_interval:
+            try:
+                self._update_interval = int(ucr.get("ucsschool/umc/computerroom/update-interval", 1))
+            except ValueError:
+                MODULE.warning("ucsschool/umc/computerroom/update-interval is not a valid integer")
+                self._update_interval = 1
+            if self._update_interval <= 0:
+                MODULE.warning("ucsschool/umc/computerroom/update-interval should be positive")
+                self._update_interval = 1
+        return self._update_interval
 
     @property
     def name(self):  # type: () -> Optional[str]
@@ -513,12 +529,17 @@ class VeyonComputer(threading.Thread):
 
     @property
     def ipAddress(self):
-        if not ucr.is_true("ucsschool/umc/computerroom/ping-client-ip-addresses", False):
-            self._reachable_ip = self._ip_addresses[0] if self._ip_addresses else ""
         if self._reachable_ip:
             return self._reachable_ip
+        if not ucr.is_true("ucsschool/umc/computerroom/ping-client-ip-addresses", False):
+            self._reachable_ip = self._ip_addresses[0] if self._ip_addresses else ""
         if self._ip_addresses:
-            self._reachable_ip = self._find_reachable_ip()
+            try:
+                self._reachable_ip = self._find_reachable_ip()
+            except VeyonConnectionError as exc:
+                if self._update_successful.current:
+                    MODULE.warn("Could not connecto to veyon proxy {}".format(exc))
+                return ""
             return self._reachable_ip if self._reachable_ip else self._ip_addresses[0]
         return ""
 
@@ -545,24 +566,24 @@ class VeyonComputer(threading.Thread):
             )
         )
 
-    @property
-    def screenshot(self):
+    def screenshot(self, size=None):
         if not self.connected():
             MODULE.warn("{} not connected - skipping screenshot".format(self.name))
             return None
+        width = getattr(self.screenshot_dimension, "width", None)
+        height = getattr(self.screenshot_dimension, "height", None)
+        size_to_width = {"2": 640, "3": 480, "4": 320}
+        if size in size_to_width:
+            width = min(size_to_width[size], width) if width else size_to_width[size]
+        dimension = Dimension(width, height)
         image = None
         for ip_address in self._ip_addresses:
             try:
-                if self.screenshot_dimension:
-                    image = self._veyon_client.get_screenshot(
-                        host=ip_address,
-                        screenshot_format=ScreenshotFormat.JPEG,
-                        dimension=self.screenshot_dimension,
-                    )
-                else:
-                    image = self._veyon_client.get_screenshot(
-                        host=ip_address, screenshot_format=ScreenshotFormat.JPEG
-                    )
+                image = self._veyon_client.get_screenshot(
+                    host=ip_address,
+                    screenshot_format=ScreenshotFormat.JPEG,
+                    dimension=dimension,
+                )
             except VeyonError:
                 pass  # might just be a non reachable IP. TODO: Catch errors other than 404
             if image:
@@ -649,7 +670,11 @@ class VeyonComputer(threading.Thread):
         return None
 
     def connected(self):
-        return self._veyon_client.ping(host=self.ipAddress)
+        try:
+            return self._veyon_client.ping(host=self.ipAddress)
+        except VeyonConnectionError as exc:
+            MODULE.warning("Connecting to Veyon failed: {}".format(exc))
+            return False
 
     def update(self):
         MODULE.info("{}: updating information.".format(self.name))
@@ -693,12 +718,17 @@ class VeyonComputer(threading.Thread):
             self.teacher.set(self.isTeacher)
             self._demo_server.set(demo_server)
             self._demo_client.set(demo_client)
+            self._update_successful.set(True)
+        except VeyonConnectionError as exc:
+            if self._update_successful.current:
+                # Only log if previous attempt was successful
+                self._update_successful.set(False)
+                MODULE.warning("Error updating information for {}: {}".format(self.name, exc))
+            self.reset_state()
         except Exception:
-            MODULE.error(
-                "Error updating information for {}: {}".format(
-                    self.name,
-                    traceback.format_exc(),
-                )
+            self._update_successful.set(False)
+            MODULE.warning(
+                "Error updating information for {}: {}".format(self.name, traceback.format_exc())
             )
             self.reset_state()
 
@@ -719,16 +749,24 @@ class VeyonComputer(threading.Thread):
 
     def close(self):
         for ip_address in self._ip_addresses:
-            self._veyon_client.remove_session(ip_address)
+            try:
+                self._veyon_client.remove_session(ip_address)
+            except VeyonConnectionError as exc:
+                MODULE.warning("Could not remove veyon session for {}: {}".format(self.name, exc))
 
     def _set_feature(self, feature, active=True):  # type: (Feature, bool) -> None
-        if not self.connected():
-            MODULE.warn("{} not connected - skipping setting feature {}".format(self.name, feature))
-            return
         try:
             self._veyon_client.set_feature(feature, host=self.ipAddress, active=active)
         except VeyonError:
-            pass
+            MODULE.warning(
+                "{} could not be reached - skipped setting feature{}".format(self.name, feature)
+            )
+        except VeyonConnectionError:
+            MODULE.warning(
+                "Error connecting with the veyon proxy - skipped setting feature {} for {}".format(
+                    feature, self.name
+                )
+            )
 
     def lockScreen(self, lock):  # type: (bool) -> None
         self._set_feature(Feature.SCREEN_LOCK, lock)

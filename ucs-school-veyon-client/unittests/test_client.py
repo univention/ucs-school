@@ -129,7 +129,7 @@ def monkey_delete(*args, **kwargs):
 
 def test_connection_error_on_unreachable_url(monkeypatch):
     monkeypatch.setattr(requests, "get", monkey_get)
-    with pytest.raises(ConnectionError):
+    with pytest.raises(VeyonConnectionError):
         client = VeyonClient("unreachable", {})
         client.ping()
 

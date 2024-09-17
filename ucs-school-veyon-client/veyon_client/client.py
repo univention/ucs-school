@@ -146,7 +146,7 @@ class VeyonClient:
                 "{}/authentication".format(self._url),
                 headers={"Connection-Uid": session_uid},
             )
-        except (requests.ConnectionError, requests.Timeout):
+        except requests.RequestException:
             raise VeyonConnectionError
         except VeyonError:
             pass  # We do not care if the connection was already invalid or does not exist anymore
@@ -163,7 +163,7 @@ class VeyonClient:
         """
         try:
             requests.head("{}/feature".format(self._url), timeout=self._ping_timeout)
-        except (requests.ConnectionError, requests.Timeout):
+        except requests.RequestException:
             raise VeyonConnectionError("No response from WebAPI Server ({}).".format(self._url))
         return True
 
@@ -195,9 +195,12 @@ class VeyonClient:
             params["width"] = dimension.width
         if dimension and dimension.height:
             params["height"] = dimension.height
-        result = requests.get(
-            "{}/framebuffer".format(self._url), params=params, headers=self._get_headers(host)
-        )
+        try:
+            result = requests.get(
+                "{}/framebuffer".format(self._url), params=params, headers=self._get_headers(host)
+            )
+        except requests.RequestException as exc:
+            raise VeyonConnectionError(exc)
         check_veyon_error(result)
         return result.content
 
@@ -208,8 +211,8 @@ class VeyonClient:
                 "{}/authentication/{}".format(self._url, host), timeout=self._ping_timeout
             )
             return result.status_code == 200
-        except requests.ReadTimeout:
-            return False
+        except requests.RequestException as exc:
+            raise VeyonConnectionError(exc)
 
     def set_feature(self, feature, host=None, active=True, arguments=None):
         # type: (Feature, Optional[str], Optional[bool], Optional[Dict[str, str]]) -> None
@@ -225,11 +228,14 @@ class VeyonClient:
         data = {"active": active}
         if arguments:
             data["arguments"] = arguments
-        result = requests.put(
-            "{}/feature/{}".format(self._url, feature),
-            json=data,
-            headers=self._get_headers(host),
-        )
+        try:
+            result = requests.put(
+                "{}/feature/{}".format(self._url, feature),
+                json=data,
+                headers=self._get_headers(host),
+            )
+        except requests.RequestException as exc:
+            raise VeyonConnectionError(exc)
         check_veyon_error(result)
 
     def get_feature_status(self, feature, host=None):  # type: (Feature, Optional[str]) -> bool
@@ -243,9 +249,12 @@ class VeyonClient:
             status, like "REBOOT"
         :rtype: bool
         """
-        result = requests.get(
-            "{}/feature/{}".format(self._url, feature), headers=self._get_headers(host)
-        )
+        try:
+            result = requests.get(
+                "{}/feature/{}".format(self._url, feature), headers=self._get_headers(host)
+            )
+        except requests.RequestException as exc:
+            raise VeyonConnectionError(exc)
         check_veyon_error(result)
         return result.json()["active"]
 
@@ -259,6 +268,9 @@ class VeyonClient:
             result will be -1
         :rtype: VeyonUser
         """
-        result = requests.get("{}/user".format(self._url), headers=self._get_headers(host))
+        try:
+            result = requests.get("{}/user".format(self._url), headers=self._get_headers(host))
+        except requests.RequestException as exc:
+            raise VeyonConnectionError(exc)
         check_veyon_error(result)
         return VeyonUser(**result.json())

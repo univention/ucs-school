@@ -405,9 +405,7 @@ class Instance(SchoolBaseModule):
         try:
             self._computerroom.veyon_client.test_connection()
         except VeyonConnectionError:
-            MODULE.error(umc_veyon_client_error_log_message)
-            MODULE.error(traceback.format_exc())
-            raise UMC_Error(message=umc_veyon_client_error_message, traceback=traceback.format_exc())
+            MODULE.warning(umc_veyon_client_error_log_message)
 
         # match the corresponding school OU
         try:
@@ -646,7 +644,7 @@ class Instance(SchoolBaseModule):
         or a premade SVG image for special situations like when a screenshots is not ready yet
         """
         computer = request.options["computer"]
-        tmpfile = computer.screenshot
+        tmpfile = computer.screenshot(size=request.options.get("size", None))
         if computer.hide_screenshot:
             mimetype = "image/svg+xml"
             filename = FN_SCREENSHOT_DENIED
@@ -795,6 +793,7 @@ class Instance(SchoolBaseModule):
         if not self._computerroom.school or not self._computerroom.room:
             raise UMC_Error(_("no room selected"))
 
+        MODULE.debug("set settings for {}".format(self._computerroom.roomDN))
         # find AT jobs for the room at remove them
         jobs = atjobs.list(extended=True)
         for job in jobs:

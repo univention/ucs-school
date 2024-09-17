@@ -6,6 +6,8 @@
 ## packages: [ucs-school-umc-computerroom]
 from __future__ import print_function
 
+import subprocess
+
 import pytest
 
 from ucsschool.lib.models.computer import (
@@ -87,3 +89,25 @@ def test_computerroom_module_base_checks(schoolenv, ucr):
     room3.checK_room_aquire(client2, "OK")
     room3.check_room_user(client1, tea2)
     room3.check_room_computers(client2, created_computers_dn[4:9])
+
+
+def test_veyon_down(schoolenv):
+    subprocess.check_call(["univention-app", "stop", "ucsschool-veyon-proxy"])
+    try:
+        school, _ = schoolenv.create_ou(name_edudc=schoolenv.ucr.get("hostname"))
+        tea, _ = schoolenv.create_user(school, is_teacher=True)
+        lo = schoolenv.open_ldap_connection()
+
+        computer = Computer(school=school, ctype="windows")
+        lo = schoolenv.open_ldap_connection()
+        WindowsComputer(**computer.get_args()).create(lo)
+
+        room = Room(school, host_members=[computer.dn])
+        schoolenv.create_computerroom(
+            school, name=room.name, description=room.description, host_members=room.host_members
+        )
+        client = Client(None, tea, "univention")
+        room.checK_room_aquire(client, "OK")
+        room.check_room_computers(client, [computer.dn])
+    finally:
+        subprocess.check_call(["univention-app", "start", "ucsschool-veyon-proxy"])

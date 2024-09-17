@@ -98,7 +98,10 @@
 	max-height: 100%;
 }
 .screenShotView__imgTooltip {
-	width: 100%;
+	width: 66vw;
+}
+.dijitTooltipContainer:has(.screenShotView__imgTooltip) {
+	max-width: 100%;
 }
 .screenShotView__imgTooltip--grid {
 	width: 240px;
