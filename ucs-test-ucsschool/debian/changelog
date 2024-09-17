@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.190) unstable; urgency=medium
+
+  * Bug #57604: Test computerrom without veyon proxy running
+
+ -- Jürn Brodersen <brodersen@univention.de>  Tue, 17 Sep 2024 16:59:21 +0200
+
 ucs-test-ucsschool (7.3.189) unstable; urgency=medium
 
   * Issue #1254: Add tests for the LUSDReader class
