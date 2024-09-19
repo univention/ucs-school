@@ -13,12 +13,12 @@ Changelog
 
   * New package for LUSD import (:uv:bug:`57547`).
 
-.. _changelog-ucsschool-2024-09-18:
+.. _changelog-ucsschool-2024-09-19:
 
-Released on 2024-09-17
+Released on 2024-09-19
 ======================
 
-Source package *ucs-school-umc-computerroom* in version ``12.0.18``:
+Source package *ucs-school-umc-computerroom* in version ``12.0.19``:
 
 * Keep the computer room responsive even if the Veyon Proxy is unstable.
   This will ensure that exams can be started and finished, even if Veyon functionality does not work (:uv:bug:`57604`).
