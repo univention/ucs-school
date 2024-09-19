@@ -323,7 +323,7 @@ class ComputerRoomManager(dict):
                 key_data = fp.read().strip()
 
             self._veyon_client = VeyonClient(
-                "http://localhost:8888/api/v1",
+                "http://localhost:11080/api/v1",
                 credentials={"keyname": "teacher", "keydata": key_data},
                 auth_method=AuthenticationMethod.AUTH_KEYS,
             )
