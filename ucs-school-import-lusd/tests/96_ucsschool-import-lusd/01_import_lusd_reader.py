@@ -125,7 +125,7 @@ def test_lusd_reader_read_teacher() -> None:
     setup_config(TEACHER_CONFIG_PATH, user_role="teacher")
     lusd_reader = LUSDReader(filename=TEST_DATA_TEACHER_PATH)
     lusd_data = list(lusd_reader.read())
-    assert len(lusd_data) == 2
+    assert len(lusd_data) == 3
     assert lusd_data == [
         {
             "personalUID": "20e8d2af-9863-479f-b327-51546c807099",
@@ -136,6 +136,17 @@ def test_lusd_reader_read_teacher() -> None:
             "klassenlehrerKlassen": "11KB1,11KB2",
             "klassenlehrerVertreterKlassen": "12KB1",
             "lehrerIdEsz": "lusd.test08@preschule.hessen.de",
+            "dienststellennummerStammschule": "515400",
+        },
+        {
+            "personalUID": "bfe21c8b-ed35-4c6c-9de8-a6d938b2a59e",
+            "nachname": "Muster",
+            "vorname": "Erika",
+            "personalKuerzel": "Y246",
+            "dienststellennummer": "627000",
+            "klassenlehrerKlassen": "10KB1,10KB2",
+            "klassenlehrerVertreterKlassen": "13KB1",
+            "lehrerIdEsz": "lusd.test10@preschule.hessen.de",
             "dienststellennummerStammschule": "515400",
         },
         {

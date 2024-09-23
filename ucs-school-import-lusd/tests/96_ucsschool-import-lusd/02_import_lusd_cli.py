@@ -183,17 +183,38 @@ def private_rsa_key(backup_files: None) -> None:
 def backup_files() -> Generator[None, None, None]:
     backup_suffix = f".backup_{int(time())}"
     backup_auth_key = Configuration.authentication_key_file_path.with_suffix(backup_suffix)
-    Configuration.authentication_key_file_path.rename(backup_auth_key)
+    try:
+        Configuration.authentication_key_file_path.rename(backup_auth_key)
+    except FileNotFoundError:
+        pass
     backup_downloads = Configuration.lusd_data_save_path.with_suffix(backup_suffix)
-    Configuration.lusd_data_save_path.rename(backup_downloads)
-    Configuration.lusd_data_save_path.mkdir()
+    try:
+        Configuration.lusd_data_save_path.rename(backup_downloads)
+    except FileNotFoundError:
+        pass
+    Configuration.lusd_data_save_path.mkdir(parents=True)
     backup_config = CONFIG_PATH.with_suffix(backup_suffix)
-    CONFIG_PATH.replace(backup_config)
+    try:
+        CONFIG_PATH.replace(backup_config)
+    except FileNotFoundError:
+        pass
     yield
-    backup_auth_key.replace(Configuration.authentication_key_file_path)
-    shutil.rmtree(Configuration.lusd_data_save_path)
-    backup_downloads.replace(Configuration.lusd_data_save_path)
-    backup_config.replace(CONFIG_PATH)
+    try:
+        backup_auth_key.replace(Configuration.authentication_key_file_path)
+    except FileNotFoundError:
+        pass
+    try:
+        shutil.rmtree(Configuration.lusd_data_save_path)
+    except FileNotFoundError:
+        pass
+    try:
+        backup_downloads.replace(Configuration.lusd_data_save_path)
+    except FileNotFoundError:
+        pass
+    try:
+        backup_config.replace(CONFIG_PATH)
+    except FileNotFoundError:
+        pass
 
 
 @pytest.fixture()
