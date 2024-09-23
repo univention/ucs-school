@@ -15,6 +15,7 @@ Standards-Version: 3.8.2
 Package: ucs-school-import-lusd
 Architecture: all
 Depends:
+ python3-ucsschool-importer-lusd (= ${source:Version}),
  ucs-school-import,
  ${misc:Depends},
 Description: The UCS@school LUSD importer package
