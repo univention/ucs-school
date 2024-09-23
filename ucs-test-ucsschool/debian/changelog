@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.191) unstable; urgency=medium
+
+  * Bug #57613: Test that custom readers without args and kwargs work.
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Mon, 23 Sep 2024 13:00:00 +0200
+
 ucs-test-ucsschool (7.3.190) unstable; urgency=medium
 
   * Bug #57604: Test computerrom without veyon proxy running

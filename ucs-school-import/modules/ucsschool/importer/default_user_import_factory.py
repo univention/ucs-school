@@ -70,6 +70,21 @@ class DefaultUserImportFactory(object):
         self.logger = logging.getLogger(__name__)
         self.load_methods_from_config()
 
+    @staticmethod
+    def init_wrapper(klass):
+        """
+        This returns a function that tries to init a class with args and kwargs.
+        If that does not work, it tries to do the same, but without any arguments.
+        """
+
+        def create_class(*args, **kwargs):
+            try:
+                return klass(*args, **kwargs)
+            except TypeError:
+                return klass()
+
+        return create_class
+
     def load_methods_from_config(self):  # type: () -> None
         """
         Overwrite the methods in this class with constructors or methods from
@@ -122,7 +137,7 @@ class DefaultUserImportFactory(object):
                     super_klass.__name__,
                 )
                 continue
-            setattr(self, make_name, klass)
+            setattr(self, make_name, self.init_wrapper(klass))
             self.logger.info("%s.%s is now %s.", self.__class__.__name__, make_name, klass)
 
         for k in methods:
