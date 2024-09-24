@@ -1,1 +1,3 @@
 # personal ignores like editor or IDE specific configuration files can be placed in .git/info/exclude
+
+doc/**/_build

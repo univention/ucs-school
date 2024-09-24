@@ -7,3 +7,5 @@ inkl
 Konnektoren
 Dictionaries
 UnsupportedEncodingError
+Logging
+Logs
