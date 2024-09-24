@@ -87,6 +87,10 @@ for file in "${release_files[@]}"; do git mv "$file" "$(echo $file | sed "s/^/..
 
 Commit the changes to git, and `cd` to the root of the `ucsschool` repository.
 
+### Update release date json
+
+[release-dates](https://git.knut.univention.de/univention/dist/release-dates)
+
 ### Generate the changelog
 
 Open up a second terminal for running docker commands.
