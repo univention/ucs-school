@@ -189,7 +189,7 @@ the headline.
 ### Send the release announcement email
 
 Send an internal announcement mail with the following text (**Adapt version and name**):
-<pre>
+```
 To: app-announcement@univention.de
 Subject: App Center: UCS@school 5.0 v6 released
 
@@ -210,7 +210,7 @@ Excerpts from the changelog:
 Greetings,
 
  $NAME
-</pre>
+```
 
 ### Close Bugzilla bugs
 
@@ -227,14 +227,14 @@ This will enable you to select and modify the bugs you need.
 
 
 Use this text as the comment for closing the mentioned bugs:
-<pre>
+```
 UCS@school 5.0 v6 has been released.
 
 - https://docs.software-univention.de/ucsschool-changelog/5.0v6/en/changelog.html
 - https://docs.software-univention.de/ucsschool-changelog/5.0v6/de/changelog.html
 
 If this error occurs again, please clone this bug.
-</pre>
+```
 
 ### Make an announcement in chat
 
