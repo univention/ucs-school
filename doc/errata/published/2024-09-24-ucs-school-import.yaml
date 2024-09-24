@@ -1,7 +1,0 @@
-product: ucsschool
-release: "5.0"
-version: [0]
-scope: ucs_5.0-0-ucs-school-5.0
-src: ucs-school-import
-fix: 18.0.52
-bug: [57613]

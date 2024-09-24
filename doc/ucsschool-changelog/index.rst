@@ -9,7 +9,7 @@
 ***************
 
 This document contains the changelogs with the detailed change information for
-the update of |UCSUAS| from version 5.0 v4 to 5.0 v5.
+the update of |UCSUAS| from version 5.0 v5 to 5.0 v6.
 
 If necessary, important notes about the update are covered in a separate
 section. The change information for previous version jumps can be found at

@@ -1,9 +1,0 @@
-product: ucsschool
-release: "5.0"
-version: [0]
-scope: ucs_5.0-0-ucs-school-5.0
-src: ucs-school-import
-fix: 18.0.47
-desc: |
- * Fixed a performance regression which could cause significant longer startup times for the UCS\@school import (Bug #57408).
-bug: [57408]

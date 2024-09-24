@@ -1,9 +1,0 @@
-product: ucsschool
-release: "5.0"
-version: [0]
-scope: ucs_5.0-0-ucs-school-5.0
-src: ucs-school-umc-computerroom
-fix: 12.0.16
-desc: |
- * If a local user is logged into a computer that is in a computer room, the username is prefixed with ``LOCAL\`` in the computer room module instead of showing an error message (Bug #56937).
-bug: [56937]

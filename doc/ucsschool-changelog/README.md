@@ -108,5 +108,5 @@ The pipeline runs on an MR automatically and will tell you if something is wrong
 
 Once all pipelines are complete, you should visit the changelog pages and verify that the changes are there:
 
-* [English changelog](https://docs.software-univention.de/ucsschool-changelog/5.0v5/en/changelog.html)
-* [German changelog](https://docs.software-univention.de/ucsschool-changelog/5.0v5/de/changelog.html)
+* [English changelog](https://docs.software-univention.de/ucsschool-changelog/5.0v6/en/changelog.html)
+* [German changelog](https://docs.software-univention.de/ucsschool-changelog/5.0v6/de/changelog.html)

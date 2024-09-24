@@ -1,9 +1,0 @@
-product: ucsschool
-release: "5.0"
-version: [0]
-scope: ucs_5.0-0-ucs-school-5.0
-src: ucs-school-lib
-fix: 13.0.45
-desc: |
- * Fixed a consistency check for non default admins group prefix. See UCRV ``ucsschool/ldap/default/groupprefix/admins``. (Bug #55884).
-bug: [55884]

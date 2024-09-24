@@ -109,7 +109,7 @@ cd ~/git/ucs-doc-overview-pages
 vi documentation/ucs-doc-overview-pages/navigation/docs/ucsschool-changelog.rst
 ```
 
-Search for `v5` and create similar entries for `v6`. Then commit and create an MR.
+Search for `v6` and create similar entries for `v7`. Then commit and create an MR.
 
 After merging the MR, follow the [doc pipeline](https://git.knut.univention.de/univention/documentation/ucs-doc-overview-pages/-/pipelines),
 and then check that the links appear under the [UCS@school changelogs](https://docs.software-univention.de/release-notes_5.0.html.en).
@@ -121,7 +121,7 @@ Finally, you should update [docs.univention.de](https://git.knut.univention.de/u
 The following commands can be run on `omar` to create a new release version:
 
 ```shell
-univention-appcenter-control new-version "5.0/ucsschool=5.0 v4" "5.0/ucsschool=5.0 v5"
+univention-appcenter-control new-version "5.0/ucsschool=5.0 v6" "5.0/ucsschool=5.0 v7"
 ```
 
 Then publish the packages to Test Appcenter:
@@ -130,11 +130,11 @@ Then publish the packages to Test Appcenter:
 # copy_app_binaries -r <ucs-major-minor> -v <app-version> -u <yaml-datei> ...
 # For example:
 cd ~/git/ucsschool/doc/errata/staging
-copy_app_binaries -r 5.0 -v "5.0 v5" -u ucs-school-lib.yaml ucs-school-umc-diagnostic.yaml
+copy_app_binaries -r 5.0 -v "5.0 v6" -u ucs-school-lib.yaml ucs-school-umc-diagnostic.yaml
 ```
 
 The `ucs-test-ucsschool` package should also be released, if it is safe to do so.
-Please see the instructions in the [manual release](README_manual_release.md#ucs-test-ucsschool-updates), being sure to use `v5` instead of `v4` in the commands.
+Please see the instructions in the [manual release](README_manual_release.md#ucs-test-ucsschool-updates), being sure to use `v6` instead of `v4` in the commands.
 
 ## Verify information in the Selfservice Center
 
@@ -191,17 +191,17 @@ the headline.
 Send an internal announcement mail with the following text (**Adapt version and name**):
 <pre>
 To: app-announcement@univention.de
-Subject: App Center: UCS@school 5.0 v5 released
+Subject: App Center: UCS@school 5.0 v6 released
 
 Hello all,
 
 the following app update has just been released:
-- UCS@school 5.0 v5
+- UCS@school 5.0 v6
 
 The changelog is available here:
 
-- https://docs.software-univention.de/ucsschool-changelog/5.0v5/en/changelog.html
-- https://docs.software-univention.de/ucsschool-changelog/5.0v5/de/changelog.html
+- https://docs.software-univention.de/ucsschool-changelog/5.0v6/en/changelog.html
+- https://docs.software-univention.de/ucsschool-changelog/5.0v6/de/changelog.html
 
 Excerpts from the changelog:
 - ...

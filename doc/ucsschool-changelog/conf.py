@@ -162,6 +162,7 @@ univention_use_doc_base = True
 
 intersphinx_mapping = {
     "uv-manual": ("https://docs.software-univention.de/manual/5.0/de", None),
+    "uv-import": ("https://docs.software-univention.de/ucsschool-import/5.0/de", None),  # TODO
     "uv-ucsschool-admin": (
         "https://docs.software-univention.de/ucsschool-manual/5.0/de/",
         None,
@@ -172,7 +173,7 @@ linkcheck_allowed_redirects = {
     r"https://help\.univention\.com/t/\d+": r"https://help\.univention\.com/t/[\w-]+/\d+",
 }
 
-univention_changelog_previous_release = "5.0 v4"
+univention_changelog_previous_release = "5.0 v5"
 univention_changelog_builder = "ucsschool"
 
 # See Univention Sphinx Extension for its options.

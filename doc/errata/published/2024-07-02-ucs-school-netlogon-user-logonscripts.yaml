@@ -1,9 +1,0 @@
-product: ucsschool
-release: "5.0"
-version: [0]
-scope: ucs_5.0-0-ucs-school-5.0
-src: ucs-school-netlogon-user-logonscripts
-fix: 16.0.6
-desc: |
- * The new Nubus logo replaces the UCS logo. Users who have the link for the UMC on the desktop will see the new logo (Bug #57395).
-bug: [57395]

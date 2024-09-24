@@ -1,9 +1,0 @@
-product: ucsschool
-release: "5.0"
-version: [0]
-scope: ucs_5.0-0-ucs-school-5.0
-src: ucs-school-umc-lists
-fix: 3.0.10
-desc: |
- * Fixed issues that would lead to unexpected behavior while exporting class lists (Bug #57018).
-bug: [57018]

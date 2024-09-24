@@ -1,9 +1,0 @@
-product: ucsschool
-release: "5.0"
-version: [0]
-scope: ucs_5.0-0-ucs-school-5.0
-src: ucs-school-umc-computerroom
-fix: 12.0.17
-desc: |
- * Added the UCR variable ``ucsschool/umc/computerroom/screenshot_dimension``, with which you can set the base screenshot size in the computer room module. A lower base screenshot size can help to improve performance (Bug #57443).
-bug: [57443]
