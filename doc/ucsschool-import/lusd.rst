@@ -33,6 +33,7 @@ Auf der Kommandozeile installieren Sie das Paket mit dem folgenden Befehl:
 .. code-block:: console
 
    $ univention-install ucs-school-import-lusd
+   $ mkdir -p /var/lib/ucs-school-import-lusd/
 
 Um Daten aus LUSD abrufen zu können, muss sich das System beim hessischen Kultusministerium authentifizieren.
 Dazu ist ein privater Schlüssel erforderlich, den Sie als Datei :file:`/var/lib/ucs-school-import-lusd/auth_key` im UCS-System
