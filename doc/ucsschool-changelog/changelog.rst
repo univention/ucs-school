@@ -13,14 +13,14 @@ Changelog
 
   * New package for LUSD import (:uv:bug:`57547`).
 
-.. _changelog-ucsschool-2024-09-23:
+.. _changelog-ucsschool-2024-09-24:
 
-Released on 2024-09-23
+Released on 2024-09-24
 ======================
 
 Source package *ucs-school-import* in version ``18.0.52``:
 
-* Fixed: Imports using custom reader classes were failing due to the filename argument now getting always passed to reader classes (:uv:bug:`57613`)
+* Fixed: Imports using custom reader classes were failing due to the filename argument now getting always passed to reader classes (:uv:bug:`57613`).
 
 .. _changelog-ucsschool-2024-09-19:
 
