@@ -25,14 +25,14 @@ LUSD nach |UCSUAS| einrichten lässt.
 Installation
 ============
 
-Die Komponenten für den LUSD Import werden über das Paket :program:`ucsschool-import-lusd`
+Die Komponenten für den LUSD Import werden über das Paket :program:`ucs-school-import-lusd`
 auf einem UCS Primary oder Backup Directory Node installiert.
 
 Auf der Kommandozeile installieren Sie das Paket mit dem folgenden Befehl:
 
 .. code-block:: console
 
-   $ univention-install ucsschool-import-lusd
+   $ univention-install ucs-school-import-lusd
 
 Um Daten aus LUSD abrufen zu können, muss sich das System beim hessischen Kultusministerium authentifizieren.
 Dazu ist ein privater Schlüssel erforderlich, den Sie als Datei :file:`/var/lib/ucs-school-import-lusd/auth_key` im UCS-System
@@ -55,7 +55,7 @@ Stellen Sie außerdem mit folgendem Befehl sicher, dass die Datei nur von dem Be
 Verwendung
 ==========
 
-Das Paket :program:`ucsschool-import-lusd` erstellt während der Installation einen Cron Job, der den LUSD Import täglich ausführt.
+Das Paket :program:`ucs-school-import-lusd` erstellt während der Installation einen Cron Job, der den LUSD Import täglich ausführt.
 Der Name des Jobs lautet ``LUSD_import``.
 Der Cron Job wird dabei durch UCR Variablen konfiguriert, wie im
 :external+uv-manual:ref:`UCS Handbuch <computers-defining-cron-jobs-in-univention-configuration-registry>`
