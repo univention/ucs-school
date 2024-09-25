@@ -49,7 +49,7 @@ from veyon_client.models import (
 
 def monkey_get(*args, **kwargs):
     response = Response()
-    url_parts = args[0].split("/")
+    url_parts = args[1].split("/")
     domain = url_parts[0]
     method = url_parts[1]
     if domain in ["unreachable"]:
@@ -78,13 +78,13 @@ def monkey_get(*args, **kwargs):
                 params["format"], params["compression"], params["quality"]
             ).encode("UTF-8")
     else:
-        raise RuntimeError("Unexpected url for monkeypatch get: {}".format(args[0]))
+        raise RuntimeError("Unexpected url for monkeypatch get: {}".format(args[1]))
     return response
 
 
 def monkey_post(*args, **kwargs):
     response = Response()
-    url_parts = args[0].split("/")
+    url_parts = args[1].split("/")
     domain = url_parts[0]
     method = url_parts[1]
     if domain in ["wrong_credentials"]:
@@ -128,10 +128,9 @@ def monkey_delete(*args, **kwargs):
 
 
 def test_connection_error_on_unreachable_url(monkeypatch):
-    monkeypatch.setattr(requests, "get", monkey_get)
-    with pytest.raises(VeyonConnectionError):
-        client = VeyonClient("unreachable", {})
-        client.ping()
+    monkeypatch.setattr(requests.Session, "get", monkey_get)
+    client = VeyonClient("unreachable", {})
+    assert not client.ping()
 
 
 def test_connection_test(monkeypatch):
@@ -141,7 +140,7 @@ def test_connection_test(monkeypatch):
 
 
 def test_authentication_method_not_available(monkeypatch):
-    monkeypatch.setattr(requests, "post", monkey_post)
+    monkeypatch.setattr(requests.Session, "post", monkey_post)
     client = VeyonClient("wrong_method", {}, auth_method=AuthenticationMethod.AUTH_KEYS)
     with pytest.raises(VeyonError) as exc:
         client._create_session("localhost")
@@ -149,8 +148,8 @@ def test_authentication_method_not_available(monkeypatch):
 
 
 def test_wrong_credentials(monkeypatch):
-    monkeypatch.setattr(requests, "get", monkey_get)
-    monkeypatch.setattr(requests, "post", monkey_post)
+    monkeypatch.setattr(requests.Session, "get", monkey_get)
+    monkeypatch.setattr(requests.Session, "post", monkey_post)
     client = VeyonClient("wrong_credentials", {}, auth_method=AuthenticationMethod.AUTH_LOGON)
     with pytest.raises(VeyonError) as exc:
         client._create_session("localhost")
@@ -158,8 +157,8 @@ def test_wrong_credentials(monkeypatch):
 
 
 def test_create_session(monkeypatch):
-    monkeypatch.setattr(requests, "get", monkey_get)
-    monkeypatch.setattr(requests, "post", monkey_post)
+    monkeypatch.setattr(requests.Session, "get", monkey_get)
+    monkeypatch.setattr(requests.Session, "post", monkey_post)
     client = VeyonClient("create_session", {}, auth_method=AuthenticationMethod.AUTH_LOGON)
     assert client._create_session("localhost") == VeyonSession("42", 0)
 
@@ -175,8 +174,8 @@ def test_reuse_session():
 
 
 def test_second_host(monkeypatch):
-    monkeypatch.setattr(requests, "get", monkey_get)
-    monkeypatch.setattr(requests, "post", monkey_post)
+    monkeypatch.setattr(requests.Session, "get", monkey_get)
+    monkeypatch.setattr(requests.Session, "post", monkey_post)
     client = VeyonClient("create_session", {}, auth_method=AuthenticationMethod.AUTH_LOGON)
     time = datetime.now()
     client._session_cache["localhost"] = VeyonSession(
@@ -187,9 +186,9 @@ def test_second_host(monkeypatch):
 
 @pytest.mark.parametrize("screenshot_format,compression,quality", [("png", 6, 80), ("jpeg", 1, 20)])
 def test_framebuffer(monkeypatch, screenshot_format, compression, quality):
-    monkeypatch.setattr(requests, "get", monkey_get)
-    monkeypatch.setattr(requests, "post", monkey_post)
-    monkeypatch.setattr(requests, "delete", monkey_delete)
+    monkeypatch.setattr(requests.Session, "get", monkey_get)
+    monkeypatch.setattr(requests.Session, "post", monkey_post)
+    monkeypatch.setattr(requests.Session, "delete", monkey_delete)
     client = VeyonClient("framebuffer", {}, auth_method=AuthenticationMethod.AUTH_LOGON)
     assert client.get_screenshot(
         screenshot_format=screenshot_format, quality=quality, compression=compression
@@ -197,9 +196,9 @@ def test_framebuffer(monkeypatch, screenshot_format, compression, quality):
 
 
 def test_wrong_image_format(monkeypatch):
-    monkeypatch.setattr(requests, "get", monkey_get)
-    monkeypatch.setattr(requests, "post", monkey_post)
-    monkeypatch.setattr(requests, "delete", monkey_delete)
+    monkeypatch.setattr(requests.Session, "get", monkey_get)
+    monkeypatch.setattr(requests.Session, "post", monkey_post)
+    monkeypatch.setattr(requests.Session, "delete", monkey_delete)
     client = VeyonClient("framebuffer", {}, auth_method=AuthenticationMethod.AUTH_LOGON)
     with pytest.raises(VeyonError) as exc:
         client.get_screenshot(screenshot_format="gif")
@@ -207,9 +206,9 @@ def test_wrong_image_format(monkeypatch):
 
 
 def test_encoding_error(monkeypatch):
-    monkeypatch.setattr(requests, "get", monkey_get)
-    monkeypatch.setattr(requests, "post", monkey_post)
-    monkeypatch.setattr(requests, "delete", monkey_delete)
+    monkeypatch.setattr(requests.Session, "get", monkey_get)
+    monkeypatch.setattr(requests.Session, "post", monkey_post)
+    monkeypatch.setattr(requests.Session, "delete", monkey_delete)
     client = VeyonClient("encoding_error", {}, auth_method=AuthenticationMethod.AUTH_LOGON)
     with pytest.raises(VeyonError) as exc:
         client.get_screenshot()
@@ -217,9 +216,9 @@ def test_encoding_error(monkeypatch):
 
 
 def test_invalid_feature(monkeypatch):
-    monkeypatch.setattr(requests, "get", monkey_get)
-    monkeypatch.setattr(requests, "post", monkey_post)
-    monkeypatch.setattr(requests, "delete", monkey_delete)
+    monkeypatch.setattr(requests.Session, "get", monkey_get)
+    monkeypatch.setattr(requests.Session, "post", monkey_post)
+    monkeypatch.setattr(requests.Session, "delete", monkey_delete)
     client = VeyonClient("invalid_feature", {}, auth_method=AuthenticationMethod.AUTH_LOGON)
     with pytest.raises(VeyonError) as exc:
         client.set_feature("NON_EXISTENT_FEATURE")
@@ -227,9 +226,9 @@ def test_invalid_feature(monkeypatch):
 
 
 def test_invalid_feature_status(monkeypatch):
-    monkeypatch.setattr(requests, "get", monkey_get)
-    monkeypatch.setattr(requests, "post", monkey_post)
-    monkeypatch.setattr(requests, "delete", monkey_delete)
+    monkeypatch.setattr(requests.Session, "get", monkey_get)
+    monkeypatch.setattr(requests.Session, "post", monkey_post)
+    monkeypatch.setattr(requests.Session, "delete", monkey_delete)
     client = VeyonClient("invalid_feature", {}, auth_method=AuthenticationMethod.AUTH_LOGON)
     with pytest.raises(VeyonError) as exc:
         client.get_feature_status("NON_EXISTENT_FEATURE")
@@ -238,25 +237,25 @@ def test_invalid_feature_status(monkeypatch):
 
 @pytest.mark.parametrize("feature,expected", [("REBOOT", False), ("SCREEN_LOCK", True)])
 def test_get_feature_status(monkeypatch, feature, expected):
-    monkeypatch.setattr(requests, "get", monkey_get)
-    monkeypatch.setattr(requests, "post", monkey_post)
-    monkeypatch.setattr(requests, "delete", monkey_delete)
+    monkeypatch.setattr(requests.Session, "get", monkey_get)
+    monkeypatch.setattr(requests.Session, "post", monkey_post)
+    monkeypatch.setattr(requests.Session, "delete", monkey_delete)
     client = VeyonClient("get_feature", {}, auth_method=AuthenticationMethod.AUTH_LOGON)
     assert client.get_feature_status(feature) == expected
 
 
 def test_get_user_info(monkeypatch):
-    monkeypatch.setattr(requests, "get", monkey_get)
-    monkeypatch.setattr(requests, "post", monkey_post)
-    monkeypatch.setattr(requests, "delete", monkey_delete)
+    monkeypatch.setattr(requests.Session, "get", monkey_get)
+    monkeypatch.setattr(requests.Session, "post", monkey_post)
+    monkeypatch.setattr(requests.Session, "delete", monkey_delete)
     client = VeyonClient("user_info", {}, auth_method=AuthenticationMethod.AUTH_LOGON)
     assert client.get_user_info() == VeyonUser("LOGIN", "FULLNAME", "SESSION")
 
 
 def test_idle_timeout(monkeypatch):
-    monkeypatch.setattr(requests, "get", monkey_get)
-    monkeypatch.setattr(requests, "post", monkey_post)
-    monkeypatch.setattr(requests, "delete", monkey_delete)
+    monkeypatch.setattr(requests.Session, "get", monkey_get)
+    monkeypatch.setattr(requests.Session, "post", monkey_post)
+    monkeypatch.setattr(requests.Session, "delete", monkey_delete)
     client = VeyonClient("idle_timeout", {}, auth_method=AuthenticationMethod.AUTH_LOGON)
     time = datetime.now()
     client._session_cache["localhost"] = VeyonSession(
@@ -267,7 +266,7 @@ def test_idle_timeout(monkeypatch):
 
 
 def test_remove_session(monkeypatch):
-    monkeypatch.setattr(requests, "delete", monkey_delete)
+    monkeypatch.setattr(requests.Session, "delete", monkey_delete)
     client = VeyonClient("remove_session", {}, auth_method=AuthenticationMethod.AUTH_LOGON)
     time = datetime.now()
     client._session_cache["localhost"] = VeyonSession(
@@ -294,8 +293,8 @@ def test_client_thread_safety(monkeypatch):
     def _call_get_connection_uid(j):
         results[j] = client._get_connection_uid("localhost")
 
-    monkeypatch.setattr(requests, "delete", monkey_delete)
-    monkeypatch.setattr(requests, "post", monkey_post)
+    monkeypatch.setattr(requests.Session, "delete", monkey_delete)
+    monkeypatch.setattr(requests.Session, "post", monkey_post)
     client = VeyonClient(
         "random_uid",
         {},

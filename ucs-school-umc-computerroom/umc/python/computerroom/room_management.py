@@ -470,15 +470,40 @@ class VeyonComputer(threading.Thread):
         self._input_lock = LockableAttribute(initial_value=None)
         self._demo_server = LockableAttribute(initial_value=None)
         self._demo_client = LockableAttribute(initial_value=None)
+        self._idle_timeout = 30.0
         self._timer = None
         self._update_interval = None
+        self._update_paused = False
+        self._last_use_of_info = time.monotonic()
         self.should_run = True
         self.screenshot_dimension = screenshot_dimension
 
     def run(self):
         while self.should_run:
-            self.update()
+            if not self.update_paused():
+                self.update()
             time.sleep(self.update_interval + random.uniform(0, 1))  # nosec
+
+    def update_paused(self):
+        if time.monotonic() > self._last_use_of_info + self._idle_timeout:
+            msg = (
+                "{}: not updating information as VeyonComputer thread "
+                "has not been used for more than {} seconds."
+            ).format(self.name, self._idle_timeout)
+            if self._update_paused:
+                MODULE.debug(msg)
+                return True
+            MODULE.info(msg)
+            self._update_paused = True
+            return True
+        else:
+            msg = "{}: updating information as module is active.".format(self.name)
+            if not self._update_paused:
+                MODULE.debug(msg)
+                return False
+            MODULE.info(msg)
+            self._update_paused = False
+            return False
 
     @property
     def update_interval(self):
@@ -537,8 +562,11 @@ class VeyonComputer(threading.Thread):
             try:
                 self._reachable_ip = self._find_reachable_ip()
             except VeyonConnectionError as exc:
+                msg = "Could not connecto to veyon proxy {!r}".format(exc)
                 if self._update_successful.current:
-                    MODULE.warn("Could not connecto to veyon proxy {}".format(exc))
+                    MODULE.warn(msg)
+                    return ""
+                MODULE.debug(msg)
                 return ""
             return self._reachable_ip if self._reachable_ip else self._ip_addresses[0]
         return ""
@@ -553,6 +581,7 @@ class VeyonComputer(threading.Thread):
 
     @property
     def hasChanged(self):
+        self._last_use_of_info = time.monotonic()
         return any(
             state.hasChanged
             for state in (
@@ -614,6 +643,7 @@ class VeyonComputer(threading.Thread):
 
     @property
     def dict(self):
+        self._last_use_of_info = time.monotonic()
         result = {
             "id": self.name,
             "name": self.name,
@@ -720,10 +750,13 @@ class VeyonComputer(threading.Thread):
             self._demo_client.set(demo_client)
             self._update_successful.set(True)
         except VeyonConnectionError as exc:
+            msg = "Error updating information for {}: {!r}".format(self.name, exc)
             if self._update_successful.current:
                 # Only log if previous attempt was successful
                 self._update_successful.set(False)
-                MODULE.warning("Error updating information for {}: {}".format(self.name, exc))
+                MODULE.warning(msg)
+            else:
+                MODULE.info(msg)
             self.reset_state()
         except Exception:
             self._update_successful.set(False)

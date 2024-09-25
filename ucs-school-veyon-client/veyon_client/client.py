@@ -27,6 +27,8 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import socket
+import threading
 import time
 from collections import defaultdict
 from datetime import datetime
@@ -47,6 +49,9 @@ from .utils import check_veyon_error
 
 if TYPE_CHECKING:
     from .models import Dimension, Feature  # noqa: F401
+
+if not hasattr(threading, "get_ident"):
+    threading.get_ident = lambda: threading.current_thread().ident
 
 
 class VeyonClient:
@@ -78,6 +83,13 @@ class VeyonClient:
         self._session_cache = {}  # type: Dict[str, VeyonSession]
         self._last_used = {}  # type: Dict[str, float]
         self._session_locks = defaultdict(Lock)  # type: defaultdict[str, Lock]
+        self._request_sessions = {}  # type: Dict[str, requests.Session]
+
+        # One requests.Session per thread
+        # see docs: https://docs.python.org/3/library/threading.html#thread-local-data
+        self._thread_local = threading.local()
+        self._thread_local._request_session = None
+
         self._locks_lock = Lock()  # type: Lock
         """This lock is needed to ensure thread safe operation of the defaultdict for the individual
         session locks"""
@@ -85,12 +97,18 @@ class VeyonClient:
     def _get_headers(self, host=None):  # type: (Optional[str]) -> Dict[str, str]
         return {"Connection-Uid": self._get_connection_uid(host)}
 
+    @property
+    def request_session(self):
+        if not getattr(self._thread_local, "_request_session", None):
+            self._thread_local._request_session = requests.Session()
+        return self._thread_local._request_session
+
     def _reset_idle_time(self, host):
         self._last_used[host] = time.time()
 
     def _create_session(self, host):  # type: (str) -> VeyonSession
         auth_route = "{}/authentication/{}".format(self._url, host)
-        result = requests.post(
+        result = self.request_session.post(
             auth_route, json={"method": str(self._auth_method), "credentials": self._credentials}
         )
         check_veyon_error(result)
@@ -142,7 +160,7 @@ class VeyonClient:
         try:
             session = self._session_cache.get(host, None)
             session_uid = session.connection_uid if session else ""
-            requests.delete(
+            self.request_session.delete(
                 "{}/authentication".format(self._url),
                 headers={"Connection-Uid": session_uid},
             )
@@ -162,7 +180,7 @@ class VeyonClient:
         :raises VeyonConnectionError: if the there is no response.
         """
         try:
-            requests.head("{}/feature".format(self._url), timeout=self._ping_timeout)
+            self.request_session.head("{}/feature".format(self._url), timeout=self._ping_timeout)
         except requests.RequestException:
             raise VeyonConnectionError("No response from WebAPI Server ({}).".format(self._url))
         return True
@@ -196,7 +214,7 @@ class VeyonClient:
         if dimension and dimension.height:
             params["height"] = dimension.height
         try:
-            result = requests.get(
+            result = self.request_session.get(
                 "{}/framebuffer".format(self._url), params=params, headers=self._get_headers(host)
             )
         except requests.RequestException as exc:
@@ -206,13 +224,14 @@ class VeyonClient:
 
     def ping(self, host=None):  # type: (Optional[str]) -> bool
         host = host if host else self._default_host
+        veyon_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
-            result = requests.get(
-                "{}/authentication/{}".format(self._url, host), timeout=self._ping_timeout
-            )
-            return result.status_code == 200
-        except requests.RequestException as exc:
+            veyon_socket.settimeout(self._ping_timeout)
+            return veyon_socket.connect_ex((host, 11100)) == 0
+        except OSError as exc:
             raise VeyonConnectionError(exc)
+        finally:
+            veyon_socket.close()
 
     def set_feature(self, feature, host=None, active=True, arguments=None):
         # type: (Feature, Optional[str], Optional[bool], Optional[Dict[str, str]]) -> None
@@ -229,7 +248,7 @@ class VeyonClient:
         if arguments:
             data["arguments"] = arguments
         try:
-            result = requests.put(
+            result = self.request_session.put(
                 "{}/feature/{}".format(self._url, feature),
                 json=data,
                 headers=self._get_headers(host),
@@ -250,7 +269,7 @@ class VeyonClient:
         :rtype: bool
         """
         try:
-            result = requests.get(
+            result = self.request_session.get(
                 "{}/feature/{}".format(self._url, feature), headers=self._get_headers(host)
             )
         except requests.RequestException as exc:
@@ -269,7 +288,9 @@ class VeyonClient:
         :rtype: VeyonUser
         """
         try:
-            result = requests.get("{}/user".format(self._url), headers=self._get_headers(host))
+            result = self.request_session.get(
+                "{}/user".format(self._url), headers=self._get_headers(host)
+            )
         except requests.RequestException as exc:
             raise VeyonConnectionError(exc)
         check_veyon_error(result)

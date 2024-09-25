@@ -1,0 +1,7 @@
+product: ucsschool
+release: "5.0"
+version: [0]
+scope: ucs_5.0-0-ucs-school-5.0
+src: ucs-school-veyon-client
+fix: 2.0.9
+bug: [57610, 53995]
