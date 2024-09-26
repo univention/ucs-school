@@ -21,7 +21,7 @@ Source package *ucs-school-umc-computerroom* in version ``12.0.21``:
 Source package *ucs-school-veyon-client* in version ``2.0.9``:
 
 * Improved the performance of the Veyon Python client (:uv:bug:`57610`).
-* The authentication error pop up which is sometimes shown on the monitored Windows clients will no longer appear because the root cause was fixed (:uv:bug:`53995`).
+* The authentication error pop up which is sometimes shown on the monitored Windows clients will no longer appear (:uv:bug:`53995`).
 
 .. _changelog-ucsschool-2024-09-24:
 

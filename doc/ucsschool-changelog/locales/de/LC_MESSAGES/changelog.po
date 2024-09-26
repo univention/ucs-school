@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UCS@school - 5.0 v5 Changelog \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-25 21:08+0000\n"
+"POT-Creation-Date: 2024-09-26 10:17+0000\n"
 "PO-Revision-Date: 2023-08-02 09:20+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -57,12 +57,10 @@ msgstr "Die Performance des Veyon Python Client wurde verbessert (:uv:bug:`57610
 #: ../../changelog.rst:24
 msgid ""
 "The authentication error pop up which is sometimes shown on the monitored"
-" Windows clients will no longer appear because the root cause was fixed "
-"(:uv:bug:`53995`)."
+" Windows clients will no longer appear (:uv:bug:`53995`)."
 msgstr ""
 "Die Benachrichtigung mit einen Authentifizierungsfehler, welches manchmal"
-" auf den Windowsrechnern angezeigt wurde erscheint nicht mehr da der "
-"zugrunde liegende Fehler behoben wurde (:uv:bug:`53995`)."
+" auf den Windowsrechnern angezeigt wurde erscheint nicht mehr (:uv:bug:`53995`)."
 
 #: ../../changelog.rst:29
 msgid "Released on 2024-09-24"
@@ -83,3 +81,4 @@ msgstr ""
 "der LUSD API in UCS\\@school unterstützt wurde hinzugefügt. Weitere "
 "Informationen finden Sie im Abschnitt :external+uv-import:ref:`LUSD "
 "Import <lusd-import>` im UCS\\@school Import Handbuch (:uv:bug:`57547`)."
+
