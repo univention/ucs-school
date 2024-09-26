@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.192) unstable; urgency=medium
+
+  * Issue #1285: Fix 101_multiple_ips_and_macs.py
+
+ -- Jürn Brodersen <brodersen@univention.de>  Thu, 26 Sep 2024 11:20:30 +0200
+
 ucs-test-ucsschool (7.3.191) unstable; urgency=medium
 
   * Bug #57613: Test that custom readers without args and kwargs work.

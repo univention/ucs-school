@@ -37,9 +37,9 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import socket
+
 import pytest
-import requests
-from requests import Response
 
 import univention.testing.strings as uts
 from ucsschool.veyon_client import client as veyon_client_module
@@ -64,17 +64,14 @@ class MockComputer:
         self.module = "computers/windows"
 
 
-def monkey_get(*args, **kwargs):
-    response = Response()
-    url_parts = args[0].split("/")
-    ip = url_parts[-1]
+def monkey_connect_ex(*args, **kwargs):
+    ip = args[1][0]
     if ip == "invalid":
-        response.status_code = 400
+        return 1
     elif ip == "valid":
-        response.status_code = 200
+        return 0
     else:
-        response.status_code = 404
-    return response
+        raise OSError()
 
 
 def get_dummy_veyon_computer(ips=None, auth_method=None):
@@ -92,7 +89,7 @@ def get_dummy_veyon_computer(ips=None, auth_method=None):
 
 
 def test_connected_veyon(monkeypatch):
-    monkeypatch.setattr(requests, "get", monkey_get)
+    monkeypatch.setattr(socket.socket, "connect_ex", monkey_connect_ex)
     ips = ["valid"]
     computer = get_dummy_veyon_computer(ips)
     assert computer.connected()
@@ -101,7 +98,7 @@ def test_connected_veyon(monkeypatch):
 def test_second_valid_veyon(monkeypatch):
     handler_set(["ucsschool/umc/computerroom/ping-client-ip-addresses=yes"])
     ucr.load()
-    monkeypatch.setattr(requests, "get", monkey_get)
+    monkeypatch.setattr(socket.socket, "connect_ex", monkey_connect_ex)
     ips = ["invalid", "valid"]
     computer = get_dummy_veyon_computer(ips)
     assert computer.connected()
@@ -116,7 +113,7 @@ def test_first_valid_veyon(monkeypatch, ucr_value):
     else:
         handler_set(["ucsschool/umc/computerroom/ping-client-ip-addresses={}".format(ucr_value)])
     ucr.load()
-    monkeypatch.setattr(requests, "get", monkey_get)
+    monkeypatch.setattr(socket.socket, "connect_ex", monkey_connect_ex)
     ips = ["valid", "invalid"]
     computer = get_dummy_veyon_computer(ips)
     assert computer.connected()
@@ -127,7 +124,7 @@ def test_first_valid_veyon(monkeypatch, ucr_value):
 def test_multiple_ips_last_valid_veyon(monkeypatch):
     handler_set(["ucsschool/umc/computerroom/ping-client-ip-addresses=yes"])
     ucr.load()
-    monkeypatch.setattr(requests, "get", monkey_get)
+    monkeypatch.setattr(socket.socket, "connect_ex", monkey_connect_ex)
     ips = ["invalid"] * 10
     ips.append("valid")
     computer = get_dummy_veyon_computer(ips)
@@ -139,16 +136,16 @@ def test_multiple_ips_last_valid_veyon(monkeypatch):
 
 
 def test_no_valid_ip_veyon(monkeypatch):
-    monkeypatch.setattr(requests, "get", monkey_get)
     ips = ["invalid"] * 2
     computer = get_dummy_veyon_computer(ips)
+    monkeypatch.setattr(socket.socket, "connect_ex", monkey_connect_ex)
     assert computer.connected() is False
     for ip in ips[:-1]:
         assert computer._veyon_client.ping(ip) is False
 
 
 def test_no_ips_veyon(monkeypatch):
-    monkeypatch.setattr(requests, "get", monkey_get)
+    monkeypatch.setattr(socket.socket, "connect_ex", monkey_connect_ex)
     client = veyon_client_module.VeyonClient(
         "http://localhost:11080/api/v1",
         credentials={"username": "user", "password": "secret"},
