@@ -604,6 +604,7 @@ class VeyonComputer(threading.Thread):
         size_to_width = {"2": 640, "3": 480, "4": 320}
         if size in size_to_width:
             width = min(size_to_width[size], width) if width else size_to_width[size]
+            height = None
         dimension = Dimension(width, height)
         image = None
         for ip_address in self._ip_addresses:
