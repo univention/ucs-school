@@ -20,7 +20,6 @@ This document describes how to prepare and execute an Errata Release for the UCS
 - [ ] Publish to production App Center
 - [ ] Publish changelog and manual
 - [ ] Update public documentation
-  - [ ] Update release wiki
   - [ ] Send announcement email
   - [ ] Update bugzilla bugs
 - [ ] QA the release
