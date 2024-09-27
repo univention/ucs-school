@@ -215,7 +215,14 @@ Wenn Sie die integrierte Web-Oberfläche zur Überwachung der Computerräume ver
 steigen die Hardwareanforderungen an den Schulserver.
 :numref:`schools-windows-veyon-proxy-requirements-table` liefert eine Orientierung über die Hardwareanforderungen.
 
-.. list-table:: Benötigte Systemressourcen unter Last
+
+.. warning::
+   Es gilt zu beachten, dass es sich hierbei um Messungen unter Laborbedingungen handelt.
+   Die tatsächlichen Hardwareanforderungen können mitunter stark von den Angaben abweichen und sind zum Beispiel
+   von der Bildschirmauflösung und aktiver Nutzung der Windowsrechner,
+   sowie der tatsächlichen Leistung der Prozessorkerne abhängig.
+
+.. list-table:: Minimale Systemressourcen unter Last
    :widths: 4 4 4
    :header-rows: 1
    :name: schools-windows-veyon-proxy-requirements-table
@@ -232,14 +239,22 @@ steigen die Hardwareanforderungen an den Schulserver.
    * - 80
      - 2000 MB
      - 6 vCPU / Threads
+   * - 120
+     - 3000 MB
+     - 8 vCPU / Threads
+   * - 200
+     - 5000 MB
+     - 12 vCPU / Threads
 
-Die Prozessorauslastung hängt stark vom eingesetzten System bzw. der Umgebung ab.
 Die aufgeführten benötigten Systemressourcen wurden mit einem
 ``Intel® Xeon® Silver 4314 Prozessor`` gemessen.
+Die Hardwareanforderungen können je nach Umgebung reduziert werden, indem die Einstellungen der Veyon Proxy App und des Computerraum Moduls
+angepasst werden, wie in :ref:`school-windows-veyon-expert-config` beschrieben.
+Für diese Messungen wurden die Einstellungen nicht angepasst.
 
 .. note::
 
-   Bei mehr als 80 aktiven Computern ist der direkte Einsatz von :program:`Veyon Master` empfehlenswert.
+   Bei mehr als 200 gleichzeitig aktiven Computern empfehlen wir den direkte Einsatz von :program:`Veyon Master`.
 
 .. _school-windows-veyon-clients-students:
 
