@@ -254,7 +254,7 @@ Für diese Messungen wurden die Einstellungen nicht angepasst.
 
 .. note::
 
-   Bei mehr als 200 gleichzeitig aktiven Computern empfehlen wir den direkte Einsatz von :program:`Veyon Master`.
+   Bei mehr als 200 gleichzeitig aktiven Computern empfehlen wir den direkten Einsatz von :program:`Veyon Master`.
 
 .. _school-windows-veyon-clients-students:
 
