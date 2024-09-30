@@ -307,7 +307,7 @@ class ComputerRoomManager(dict):
         """Return a list of valid domain users who are logged into the computers"""
         valid_users = []
         for computer in self.values():
-            if computer.user.current and computer.connected():
+            if computer.user.current and computer.connected:
                 user_info = self._user_map[computer.user.current]
                 valid_users.append(user_info.username)
         return valid_users
@@ -419,7 +419,7 @@ class ComputerRoomManager(dict):
             raise AttributeError("unknown system %s" % demo_server)
 
         # start demo server
-        clients = [comp for comp in self.values() if comp.name != demo_server and comp.connected()]
+        clients = [comp for comp in self.values() if comp.name != demo_server and comp.connected]
         MODULE.info("Demo server is %s" % (demo_server,))
         MODULE.info("Demo clients: %s" % ", ".join(x.name for x in clients))
         MODULE.info("Demo client users: %s" % ", ".join(str(x.user.current) for x in clients))
@@ -472,6 +472,7 @@ class VeyonComputer(threading.Thread):
         self._demo_client = LockableAttribute(initial_value=None)
         self._idle_timeout = 30.0
         self._timer = None
+        self.connected = False
         self._update_interval = None
         self._update_paused = False
         self._last_use_of_info = time.monotonic()
@@ -481,8 +482,49 @@ class VeyonComputer(threading.Thread):
     def run(self):
         while self.should_run:
             if not self.update_paused():
-                self.update()
+                self._check_connection()
+                if self.connected:
+                    self.update()
             time.sleep(self.update_interval + random.uniform(0, 1))  # nosec
+
+    def _find_reachable_ip_address(self):
+        if self._reachable_ip:
+            return self._reachable_ip
+        if not ucr.is_true("ucsschool/umc/computerroom/ping-client-ip-addresses", False):
+            self._reachable_ip = self._ip_addresses[0] if self._ip_addresses else ""
+            return self._reachable_ip
+        if self._ip_addresses:
+            try:
+                self._reachable_ip = self._first_available_ip()
+            except VeyonConnectionError as exc:
+                msg = "Could not connect to veyon proxy {!r}".format(exc)
+                if self._update_successful.current:
+                    MODULE.warn(msg)
+                    return ""
+                MODULE.debug(msg)
+                return ""
+            return self._reachable_ip if self._reachable_ip else self._ip_addresses[0]
+        return ""
+
+    def _check_connection(self):
+        try:
+            if not self._reachable_ip:
+                self._reachable_ip = self._find_reachable_ip_address()
+                if not self._reachable_ip:
+                    MODULE.info("No reachable IP address found for {}".format(self.name))
+                    return
+            try:
+                self.connected = self._veyon_client.ping(self.ipAddress)
+            except VeyonConnectionError:
+                self.connected = False
+        except Exception:
+            self.connected = False
+            MODULE.warning(
+                "Error when checking connection for {}: {}".format(self.name, traceback.format_exc())
+            )
+        if not self.connected:
+            MODULE.info("No connection for {} with IP {}".format(self.name, self.ipAddress))
+            self.reset_state()
 
     def update_paused(self):
         if time.monotonic() > self._last_use_of_info + self._idle_timeout:
@@ -554,22 +596,7 @@ class VeyonComputer(threading.Thread):
 
     @property
     def ipAddress(self):
-        if self._reachable_ip:
-            return self._reachable_ip
-        if not ucr.is_true("ucsschool/umc/computerroom/ping-client-ip-addresses", False):
-            self._reachable_ip = self._ip_addresses[0] if self._ip_addresses else ""
-        if self._ip_addresses:
-            try:
-                self._reachable_ip = self._find_reachable_ip()
-            except VeyonConnectionError as exc:
-                msg = "Could not connecto to veyon proxy {!r}".format(exc)
-                if self._update_successful.current:
-                    MODULE.warn(msg)
-                    return ""
-                MODULE.debug(msg)
-                return ""
-            return self._reachable_ip if self._reachable_ip else self._ip_addresses[0]
-        return ""
+        return self._reachable_ip
 
     @property
     def macAddress(self):
@@ -596,7 +623,7 @@ class VeyonComputer(threading.Thread):
         )
 
     def screenshot(self, size=None):
-        if not self.connected():
+        if not self.connected:
             MODULE.warn("{} not connected - skipping screenshot".format(self.name))
             return None
         width = getattr(self.screenshot_dimension, "width", None)
@@ -607,17 +634,14 @@ class VeyonComputer(threading.Thread):
             height = None
         dimension = Dimension(width, height)
         image = None
-        for ip_address in self._ip_addresses:
-            try:
-                image = self._veyon_client.get_screenshot(
-                    host=ip_address,
-                    screenshot_format=ScreenshotFormat.JPEG,
-                    dimension=dimension,
-                )
-            except VeyonError:
-                pass  # might just be a non reachable IP. TODO: Catch errors other than 404
-            if image:
-                break
+        try:
+            image = self._veyon_client.get_screenshot(
+                host=self.ipAddress,
+                screenshot_format=ScreenshotFormat.JPEG,
+                dimension=dimension,
+            )
+        except VeyonError:
+            pass  # might just be a non reachable IP. TODO: Catch errors other than 404
         if image:
             tmp_file = tempfile.NamedTemporaryFile(delete=False)
             tmp_file.write(image)
@@ -682,7 +706,7 @@ class VeyonComputer(threading.Thread):
     def demoClient(self):
         return self._demo_client.current
 
-    def _find_reachable_ip(self):  # type: () -> Optional[str]
+    def _first_available_ip(self):  # type: () -> Optional[str]
         for ip_address in self._ip_addresses:
             try:
                 reachable = self._veyon_client.ping(host=ip_address)
@@ -700,13 +724,6 @@ class VeyonComputer(threading.Thread):
             MODULE.error("Fetching feature status failed: {}".format(exc))
         return None
 
-    def connected(self):
-        try:
-            return self._veyon_client.ping(host=self.ipAddress)
-        except VeyonConnectionError as exc:
-            MODULE.warning("Connecting to Veyon failed: {}".format(exc))
-            return False
-
     def update(self):
         MODULE.info("{}: updating information.".format(self.name))
         try:
@@ -715,11 +732,6 @@ class VeyonComputer(threading.Thread):
             screen_lock = None
             demo_server = None
             demo_client = None
-            if not self._veyon_client.ping(self.ipAddress):
-                MODULE.info("Ping not successfull for {} with IP {}".format(self.name, self.ipAddress))
-                MODULE.info("{}: Updating information was not successful.".format(self.name))
-                self.reset_state()
-                return
             try:
                 veyon_user = self._veyon_client.get_user_info(host=self.ipAddress)
                 input_lock = self._fetch_feature_status(Feature.INPUT_DEVICE_LOCK)
@@ -782,15 +794,19 @@ class VeyonComputer(threading.Thread):
         pass  # Nothing to do for the VeyonComputer
 
     def close(self):
-        for ip_address in self._ip_addresses:
-            try:
-                self._veyon_client.remove_session(ip_address)
-            except VeyonConnectionError as exc:
-                MODULE.warning("Could not remove veyon session for {}: {}".format(self.name, exc))
+        try:
+            self._veyon_client.remove_session(self.ipAddress)
+        except VeyonConnectionError as exc:
+            MODULE.warning("Could not remove veyon session for {}: {}".format(self.name, exc))
 
     def _set_feature(self, feature, active=True):  # type: (Feature, bool) -> None
         try:
-            self._veyon_client.set_feature(feature, host=self.ipAddress, active=active)
+            if self.connected:
+                self._veyon_client.set_feature(feature, host=self.ipAddress, active=active)
+            else:
+                MODULE.debug(
+                    "Not setting feature {} as computer {} is offline.".format(repr(feature), self.name)
+                )
         except VeyonError:
             MODULE.warning(
                 "{} could not be reached - skipped setting feature{}".format(self.name, feature)

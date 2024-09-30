@@ -92,7 +92,8 @@ def test_connected_veyon(monkeypatch):
     monkeypatch.setattr(socket.socket, "connect_ex", monkey_connect_ex)
     ips = ["valid"]
     computer = get_dummy_veyon_computer(ips)
-    assert computer.connected()
+    computer._check_connection()
+    assert computer.connected
 
 
 def test_second_valid_veyon(monkeypatch):
@@ -101,7 +102,8 @@ def test_second_valid_veyon(monkeypatch):
     monkeypatch.setattr(socket.socket, "connect_ex", monkey_connect_ex)
     ips = ["invalid", "valid"]
     computer = get_dummy_veyon_computer(ips)
-    assert computer.connected()
+    computer._check_connection()
+    assert computer.connected
     assert computer._veyon_client.ping(ips[0]) is False
     assert computer._veyon_client.ping(ips[1])
 
@@ -116,7 +118,8 @@ def test_first_valid_veyon(monkeypatch, ucr_value):
     monkeypatch.setattr(socket.socket, "connect_ex", monkey_connect_ex)
     ips = ["valid", "invalid"]
     computer = get_dummy_veyon_computer(ips)
-    assert computer.connected()
+    computer._check_connection()
+    assert computer.connected
     assert computer._veyon_client.ping(ips[0])
     assert computer._veyon_client.ping(ips[1]) is False
 
@@ -128,8 +131,8 @@ def test_multiple_ips_last_valid_veyon(monkeypatch):
     ips = ["invalid"] * 10
     ips.append("valid")
     computer = get_dummy_veyon_computer(ips)
-    assert computer.connected()
-    print(computer.connected())
+    computer._check_connection()
+    assert computer.connected
     for ip in ips[:-1]:
         assert computer._veyon_client.ping(ip) is False
     assert computer._veyon_client.ping(ips[-1])
@@ -139,7 +142,8 @@ def test_no_valid_ip_veyon(monkeypatch):
     ips = ["invalid"] * 2
     computer = get_dummy_veyon_computer(ips)
     monkeypatch.setattr(socket.socket, "connect_ex", monkey_connect_ex)
-    assert computer.connected() is False
+    computer._check_connection()
+    assert computer.connected is False
     for ip in ips[:-1]:
         assert computer._veyon_client.ping(ip) is False
 
@@ -163,4 +167,5 @@ def test_no_ips_veyon(monkeypatch):
         screenshot_dimension=Dimension(None, None),
     )
     _ = computer.ipAddress
-    assert computer.connected() is False
+    computer._check_connection()
+    assert computer.connected is False

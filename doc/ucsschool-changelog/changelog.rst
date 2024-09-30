@@ -8,6 +8,15 @@
 Changelog
 *********
 
+.. _changelog-ucsschool-2024-10-01:
+
+Released on 2024-10-01
+======================
+
+Source package *ucs-school-umc-computerroom* in version ``12.0.22``:
+
+* Fixed: The computer room UMC module will no longer have large response times when offline computers are present (:uv:bug:`57631`).
+
 .. _changelog-ucsschool-2024-09-26:
 
 Released on 2024-09-26
