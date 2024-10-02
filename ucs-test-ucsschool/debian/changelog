@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.194) unstable; urgency=medium
+
+  * Issue #1276: Reworked import http api test as pytest.
+
+ -- Alexander Steffen <steffen@univention.de>  Wed, 02 Oct 2024 07:58:02 +0200
+
 ucs-test-ucsschool (7.3.193) unstable; urgency=medium
 
   * Issue #1293: Fix 101_multiple_ips_and_macs.py
