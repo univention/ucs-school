@@ -11,13 +11,20 @@ SPHINXOPTS    ?=
 SPHINXBUILD   ?= sphinx-build
 SOURCEDIR     = .
 BUILDDIR      = _build
+DOCKER_REGISTRY := docker-registry.knut.univention.de
+SPHINX_DOCKER_BASE = $(DOCKER_REGISTRY)/knut/sphinx-base:latest
+SPHINX_DOCKER_FULL = $(DOCKER_REGISTRY)/sphinx:latest
+DOCKER_USER_CMD := docker run --rm -v "$(shell dirname $$(pwd)):/project/doc" -w /project/doc/ucsschool-manual --network=host -u "$(USER_ID)"
 
 # Put it first so that "make" without argument is like "make help".
 help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
-livehtml:
+livehtml-nodocker:
 	sphinx-autobuild "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+
+livehtml:
+	$(DOCKER_USER_CMD) $(SPHINX_DOCKER_BASE) sphinx-autobuild "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 .PHONY: help Makefile
 
