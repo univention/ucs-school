@@ -359,8 +359,8 @@ dunkelgrau färben.
 
 .. _school-windows-veyon-expert-config:
 
-Konfiguration der App :program:`UCS\@school Veyon Proxy`
---------------------------------------------------------
+Performance-Optimierungen der App :program:`UCS\@school Veyon Proxy`
+--------------------------------------------------------------------
 
 .. caution::
    Dieser Abschnitt beschreibt ausschließlich Experteneinstellungen zur Optimierung und kann
@@ -368,40 +368,74 @@ Konfiguration der App :program:`UCS\@school Veyon Proxy`
    :program:`UCS\@school Veyon Proxy` werden ohne Verifikation direkt an den im Docker-Container
    enthaltenen Veyon Master weitergereicht.
 
+.. note::
+   Alle Einstellungen müssen auf dem edukativen Schulservern gemacht werden.
 
-Ab Version *4.8.3.8-ucs1* des :program:`UCS\@school Veyon Proxy` stehen drei neue App-Einstellungen
-zur Verfügung um Performance-Optimierungen für verschiedene Anwendungsfälle zu bieten:
+Ab Version *4.8.3.8-ucs1* des :program:`UCS\@school Veyon Proxy` stehen neue App-Einstellungen
+zur Verfügung um Performance-Optimierungen zu definieren.
+
+Die Einstellungen steuern die Verbindung zwischen :program:`UCS\@school Veyon Proxy` und den Windows-Clients.
 
 - :envvar:`veyon/Master/ComputerMonitoringUpdateInterval`
 - :envvar:`veyon/Master/ComputerMonitoringImageQuality`
+- :envvar:`veyon/Core/ComputerStatePollingInterval`
 - :envvar:`veyon/WebAPI/ConnectionIdleTimeout`
 
-Die Einstellung :envvar:`veyon/Master/ComputerMonitoringUpdateInterval` erlaubt die Anpassung des
-Intervalls wie oft der :program:`UCS\@school Veyon Proxy` neue Screenshots von Zielrechnern abfragt und ist in Millisekunden angegeben.
-Hierbei beträgt der maximale Wert 10000.
+.. code-block:: bash
+   :caption: App-Einstellungen werden wie folgt geändert, die App wird dabei neu gestartet.
+
+   univention-app configure ucsschool-veyon-proxy --set veyon/WebAPI/ConnectionIdleTimeout=60
 
 Die Einstellung :envvar:`veyon/Master/ComputerMonitoringImageQuality` bietet die Möglichkeit
-die Qualität der abgeholten Screenshots zu bestimmen. Der Wert ist von 0 (höchste Qualität)
-bis 4 (niedrigste Qualität) begrenzt.
+die Qualität der VNC Verbindung zwischen den Windows-Clients und dem :program:`UCS\@school Veyon Proxy` zu ändern.
+Der Wert ist von 0 (höchste Qualität) bis 4 (niedrigste Qualität) begrenzt.
+Auf Stufe 4 können Kompressionsartefakte erkennbar sein,
+ein Unterschied zwischen den Stufen ist meist nur im direkten Vergleich erkennbar.
+Ist die Qualität niedrig Eingestellt reduziert dies die Datenmenge,
+die über die VNC Verbindung zwischen Windows-Clients und dem :program:`UCS\@school Veyon Proxy` übertragen wird.
+Wir empfehlen Stufe 4 als Standardeinstellung.
+
+Die Einstellungen :envvar:`veyon/Master/ComputerMonitoringUpdateInterval`
+und :envvar:`veyon/Core/ComputerStatePollingInterval` steuern den Intervall,
+in dem der :program:`UCS\@school Veyon Proxy` neue Screenshots und Statusupdates von Zielrechnern abfragt
+und ist in Millisekunden angegeben.
+Hierbei beträgt der maximal Wert 10000 msec, der Standardwert beträgt 1000 msec.
+Das Minimum beider Werte bestimmt wie oft der :program:`UCS\@school Veyon Proxy` einen neuen Screenshot erzeugt.
+Durch erhöhen der Werte kann die Prozessor- und Netzwerklast, des Systems, reduziert werden.
 
 Die Einstellung :envvar:`veyon/WebAPI/ConnectionIdleTimeout` definiert die Zeit in Sekunden,
 nach der eine inaktive VNC-Verbindung zwischen dem :program:`UCS\@school Veyon Proxy` und einem Windows-Client
 geschlossen wird.
+Wir empfehlen 60 Sekunden, der Wert sollte jedoch immer höher sein als die folgenden Computerraum Modul Einstellungen,
+um zu Vermeiden das Verbindungen neu auf gebaut werden.
 
-Auch das Computerraum Modul bietet einige Einstellungen zur Optimierung.
-Dabei zielen alle Einstellungen darauf ab den :program:`UCS\@school Veyon Proxy` zu entlasten,
-indem die Anzahl von Anfragen an den Proxy reduziert werden:
+Performance-Optimierungen des :program:`Computerraum Moduls`
+------------------------------------------------------------
+
+Auch das Computerraum Modul bietet einige Einstellungen zur Performance-Optimierung.
+Dabei zielen alle Einstellungen darauf, den :program:`UCS\@school Veyon Proxy` zu entlasten,
+indem die Anzahl von Anfragen an den Proxy reduziert werden.
+
+Die Einstellungen steuern die Verbindung zwischen |UCSUMC| und dem :program:`UCS\@school Veyon Proxy`.
+Statusupdates und Screenshots werden vom :program:`UCS\@school Veyon Proxy` zwischen gespeichert.
+Die folgenden UCR-Variablen steuern wie oft dieser Zwischenspeicher (Cache) abgefragt wird.
 
 - :envvar:`ucsschool/umc/computerroom/update-interval`
 - :envvar:`ucsschool/umc/computerroom/screenshot/interval`
 
 Die Einstellung :envvar:`ucsschool/umc/computerroom/update-interval` steuert das Intervall in Sekunden, mit dem der Computerraum
-Informationen zum eingeloggten Benutzer, sowie dem Sperrzustand von Monitor und Eingabegeräten abfragt.
+Informationen zum eingeloggten Benutzer, sowie dem Sperrzustand von Monitor und Eingabegeräten, an der App, abfragt. Die Standardeinstellung beträgt 1 Sekunde.
 
 Die Einstellung :envvar:`ucsschool/umc/computerroom/screenshot/interval` steuert das Intervall in Sekunden, mit dem der Computerraum
-den Bildschirminhalt der Computer abfragt.
+einen Screenshot des Computers abfragt. Der Standardwert beträgt 5 Sekunden.
+Der Inhalt des Screenshots ändert sich nur,
+wenn die App einen neuen Screenshot zwischenspeichert.
 
+.. code-block:: bash
+   :caption: Computerraum Einstellungen werden als UCR-Variablen gesetzt. Die UMC muss manuell neu gestartet und die UMC im Browser muss neu geladen werden, damit die Einstellungen greifen.
 
+   ucr set ucsschool/umc/computerroom/update-interval=1
+   service univention-management-console-server restart
 
 
 .. _school-windows-veyon-clients-teachers:
