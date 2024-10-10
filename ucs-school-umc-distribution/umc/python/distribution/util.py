@@ -520,7 +520,20 @@ class Project(_Dict):
                 for part in parts:
                     startdir = os.path.join(startdir, part)
                     if os.path.isdir(startdir):  # prevent race conditions with symlink attacs
-                        os.chown(startdir, owner, group)
+
+                        # Bug 57661: Only try to change owner/group if it is not already set
+                        stat = os.stat(startdir)
+                        if not (stat.st_uid == owner and stat.st_gid == group):
+                            try:
+                                os.chown(startdir, owner, group)
+                            except PermissionError:
+                                MODULE.error(
+                                    (
+                                        "Unable to change ownership for "
+                                        "%s from uid=%s/gid=%s to uid=%s/gid=%s."
+                                    )
+                                    % (startdir, stat.st_uid, stat.st_gid, owner, group)
+                                )
 
         except (OSError, IOError) as exc:
             import traceback

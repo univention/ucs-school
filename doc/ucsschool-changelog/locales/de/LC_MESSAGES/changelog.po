@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UCS@school - 5.0 v5 Changelog \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-30 10:20+0000\n"
+"POT-Creation-Date: 2024-10-11 10:03+0000\n"
 "PO-Revision-Date: 2023-08-02 09:20+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,30 +22,49 @@ msgid "Changelog"
 msgstr "Changelog"
 
 #: ../../changelog.rst:14
+msgid "Released on 2024-10-14"
+msgstr "Veröffentlicht am 14. Oktober 2024"
+
+#: ../../changelog.rst:16
+msgid "Source package *ucs-school-umc-distribution* in version ``18.0.10``:"
+msgstr "Quellpaket *ucs-school-umc-distribution* in Version ``18.0.10``:"
+
+#: ../../changelog.rst:18
+msgid ""
+"Fixed: During exam collection, a permission error was written to the log "
+"file. Note: Although shown as an error, this had no negative effect on "
+"exam collection (:uv:bug:`57661`)."
+msgstr ""
+"Es wurde behoben dass ein Zugriffsfehler log Dateien erscheint, wenn "
+"Klassenarbeiten eingesammelt wurden. Anmerkung: Der Log Eintrag ist als Fehler markiert, hat aber "
+"keine negative Auswirkung auf das einsammeln der Klassenarbeit (:uv:bug:`57661`)."
+
+#: ../../changelog.rst:23
 msgid "Released on 2024-10-01"
 msgstr "Veröffentlicht am 01. Oktober 2024"
 
-#: ../../changelog.rst:16
+#: ../../changelog.rst:25
 msgid "Source package *ucs-school-umc-computerroom* in version ``12.0.22``:"
 msgstr "Quellpaket *ucs-school-umc-computerroom* in Version ``12.0.22``:"
 
-#: ../../changelog.rst:18
+#: ../../changelog.rst:27
 msgid ""
 "Fixed: The computer room UMC module will no longer have large response "
 "times when offline computers are present (:uv:bug:`57631`)."
 msgstr ""
-"Behoben: Das Computerraum UMC Modul hat nicht mehr lange Reaktionszeiten, "
-"wenn sich im Computerraum heruntergefahrene Computer befinden (:uv:bug:`57631`)."
+"Behoben: Das Computerraum UMC Modul hat nicht mehr lange Reaktionszeiten,"
+" wenn sich im Computerraum heruntergefahrene Computer befinden "
+"(:uv:bug:`57631`)."
 
-#: ../../changelog.rst:23
+#: ../../changelog.rst:32
 msgid "Released on 2024-09-26"
 msgstr "Veröffentlicht am 26. September 2024"
 
-#: ../../changelog.rst:25
+#: ../../changelog.rst:34
 msgid "Source package *ucs-school-umc-computerroom* in version ``12.0.21``:"
 msgstr "Quellpaket *ucs-school-umc-computerroom* in Version ``12.0.21``:"
 
-#: ../../changelog.rst:27
+#: ../../changelog.rst:36
 msgid ""
 "Improved the performance of the UMC computer room module: More computers "
 "can be monitored at the same time (:uv:bug:`57610`)."
@@ -53,7 +72,7 @@ msgstr ""
 "Die Performance des UMC Computerraum Moduls wurde verbessert. Es können "
 "nun mehr Computer zum selben Zeitpunkt überwacht werden (:uv:bug:`57610`)"
 
-#: ../../changelog.rst:28
+#: ../../changelog.rst:37
 msgid ""
 "Improved the resource usage of the UMC computer room module: Unused "
 "computer room sessions will consume less resources (:uv:bug:`57099`)."
@@ -62,15 +81,15 @@ msgstr ""
 "Unbenutzte Computerraum-Sitzungen verbrauchen nun weniger Ressourcen "
 "(:uv:bug:`57099`)."
 
-#: ../../changelog.rst:30
+#: ../../changelog.rst:39
 msgid "Source package *ucs-school-veyon-client* in version ``2.0.9``:"
 msgstr "Quellpaket *ucs-school-veyon-client* in Version ``2.0.9``:"
 
-#: ../../changelog.rst:32
+#: ../../changelog.rst:41
 msgid "Improved the performance of the Veyon Python client (:uv:bug:`57610`)."
 msgstr "Die Performance des Veyon Python Client wurde verbessert (:uv:bug:`57610`)"
 
-#: ../../changelog.rst:33
+#: ../../changelog.rst:42
 msgid ""
 "The authentication error pop up which is sometimes shown on the monitored"
 " Windows clients will no longer appear (:uv:bug:`53995`)."
@@ -79,15 +98,15 @@ msgstr ""
 " auf den Windowsrechnern angezeigt wurde erscheint nicht mehr "
 "(:uv:bug:`53995`)."
 
-#: ../../changelog.rst:38
+#: ../../changelog.rst:47
 msgid "Released on 2024-09-24"
 msgstr "Veröffentlicht am 24. September 2024"
 
-#: ../../changelog.rst:40
+#: ../../changelog.rst:49
 msgid "Source package *ucs-school-import-lusd* in version ``1.0.0``:"
 msgstr "Quellpaket *ucs-school-import-lusd* in Version ``1.0.0``:"
 
-#: ../../changelog.rst:42
+#: ../../changelog.rst:51
 msgid ""
 "Added: A new package which supports importing users and groups from the "
 "LUSD API into UCS\\@school. See the :external+uv-import:ref:`LUSD Import "
