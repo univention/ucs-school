@@ -89,6 +89,8 @@ class Exam(object):
     :type connection: UMC connection object
     """
 
+    UMC_SCHOOLEXAM_LOG_PATH = "/var/log/univention/management-console-module-schoolexam.log"
+
     def __init__(
         self,
         school,
@@ -307,6 +309,7 @@ html5
             self.files,
             path,
         )
+        self._check_collection_logs()
 
     def check_upload(self):
         path = "/tmp/ucsschool-exam-upload*"
@@ -323,6 +326,16 @@ html5
             self.files,
             path,
         )
+
+    def _check_collection_logs(self, lines=50):
+        """Check last lines for specific errors"""
+        with open(self.UMC_SCHOOLEXAM_LOG_PATH) as f:
+            lines = f.readlines()[-lines:]
+            for line in lines:
+
+                # Bug 57661
+                assert not re.match(r".*ERROR.*failed to create/chown.*/home/.*Klassenarbeiten", line)
+                assert not re.match(r".*PermissionError:.*/home/.*Klassenarbeiten", line)
 
 
 class ExamSaml(Exam):
