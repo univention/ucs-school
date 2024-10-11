@@ -189,8 +189,6 @@ finden Informationen im :external+veyon-docs:doc:`Veyon-Benutzerhandbuch <user/i
 
 Welche Möglichkeit Sie wählen,
 hängt neben den verfügbaren Features auch von der Anzahl der gleichzeitig zu überwachenden Computer bzw. Computerräume ab.
-Ab einer Anzahl von mehr als 80 aktiven Computern,
-empfiehlt sich die Nutzung von :program:`Veyon Master`, siehe :ref:`school-windows-veyon-master`.
 
 .. important::
 
@@ -215,6 +213,12 @@ Wenn Sie die integrierte Web-Oberfläche zur Überwachung der Computerräume ver
 steigen die Hardwareanforderungen an den Schulserver.
 :numref:`schools-windows-veyon-proxy-requirements-table` liefert eine Orientierung über die Hardwareanforderungen.
 
+Ein Computer gilt dabei als aktiv,
+wenn er angeschaltet ist und sich in einem Computerraum befindet,
+welcher zu diesem Zeitpunkt überwacht wird.
+
+Computer, die nicht aktiv überwacht werden,
+spielen für die Performance nur eine untergeordnete Rolle.
 
 .. warning::
    Es gilt zu beachten, dass es sich hierbei um Messungen unter Laborbedingungen handelt.
@@ -254,7 +258,7 @@ Für diese Messungen wurden die Einstellungen nicht angepasst.
 
 .. note::
 
-   Bei mehr als 200 gleichzeitig aktiven Computern empfehlen wir den direkten Einsatz von :program:`Veyon Master`.
+   Bei mehr als 200 gleichzeitig aktiven Computern empfehlen wir den direkten Einsatz von :program:`Veyon Master`, siehe :ref:`school-windows-veyon-master`.
 
 .. _school-windows-veyon-clients-students:
 
@@ -391,7 +395,7 @@ die Qualität der VNC Verbindung zwischen den Windows-Clients und dem :program:`
 Der Wert ist von 0 (höchste Qualität) bis 4 (niedrigste Qualität) begrenzt.
 Auf Stufe 4 können Kompressionsartefakte erkennbar sein,
 ein Unterschied zwischen den Stufen ist meist nur im direkten Vergleich erkennbar.
-Ist die Qualität niedrig Eingestellt reduziert dies die Datenmenge,
+Ist die Qualität niedrig eingestellt reduziert dies die Datenmenge,
 die über die VNC Verbindung zwischen Windows-Clients und dem :program:`UCS\@school Veyon Proxy` übertragen wird.
 Wir empfehlen Stufe 4 als Standardeinstellung.
 
