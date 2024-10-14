@@ -962,7 +962,19 @@ class Instance(SchoolBaseModule):
             MODULE.info("SMB process: %s" % str(process))
             if process.username and process.username.lower() in veyon_users:
                 MODULE.info("Kill SMB process %s" % process.pid)
-                os.kill(int(process.pid), signal.SIGTERM)
+                try:
+                    os.kill(int(process.pid), signal.SIGTERM)
+                except ProcessLookupError:
+                    # Bug 56904
+                    # It is possible (though rare) that an smb process is stopped
+                    # between the `smbstatus` call and the os.kill, resulting in a ProcessLookupError
+                    MODULE.info(
+                        "Tried to kill SMB process with pid %s, but process does not exist anymore."
+                        % (process.pid)
+                    )
+                except Exception:
+                    MODULE.error("Unable to kill SMB process %s." % (process.pid))
+                    MODULE.error(traceback.format_exc())
 
     @sanitize(server=StringSanitizer(required=True))
     @check_room_access

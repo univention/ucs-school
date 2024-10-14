@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (12.0.23) unstable; urgency=medium
+
+  * Bug #56904: Handle OS errors when sending SIGTERM to smb processes
+
+ -- Johannes Königer <koeniger@univention.de>  Mon, 14 Oct 2024 09:44:18 +0200
+
 ucs-school-umc-computerroom (12.0.22) unstable; urgency=medium
 
   * Bug #57631: Move connection checks to threads and avoid setting features
