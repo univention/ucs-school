@@ -8,14 +8,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UCS@school - 5.0 v5 Changelog \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-15 08:43+0000\n"
+"POT-Creation-Date: 2024-10-15 11:05+0000\n"
 "PO-Revision-Date: 2023-08-02 09:20+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.16.0\n"
+"Generated-By: Babel 2.14.0\n"
 
 #: ../../changelog.rst:9
 msgid "Changelog"
@@ -26,18 +26,28 @@ msgid "Released on 2024-10-16"
 msgstr "Veröffentlicht am 16. Oktober 2024"
 
 #: ../../changelog.rst:16
-msgid "Source package *ucs-school-umc-exam* in version ``10.0.14``:"
-msgstr "Quellpaket *ucs-school-umc-exam* in Version ``10.0.14``:"
+msgid "Source package *ucs-school-umc-exam* in version ``10.0.15``:"
+msgstr "Quellpaket *ucs-school-umc-exam* in Version ``10.0.15``:"
 
 #: ../../changelog.rst:18
-msgid "Improved error handling during exam clean up (:uv:bug:`56766`)."
-msgstr "Verbesserte Fehlerbehandlung beim abschließen einer Klassenarbeit (:uv:bug:`56766`)."
+msgid ""
+"Fixed: Exam related files do no longer receive duplicate NT ACLs, which "
+"previously could result in an OSError 28 (:uv:bug:`57667`)."
+msgstr ""
+"Behoben: Dateien die für Prüfungen oder Klassenarbeiten benötigt werden, erhalten keine doppelten NT ACLs mehr, "
+"was früher zu einem OSError 28 führen konnte (:uv:bug:`57667`)."
 
 #: ../../changelog.rst:20
+msgid "Improved error handling during exam clean up (:uv:bug:`56766`)."
+msgstr ""
+"Verbesserte Fehlerbehandlung beim abschließen einer Klassenarbeit "
+"(:uv:bug:`56766`)."
+
+#: ../../changelog.rst:22
 msgid "Source package *ucs-school-umc-distribution* in version ``18.0.10``:"
 msgstr "Quellpaket *ucs-school-umc-distribution* in Version ``18.0.10``:"
 
-#: ../../changelog.rst:22
+#: ../../changelog.rst:24
 msgid ""
 "Fixed: During exam collection, a permission error was written to the log "
 "file. Note: Although shown as an error, this had no negative effect on "
@@ -48,25 +58,25 @@ msgstr ""
 "Fehler markiert, hat aber keine negative Auswirkung auf das einsammeln "
 "der Klassenarbeit (:uv:bug:`57661`)."
 
-#: ../../changelog.rst:24
+#: ../../changelog.rst:26
 msgid "Source package *ucs-school-umc-computerroom* in version ``12.0.23``:"
 msgstr "Quellpaket *ucs-school-umc-computerroom* in Version ``12.0.23``:"
 
-#: ../../changelog.rst:26
+#: ../../changelog.rst:28
 msgid "Improved the error handling when managing SMB processes (:uv:bug:`56904`)."
 msgstr ""
 "Die Fehlerbehandlung beim Verwalten von SMB Prozessen wurde verbessert "
 "(:uv:bug:`56904`)."
 
-#: ../../changelog.rst:31
+#: ../../changelog.rst:33
 msgid "Released on 2024-10-01"
 msgstr "Veröffentlicht am 01. Oktober 2024"
 
-#: ../../changelog.rst:33
+#: ../../changelog.rst:35
 msgid "Source package *ucs-school-umc-computerroom* in version ``12.0.22``:"
 msgstr "Quellpaket *ucs-school-umc-computerroom* in Version ``12.0.22``:"
 
-#: ../../changelog.rst:35
+#: ../../changelog.rst:37
 msgid ""
 "Fixed: The computer room UMC module will no longer have large response "
 "times when offline computers are present (:uv:bug:`57631`)."
@@ -75,15 +85,15 @@ msgstr ""
 " wenn sich im Computerraum heruntergefahrene Computer befinden "
 "(:uv:bug:`57631`)."
 
-#: ../../changelog.rst:40
+#: ../../changelog.rst:42
 msgid "Released on 2024-09-26"
 msgstr "Veröffentlicht am 26. September 2024"
 
-#: ../../changelog.rst:42
+#: ../../changelog.rst:44
 msgid "Source package *ucs-school-umc-computerroom* in version ``12.0.21``:"
 msgstr "Quellpaket *ucs-school-umc-computerroom* in Version ``12.0.21``:"
 
-#: ../../changelog.rst:44
+#: ../../changelog.rst:46
 msgid ""
 "Improved the performance of the UMC computer room module: More computers "
 "can be monitored at the same time (:uv:bug:`57610`)."
@@ -91,7 +101,7 @@ msgstr ""
 "Die Performance des UMC Computerraum Moduls wurde verbessert. Es können "
 "nun mehr Computer zum selben Zeitpunkt überwacht werden (:uv:bug:`57610`)"
 
-#: ../../changelog.rst:45
+#: ../../changelog.rst:47
 msgid ""
 "Improved the resource usage of the UMC computer room module: Unused "
 "computer room sessions will consume less resources (:uv:bug:`57099`)."
@@ -100,15 +110,15 @@ msgstr ""
 "Unbenutzte Computerraum-Sitzungen verbrauchen nun weniger Ressourcen "
 "(:uv:bug:`57099`)."
 
-#: ../../changelog.rst:47
+#: ../../changelog.rst:49
 msgid "Source package *ucs-school-veyon-client* in version ``2.0.9``:"
 msgstr "Quellpaket *ucs-school-veyon-client* in Version ``2.0.9``:"
 
-#: ../../changelog.rst:49
+#: ../../changelog.rst:51
 msgid "Improved the performance of the Veyon Python client (:uv:bug:`57610`)."
 msgstr "Die Performance des Veyon Python Client wurde verbessert (:uv:bug:`57610`)"
 
-#: ../../changelog.rst:50
+#: ../../changelog.rst:52
 msgid ""
 "The authentication error pop up which is sometimes shown on the monitored"
 " Windows clients will no longer appear (:uv:bug:`53995`)."
@@ -117,15 +127,15 @@ msgstr ""
 " auf den Windowsrechnern angezeigt wurde erscheint nicht mehr "
 "(:uv:bug:`53995`)."
 
-#: ../../changelog.rst:55
+#: ../../changelog.rst:57
 msgid "Released on 2024-09-24"
 msgstr "Veröffentlicht am 24. September 2024"
 
-#: ../../changelog.rst:57
+#: ../../changelog.rst:59
 msgid "Source package *ucs-school-import-lusd* in version ``1.0.0``:"
 msgstr "Quellpaket *ucs-school-import-lusd* in Version ``1.0.0``:"
 
-#: ../../changelog.rst:59
+#: ../../changelog.rst:61
 msgid ""
 "Added: A new package which supports importing users and groups from the "
 "LUSD API into UCS\\@school. See the :external+uv-import:ref:`LUSD Import "

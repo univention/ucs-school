@@ -1,3 +1,9 @@
+ucs-test-ucsschool (7.3.197) unstable; urgency=medium
+
+  * Issue #1300: Changed test to check new capabilities of exam module.
+
+ -- Alexander Steffen <steffen@univention.de>  Tue, 15 Oct 2024 12:58:07 +0200
+
 ucs-test-ucsschool (7.3.196) unstable; urgency=medium
 
   * Bug #56766: Add test for UMCP endpoint

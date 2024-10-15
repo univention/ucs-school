@@ -1,3 +1,9 @@
+ucs-school-umc-exam (10.0.15) unstable; urgency=medium
+
+  * Bug #57667: Fixed duplicated aces in NT acls.
+
+ -- Alexander Steffen <steffen@univention.de>  Tue, 15 Oct 2024 12:49:07 +0200
+
 ucs-school-umc-exam (10.0.14) unstable; urgency=medium
 
   * Bug #56766: Make sure only user DNs are sent to schoolexam master

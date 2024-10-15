@@ -34,7 +34,6 @@
 import datetime
 import logging
 import os
-import re
 import shutil
 import subprocess
 import tempfile
@@ -47,6 +46,7 @@ import ldap
 from ldap.dn import escape_dn_chars
 from ldap.filter import filter_format
 from samba.auth_util import system_session_unix
+from samba.dcerpc import security
 from samba.ntacls import getntacl, setntacl
 from samba.param import LoadParm
 from samba.samba3 import param
@@ -60,7 +60,6 @@ from ucsschool.lib.models.utils import (
     ModuleHandler,
     NotInstalled,
     UnknownPackage,
-    exec_cmd,
     get_package_version,
 )
 from ucsschool.lib.roles import (
@@ -186,92 +185,51 @@ class Instance(SchoolBaseModule):
         room_module.prepare(request)
         return room_module
 
-    @staticmethod
-    @LDAP_Connection()
-    def init_windows_profiles(exam_user, ldap_user_read=None):  # type: (User, LoType) -> None
-        """
-        When login with smbclient, the folder windows-profile and others
-        are created. We need those folders to be present at this time to set the
-        permissions for them, too.
-
-        :param exam_user:
-        :param ldap_user_read:
-        """
-        ldap_user = ldap_user_read.get(exam_user.dn)
-        workstation = ldap_user.get("sambaUserWorkstations", [b""])[0].decode("UTF-8")
-        password = ldap_user.get("sambaNTPassword", [b""])[0].decode("ASCII")
-
-        if not password:
-            logger.warning(
-                f"User {exam_user.dn} is missing a password."
-                "They will be allowed to modify the permissions of their distribution folder,"
-                "which can be exploited to share data during the exam."
-            )
-            return
-        with tempfile.NamedTemporaryFile("w+") as auth_file:
-            auth_file.write(
-                f"""username={exam_user.username}
-                   password={password}
-                   domain={ucr['domainname']}"""
-            )
-            auth_file.flush()
-
-            cmd = [
-                "smbclient",
-                "--pw-nt-hash",
-                "--authentication-file={}".format(auth_file.name),
-                "-L",
-                "localhost",
-            ]
-            if workstation:
-                workstation = workstation.split(",")[0]
-                cmd.append(f"--netbiosname={workstation}")
-            else:
-                logger.debug(
-                    f"{exam_user.dn} is missing a workstation. The exam-user will be able to login to "
-                    "workstations outside the computerroom."
-                )
-            rv, stdout, stderr = exec_cmd(cmd)
-            if rv != 0:
-                logger.error(
-                    f"Error while initiating windows-profiles for {exam_user.dn} rv: {rv} {stderr!r}"
-                    f" {stdout!r}"
-                )
-
     def deny_owner_change_permissions(self, filename: str) -> None:
         """
         A user gets full control over her permissions by default.
-        The SDDL string of the home dir is extended by
+        The SDDL string of the home dir is changed to
         - forbid exam-users to change the permissions and owner
         - overrides standard behavior, i.e. full control, with 'edit' for owners.
         """
+        # s3conf needs to be loaded for direct_db_access=False in getntacl, otherwise you get an error
         s3conf = param.get_context()
         s3conf.load(self.lp.configfile)
         dacl = getntacl(self.lp, filename, system_session_unix(), direct_db_access=False)
-        old_sddl = dacl.as_sddl()
         owner_sid = dacl.owner_sid
-        res = re.search(r"(O:.+?G:.+?)D:[^\(]*(.+)", old_sddl)
-        if res:
-            owner = res.group(1)
-            old_aces = res.group(2)
-            old_aces = re.findall(r"\(.+?\)", old_aces)
-            allow_aces = "".join([ace for ace in old_aces if "A;" in ace])
-            deny_aces = "".join([ace for ace in old_aces if "D;" in ace])
-            # deny user change of permissions and owner
-            new_deny_aces = "(D;OICI;WOWD;;;{})".format(owner_sid)
-            new_allow_ace = [
-                "(A;OICI;0x001301BF;;;S-1-3-4)",  # change default behaviour for owners to modify
-                "(A;OICI;0x001301BF;;;{})".format(owner_sid),  # add modify ace for owner
-            ]
-            if new_deny_aces not in deny_aces:
-                deny_aces += new_deny_aces
-            for ace in new_allow_ace:
-                if ace not in allow_aces:
-                    allow_aces += ace
-            new_sddl = "{}D:PAI{}{}".format(owner, deny_aces.strip(), allow_aces.strip())
-            if new_sddl != old_sddl:
-                logger.debug("set nt acls {} on {}".format(new_sddl, filename))
-                setntacl(self.lp, filename, new_sddl, owner_sid, system_session_unix())
+        # deny user change of permissions and owner
+        new_deny_ace = security.ace()
+        new_deny_ace.trustee = owner_sid
+        new_deny_ace.type = security.SEC_ACE_TYPE_ACCESS_DENIED
+        new_deny_ace.flags = (
+            security.SEC_ACE_FLAG_OBJECT_INHERIT | security.SEC_ACE_FLAG_CONTAINER_INHERIT
+        )
+        new_deny_ace.access_mask = security.SEC_STD_WRITE_OWNER | security.SEC_STD_WRITE_DAC
+        if new_deny_ace not in dacl.dacl.aces:
+            dacl.dacl_add(new_deny_ace, 0)  # Deny acl should come first
+        for trustee in [security.dom_sid(security.SID_OWNER_RIGHTS), owner_sid]:
+            new_allow_ace = security.ace()
+            new_allow_ace.trustee = trustee
+            new_allow_ace.flags = (
+                security.SEC_ACE_FLAG_OBJECT_INHERIT | security.SEC_ACE_FLAG_CONTAINER_INHERIT
+            )
+            new_allow_ace.type = security.SEC_ACE_TYPE_ACCESS_ALLOWED
+            new_allow_ace.access_mask = (
+                security.SEC_RIGHTS_FILE_WRITE
+                | security.SEC_RIGHTS_FILE_READ
+                | security.SEC_RIGHTS_FILE_EXECUTE
+                | security.SEC_STD_DELETE
+            )
+            if new_allow_ace not in dacl.dacl.aces:
+                dacl.dacl_add(new_allow_ace)
+        dacl.type = (
+            security.SEC_DESC_DACL_PRESENT
+            | security.SEC_DESC_DACL_AUTO_INHERITED
+            | security.SEC_DESC_DACL_PROTECTED
+            | security.SEC_DESC_SELF_RELATIVE
+        )
+        logger.debug("set nt acls {} on {}".format(dacl.as_sddl(), filename))
+        setntacl(self.lp, filename, dacl.as_sddl(), owner_sid, system_session_unix())
 
     def set_nt_acls_on_exam_folders(self, exam_users: List[User]) -> None:
         """
@@ -282,7 +240,6 @@ class Instance(SchoolBaseModule):
         logger.info("users=%r", [u.username for u in exam_users])
         for exam_user in exam_users:
             folder = exam_user.unixhome
-            Instance.init_windows_profiles(exam_user)
             for root, _sub, files in os.walk(folder):
                 self.deny_owner_change_permissions(filename=root)
                 for f in files:
@@ -777,9 +734,15 @@ class Instance(SchoolBaseModule):
             # distribute exam files
             progress.component(_("Distributing exam files"))
             progress.info("")
-            Instance.set_datadir_immutable_flag(my.project.getRecipients(), my.project, False)
+            exam_students = [
+                s
+                for s in my.project.getRecipients()
+                if User.from_dn(s.dn, None, ldap_user_read).is_exam_student(ldap_user_read)
+            ]
+            Instance.set_datadir_immutable_flag(exam_students, my.project, False)
             my.project.distribute()
-            Instance.set_datadir_immutable_flag(my.project.getRecipients(), my.project, True)
+            self.set_nt_acls_on_exam_folders(exam_students)
+            Instance.set_datadir_immutable_flag(exam_students, my.project, True)
             progress.add_steps(20)
 
             # prepare room settings via lib...
@@ -808,10 +771,6 @@ class Instance(SchoolBaseModule):
                 customRule=request.options.get("customRule"),
             )
             # wait for samba-replication
-            progress.add_steps(5)
-            Instance.set_datadir_immutable_flag(my.project.getRecipients(), my.project, False)
-            self.set_nt_acls_on_exam_folders(my.project.getRecipients())
-            Instance.set_datadir_immutable_flag(my.project.getRecipients(), my.project, True)
             progress.add_steps(5)
 
         def _finished(thread, result, request):

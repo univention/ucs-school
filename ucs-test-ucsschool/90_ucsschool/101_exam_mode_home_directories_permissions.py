@@ -9,10 +9,12 @@
 
 import os
 import re
+import subprocess
 import tempfile
 from datetime import datetime, timedelta
 from typing import TYPE_CHECKING, List  # noqa: F401
 
+import PAM
 from ldap.filter import escape_filter_chars
 
 import univention.testing.strings as uts
@@ -37,15 +39,41 @@ if TYPE_CHECKING:
     from univention.admin.uldap import access as LoType  # noqa: F401
 
 
-def check_nt_acls(filename):  # type: (str) -> None
+def set_datatir_immutable_flag(directory: str, flag: bool = True):
+    modifier = "+i" if flag else "-i"
+    try:
+        print(f'# Setting flag "{modifier}" for {directory}')
+        subprocess.check_call(["/usr/bin/chattr", modifier, directory])  # nosec
+    except subprocess.CalledProcessError:
+        raise RuntimeError(f"# Could not set immutable flag on {directory}")
+
+
+def get_nt_acls(filename):
     rv, stdout, stderr = exec_cmd(
         ["samba-tool", "ntacl", "get", "--as-sddl", filename], log=False, raise_exc=True
     )
+    assert stdout is not None
+    return stdout.strip()
+
+
+def _check_for_nt_acl_duplicates(nt_acl_content: str):
+    parts = [
+        part for part in nt_acl_content.replace(")", "\n").replace("(", "\n").split("\n") if part != ""
+    ]
+    orig_len = len(parts)
+    assert len(set(parts)) == orig_len, f"The given acl does contain duplicate aces: {parts}"
+
+
+def check_nt_acls(filename):  # type: (str) -> None
+    content = get_nt_acls(filename)
+
     assert re.match(
         r"O:(.+)G:.*\(D;OICI[^;]*;.*?WOWD[^)]+;\1\).*\(A;OICI[^;]*;0x001301bf;;;(S-1-3-4|OW)\)"
         r".*\(A;OICI[^;]*;0x001301bf;;;\1\)",
-        stdout,
-    ), "The permissions of share {} can be changed {}".format(filename, stdout)
+        content,
+    ), "The permissions of share {} can be changed {}".format(filename, content)
+
+    _check_for_nt_acl_duplicates(content)
 
 
 @retry_cmd
@@ -173,6 +201,21 @@ def test_exam_mode_home_directories(udm_session, schoolenv, ucr):
     )
 
     create_homedirs([studn1, studn2], lo)
+    print("# Getting NT acls of teachers home directory")
+
+    try:
+        p = PAM.pam()
+        p.start("session")
+        p.set_item(PAM.PAM_USER, tea)
+        p.open_session()
+        p.close_session()
+    except PAM.error as err:
+        raise RuntimeError(err)
+
+    assert os.path.exists(f"/home/{school}/lehrer/{tea}")
+
+    tea_homedir_nt_acls = get_nt_acls(f"/home/{school}/lehrer/{tea}")
+
     print("# Set an exam and start it")
     current_time = datetime.now()
     chosen_time = current_time + timedelta(hours=2)
@@ -188,6 +231,18 @@ def test_exam_mode_home_directories(udm_session, schoolenv, ucr):
             connection=Client(username=tea, password="univention"),
         )
         exam.uploadFile(f.name)
+    print(f"# Setting immutable flag on {stu1} exam directory.")
+    try:
+        p = PAM.pam()
+        p.start("session")
+        p.set_item(PAM.PAM_USER, stu1)
+        p.open_session()
+        p.close_session()
+    except PAM.error as err:
+        raise RuntimeError(err)
+
+    os.makedirs(f"/home/{school}/schueler/{stu1}/Klassenarbeiten")
+    set_datatir_immutable_flag(f"/home/{school}/schueler/{stu1}/Klassenarbeiten")
     exam.start()
 
     exam_member_dns = [
@@ -200,6 +255,14 @@ def test_exam_mode_home_directories(udm_session, schoolenv, ucr):
             "(sAMAccountName=%s)" % (escape_filter_chars(username),), attrs="objectSid"
         )
     wait_for_s4connector()
+
+    print("# Checking for changes of NT acls of teachers home directory")
+    assert tea_homedir_nt_acls == get_nt_acls(
+        f"/home/{school}/lehrer/{tea}"
+    ), "NT acls differ from before."
+    assert tea_homedir_nt_acls != "", "No NT acls found."
+    _check_for_nt_acl_duplicates(tea_homedir_nt_acls)
+
     print("# create home directories and check permissions")
     create_homedirs(exam_member_dns, lo)
     distribution_data_folder = ucr.get("ucsschool/exam/datadir/recipient", "Klassenarbeiten")

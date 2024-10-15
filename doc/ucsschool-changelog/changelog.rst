@@ -13,7 +13,9 @@ Changelog
 Released on 2024-10-16
 ======================
 
-Source package *ucs-school-umc-exam* in version ``10.0.14``:
+Source package *ucs-school-umc-exam* in version ``10.0.15``:
+
+* Fixed: Exam related files do no longer receive duplicate NT ACLs, which previously could result in an OSError 28 (:uv:bug:`57667`).
 
 * Improved error handling during exam clean up (:uv:bug:`56766`).
 
