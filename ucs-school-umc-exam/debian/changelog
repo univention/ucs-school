@@ -1,3 +1,11 @@
+ucs-school-umc-exam (10.0.14) unstable; urgency=medium
+
+  * Bug #56766: Make sure only user DNs are sent to schoolexam master
+    route `remove_users_from_non_primary_groups`, verify on the server
+    side that only DNs have been received and skip if necessary.
+
+ -- Johannes Königer <koeniger@univention.de>  Mon, 14 Oct 2024 14:27:45 +0200
+
 ucs-school-umc-exam (10.0.13) unstable; urgency=medium
 
   * Bug #53232: Prevent cleanup skips on singleserver installations.

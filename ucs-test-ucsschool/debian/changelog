@@ -1,3 +1,10 @@
+ucs-test-ucsschool (7.3.196) unstable; urgency=medium
+
+  * Bug #56766: Add test for UMCP endpoint
+    remove_users_from_non_primary_groups.
+
+ -- Johannes Königer <koeniger@univention.de>  Fri, 11 Oct 2024 12:00:00 +0200
+
 ucs-test-ucsschool (7.3.195) unstable; urgency=medium
 
   * Bug #57661: Check exam logs after collection.

@@ -13,6 +13,10 @@ Changelog
 Released on 2024-10-16
 ======================
 
+Source package *ucs-school-umc-exam* in version ``10.0.14``:
+
+* Improved error handling during exam clean up (:uv:bug:`56766`).
+
 Source package *ucs-school-umc-distribution* in version ``18.0.10``:
 
 * Fixed: During exam collection, a permission error was written to the log file. Note: Although shown as an error, this had no negative effect on exam collection (:uv:bug:`57661`).

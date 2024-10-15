@@ -610,8 +610,16 @@ class Instance(SchoolBaseModule):
         remove_list = {}  # type: Dict[str, Tuple[List[str], List[str]]]
         logger.info("Collecting non-primary groups of %d users...", len(userdns))
         for user_dn in userdns:
+            logger.debug("Collecting for user %s" % user_dn)
             user_ldap_obj = ldap_user_read.get(user_dn, attr=["uid", "gidNumber"])
-            user_name = user_ldap_obj["uid"][0].decode("UTF-8")
+
+            # Bug 56766: Check that the received DN represents a user
+            uid = user_ldap_obj.get("uid", None)
+            if not uid:
+                logger.error("DN %s appears not to be a user DN. This DN will be skipped." % user_dn)
+                continue
+
+            user_name = uid[0].decode("UTF-8")
             users_primary_gid = user_ldap_obj["gidNumber"][0]  # type: bytes
             for group_dn, group_attrs in ldap_user_read.search(
                 filter_format("uniqueMember=%s", (user_dn,)), attr=["dn", "gidNumber"]

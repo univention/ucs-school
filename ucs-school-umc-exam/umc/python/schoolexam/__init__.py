@@ -943,7 +943,10 @@ class Instance(SchoolBaseModule):
                     role_exam_user, f"{project.name}-{school}", context_type_exam
                 )
                 recipients = ldap_user_read.search(
-                    filter_format("ucsschoolRole=%s", (exam_role_str,)), attr=["ucsschoolRole", "uid"]
+                    filter_format(
+                        "(&(ucsschoolRole=%s)(univentionObjectType=users/user))", (exam_role_str,)
+                    ),
+                    attr=["ucsschoolRole", "uid"],
                 )
                 # This is needed for backwards compatibility with any Primary Directory Node
                 # that is not updated to use roles for exam membership yet.
