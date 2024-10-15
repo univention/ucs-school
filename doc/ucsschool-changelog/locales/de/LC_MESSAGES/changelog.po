@@ -37,7 +37,8 @@ msgid ""
 msgstr ""
 "Behoben: Dateien die für Prüfungen oder Klassenarbeiten benötigt werden, "
 "erhalten keine doppelten NT ACLs mehr, was früher zu einem OSError 28 "
-"führen konnte. Wir haben ein Reinigungsskript für bereits duplizierte ACLs verfügbar unter (:uv:bug:`57667`)."
+"führen konnte. Wir haben ein Reinigungsskript für bereits duplizierte "
+"ACLs verfügbar unter :uv:help:`23543` (:uv:bug:`57667`)."
 
 #: ../../changelog.rst:20
 msgid "Improved error handling during exam clean up (:uv:bug:`56766`)."
