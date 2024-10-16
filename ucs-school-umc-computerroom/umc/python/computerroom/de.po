@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-computerroom\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2022-06-21 15:57+0200\n"
+"POT-Creation-Date: 2024-10-16 08:47+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Univention GmbH <packages@univention.de>\n"
 "Language-Team: Univention GmbH <packages@univention.de>\n"
@@ -11,11 +11,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: umc/python/computerroom/__init__.py:548
+#: umc/python/computerroom/__init__.py:554
 msgid "A different user is already running a computer room session."
 msgstr "Ein anderer Benutzer hat bereits eine offene Computerraumsitzung."
 
-#: umc/python/computerroom/__init__.py:392
+#: umc/python/computerroom/__init__.py:397
 msgid ""
 "Computers in the computerroom can currently not be remote controlled, "
 "because the associated service is not available. The system will try to "
@@ -23,11 +23,12 @@ msgid ""
 "persists, please contact the system administrator."
 msgstr ""
 "Rechner in den Computerräumen können momentan nicht ferngesteuert werden, da "
-"der zugehörige Service nicht verfügbar ist. Das System wird versuchen den Service "
-"neu zu starten, bitte probieren Sie es in wenigen Augenblicken noch einmal. "
-"Falls das Problem bestehen bleibt, kontaktieren Sie bitte den Systemadministrator."
+"der zugehörige Service nicht verfügbar ist. Das System wird versuchen den "
+"Service neu zu starten, bitte probieren Sie es in wenigen Augenblicken noch "
+"einmal. Falls das Problem bestehen bleibt, kontaktieren Sie bitte den "
+"Systemadministrator."
 
-#: umc/python/computerroom/__init__.py:748
+#: umc/python/computerroom/__init__.py:759
 msgid ""
 "In this room an exam is currently already written. Please select another "
 "room."
@@ -35,26 +36,31 @@ msgstr ""
 "In diesem Raum wird derzeit schon eine Klassenarbeit geschrieben. Bitte "
 "wählen Sie einen anderen Raum."
 
-#: umc/python/computerroom/__init__.py:285
-#: umc/python/computerroom/__init__.py:289
-#: umc/python/computerroom/__init__.py:292
-#: umc/python/computerroom/__init__.py:298
+#: umc/python/computerroom/__init__.py:286
+#: umc/python/computerroom/__init__.py:290
+#: umc/python/computerroom/__init__.py:293
+#: umc/python/computerroom/__init__.py:299
 #, python-format
 msgid "Invalid room DN: %s"
 msgstr "Ungültige Raum-DN: %s"
 
-#: umc/python/computerroom/__init__.py:1009
+#: umc/python/computerroom/__init__.py:1029
 msgid "Plugin not found."
 msgstr "Plugin nicht gefunden."
 
 #: umc/python/computerroom/__init__.py:268
-msgid "Unknown computer"
-msgstr "Unbekannter Computer"
+#, python-format
+msgid ""
+"Unknown computer: %s\n"
+"Please contact your system administrator to resolve this problem."
+msgstr ""
+"Unbekannter Computer: %s\n"
+"Bitte kontaktieren Sie Ihren System Administrator, um das Problem zu beheben."
 
-#: umc/python/computerroom/__init__.py:554
-#: umc/python/computerroom/__init__.py:573
-#: umc/python/computerroom/__init__.py:688
-#: umc/python/computerroom/__init__.py:785
+#: umc/python/computerroom/__init__.py:568
+#: umc/python/computerroom/__init__.py:585
+#: umc/python/computerroom/__init__.py:697
+#: umc/python/computerroom/__init__.py:795
 msgid "no room selected"
 msgstr "kein Raum ausgewählt"
 
@@ -65,3 +71,7 @@ msgstr "screenshot_denied_de.svg"
 #: umc/python/computerroom/__init__.py:93
 msgid "screenshot_notready.svg"
 msgstr "screenshot_notready_de.svg"
+
+#, python-format
+#~ msgid "Unknown computer: %s"
+#~ msgstr "Unbekannter Computer: %s"

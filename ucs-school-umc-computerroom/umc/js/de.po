@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ucs-school-umc-computerroom\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2023-11-01 16:33+0100\n"
+"POT-Creation-Date: 2024-10-16 08:32+0200\n"
 "PO-Revision-Date: 2012-05-24 14:32+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -31,8 +31,8 @@ msgid ""
 "<b>Note:</b> In this computer room the exam \"%s\" is currently being "
 "conducted by %s."
 msgstr ""
-"<b>Hinweis:</b> In diesem Computerraum wird momentan die Klassenarbeit \"%s"
-"\" von %s durchgeführt."
+"<b>Hinweis:</b> In diesem Computerraum wird momentan die Klassenarbeit "
+"\"%s\" von %s durchgeführt."
 
 #: umc/js/computerroom.js:1060
 #, javascript-format
@@ -60,8 +60,8 @@ msgstr ""
 #: umc/js/computerroom/SettingsDialog.js:82
 msgid ""
 "<p>In this text box you can list web sites that are allowed to be used by "
-"the students. Each line should contain one web site. Example: </p><p style="
-"\"font-family: monospace\">univention.com<br/>wikipedia.org<br/></p>"
+"the students. Each line should contain one web site. Example: </p><p "
+"style=\"font-family: monospace\">univention.com<br/>wikipedia.org<br/></p>"
 msgstr ""
 "<p>In diesem Textfeld können die Webseiten eingetragen werden, die von den "
 "Schülern besucht werden dürfen. Pro Zeile ist eine Webseite einzutragen. "
@@ -99,7 +99,7 @@ msgstr ""
 "<p>Die Klassenarbeit wurde erfolgreich beendet. Alle zugehörigen Dokumente "
 "wurden aus den Schülerheimatverzeichnissen eingesammelt.</p>"
 
-#: umc/js/computerroom/ScreenshotView.js:286
+#: umc/js/computerroom/ScreenshotView.js:294
 msgid "All computers in this room are offline."
 msgstr "Alle Computer in diesem Raum sind offline."
 
@@ -111,13 +111,13 @@ msgstr ""
 "Alle zugehörigen Klassenarbeitsdokumente wurden erfolgreich aus den "
 "Heimatverzeichnissen der Schüler eingesammelt."
 
-#: umc/js/computerroom/ScreenshotView.js:253
+#: umc/js/computerroom/ScreenshotView.js:260
 msgid "Back to overview"
 msgstr "Zurück zur Übersicht"
 
-#: umc/js/computerroom.js:137 umc/js/computerroom.js:878
-#: umc/js/computerroom.js:916 umc/js/computerroom.js:1083
-#: umc/js/computerroom.js:1159 umc/js/computerroom/SettingsDialog.js:115
+#: umc/js/computerroom/SettingsDialog.js:115 umc/js/computerroom.js:137
+#: umc/js/computerroom.js:878 umc/js/computerroom.js:916
+#: umc/js/computerroom.js:1083 umc/js/computerroom.js:1159
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -180,8 +180,8 @@ msgstr ""
 "Kontrolle des Raumes wieder übernehmen, indem Sie ihn in der Liste aller "
 "Räume erneut auswählen."
 
-#: umc/js/computerroom.js:698 umc/js/computerroom/ScreenshotView.js:183
-#: umc/js/computerroom/ScreenshotView.js:195
+#: umc/js/computerroom/ScreenshotView.js:181
+#: umc/js/computerroom/ScreenshotView.js:191 umc/js/computerroom.js:698
 msgid "Currently there is no screenshot available. Wait a few seconds."
 msgstr "Derzeit ist kein Screenshot verfügbar. Bitte einige Sekunden warten."
 
@@ -258,7 +258,7 @@ msgstr ""
 msgid "IP address"
 msgstr "IP-Adresse"
 
-#: umc/js/computerroom/ScreenshotView.js:270
+#: umc/js/computerroom/ScreenshotView.js:277
 msgid "Large"
 msgstr "Groß"
 
@@ -314,7 +314,7 @@ msgstr "Kein Raum ausgewählt"
 msgid "No user logged in"
 msgstr "Kein Benutzer angemeldet"
 
-#: umc/js/computerroom/ScreenshotView.js:269
+#: umc/js/computerroom/ScreenshotView.js:276
 msgid "Normal"
 msgstr "Normal"
 
@@ -377,7 +377,7 @@ msgstr "Computer neu starten"
 msgid "School"
 msgstr "Schule"
 
-#: umc/js/computerroom/ScreenshotView.js:241
+#: umc/js/computerroom/ScreenshotView.js:248
 msgid "Screenshots of computers"
 msgstr "Bildschirmfotos der Computer"
 
@@ -401,11 +401,11 @@ msgstr "Freigabezugriff"
 msgid "Shutdown computer"
 msgstr "Computer herunterfahren"
 
-#: umc/js/computerroom/ScreenshotView.js:265
+#: umc/js/computerroom/ScreenshotView.js:272
 msgid "Size"
 msgstr "Größe"
 
-#: umc/js/computerroom/ScreenshotView.js:268
+#: umc/js/computerroom/ScreenshotView.js:275
 msgid "Small"
 msgstr "Klein"
 
@@ -543,7 +543,7 @@ msgstr ""
 "des Raums übernehmen, dazu wird dem momentanen Lehrer ein Hinweis angezeigt "
 "und seine Sitzung geschlossen."
 
-#: umc/js/computerroom/ScreenshotView.js:242
+#: umc/js/computerroom/ScreenshotView.js:249
 msgid ""
 "This page shows screenshots of selected computers that will be updated "
 "continuously."
@@ -555,7 +555,7 @@ msgstr ""
 msgid "Time is up"
 msgstr "Zeit ist abgelaufen"
 
-#: umc/js/computerroom/ScreenshotView.js:267
+#: umc/js/computerroom/ScreenshotView.js:274
 msgid "Tiny"
 msgstr "Winzig"
 
@@ -591,7 +591,8 @@ msgstr "Internetregeln"
 msgid "Windows"
 msgstr "Windows"
 
-#: umc/js/computerroom/ScreenshotView.js:185
+#: umc/js/computerroom/ScreenshotView.js:183
+#: umc/js/computerroom/ScreenshotView.js:193
 msgid "screenshot_notready.svg"
 msgstr "screenshot_notready_de.svg"
 

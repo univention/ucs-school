@@ -23,9 +23,10 @@ Source package *ucs-school-umc-distribution* in version ``18.0.10``:
 
 * Fixed: During exam collection, a permission error was written to the log file. Note: Although shown as an error, this had no negative effect on exam collection (:uv:bug:`57661`).
 
-Source package *ucs-school-umc-computerroom* in version ``12.0.23``:
+Source package *ucs-school-umc-computerroom* in version ``12.0.24``:
 
 * Improved the error handling when managing SMB processes (:uv:bug:`56904`).
+* Improved the error handling, if non existent computers were configured for a computer room (:uv:bug:`43243`).
 
 .. _changelog-ucsschool-2024-10-01:
 

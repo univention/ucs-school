@@ -262,10 +262,17 @@ class ComputerSanitizer(StringSanitizer):
 
     def _sanitize(self, value, name, further_args):
         value = super(ComputerSanitizer, self)._sanitize(value, name, further_args)
-        try:
-            return self.instance._computerroom.get(value)
-        except KeyError:
-            raise UMC_Error(_("Unknown computer"))
+        computer = self.instance._computerroom.get(value)
+        if not computer:
+            MODULE.error("Requested computer was not found in computerroom: %s." % value)
+            raise UMC_Error(
+                _(
+                    "Unknown computer: %s\n"
+                    "Please contact your system administrator to resolve this problem."
+                )
+                % value
+            )
+        return computer
 
 
 class ComputerRoomDNSanitizer(DNSanitizer):
