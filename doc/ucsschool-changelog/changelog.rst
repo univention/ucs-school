@@ -10,7 +10,7 @@ Changelog
 
 .. _changelog-ucsschool-2024-10-16:
 
-Released on 2024-10-16
+Released on 2024-10-17
 ======================
 
 Source package *ucs-school-umc-exam* in version ``10.0.15``:
