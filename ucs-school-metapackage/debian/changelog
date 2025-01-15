@@ -1,8 +1,15 @@
+ucs-school-metapackage (15.0.0) unstable; urgency=medium
+
+  * Issue univention/ucsschool#1318: Fix pre-join hook for UCS 5.2
+    Dropping support for python2
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Thu, 16 Jan 2025 08:33:00 +0200
+
 ucs-school-metapackage (14.0.1) unstable; urgency=medium
 
   * Issue univention/ucsschool#1313: use -H for ldapsearch
 
- -- Felix Botner <botner@univention.de>  Thu, 16 Jan 2025 08:24:00 +0100
+ -- Felix Botner <botner@univention.de>  Thu, 16 Jan 2025 08:24:00 +0200
 
 ucs-school-metapackage (14.0.0) unstable; urgency=medium
 
