@@ -40,7 +40,7 @@ integration_tests:
       when: manual
       allow_failure: False
   variables:
-    TARGET_VERSION: "5.0-9"
+    TARGET_VERSION: "5.2-0"
   before_script:
     - apt-get update && apt-get install -y rsync git colorized-logs || echo "packages installed."
     - .gitlab-ci/prepare_secrets.sh
