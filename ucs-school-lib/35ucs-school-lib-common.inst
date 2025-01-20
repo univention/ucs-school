@@ -33,7 +33,7 @@
 
 ## joinscript api: bindpwdfile
 
-VERSION=1
+VERSION=2
 
 . /usr/share/univention-join/joinscripthelper.lib
 
@@ -60,15 +60,9 @@ fi
 
 if [ "$NUMBER_OF_INVALID_USERNAMES" -gt 0 ]; then
   echo "$NUMBER_OF_INVALID_USERNAMES" "UCS@school usernames which are not valid are present."
-  echo "Usage of usernames which are not compliant with Windows naming conventions is deprecated "
-  echo "and support will be removed with UCS 5.2."
-  echo "This specific validation can be manually enabled and disabled with the UCR variable "
-  echo "ucsschool/validation/username/windows-check."
-else
-  echo "No invalid usernames found."
-  echo "Automatically enabling validation for any future user creation, if the UCR variable"
-  echo "ucsschool/validation/username/windows-check has not been set yet..."
-  ucr set "ucsschool/validation/username/windows-check?true"
+  echo "Usage of usernames which are not compliant with Windows naming conventions is not allowed"
+  echo "as of UCS@school 5.2."
+  die
 fi
 
 joinscript_save_current_version

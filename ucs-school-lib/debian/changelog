@@ -1,3 +1,10 @@
+ucs-school-lib (15.0.0) unstable; urgency=medium
+
+  * Issue univention/ucsschool#1052: remove UCR variable to disable username check
+    for reserved windows names.
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Mon, 20 Jan 2025 09:17:00 +0100
+
 ucs-school-lib (14.0.1) unstable; urgency=medium
 
   * Issue univention/ucsschool#1313: use -H for ldapsearch

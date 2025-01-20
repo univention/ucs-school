@@ -4,7 +4,7 @@ import subprocess
 from html import escape
 
 from univention.lib.i18n import Translation
-from univention.management.console.modules.diagnostic import Critical, Warning, main
+from univention.management.console.modules.diagnostic import Critical, main
 
 _ = Translation("ucs-school-umc-diagnostic").translate
 
@@ -45,18 +45,14 @@ def run(_umc_instance):
     check_username_validity_output_escaped = escape(check_username_validity_output)
 
     if _("Total number of invalid usernames:") in check_username_validity_output_escaped:
-        raise Warning(
-            description="{} {} {}\n{} {}:\n\n<pre>{}</pre>".format(
+        raise Critical(
+            description="{} {}\n{} {}:\n\n<pre>{}</pre>".format(
                 _("Usernames have been detected which do not comply to user naming rules."),
                 _(
                     "To fix this, change the usernames to a supported form. "
                     'Refer to the <a href="http://docs.software-univention.de/ucsschool-manual/5.0/de/'
                     'management/users.html" target="_blank" rel="noopener noreferrer">'
                     "administrators manual</a> for rules regarding usernames."
-                ),
-                _(
-                    "Important: Support for names which do not comply to Windows naming conventions"
-                    " is deprecated, and will be removed with UCS 5.2."
                 ),
                 _("The following is a list of all offending usernames, as retrieved by the tool "),
                 check_windows_compliance_tool_path,
