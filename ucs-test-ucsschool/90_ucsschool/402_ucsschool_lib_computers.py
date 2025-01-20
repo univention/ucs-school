@@ -1,7 +1,7 @@
 #!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Check computer model in ucsschool lib
-## tags: [apptest,ucsschool]
+## tags: [apptest,ucsschool,ucs-school-lib]
 ## roles: [domaincontroller_master]
 ## exposure: dangerous
 ## packages:

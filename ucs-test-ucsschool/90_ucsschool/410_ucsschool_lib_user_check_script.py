@@ -2,7 +2,7 @@
 ## -*- coding: utf-8 -*-
 ## desc: test /usr/share/ucs-school-lib/scripts/ucs-school-validate-usernames
 ## roles: [domaincontroller_master]
-## tags: [apptest,ucsschool,ucsschool_import1]
+## tags: [apptest,ucsschool,ucsschool_import1,ucs-school-lib]
 ## exposure: dangerous
 ## packages:
 ##   - python3-ucsschool-lib

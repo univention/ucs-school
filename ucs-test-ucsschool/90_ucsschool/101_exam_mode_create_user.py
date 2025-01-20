@@ -2,7 +2,7 @@
 ## -*- coding: utf-8 -*-
 ## desc: Test the
 ## roles: [domaincontroller_master, domaincontroller_backup]
-## tags: [apptest,ucsschool,ucsschool_base1]
+## tags: [apptest,ucsschool,ucsschool_base1,ucs-school-umc-exam]
 ## exposure: dangerous
 ## bugs: [54848]
 ## packages: [ucs-school-umc-exam-master]

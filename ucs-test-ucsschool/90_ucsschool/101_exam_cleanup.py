@@ -2,7 +2,7 @@
 ## -*- coding: utf-8 -*-
 ## desc: tests for exam-cleanup script
 ## roles: [domaincontroller_master]
-## tags: [apptest,ucsschool,ucsschool_base1]
+## tags: [apptest,ucsschool,ucsschool_base1,ucs-school-umc-exam]
 ## exposure: dangerous
 ## bugs: [50636]
 ## packages: [univention-samba4, ucs-school-umc-computerroom, ucs-school-umc-exam]

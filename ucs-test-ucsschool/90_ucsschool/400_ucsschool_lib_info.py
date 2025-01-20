@@ -1,7 +1,7 @@
 #!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Test python module ucsschool.lib.info
-## tags: [apptest,ucsschool,ucsschool_base1]
+## tags: [apptest,ucsschool,ucsschool_base1,ucs-school-lib]
 ## exposure: dangerous
 ## packages:
 ##   - python3-ucsschool-lib
