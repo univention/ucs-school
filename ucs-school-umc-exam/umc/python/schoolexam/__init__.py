@@ -100,7 +100,6 @@ if TYPE_CHECKING:
 
 _ = Translation("ucs-school-umc-exam").translate
 
-CREATE_USER_POST_HOOK_DIR = "/usr/share/ucs-school-exam/hooks/create_exam_user_post.d/"
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 if "schoolexam" not in list(logger.handlers):
@@ -675,21 +674,6 @@ class Instance(SchoolBaseModule):
                         logger.error("Clearing user name cache failed: %s", " ".join(cmd))
                     else:
                         logger.info("Clearing user name cache finished successfully.")
-
-                    # call hook scripts
-                    if 0 != subprocess.call(  # nosec
-                        [
-                            "/bin/run-parts",
-                            CREATE_USER_POST_HOOK_DIR,
-                            "--arg",
-                            iuser.username,
-                            "--arg",
-                            iuser.dn,
-                            "--arg",
-                            iuser.homedir,
-                        ]
-                    ):
-                        raise ValueError(f"failed to run hook scripts for user {iuser.username!r}")
 
                     # store User object in list of final recipients
                     recipients.append(iuser)
