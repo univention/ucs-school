@@ -32,7 +32,7 @@
 ## -*- coding: utf-8 -*-
 ## desc: Test import_lusd cli
 ## roles: [domaincontroller_master]
-## tags: [apptest,ucsschool,ucsschool_import2]
+## tags: [apptest,ucsschool,ucsschool_import2,ucs-school-import-lusd]
 ## exposure: dangerous
 ## packages:
 ##   - ucs-school-import
