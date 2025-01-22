@@ -1,14 +1,15 @@
-ucs-school-umc-diagnostic (2.100.1) unstable; urgency=medium
+ucs-school-umc-diagnostic (4.0.0) unstable; urgency=medium
 
-  * UCS@school 5.1
+  * Issue univention/ucsschool#1052: remove UCR variable to disable username check
+    for reserved windows names.
+
+ -- Jürn Brodersen <brodersen@univention.de>  Wed, 22 Jan 2025 15:48:15 +0100
+
+ucs-school-umc-diagnostic (3.0.0) unstable; urgency=medium
+
+  * UCS@school 5.2
 
  -- Florian Best <best@univention.de>  Fri, 22 Sep 2023 13:53:35 +0200
-
-ucs-school-umc-diagnostic (2.99.1) unstable; urgency=medium
-
-  * UCS@school 5.1
-
- -- Florian Best <best@univention.de>  Fri, 22 Sep 2023 13:44:11 +0200
 
 ucs-school-umc-diagnostic (2.0.15) unstable; urgency=medium
 
