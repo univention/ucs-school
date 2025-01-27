@@ -9,6 +9,7 @@ repos:
       - id: check-json
       - id: check-xml
       - id: check-yaml
+        exclude: ".gitlab-ci/gitlab-ci.yml"
       - id: check-shebang-scripts-are-executable
         files: ^ucs-school-import-lusd/.*
       - id: check-executables-have-shebangs

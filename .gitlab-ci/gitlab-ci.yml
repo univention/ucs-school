@@ -9,8 +9,9 @@ variables:
 
 include:
   - project: univention/dist/docker-services
-    file:
-    - pre-commit.yml
+    file: pre-commit.yml
+  - project: univention/internal/ucsschool-ci-utils
+    file: fragments/openstack.yaml
   - local: .gitlab-ci/docs.yml
     rules:
       - if: $CI_COMMIT_MESSAGE =~ /skip-doc/ || $RUN_DOCS == "no"
@@ -30,7 +31,7 @@ run pre-commit:
   extends: .pre-commit
 
 integration_tests:
-  image: $IMAGE_UCS_EC2_TOOLS
+  extends: .run_openstack_cfg
   stage: test
   needs: []
   rules:
@@ -41,15 +42,12 @@ integration_tests:
       allow_failure: False
   variables:
     TARGET_VERSION: "5.2-0"
-  before_script:
-    - apt-get update && apt-get install -y rsync git colorized-logs || echo "packages installed."
-    - .gitlab-ci/prepare_secrets.sh
+    OPENSTACK_CFG_FILE: ".gitlab-ci/branch_tests.cfg"
+  script:
     - mkdir results
     - git fetch --depth 1 origin $CI_MERGE_REQUEST_TARGET_BRANCH_NAME:compare
-  script:
     - export PACKAGES_TO_INSTALL=$(git diff --name-only $CI_COMMIT_BRANCH compare | grep debian/changelog | sed 's/\(.*\)\/debian\/changelog/\1/g' | tr '\n' ' ')
-    - unset OS_PROJECT_NAME
-    - . clouds.rc && ucs-openstack-create --replace -t -c .gitlab-ci/branch_tests.cfg | ansi2txt
+    - !reference [.run_openstack_cfg, script]
     - .gitlab-ci/parse_junit.py
   artifacts:
     reports:
