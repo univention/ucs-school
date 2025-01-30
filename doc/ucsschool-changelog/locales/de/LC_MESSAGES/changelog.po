@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UCS@school - 5.0 v5 Changelog \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-08 08:30+0000\n"
+"POT-Creation-Date: 2025-02-07 07:59+0000\n"
 "PO-Revision-Date: 2023-08-02 09:20+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,232 +21,75 @@ msgstr ""
 msgid "Changelog"
 msgstr "Changelog"
 
-#: ../../changelog.rst:14
-msgid "Released on 2025-01-14"
-msgstr "Veröffentlicht am 14. Januar 2025"
+#: ../../changelog.rst:15
+msgid "Released on 2025-03-11"
+msgstr "Veröffentlicht am 11. März 2025"
 
-#: ../../changelog.rst:16
-msgid "Source package *ucs-school-veyon-windows* in version ``4.9.1.0-ucs5.0-0``:"
-msgstr "Quellpaket *ucs-school-veyon-windows* in Version ``4.9.1.0-ucs5.0-0``:"
+#: ../../changelog.rst:17
+msgid "Source package *ucs-school-umc-exam* in version ``12.0.0``:"
+msgstr "Quellpaket *ucs-school-umc-exam* in Version ``12.0.0``:"
 
-#: ../../changelog.rst:18
-msgid "Updated: New version of the Veyon Windows client (:uv:bug:`57837`)."
-msgstr ""
-"Aktualisiert: Eine neue Version des Veyon Windows Clients wurde "
-"veröffentlicht (:uv:bug:`57837`)."
-
-#: ../../changelog.rst:23
-msgid "Released on 2024-12-17"
-msgstr "Veröffentlicht am 17. Dezember 2024"
-
-#: ../../changelog.rst:25
-msgid "Source package *ucs-school-import-lusd* in version ``1.0.4``:"
-msgstr "Quellpaket *ucs-school-import-lusd* in Version ``1.0.4``:"
-
-#: ../../changelog.rst:27
+#: ../../changelog.rst:19
 msgid ""
-"Added: a new configuration key ``ucsschool/import/lusd/school_authority``"
-" to check if all school mappings are part of the responsible school "
-"authority (:uv:bug:`57803`)."
+"Exam *shell* hooks are no longer supported. In UCS\\@school 5.0 exam "
+"shell hooks that are stored in ``/usr/share/ucs-school-"
+"exam/hooks/create_exam_user_post.d/`` are run during the start of an exam"
+" for each exam user. This feature has been removed in UCS\\@school 5.2."
 msgstr ""
-"Hinzugefügt: ein neuer Konfigurationsschlüssel "
-"``ucsschool/import/lusd/school_authority`` um zu überprüfen, ob alle "
-"Schulzuordnungen Teil der zuständigen Schulbehörde sind "
-"(:uv:bug:`57803`)."
+"Shell Hooks für den Klassenarbeitsmodus sind nicht mehr unterstützt. In "
+"UCS\\@school 5.0 werden Hooks, die in ``/usr/share/ucs-school-"
+"exam/hooks/create_exam_user_post`` gespeichert sind, während des Starts "
+"einer Prüfung für jeden Klassenarbeits-Benutzer ausgeführt. Diese "
+"Funktion wurde in UCS\\@school 5.2 entfernt."
 
-#: ../../changelog.rst:29
-msgid "Added: options to skip importing students or teachers (:uv:bug:`57804`)."
-msgstr ""
-"Hinzugefügt: Optionen zum Überspringen des Imports von Schülern oder "
-"Lehrern (:uv:bug:`57804`)."
-
-#: ../../changelog.rst:31
+#: ../../changelog.rst:22
 msgid ""
-"Added: optional hook to import the ``semesterStufe`` from the LUSD "
-"database (:uv:bug:`57805`)."
+"Please note: This change does not affect the *Python* hooks for the exam "
+"mode that are executed on the Primary Directory Node and are located in "
+"the directory ``/usr/share/ucs-school-exam-"
+"master/pyhooks/create_exam_user_pre/``."
 msgstr ""
-"Hinzugefügt: Optionaler Hook, um die ``semesterStufe`` aus der LUSD "
-"Datenbank zu importieren (:uv:bug:`57805`)."
+"Anmerkung: Diese Änderung wirkt sich nicht auf die *Python*-Hooks für den "
+"Klassenarbeitsmodus aus, die auf der Primary Directory Node ausgeführt werden "
+"und im Verzeichnis ``/usr/share/ucs-school-exam-"
+"master/pyhooks/create_exam_user_pre/`` liegen."
 
-#: ../../changelog.rst:36
-msgid "Released on 2024-11-21"
-msgstr "Veröffentlicht am 21. November 2024"
+#: ../../changelog.rst:24
+msgid "Source package *ucs-school-metapackage* in version ``15.0.0``:"
+msgstr "Quellpaket *ucs-school-metapackage* in Version ``15.0.0``:"
 
-#: ../../changelog.rst:38
-msgid "Source package *ucs-school-import* in version ``18.0.55``:"
-msgstr "Quellpaket *ucs-school-import* in Version ``18.0.55``:"
+#: ../../changelog.rst:26
+msgid "Dropping support for Python 2."
+msgstr "Support für Python 2 entfernt."
 
-#: ../../changelog.rst:40
+#: ../../changelog.rst:28
+msgid "Source package *ucs-school-lib* in version ``15.0.0``:"
+msgstr "Quellpaket *ucs-school-lib* in Version ``15.0.0``:"
+
+#: ../../changelog.rst:30
 msgid ""
-"Fixed: The import hook ``create_new_ox_contexts_kelvin.py`` failed to "
-"create users when the default context is used (:uv:bug:`57728`)."
+"The UCR-Variable ``ucsschool/validation/username/windows-check`` has been"
+" removed. UCS\\@school user names are now always validated to comply with"
+" Windows naming conventions, it is no longer possible to deactivate this "
+"check. To prevent problems, conflicting usernames of existing users should be changed "
+"before starting the update to UCS\\@school 5.2v1."
 msgstr ""
-"Behoben: Der Import Hook ``create_new_ox_contexts_kelvin.py`` schlug fehl"
-" wenn ein Benutzer mit dem Standard OX Kontext erstellt wurde "
-"(:uv:bug:`57728`)."
+"Die UCR-Variable ``ucsschool/validation/username/windows-check`` wurde "
+"entfernt. Benutzernamen in UCS\\@school werden nun immer bezüglich der "
+"Windows-Namenskonventionen validiert. Es ist nicht mehr möglich, diese "
+"Validierung zu deaktivieren. Um Probleme zu vermeiden, sollten "
+"Benutzernamen von bestehenden Benutzern, die nicht mit der Namenskonvention übereinstimmen, "
+"vor dem Update auf UCS\\@school 5.2v1 geändert werden."
 
-#: ../../changelog.rst:41
+#: ../../changelog.rst:33
+msgid "Source package *ucs-school-umc-diagnostic* in version ``4.0.0``:"
+msgstr "Quellpaket *ucs-school-umc-diagnostic* in Version ``4.0.0``:"
+
+#: ../../changelog.rst:35
 msgid ""
-"Fixed: The Django front end of the import API did provide an outdated, "
-"broken link which has been replaced (:uv:bug:`57673`)."
+"Usernames which do not comply with Windows naming conventions are now "
+"shown as critical errors in the system diagnostic tool."
 msgstr ""
-"Behoben: Es wurde ein defekter Link im Django Frontend der Import API "
-"ersetzt (:uv:bug:`57673`)."
-
-#: ../../changelog.rst:42
-msgid ""
-"Fixed: When an unhandled error occurred during the graphical user import,"
-" no detailed error information was shown in the error log "
-"(:uv:bug:`57607`)."
-msgstr ""
-"Behoben: Wenn ein unbehandelter Fehler während des grafischen "
-"Benutzerimports auftrat, waren keine detaillierten Informationen zu "
-"diesem Fehler in den Protokollen zu finden (:uv:bug:`57607`)."
-
-#: ../../changelog.rst:44
-msgid "Source package *ucs-school-veyon-windows* in version ``4.9.0.0-ucs5.0-0``"
-msgstr "Quellpaket *ucs-school-veyon-windows* in Version ``4.9.0.0-ucs5.0-0``:"
-
-#: ../../changelog.rst:46
-msgid "Updated: New version of the Veyon Windows client (:uv:bug:`57702`)."
-msgstr ""
-"Aktualisiert: Eine neue Version des Veyon Windows Clients wurde "
-"veröffentlicht (:uv:bug:`57702`)."
-
-#: ../../changelog.rst:51
-msgid "Released on 2024-10-17"
-msgstr "Veröffentlicht am 17. Oktober 2024"
-
-#: ../../changelog.rst:53
-msgid "Source package *ucs-school-umc-exam* in version ``10.0.15``:"
-msgstr "Quellpaket *ucs-school-umc-exam* in Version ``10.0.15``:"
-
-#: ../../changelog.rst:55
-msgid ""
-"Fixed: Exam related files do no longer receive duplicate NT ACLs, which "
-"previously could result in an OSError 28. We have a clean up script for "
-"already duplicated ACL available at :uv:help:`23543` (:uv:bug:`57667`)."
-msgstr ""
-"Behoben: Dateien die für Prüfungen oder Klassenarbeiten benötigt werden, "
-"erhalten keine doppelten NT ACLs mehr, was früher zu einem OSError 28 "
-"führen konnte. Wir haben ein Reinigungsskript für bereits duplizierte "
-"ACLs verfügbar unter :uv:help:`23543` (:uv:bug:`57667`)."
-
-#: ../../changelog.rst:57
-msgid "Improved error handling during exam clean up (:uv:bug:`56766`)."
-msgstr ""
-"Verbesserte Fehlerbehandlung beim abschließen einer Klassenarbeit "
-"(:uv:bug:`56766`)."
-
-#: ../../changelog.rst:59
-msgid "Source package *ucs-school-umc-distribution* in version ``18.0.10``:"
-msgstr "Quellpaket *ucs-school-umc-distribution* in Version ``18.0.10``:"
-
-#: ../../changelog.rst:61
-msgid ""
-"Fixed: During exam collection, a permission error was written to the log "
-"file. Note: Although shown as an error, this had no negative effect on "
-"exam collection (:uv:bug:`57661`)."
-msgstr ""
-"Es wurde behoben dass ein Zugriffsfehler log Dateien erscheint, wenn "
-"Klassenarbeiten eingesammelt wurden. Anmerkung: Der Log Eintrag ist als "
-"Fehler markiert, hat aber keine negative Auswirkung auf das einsammeln "
-"der Klassenarbeit (:uv:bug:`57661`)."
-
-#: ../../changelog.rst:63
-msgid "Source package *ucs-school-umc-computerroom* in version ``12.0.24``:"
-msgstr "Quellpaket *ucs-school-umc-computerroom* in Version ``12.0.24``:"
-
-#: ../../changelog.rst:65
-msgid "Improved the error handling when managing SMB processes (:uv:bug:`56904`)."
-msgstr ""
-"Die Fehlerbehandlung beim Verwalten von SMB Prozessen wurde verbessert "
-"(:uv:bug:`56904`)."
-
-#: ../../changelog.rst:66
-msgid ""
-"Improved the error handling, if non existent computers were configured "
-"for a computer room (:uv:bug:`43243`)."
-msgstr ""
-"Die Fehlerbehandlung bei falsch eingerichteten Computerräumen wurde "
-"verbessert (:uv:bug:`43243`)."
-
-#: ../../changelog.rst:71
-msgid "Released on 2024-10-01"
-msgstr "Veröffentlicht am 01. Oktober 2024"
-
-#: ../../changelog.rst:73
-msgid "Source package *ucs-school-umc-computerroom* in version ``12.0.22``:"
-msgstr "Quellpaket *ucs-school-umc-computerroom* in Version ``12.0.22``:"
-
-#: ../../changelog.rst:75
-msgid ""
-"Fixed: The computer room UMC module will no longer have large response "
-"times when offline computers are present (:uv:bug:`57631`)."
-msgstr ""
-"Behoben: Das Computerraum UMC Modul hat nicht mehr lange Reaktionszeiten,"
-" wenn sich im Computerraum heruntergefahrene Computer befinden "
-"(:uv:bug:`57631`)."
-
-#: ../../changelog.rst:80
-msgid "Released on 2024-09-26"
-msgstr "Veröffentlicht am 26. September 2024"
-
-#: ../../changelog.rst:82
-msgid "Source package *ucs-school-umc-computerroom* in version ``12.0.21``:"
-msgstr "Quellpaket *ucs-school-umc-computerroom* in Version ``12.0.21``:"
-
-#: ../../changelog.rst:84
-msgid ""
-"Improved the performance of the UMC computer room module: More computers "
-"can be monitored at the same time (:uv:bug:`57610`)."
-msgstr ""
-"Die Performance des UMC Computerraum Moduls wurde verbessert. Es können "
-"nun mehr Computer zum selben Zeitpunkt überwacht werden (:uv:bug:`57610`)"
-
-#: ../../changelog.rst:85
-msgid ""
-"Improved the resource usage of the UMC computer room module: Unused "
-"computer room sessions will consume less resources (:uv:bug:`57099`)."
-msgstr ""
-"Der Ressourcenverbrauch des UMC Computerraum Moduls wurde verbessert: "
-"Unbenutzte Computerraum-Sitzungen verbrauchen nun weniger Ressourcen "
-"(:uv:bug:`57099`)."
-
-#: ../../changelog.rst:87
-msgid "Source package *ucs-school-veyon-client* in version ``2.0.9``:"
-msgstr "Quellpaket *ucs-school-veyon-client* in Version ``2.0.9``:"
-
-#: ../../changelog.rst:89
-msgid "Improved the performance of the Veyon Python client (:uv:bug:`57610`)."
-msgstr "Die Performance des Veyon Python Client wurde verbessert (:uv:bug:`57610`)"
-
-#: ../../changelog.rst:90
-msgid ""
-"The authentication error pop up which is sometimes shown on the monitored"
-" Windows clients will no longer appear (:uv:bug:`53995`)."
-msgstr ""
-"Die Benachrichtigung mit einen Authentifizierungsfehler, welches manchmal"
-" auf den Windowsrechnern angezeigt wurde erscheint nicht mehr "
-"(:uv:bug:`53995`)."
-
-#: ../../changelog.rst:95
-msgid "Released on 2024-09-24"
-msgstr "Veröffentlicht am 24. September 2024"
-
-#: ../../changelog.rst:97
-msgid "Source package *ucs-school-import-lusd* in version ``1.0.0``:"
-msgstr "Quellpaket *ucs-school-import-lusd* in Version ``1.0.0``:"
-
-#: ../../changelog.rst:99
-msgid ""
-"Added: A new package which supports importing users and groups from the "
-"LUSD API into UCS\\@school. See the :external+uv-import:ref:`LUSD Import "
-"section <lusd-import>` in the UCS\\@school Import manual for more "
-"information (:uv:bug:`57547`)."
-msgstr ""
-"Ein neues Paket, dass das Importieren von Benutzerkonten und Gruppen von "
-"der LUSD API in UCS\\@school unterstützt wurde hinzugefügt. Weitere "
-"Informationen finden Sie im Abschnitt :external+uv-import:ref:`LUSD "
-"Import <lusd-import>` im UCS\\@school Import Handbuch (:uv:bug:`57547`)."
+"Benutzernamen, die nicht den Windows-Namenskonventionen entsprechen, "
+"werden nun als kritische Fehler im Systemdiagnosetool angezeigt."
 

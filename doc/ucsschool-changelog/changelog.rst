@@ -8,92 +8,29 @@
 Changelog
 *********
 
-.. _changelog-ucsschool-2025-01-15:
+.. _changelog-ucsschool-2025-03-11:
 
-Released on 2025-01-14
+
+Released on 2025-03-11
 ======================
 
-Source package *ucs-school-veyon-windows* in version ``4.9.1.0-ucs5.0-0``:
+Source package *ucs-school-umc-exam* in version ``12.0.0``:
 
-* Updated: New version of the Veyon Windows client (:uv:bug:`57837`).
+* Exam *shell* hooks are no longer supported. In UCS\@school 5.0 exam shell hooks that are stored in ``/usr/share/ucs-school-exam/hooks/create_exam_user_post.d/`` are run during the start of an exam for each exam user.
+  This feature has been removed in UCS\@school 5.2.
 
-.. _changelog-ucsschool-2024-12-17:
+  Please note: This change does not affect the *Python* hooks for the exam mode that are executed on the Primary Directory Node and are located in the directory ``/usr/share/ucs-school-exam-master/pyhooks/create_exam_user_pre/``.
 
-Released on 2024-12-17
-======================
+Source package *ucs-school-metapackage* in version ``15.0.0``:
 
-Source package *ucs-school-import-lusd* in version ``1.0.4``:
+* Dropping support for Python 2.
 
-* Added: a new configuration key ``ucsschool/import/lusd/school_authority`` to check if all school mappings are part of the responsible school authority (:uv:bug:`57803`).
+Source package *ucs-school-lib* in version ``15.0.0``:
 
-* Added: options to skip importing students or teachers (:uv:bug:`57804`).
+* The UCR-Variable ``ucsschool/validation/username/windows-check`` has been removed. UCS\@school user names are now always validated to comply with Windows naming conventions,
+  it is no longer possible to deactivate this check. To prevent problems, conflicting usernames of existing users should be changed before starting the update to UCS\@school 5.2v1.
 
-* Added: optional hook to import the ``semesterStufe`` from the LUSD database (:uv:bug:`57805`).
+Source package *ucs-school-umc-diagnostic* in version ``4.0.0``:
 
-.. _changelog-ucsschool-2024-11-21:
+* Usernames which do not comply with Windows naming conventions are now shown as critical errors in the system diagnostic tool.
 
-Released on 2024-11-21
-======================
-
-Source package *ucs-school-import* in version ``18.0.55``:
-
-* Fixed: The import hook ``create_new_ox_contexts_kelvin.py`` failed to create users when the default context is used (:uv:bug:`57728`).
-* Fixed: The Django front end of the import API did provide an outdated, broken link which has been replaced (:uv:bug:`57673`).
-* Fixed: When an unhandled error occurred during the graphical user import, no detailed error information was shown in the error log (:uv:bug:`57607`).
-
-Source package *ucs-school-veyon-windows* in version ``4.9.0.0-ucs5.0-0``
-
-* Updated: New version of the Veyon Windows client (:uv:bug:`57702`).
-
-.. _changelog-ucsschool-2024-10-17:
-
-Released on 2024-10-17
-======================
-
-Source package *ucs-school-umc-exam* in version ``10.0.15``:
-
-* Fixed: Exam related files do no longer receive duplicate NT ACLs, which previously could result in an OSError 28. We have a clean up script for already duplicated ACL available at :uv:help:`23543` (:uv:bug:`57667`).
-
-* Improved error handling during exam clean up (:uv:bug:`56766`).
-
-Source package *ucs-school-umc-distribution* in version ``18.0.10``:
-
-* Fixed: During exam collection, a permission error was written to the log file. Note: Although shown as an error, this had no negative effect on exam collection (:uv:bug:`57661`).
-
-Source package *ucs-school-umc-computerroom* in version ``12.0.24``:
-
-* Improved the error handling when managing SMB processes (:uv:bug:`56904`).
-* Improved the error handling, if non existent computers were configured for a computer room (:uv:bug:`43243`).
-
-.. _changelog-ucsschool-2024-10-01:
-
-Released on 2024-10-01
-======================
-
-Source package *ucs-school-umc-computerroom* in version ``12.0.22``:
-
-* Fixed: The computer room UMC module will no longer have large response times when offline computers are present (:uv:bug:`57631`).
-
-.. _changelog-ucsschool-2024-09-26:
-
-Released on 2024-09-26
-======================
-
-Source package *ucs-school-umc-computerroom* in version ``12.0.21``:
-
-* Improved the performance of the UMC computer room module: More computers can be monitored at the same time (:uv:bug:`57610`).
-* Improved the resource usage of the UMC computer room module: Unused computer room sessions will consume less resources (:uv:bug:`57099`).
-
-Source package *ucs-school-veyon-client* in version ``2.0.9``:
-
-* Improved the performance of the Veyon Python client (:uv:bug:`57610`).
-* The authentication error pop up which is sometimes shown on the monitored Windows clients will no longer appear (:uv:bug:`53995`).
-
-.. _changelog-ucsschool-2024-09-24:
-
-Released on 2024-09-24
-======================
-
-Source package *ucs-school-import-lusd* in version ``1.0.0``:
-
-* Added: A new package which supports importing users and groups from the LUSD API into UCS\@school. See the :external+uv-import:ref:`LUSD Import section <lusd-import>` in the UCS\@school Import manual for more information (:uv:bug:`57547`).
