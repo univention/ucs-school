@@ -25,7 +25,7 @@ copyright = "2021-{}, Univention GmbH".format(date.today().year)
 author = ""
 
 # The full version, including alpha/beta/rc tags
-release = "5.0"
+release = "5.2"
 
 html_show_copyright = True
 language = "de"
@@ -148,7 +148,7 @@ intersphinx_mapping = {
         "https://docs.software-univention.de/ext-performance/5.0/en/",
         None,
     ),
-    "python-docs": ("https://docs.python.org/3.7/", None),
+    "python-docs": ("https://docs.python.org/3.11/", None),
     "veyon-docs": ("https://docs.veyon.io/de/latest", None),
 }
 
