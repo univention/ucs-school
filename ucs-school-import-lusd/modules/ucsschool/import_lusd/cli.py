@@ -230,7 +230,7 @@ class ImportLUSD:
         except ValueError:
             logger.error(f"The authentication key {private_key_file} is not valid. Not a pem file?")
             sys.exit(1)
-        return str(jwt_token.decode())
+        return jwt_token
 
     def fetch_school_lusd_data(self, school_ids: List[str], role: str, file_path: Path) -> Any:
         """Store LUSD data for school `school_ids` in `file_path`"""

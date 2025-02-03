@@ -83,6 +83,7 @@ repos:
         additional_dependencies:
           - types-requests==2.32.0.20240712
           - pytest==8.3.2
+          - pyjwt
         args: ["--strict", "--ignore-missing-imports"]
   - repo: https://github.com/shellcheck-py/shellcheck-py
     rev: v0.10.0.1
