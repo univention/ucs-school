@@ -60,6 +60,7 @@ from ldap.filter import filter_format
 import univention.testing.ucsschool.ucs_test_school as testing_ucsschool
 from ucsschool.import_lusd.cli import CONFIG_PATH, Configuration
 from univention.admin.uldap import getAdminConnection, getMachineConnection
+from univention.config_registry import handler_set
 
 TEACHER_CONFIG_PATH = pathlib.Path(
     "/usr/share/ucs-school-import-lusd/import-config/user_import_lusd_teacher.json"
@@ -260,6 +261,9 @@ def backup_files(tmp_path: pathlib.Path) -> Generator[None, None, None]:
 @pytest.fixture()
 def schools() -> Generator[List[str], None, None]:
     with testing_ucsschool.UCSTestSchool() as schoolenv:
+        ucr = schoolenv.ucr
+        ucr.load()
+        handler_set(["ucsschool/stop_notifier=False"])
         schools = schoolenv.create_multiple_ous(2)
         yield [school[0] for school in schools]
 
