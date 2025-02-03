@@ -37,11 +37,35 @@
 ## packages:
 ##   - ucs-school-import-lusd
 
+import pathlib
 import sys
+from typing import Generator
 
 import pytest
 
+from ucsschool.importer.configuration import Configuration, setup_configuration
+from ucsschool.importer.frontend.user_import_cmdline import UserImportCommandLine
 from ucsschool.importer.models.import_user import ImportStudent
+
+STUDENT_CONFIG_PATH = pathlib.Path(
+    "/usr/share/ucs-school-import-lusd/import-config/user_import_lusd_student.json"
+)
+
+
+def setup_config() -> None:
+    ui = UserImportCommandLine()
+    default_config_files = ui.configuration_files
+    setup_configuration(
+        default_config_files + [STUDENT_CONFIG_PATH], school="ucs-test", user_role="student"
+    )
+
+
+@pytest.fixture(autouse=True)
+def import_config() -> Generator[None, None, None]:
+    Configuration._instance = None
+    setup_config()
+    yield
+    Configuration._instance = None
 
 
 @pytest.fixture()
