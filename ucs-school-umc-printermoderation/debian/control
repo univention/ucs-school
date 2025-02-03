@@ -23,10 +23,8 @@ Depends:
  univention-printserver-pdf,
  ${misc:Depends},
  ${python3:Depends},
- ${python:Depends},
 Provides:
  ${python3:Provides},
- ${python:Provides},
 Description: UCS@school UMC module for moderating print
  This package contains a UMC module for moderating print jobs of students
  .

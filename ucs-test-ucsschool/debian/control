@@ -31,11 +31,9 @@ Depends:
  python3-pytest-xvfb,
  ${misc:Depends},
  ${python3:Depends},
- ${python:Depends},
 Provides:
  ucs-test-module,
  ${python3:Provides},
- ${python:Provides},
 Description: Additional UCS@school tests for ucs-test
  This package includes some UCS@school related tests for ucs-test.
 

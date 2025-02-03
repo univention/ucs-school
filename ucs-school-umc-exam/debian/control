@@ -24,7 +24,6 @@ Depends:
  ${python3:Depends},
 Provides:
  ${python3:Provides},
- ${python:Provides},
 Description: Starts a new exam for a specified computer room
  Starts a new exam for a specified computer room
  .
@@ -47,11 +46,9 @@ Depends:
  univention-ldap-config (>= 9.0.27-3),
  univention-management-console-server (>= 12.0.31-10),
  ${misc:Depends},
- ${python:Depends},
  ${python3:Depends},
 Provides:
  ${python3:Provides},
- ${python:Provides},
 Replaces:
  ucs-school-import (<< 17.0.63),
  ucs-school-lib (<< 12.2.28),

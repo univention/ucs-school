@@ -20,10 +20,8 @@ Depends:
  univention-management-console,
  ${misc:Depends},
  ${python3:Depends},
- ${python:Depends},
 Provides:
  ${python3:Provides},
- ${python:Provides},
 Description: UMC module to generate CSV lists
  This package provides a Univention Management Console module that allows
  to export user lists for class groups or working groups.

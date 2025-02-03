@@ -26,10 +26,8 @@ Depends:
  univention-updater,
  ${misc:Depends},
  ${python3:Depends},
- ${python:Depends},
 Provides:
  ${python3:Provides},
- ${python:Provides},
 Description: This installation wizard guides the installation of UCS@school in the domain
  This installation wizard guides the installation of UCS@school in the domain
  .

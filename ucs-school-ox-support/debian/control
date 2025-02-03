@@ -14,7 +14,6 @@ Architecture: all
 Depends:
  shell-univention-lib,
  ${python3:Depends},
- ${python:Depends},
 Description: Package for running Open-Xchange in a UCS@school domain
  This package provides scripts for running Open-Xchange in a
  UCS@school domain

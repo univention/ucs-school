@@ -19,7 +19,6 @@ Depends:
  univention-config-registry,
  ${misc:Depends},
  ${python3:Depends},
- ${python:Depends},
 Description: UCS@school role shares
  This package contains support for UCS@school role shares.
  .

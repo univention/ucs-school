@@ -1,3 +1,0 @@
-modules/ucsschool/lib/*.py ucsschool.lib
-modules/ucsschool/lib/pyhooks/*.py ucsschool.lib.pyhooks
-modules/ucsschool/lib/models/*.py ucsschool.lib.models

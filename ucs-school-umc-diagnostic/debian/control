@@ -17,10 +17,8 @@ Depends:
  python3-ucsschool-lib (>= 13.0.38),
  ${misc:Depends},
  ${python3:Depends},
- ${python:Depends},
 Provides:
  ${python3:Provides},
- ${python:Provides},
 Description: System Diagnosis modules for UCS@school
  .
  It is part of Univention Corporate Server (UCS), an
