@@ -1,3 +1,9 @@
+ucs-school-import (19.0.1) unstable; urgency=low
+
+  * Bug #57897: revert temporary change
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 06 Feb 2025 17:50:17 +0100
+
 ucs-school-import (19.0.0) unstable; urgency=medium
 
   * UCS@school 5.2
