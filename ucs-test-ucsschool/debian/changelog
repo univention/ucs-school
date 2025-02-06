@@ -1,3 +1,9 @@
+ucs-test-ucsschool (8.0.2) unstable; urgency=medium
+
+  * univention/ucsschool#1359: fix 90_ucsschool/216_import-users_delete_variants.py
+
+ -- Jürn Brodersen <brodersen@univention.de>  Thu, 06 Feb 2025 16:24:36 +0100
+
 ucs-test-ucsschool (8.0.1) unstable; urgency=medium
 
   * univention/ucsschool#1052: Tag tests for gitlab pipeline

@@ -35,6 +35,7 @@
 # is obviously wrong in this case.
 from __future__ import absolute_import
 
+import calendar
 import contextlib
 import datetime
 import json
@@ -102,10 +103,9 @@ def syntax_date2_dateformat(userexpirydate):
 
 
 def udm_formula_for_shadowExpire(userexpirydate):
-    # copied from 61_udm-users/26_password_expire_date
-    # Note: this is a timezone dependend value
+    # copied from 59_udm/61_test_udm_users_password_expire_date.py
     dateformat = syntax_date2_dateformat(userexpirydate)
-    return str(int(time.mktime(time.strptime(userexpirydate, dateformat)) // 3600 // 24 + 1))
+    return str(int(calendar.timegm(time.strptime(userexpirydate, dateformat)) / 3600 / 24))
 
 
 def force_ucsschool_logger_colorized_if_has_tty():
