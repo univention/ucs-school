@@ -26,8 +26,8 @@ msgid "Released on 2025-03-11"
 msgstr "Veröffentlicht am 11. März 2025"
 
 #: ../../changelog.rst:17
-msgid "Source package *ucs-school-umc-exam* in version ``12.0.0``:"
-msgstr "Quellpaket *ucs-school-umc-exam* in Version ``12.0.0``:"
+msgid "Source package *ucs-school-umc-exam* in version ``12.0.1``:"
+msgstr "Quellpaket *ucs-school-umc-exam* in Version ``12.0.1``:"
 
 #: ../../changelog.rst:19
 msgid ""

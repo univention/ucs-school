@@ -669,7 +669,7 @@ class Instance(SchoolBaseModule):
                     # -> clear user name cache to force Samba to get the
                     # new UID from ldap.
                     logger.info("Clear user name cache...")
-                    cmd = ["/usr/sbin/nscd", "-i", "passwd"]
+                    cmd = ["/usr/sbin/sss_cache", "-U"]
                     if subprocess.call(cmd):  # nosec
                         logger.error("Clearing user name cache failed: %s", " ".join(cmd))
                     else:

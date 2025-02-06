@@ -14,7 +14,7 @@ Changelog
 Released on 2025-03-11
 ======================
 
-Source package *ucs-school-umc-exam* in version ``12.0.0``:
+Source package *ucs-school-umc-exam* in version ``12.0.1``:
 
 * Exam *shell* hooks are no longer supported. In UCS\@school 5.0 exam shell hooks that are stored in ``/usr/share/ucs-school-exam/hooks/create_exam_user_post.d/`` are run during the start of an exam for each exam user.
   This feature has been removed in UCS\@school 5.2.
