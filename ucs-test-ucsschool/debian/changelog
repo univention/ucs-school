@@ -1,3 +1,10 @@
+ucs-test-ucsschool (8.0.3) unstable; urgency=medium
+
+  * univention/ucsschool#1358: Fix regex for test in
+    101_exam_mode_home_directories_permissions.py
+
+ -- Johannes Königer <koeniger@univention.de>  Fri, 07 Feb 2025 13:32:41 +0100
+
 ucs-test-ucsschool (8.0.2) unstable; urgency=medium
 
   * univention/ucsschool#1359: fix 90_ucsschool/216_import-users_delete_variants.py

@@ -2,7 +2,7 @@
 ## -*- coding: utf-8 -*-
 ## desc: Check permissions of home dirs of exam users during exam
 ## roles: [domaincontroller_master, domaincontroller_slave]
-## tags: [apptest,ucsschool,ucsschool_base1]
+## tags: [apptest,ucsschool,ucsschool_base1,ucs-school-umc-exam]
 ## exposure: dangerous
 ## bugs: [49655]
 ## packages: [univention-samba4, ucs-school-umc-computerroom, ucs-school-umc-exam]
@@ -67,9 +67,11 @@ def _check_for_nt_acl_duplicates(nt_acl_content: str):
 def check_nt_acls(filename):  # type: (str) -> None
     content = get_nt_acls(filename)
 
+    # Ensure that the rights in the ACEs of the Access Control List have the
+    # expected values.
     assert re.match(
-        r"O:(.+)G:.*\(D;OICI[^;]*;.*?WOWD[^)]+;\1\).*\(A;OICI[^;]*;0x001301bf;;;(S-1-3-4|OW)\)"
-        r".*\(A;OICI[^;]*;0x001301bf;;;\1\)",
+        r"O:(.+)G:.*\(D;(?:OICI|CIOI)[^;]*;.*?(?:WOWD|WDWO)[^)]+;\1\).*"
+        r"\(A;OICI[^;]*;0x0*1301bf;;;(?:S-1-3-4|OW)\).*\(A;(?:OICI|CIOI)[^;]*;0x0*1301bf;;;\1\)",
         content,
     ), "The permissions of share {} can be changed {}".format(filename, content)
 

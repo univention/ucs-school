@@ -2,7 +2,7 @@
 ## -*- coding: utf-8 -*-
 ## desc: Check the consistency of exam users in unix, ldap and the ownership of their home directories
 ## roles: [domaincontroller_master, domaincontroller_slave]
-## tags: [apptest,ucsschool,ucsschool_base1]
+## tags: [apptest,ucsschool,ucsschool_base1,ucs-school-umc-exam]
 ## exposure: dangerous
 ## bugs: [52307]
 ## packages: [ucs-school-umc-computerroom, ucs-school-umc-exam]
