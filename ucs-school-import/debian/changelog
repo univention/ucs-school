@@ -1,3 +1,9 @@
+ucs-school-import (19.0.2) unstable; urgency=low
+
+  * Issue univention/ucsschool#1364: update django code to new API
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 07 Feb 2025 16:40:17 +0100
+
 ucs-school-import (19.0.1) unstable; urgency=low
 
   * Bug #57897: revert temporary change

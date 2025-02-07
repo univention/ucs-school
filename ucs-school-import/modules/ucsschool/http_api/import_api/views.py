@@ -43,7 +43,7 @@ from django_filters import CharFilter, MultipleChoiceFilter
 from django_filters.rest_framework import DjangoFilterBackend, FilterSet
 from ldap.filter import filter_format
 from rest_framework import mixins, status, viewsets
-from rest_framework.decorators import detail_route
+from rest_framework.decorators import action
 from rest_framework.exceptions import ParseError
 from rest_framework.filters import BaseFilterBackend, OrderingFilter
 from rest_framework.permissions import BasePermission, IsAuthenticated
@@ -357,7 +357,7 @@ class UserImportJobViewSet(
             del d["input_file"]
         return Response(data)
 
-    @detail_route(methods=["get"], url_path="logfile")
+    @action(detail=True, methods=["get"])
     def logfile(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = LogFileSerializer(instance.log_file, context={"request": request})
@@ -366,7 +366,7 @@ class UserImportJobViewSet(
         data["url"] = reverse("logfile-detail", kwargs=kwargs, request=request)
         return Response(data)
 
-    @detail_route(methods=["get"], url_path="passwords")
+    @action(detail=True, methods=["get"])
     def passwords(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = PasswordFileSerializer(instance.password_file, context={"request": request})
@@ -375,7 +375,7 @@ class UserImportJobViewSet(
         data["url"] = reverse("passwordsfile-detail", kwargs=kwargs, request=request)
         return Response(data)
 
-    @detail_route(methods=["get"], url_path="summary")
+    @action(detail=True, methods=["get"])
     def summary(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = SummarySerializer(instance.summary_file, context={"request": request})
@@ -388,7 +388,7 @@ class UserImportJobViewSet(
 class SubResourceMixin(object):
     #
     # It is not really necessary to check access permissions, because LogFileViewSet,
-    # PasswordsViewSet and SummaryViewSet are used in detail_routes only. The query
+    # PasswordsViewSet and SummaryViewSet are used in action() only. The query
     # filter of UserImportJobViewSet removes the forbidden UserImportJobs anyway. BUT
     # if the views were used somehow not from beneath UserImportJobViewSet, it would be
     # necessary. So better safe than sorry.
@@ -535,7 +535,7 @@ class SchoolViewSet(viewsets.ReadOnlyModelViewSet):
             d["user_imports"] = urljoin(d["url"], "imports/users")
         return Response(data)
 
-    @detail_route(methods=["get", "post"], url_path="imports/users")
+    @action(detail=True, methods=["get", "post"], url_path="imports/users")
     def user_imports(self, request, *args, **kwargs):
         """schools/{ou}/imports/users/"""
         instance = self.get_object()
@@ -563,7 +563,7 @@ class SchoolViewSet(viewsets.ReadOnlyModelViewSet):
             headers = uivs.get_success_headers(uij_serializer.data)
             return Response(uij_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
-    @detail_route()
+    @action(detail=True)
     def roles(self, request, *args, **kwargs):
         """
         schools/{ou}/roles/
