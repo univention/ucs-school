@@ -90,7 +90,7 @@ INSTALLED_APPS = (
     "ucsschool.http_api.import_api",
 )
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -120,6 +120,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "ucsschool.http_api.app.wsgi.application"
+
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 with open(os.path.join(CONF_DIR, "postgres.secret")) as fp:
     _postgres_pw = fp.read().strip()
