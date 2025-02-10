@@ -55,7 +55,7 @@ Exam shell hooks are removed
 ----------------------------
 
 Before UCS\@school 5.2v1, during the start of an exam, exam shell hooks stored in ``/usr/share/ucs-school-exam/hooks/create_exam_user_post.d/`` were ran for each exam user.
-This functionality has been removed in 5.2v1. Python hooks on the exam master are not removed and are still available.
+This functionality has been removed in 5.2v1. Python hooks for the exam mode on the Primary Directory Node are not removed and are still available.
 Check the directory ``/usr/share/ucs-school-exam/hooks/create_exam_user_post.d/`` for any custom hooks before upgrading.
 
 .. _changelog-newerrata:
