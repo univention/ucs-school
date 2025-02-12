@@ -195,7 +195,9 @@ class Username(CommonName):
 
     def validate(self, value):
         super(Username, self).validate(value)
-        if not is_valid_win_directory_name(value):
+        if ucr.is_true(
+            "ucsschool/validation/username/windows-check", False
+        ) and not is_valid_win_directory_name(value):
             raise ValueError(_("May not be a Windows reserved name"))
 
 

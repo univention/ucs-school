@@ -16,6 +16,12 @@ Description[en]=This variable controls whether errors from the validation are wr
 Type=str
 Categories=ucsschool-base
 
+[ucsschool/validation/username/windows-check]
+Description[de]=Diese Variable steuert ob beim Validieren der Benutzername bezüglich der Namenskonventionen von Windows geprüft wird. (Standard: No)
+Description[en]=This variable controls the enforcement of Windows-based naming conventions during the validation of usernames. (Default: No)
+Type=bool
+Categories=ucsschool-base
+
 [ucsschool/stop_notifier]
 Description[de] = Ob der Melder bei Vorgängen, wie z. B. Importen, die zu Konflikten mit bidirektionalen Synchronisationskonnektoren führen können, angehalten werden soll. (Standard: yes)
 Description[en] = Whether to stop the notifier during operations, such as imports, that might create conflicts with two-way synchronization connectors. (Default: yes)
