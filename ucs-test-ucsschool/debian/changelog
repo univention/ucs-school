@@ -1,3 +1,9 @@
+ucs-test-ucsschool (8.0.4) unstable; urgency=low
+
+  * univention/ucsschool#1364: Tag tests for gitlab pipeline
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 12 Feb 2025 14:52:13 +0100
+
 ucs-test-ucsschool (8.0.3) unstable; urgency=medium
 
   * univention/ucsschool#1358: Fix regex for test in

@@ -1,7 +1,7 @@
 #!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
 ## desc: Check roles through the python client
-## tags: [apptest,ucsschool,ucsschool_import1]
+## tags: [apptest,ucsschool,ucsschool_import1,ucs-school-import]
 ## roles: [domaincontroller_master]
 ## exposure: dangerous
 ## packages:

@@ -1,7 +1,7 @@
 #!/usr/share/ucs-test/runner /usr/bin/pytest-3 -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Check that school names in classes column are not used
-## tags: [apptest,ucsschool,ucsschool_import1,skip_in_upgrade_singleserver]
+## tags: [apptest,ucsschool,ucsschool_import1,skip_in_upgrade_singleserver,ucs-school-import]
 ## roles: [domaincontroller_master]
 ## exposure: dangerous
 ## packages:

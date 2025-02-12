@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ## desc: Check if auth via HTTP-API works with non-ASCII passwords (gunicorns log is checked)
 ## roles: [domaincontroller_master]
-## tags: [apptest,ucsschool_base1]
+## tags: [apptest,ucsschool_base1,ucs-school-import]
 ## exposure: dangerous
 ## packages: [ucs-school-import-http-api]
 
