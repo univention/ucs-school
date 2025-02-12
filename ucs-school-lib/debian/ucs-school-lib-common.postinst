@@ -38,4 +38,7 @@ fi
 
 ucr set ucsschool/default/share/nfs?false
 
+# update default layer (Bug #57958)
+ucr update
+
 exit 0

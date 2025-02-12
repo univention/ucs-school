@@ -1,3 +1,9 @@
+ucs-school-lib (15.0.1) unstable; urgency=medium
+
+  * Issue univention/ucsschool#1052: Enable windows username check by default
+
+ -- Jürn Brodersen <brodersen@univention.de>  Wed, 12 Feb 2025 11:11:37 +0100
+
 ucs-school-lib (14.0.1) unstable; urgency=medium
 
   * Issue univention/ucsschool#1313: use -H for ldapsearch

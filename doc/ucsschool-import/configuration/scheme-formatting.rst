@@ -39,6 +39,18 @@ werden sollen (z.B. nur der erste Teil eines Doppelnamens für eine
 E-Mailadresse), können Format-Hooks geschrieben werden. Ihre Erstellung und
 Verwendung wird in :ref:`extending-hooks-format-hooks` beschrieben.
 
+.. warning::
+
+    Benutzernamen sollten keine von Windows reservierten Namen enthalten.
+    Siehe dazu die `Microsoft Dokumentation <https://learn.microsoft.com/de-de/windows/win32/fileio/naming-a-file>`_ für weitere Informationen.
+    Benutzernamen, die diesen Regeln nicht entsprechen, werden von UCS@school standardmäßig abgelehnt, da sie zu Folgefehlern,
+    vor allem bei der Anmeldung an und Nutzung an Microsoft Windows Clients, führen können.
+
+    Reservierte Namen sind zum Beispiel `CON`, `PRN`, `AUX` oder `NUL`. Sie finden eine vollständige Liste in der Microsoft Dokumentation.
+    Neben den reservierten Namen selbst, sind auch Benutzernamen nicht erlaubt, die mit einem reserviertem Namen beginnen und denen ein Punkt folgt.
+    Schemata, die zu diesen Benutzernamen (z.B. ``con.mustermann``) führen können, sind daher zu vermeiden.
+
+
 Zur Illustration wird gezeigt, wie aus den oben angeführten Schemata für
 ``email`` und ``record_uid`` der entsprechende Wert berechnet wird, wenn
 folgende Beispiel CSV-Datei als Eingabe verwendet wird:

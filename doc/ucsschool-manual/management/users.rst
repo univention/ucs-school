@@ -96,10 +96,13 @@ des UMC-Moduls.
 
 .. important::
 
-   Benutzernamen dürfen keine von Windows reservierten Namen enthalten. Siehe
-   `Microsoft Dokumentation <https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file>`_
-   für weitere Informationen. Benutzernamen, die diesen Regeln nicht entsprechen, sind als veraltet anzusehen.
-   Ab UCS 5.2 sind diese Benutzernamen nicht mehr unterstützt und müssen geändert werden.
+   Benutzernamen sollten keine von Windows reservierten Namen enthalten.
+   Siehe dazu die `Microsoft Dokumentation <https://learn.microsoft.com/de-de/windows/win32/fileio/naming-a-file>`_ für weitere Informationen zu den betroffenen Namen.
+   Benutzernamen, die diesen Regeln nicht entsprechen, sind als veraltet anzusehen.
+   Ab UCS@school 5.2 werden fehlerhafte Benutzernamen, die z.B. automatisch durch Namensschemata erzeugt werden, standardmäßig unterbunden.
+   Sollte die Verwendung der reservierten Namen dennoch gewünscht sein, muss die Prüfung über die UCR-Variable ``ucsschool/validation/username/windows-check`` deaktiviert werden.
+   Hieraus können sich Folgefehler, vor allem bei der Anmeldung an und Nutzung an Microsoft-Windows-Clients, ergeben, daher raten wir von der Aktivierung ab.
+   Im Fehlerfall ist nur die Änderung der betroffenen Benutzernamen möglich.
 
 .. note::
 

@@ -45,8 +45,8 @@ Windows naming conventions for user names are now enforced
 Since 5.0v3, UCS\@school user names are validated with respect to Windows naming conventions,
 as user names which don't comply with Windows naming conventions lead to login issues and other problems
 (see :uv:bug:`53519`).
-This validation could be deactivated with the UCR-Variable ``ucsschool/validation/username/windows-check``.
-With 5.2v1, this variable has been removed: UCS\@school user names are now always validated to
+This validation can be deactivated with the UCR-Variable ``ucsschool/validation/username/windows-check``.
+With 5.2v1, the default of this variable has been changed: UCS\@school user names are now always validated to
 comply with `Windows naming conventions <https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file#naming-conventions>`_.
 Before upgrading, check the system diagnostic tool for warnings about user names that do not comply with Windows naming conventions.
 See the :external+uv-changelog-5.0v4:ref:`5.0v4 changelog <changelog-windows-naming-conventions>` for more information on this UCR-V in 5.0.
