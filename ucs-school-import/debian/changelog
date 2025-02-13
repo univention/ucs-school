@@ -1,3 +1,10 @@
+ucs-school-import (19.0.3) unstable; urgency=medium
+
+  * Issue univention/ucsschool#1360: Use uas-import PAM service instead of
+    plain login
+
+ -- Johannes Königer <koeniger@univention.de>  Thu, 13 Feb 2025 14:52:19 +0100
+
 ucs-school-import (19.0.2) unstable; urgency=low
 
   * Issue univention/ucsschool#1364: update django code to new API

@@ -26,3 +26,47 @@ Variables: logrotate/rotate
 Variables: logrotate/rotate/create
 Variables: logrotate/rotate/missingok
 Variables: logrotate/rotate/notifempty
+
+Type: multifile
+Multifile: etc/pam.d/uas-import
+
+Type: subfile
+Multifile: etc/pam.d/uas-import
+Subfile: etc/pam.d/uas-import.d/00_header
+
+Type: subfile
+Multifile: etc/pam.d/uas-import
+Subfile: etc/pam.d/uas-import.d/50_base
+Variables: auth/methods
+Variables: auth/umc/addon/.*
+Variables: pam/krb5/minimum_uid
+
+Type: subfile
+Multifile: etc/pam.d/uas-import
+Subfile: etc/pam.d/uas-import.d/30_tally
+Variables: auth/faillog
+Variables: auth/faillog/limit
+Variables: auth/faillog/unlock_time
+Variables: auth/faillog/root
+Variables: auth/faillog/lock_global
+
+Type: subfile
+Multifile: etc/pam.d/uas-import
+Subfile: etc/pam.d/uas-import.d/59_auth_end
+
+Type: subfile
+Multifile: etc/pam.d/uas-import
+Subfile: etc/pam.d/uas-import.d/60_account
+Variables: auth/methods
+Variables: pam/krb5/minimum_uid
+
+Type: subfile
+Multifile: etc/pam.d/uas-import
+Subfile: etc/pam.d/uas-import.d/70_session
+
+Type: subfile
+Multifile: etc/pam.d/uas-import
+Subfile: etc/pam.d/uas-import.d/80_password
+Variables: pam/krb5/ticket_after_pwchange
+Variables: pam/krb5/minimum_uid
+

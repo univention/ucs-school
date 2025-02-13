@@ -1,0 +1,34 @@
+@!@
+# search for UMC auth addons
+auth_umc_addons = any(
+    configRegistry.is_true(k, True)
+    for k in configRegistry
+    if k.startswith('auth/umc/addon/') and k.count('/') == 3
+)
+
+methods = configRegistry.get('auth/methods', '').split(' ')
+krb5_minimum_uid = int(configRegistry.get('pam/krb5/minimum_uid', 1000))
+
+if auth_umc_addons:
+    if 'krb5' in methods:
+        print(f'''
+auth     [success=2 new_authtok_reqd=2 \\
+         default=ignore]   pam_unix.so try_first_pass
+auth     [success=1 new_authtok_reqd=1 \\
+         default=ignore]   pam_krb5.so no_ccache use_first_pass defer_pwchange minimum_uid={krb5_minimum_uid}'''.strip())
+    else:
+        print('''
+auth     [success=1 new_authtok_reqd=1 \\
+         default=ignore]   pam_unix.so'''.strip())
+    print('''
+auth     [success=ok new_authtok_reqd=ok \\
+         default=die]      pam_sss.so use_first_pass'''.strip())
+else:
+    print('''
+auth     sufficient        pam_unix.so try_first_pass'''.strip())
+    if 'krb5' in methods:
+        print(f'''
+auth     sufficient        pam_krb5.so no_ccache use_first_pass defer_pwchange minimum_uid={krb5_minimum_uid}'''.strip())
+    print('''
+auth     sufficient        pam_sss.so use_first_pass'''.strip())
+@!@

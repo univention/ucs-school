@@ -1,0 +1,8 @@
+@!@
+krb5_minimum_uid = int(configRegistry.get('pam/krb5/minimum_uid', 1000))
+print('account  sufficient        pam_unix.so')
+methods = configRegistry.get('auth/methods', '').split(' ')
+if 'krb5' in methods:
+    print(f'account  sufficient        pam_krb5.so no_ccache force_pwchange minimum_uid={krb5_minimum_uid}')
+print('account  required          pam_sss.so')
+@!@
