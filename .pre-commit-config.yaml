@@ -1,5 +1,3 @@
-# See https://pre-commit.com for more information
-# See https://pre-commit.com/hooks.html for more hooks
 exclude: "^django-pam/"
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -79,7 +77,6 @@ repos:
     hooks:
       - id: mypy
         files: ^ucs-school-import-lusd/.*
-        language_version: python3.8
         additional_dependencies:
           - types-requests==2.32.0.20240712
           - pytest==8.3.2
@@ -90,7 +87,6 @@ repos:
     hooks:
       - id: shellcheck
         files: ^ucs-school-import-lusd/.*
-        language_version: python3.8
   - repo: https://git.knut.univention.de/univention/dist/pre-commit-debian.git
     rev: v1.1.0
     hooks:
@@ -127,9 +123,6 @@ repos:
     rev: v0.9.7
     hooks:
       - id: pymarkdown
-        # Pymarkdown only supports python >= 3.8.
-        # Let's be explicit about which version we're testing with.
-        language_version: python3.8
         # TODO: clean those up:
         exclude: "^doc/devel/README.*.md$\
           |^(CODE_OF_CONDUCT|CONTRIBUTING|PULL_REQUEST_TEMPLATE|README).md$\
@@ -146,4 +139,4 @@ repos:
           # MD024: Allow duplicate headings
           # MD034: Allow bare URLs
 default_language_version:
-  python: python3.7
+  python: python3.11
