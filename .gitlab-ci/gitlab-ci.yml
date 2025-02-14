@@ -12,6 +12,8 @@ include:
     file: pre-commit.yml
   - project: univention/internal/ucsschool-ci-utils
     file: fragments/openstack.yaml
+  - project: univention/internal/ucsschool-ci-utils
+    file: fragments/misc.yaml
   - local: .gitlab-ci/docs.yml
     rules:
       - if: $CI_COMMIT_MESSAGE =~ /skip-doc/ || $RUN_DOCS == "no"
@@ -29,6 +31,13 @@ include:
 run pre-commit:
   stage: lint
   extends: .pre-commit
+
+lint_commit_messages:
+  variables:
+    HOOK_IDS: "conventional-pre-commit issue-reference"
+  stage: lint
+  extends: .lint_commit_messages
+
 
 integration_tests:
   extends: .run_openstack_cfg
