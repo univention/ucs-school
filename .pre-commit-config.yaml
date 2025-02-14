@@ -1,3 +1,5 @@
+default_install_hook_types:
+  - pre-commit
 exclude: "^django-pam/"
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -138,5 +140,19 @@ repos:
           # MD013: Allow arbitrary line length
           # MD024: Allow duplicate headings
           # MD034: Allow bare URLs
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v4.0.0
+    hooks:
+      - id: conventional-pre-commit
+        stages: [ commit-msg ]
+        args: ["--strict"]
+  - repo: local
+    hooks:
+      - id: issue-reference
+        stages: [ commit-msg ]
+        name: issue-reference
+        language: pygrep
+        entry: '.*\n\n(Issue \w+(/\w+)*#\d+|Bug #\d+)\n+(\n.*)*\Z'
+        args: ["--multiline", "--negate"]
 default_language_version:
   python: python3.11
