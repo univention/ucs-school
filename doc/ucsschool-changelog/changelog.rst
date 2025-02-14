@@ -41,3 +41,6 @@ Source package *ucs-school-umc-diagnostic* in version ``4.0.1``:
 
 * Usernames which do not comply with Windows naming conventions are now shown as critical errors in the system diagnostic tool.
 
+Source package *ucs-school-umc-printermoderation* in version ``18.0.0``:
+
+* Fixed an issue were the :spelling:ignore:`"Printer Operators"` group was left in a broken state after the join script had run.

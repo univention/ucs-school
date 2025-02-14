@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UCS@school - 5.0 v5 Changelog \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-18 16:03+0000\n"
+"POT-Creation-Date: 2025-02-18 16:25+0000\n"
 "PO-Revision-Date: 2023-08-02 09:20+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -118,4 +118,17 @@ msgid ""
 msgstr ""
 "Benutzernamen, die nicht den Windows-Namenskonventionen entsprechen, "
 "werden nun als kritische Fehler im Systemdiagnosetool angezeigt."
+
+#: ../../changelog.rst:44
+msgid "Source package *ucs-school-umc-printermoderation* in version ``18.0.0``:"
+msgstr "Quellpaket *ucs-school-umc-printermoderation* in Version ``18.0.0``:"
+
+#: ../../changelog.rst:46
+msgid ""
+"Fixed an issue were the :spelling:ignore:`\"Printer Operators\"` group "
+"was left in a broken state after the join script had run."
+msgstr ""
+"Es wurde ein Problem behoben, bei dem die Gruppe "
+":spelling:ignore:`\"Printer Operators\"` in einem defekten Zustand "
+"zurückgelassen wurde, nachdem das Join-Skript ausgeführt worden war."
 

@@ -1,3 +1,10 @@
+ucs-test-ucsschool (8.0.5) unstable; urgency=medium
+
+  * Issue univention/ucsschool#1357: Tag ucs-school-umc-printermoderation
+    tests
+
+ -- Jürn Brodersen <brodersen@univention.de>  Tue, 18 Feb 2025 16:53:07 +0100
+
 ucs-test-ucsschool (8.0.4) unstable; urgency=low
 
   * univention/ucsschool#1364: Tag tests for gitlab pipeline

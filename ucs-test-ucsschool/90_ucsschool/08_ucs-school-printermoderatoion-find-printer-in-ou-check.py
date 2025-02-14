@@ -1,6 +1,6 @@
 #!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## desc: ucs-school-printermoderation-find-printer-in-ou-check
-## tags: [apptest,ucsschool,ucsschool_base1]
+## tags: [apptest,ucsschool,ucsschool_base1,ucs-school-umc-printermoderation]
 ## roles: [domaincontroller_master, domaincontroller_backup]
 ## exposure: dangerous
 ## packages: [ucs-school-umc-printermoderation, ucs-school-import]

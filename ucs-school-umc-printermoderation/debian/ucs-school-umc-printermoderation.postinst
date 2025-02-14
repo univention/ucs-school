@@ -34,4 +34,7 @@ ucr set ucsschool/printermoderation/windows/driver/name?'MS Publisher Color Prin
 
 #DEBHELPER#
 
+# Update default layer bug #57958
+ucr update
+
 exit 0

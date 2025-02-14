@@ -1,3 +1,10 @@
+ucs-school-umc-printermoderation (18.0.0) unstable; urgency=medium
+
+  * Issue univention/ucsschool#1357: fix an issue were the "Printer Operators"
+    group was left in a broken state after the join script had run.
+
+ -- Jürn Brodersen <brodersen@univention.de>  Tue, 18 Feb 2025 16:47:00 +0100
+
 ucs-school-umc-printermoderation (17.100.1) unstable; urgency=medium
 
   * UCS@school 5.1
