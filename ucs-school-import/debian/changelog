@@ -2,6 +2,8 @@ ucs-school-import (19.0.3) unstable; urgency=medium
 
   * Issue univention/ucsschool#1360: Use uas-import PAM service instead of
     plain login
+  * Issue univention/ucsschool#1360: Explicitly set default `models.CASCADE` on deletion
+    of school or principal database objects
 
  -- Johannes Königer <koeniger@univention.de>  Thu, 13 Feb 2025 14:52:19 +0100
 
