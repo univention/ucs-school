@@ -1,7 +1,7 @@
 #!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Import computers via CLI
-## tags: [apptest,ucsschool,ucsschool_import1]
+## tags: [apptest,ucsschool,ucsschool_import1,ucs-school-import]
 ## roles: [domaincontroller_master]
 ## exposure: dangerous
 ## packages:
@@ -30,6 +30,16 @@ from ucsschool.lib.models.computer import (
     UbuntuComputer,
     WindowsComputer,
 )
+from ucsschool.lib.roles import (
+    create_ucsschool_role_string,
+    role_ip_computer,
+    role_linux_computer,
+    role_mac_computer,
+    role_memberserver,
+    role_ubuntu_computer,
+    role_win_computer,
+)
+from univention.testing import utils
 from univention.testing.ucsschool.computer import Computer, SupportedComputer, random_ip, random_mac
 
 HOOK_BASEDIR = "/usr/share/ucs-school-import/pyhooks"
@@ -252,3 +262,43 @@ def test_mac_address_is_used(computer_model):
         computer.create(schoolenv.lo)
         assert mac_address_is_used(lo=schoolenv.lo, mac_address=mac) is True
         assert mac_address_is_used(lo=schoolenv.lo, mac_address=mac.upper()) is True
+
+
+@pytest.mark.parametrize(
+    "udm_computer_module,role",
+    [
+        ("computers/domaincontroller_master", None),
+        ("computers/domaincontroller_backup", None),
+        ("computers/domaincontroller_slave", None),
+        ("computers/memberserver", None),
+        ("computers/memberserver", role_memberserver),
+        ("computers/windows", role_win_computer),
+        ("computers/macos", role_mac_computer),
+        ("computers/ipmanagedclient", role_ip_computer),
+        ("computers/ubuntu", role_ubuntu_computer),
+        ("computers/linux", role_linux_computer),
+    ],
+)
+def test_udm_computer_role_hook(udm_computer_module, role, udm):
+    """See hook ucs-school-import/udm_hook/ucsschool_role_computers.py"""
+    with utu.UCSTestSchool() as schoolenv:
+        ou_name, ou_dn = schoolenv.create_ou(name_edudc=schoolenv.ucr.get("hostname"))
+        if role is None:
+            computer = udm.create_object(
+                udm_computer_module,
+                position=f"cn=computers,{schoolenv.ucr['ldap/base']}",
+                name=uts.random_name(),
+            )
+            if udm_computer_module == "computers/memberserver":
+                ucsschool_role = (create_ucsschool_role_string(role_memberserver, "-"),)
+            else:
+                ucsschool_role = ()
+        else:
+            computer = udm.create_object(
+                udm_computer_module, position=f"cn=computers,{ou_dn}", name=uts.random_name()
+            )
+            if udm_computer_module == "computers/memberserver":
+                ucsschool_role = ()
+            else:
+                ucsschool_role = (create_ucsschool_role_string(role, ou_name),)
+        utils.verify_ldap_object(computer, {"ucsschoolRole": ucsschool_role}, retry_count=2)
