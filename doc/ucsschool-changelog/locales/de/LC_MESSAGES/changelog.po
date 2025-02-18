@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UCS@school - 5.0 v5 Changelog \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-18 16:25+0000\n"
+"POT-Creation-Date: 2025-02-19 10:19+0000\n"
 "PO-Revision-Date: 2023-08-02 09:20+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -59,8 +59,8 @@ msgstr ""
 "master/pyhooks/create_exam_user_pre/`` liegen."
 
 #: ../../changelog.rst:24
-msgid "Source package *ucs-school-metapackage* in version ``15.0.0``:"
-msgstr "Quellpaket *ucs-school-metapackage* in Version ``15.0.0``:"
+msgid "Source package *ucs-school-metapackage* in version ``15.0.1``:"
+msgstr "Quellpaket *ucs-school-metapackage* in Version ``15.0.1``:"
 
 #: ../../changelog.rst:26
 msgid "Dropping support for Python 2."

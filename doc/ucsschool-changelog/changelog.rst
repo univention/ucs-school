@@ -21,7 +21,7 @@ Source package *ucs-school-umc-exam* in version ``12.0.1``:
 
   Please note: This change does not affect the *Python* hooks for the exam mode that are executed on the Primary Directory Node and are located in the directory ``/usr/share/ucs-school-exam-master/pyhooks/create_exam_user_pre/``.
 
-Source package *ucs-school-metapackage* in version ``15.0.0``:
+Source package *ucs-school-metapackage* in version ``15.0.1``:
 
 * Dropping support for Python 2.
 
