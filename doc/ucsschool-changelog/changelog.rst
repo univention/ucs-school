@@ -25,7 +25,7 @@ Source package *ucs-school-metapackage* in version ``15.0.0``:
 
 * Dropping support for Python 2.
 
-Source package *ucs-school-lib* in version ``15.0.0``:
+Source package *ucs-school-lib* in version ``15.0.1``:
 
 * The default value for the UCR variable ``ucsschool/validation/username/windows-check`` has been changed to ``yes``.
 
@@ -37,7 +37,7 @@ Source package *ucs-school-lib* in version ``15.0.0``:
   This can result in subsequent errors, especially when logging on to and using Microsoft Windows clients, so we advise against activating it.
   In the event of an error, it is only possible to change the affected user names.
 
-Source package *ucs-school-umc-diagnostic* in version ``4.0.0``:
+Source package *ucs-school-umc-diagnostic* in version ``4.0.1``:
 
 * Usernames which do not comply with Windows naming conventions are now shown as critical errors in the system diagnostic tool.
 
