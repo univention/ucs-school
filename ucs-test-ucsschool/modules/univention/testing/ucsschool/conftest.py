@@ -522,7 +522,7 @@ def schedule_restart_services(restart_services):
 def restart_umc(restart_services):
     def _restart_umc():
         restart_services(
-            "univention-management-console-web-server", "univention-management-console-server"
+            "univention-management-console-server",
         )
         # wait some time for UMC web server and UMC server to be ready before the next test is called
         time.sleep(5)
@@ -533,7 +533,7 @@ def restart_umc(restart_services):
 @pytest.fixture()
 def schedule_restart_umc(schedule_restart_services):
     schedule_restart_services(
-        "univention-management-console-web-server", "univention-management-console-server"
+        "univention-management-console-server",
     )
     # wait some time for UMC web server and UMC server to be ready before the next test is called
     time.sleep(5)
