@@ -9,6 +9,8 @@
 
 import time
 
+from selenium.webdriver.common.by import By
+
 import univention.testing.strings as uts
 import univention.testing.ucsschool.ucs_test_school as utu
 from ucsschool.lib.models.group import WorkGroup
@@ -112,7 +114,7 @@ class UMCTester(object):
             self.selenium.submit_input("pattern")
             self.selenium.click_text(wg_name2)
             time.sleep(5)
-            elem = self.selenium.driver.find_element_by_css_selector("input[name='email']")
+            elem = self.selenium.driver.find_element(By.CSS_SELECTOR, "input[name='email']")
             assert elem.get_property("value") == "{}-{}@test.de".format(school_name, wg_name2)
 
             #  Test that email is still shown if UCR is deactivated, but toggle is gone
@@ -122,7 +124,7 @@ class UMCTester(object):
             self.selenium.submit_input("pattern")
             self.selenium.click_text(wg_name2)
             time.sleep(5)
-            elem = self.selenium.driver.find_element_by_css_selector("input[name='email']")
+            elem = self.selenium.driver.find_element(By.CSS_SELECTOR, "input[name='email']")
             assert elem.get_property("value") == "{}-{}@test.de".format(school_name, wg_name2)
             assert not self.selenium.elements_visible("//label[text() = 'Activate Email Address']")
 
