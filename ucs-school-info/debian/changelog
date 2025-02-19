@@ -1,3 +1,9 @@
+ucs-school-info (11.0.0) unstable; urgency=medium
+
+  * UCS@school 5.2
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Wed, 19 Feb 2025 11:17:00 +0200
+
 ucs-school-info (10.100.1) unstable; urgency=medium
 
   * UCS@school 5.1

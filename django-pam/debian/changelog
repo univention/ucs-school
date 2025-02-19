@@ -1,14 +1,14 @@
-django-pam (2.100.1) unstable; urgency=medium
+django-pam (2.0.1A-ucs5.2-0) unstable; urgency=medium
+
+  * UCS@school 5.2
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Wed, 19 Feb 2025 11:17:00 +0200
+
+django-pam (2.0.1A-ucs5.1-0) unstable; urgency=medium
 
   * UCS@school 5.1
 
  -- Florian Best <best@univention.de>  Fri, 22 Sep 2023 13:53:33 +0200
-
-django-pam (2.99.1) unstable; urgency=medium
-
-  * UCS@school 5.1
-
- -- Florian Best <best@univention.de>  Fri, 22 Sep 2023 13:44:08 +0200
 
 django-pam (2.0.1) unstable; urgency=low
 
