@@ -537,3 +537,16 @@ def schedule_restart_umc(schedule_restart_services):
     )
     # wait some time for UMC web server and UMC server to be ready before the next test is called
     time.sleep(5)
+
+
+@pytest.fixture(autouse=True)
+def stop_module_process():
+    # Clean up ressources
+    yield
+    subprocess.call(
+        [
+            "pkill",
+            "--full",
+            "/usr/bin/python3 /usr/sbin/univention-management-console-module -m ",
+        ]
+    )

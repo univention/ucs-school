@@ -1,3 +1,10 @@
+ucs-test-ucsschool (8.0.7) unstable; urgency=medium
+
+  * univention/ucsschool#1347: use less resources, by stopping umc module
+    processes
+
+ -- Jürn Brodersen <brodersen@univention.de>  Wed, 19 Feb 2025 16:45:28 +0100
+
 ucs-test-ucsschool (8.0.6) unstable; urgency=medium
 
   * univention/ucsschool#1348: add test for udm hook ucsschool_role_computers.py
