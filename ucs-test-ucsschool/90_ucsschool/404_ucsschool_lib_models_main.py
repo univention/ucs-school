@@ -274,9 +274,9 @@ def test_create_user_windows_reserved_name(
                 person.username, container, ou_name, ucr_ldap_base
             )
             rv, stdout, stderr = exec_cmd(cmd, log=True, raise_exc=False)
-            if windows_check_enabled in ["", "false"]:
+            if windows_check_enabled in ["false"]:
                 # creating users which do not adhere to the windows naming conventions
-                # is deprecated and with 5.2 this test should be adjusted accordingly
+                # is strongly discouraged.
                 assert rv == 0
                 assert person.username in stdout
 

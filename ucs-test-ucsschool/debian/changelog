@@ -1,3 +1,11 @@
+ucs-test-ucsschool (8.0.9) unstable; urgency=low
+
+  * univention/ucsschool#1062: adapt 404_ucsschool_lib_models_main.py to
+    new default of UCR variable
+    "ucsschool/validation/username/windows-check"
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 20 Feb 2025 12:16:10 +0100
+
 ucs-test-ucsschool (8.0.8) unstable; urgency=medium
 
   * univention/ucsschool#1361: fix 91_ucsschool-selenium tests
