@@ -1,3 +1,9 @@
+ucs-test-ucsschool (8.0.8) unstable; urgency=medium
+
+  * univention/ucsschool#1361: fix 91_ucsschool-selenium tests
+
+ -- Jürn Brodersen <brodersen@univention.de>  Wed, 19 Feb 2025 18:25:19 +0100
+
 ucs-test-ucsschool (8.0.7) unstable; urgency=medium
 
   * univention/ucsschool#1347: use less resources, by stopping umc module
