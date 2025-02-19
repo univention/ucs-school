@@ -1,11 +1,11 @@
 #!/usr/share/ucs-test/runner /usr/share/ucs-test/selenium
 # -*- coding: utf-8 -*-
 ## desc: Test the creation and assigning of internet rules
-## roles: [domaincontroller_master]
-## tags: [apptest,ucsschool,ucsschool_selenium]
+## roles: [domaincontroller_master, domaincontroller_slave]
+## tags: [apptest,ucsschool,ucsschool_selenium,ucs-school-umc-internetrules]
 ## exposure: dangerous
 ## packages:
-##   - ucs-school-multiserver | ucs-school-singleserver
+##   - ucs-school-replica | ucs-school-singleserver
 
 import random
 import string

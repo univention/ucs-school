@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 ## desc: Test the creation of workgroups with email addresses.
 ## roles: [domaincontroller_master, domaincontroller_slave]
-## tags: [apptest,ucsschool,ucsschool_selenium]
+## tags: [apptest,ucsschool,ucsschool_selenium,ucs-school-umc-groups]
 ## exposure: dangerous
 ## packages:
-##   - ucs-school-multiserver | ucs-school-singleserver
+##   - ucs-school-multiserver | ucs-school-singleserver | ucs-school-replica
 
 import time
 
@@ -16,7 +16,6 @@ import univention.testing.ucsschool.ucs_test_school as utu
 from ucsschool.lib.models.group import WorkGroup
 from ucsschool.lib.models.share import WorkGroupShare
 from univention.admin import localization
-from univention.admin.uldap import getAdminConnection
 from univention.config_registry import handler_set, handler_unset
 from univention.testing import selenium
 from univention.testing.ucr import UCSTestConfigRegistry
@@ -66,10 +65,13 @@ class UMCTester(object):
         assert wg_share.exists(lo) == share_exists, "{} != {}".format(wg_share.exists(lo), share_exists)
 
     def test_umc(self):
-        with utu.UCSTestSchool() as schoolenv, UCSTestConfigRegistry(), UCSTestUDM() as udm:
-            lo, po = getAdminConnection()
+        with utu.UCSTestSchool() as schoolenv, UCSTestConfigRegistry() as ucr, UCSTestUDM() as udm:
             handler_set(["ucsschool/workgroups/autosearch=no"])
-            school_name, schooldn = schoolenv.create_ou()
+            if ucr["server/role"] == "domaincontroller_slave":
+                name_edudc = ucr["hostname"]
+            else:
+                name_edudc = None
+            school_name, schooldn = schoolenv.create_ou(name_edudc=name_edudc)
             self.selenium.do_login()
 
             #  Test that mailaddress checkbox is not visible if UCR empty
@@ -92,7 +94,7 @@ class UMCTester(object):
                     "Arbitrary students and teacher of the school can be selected as group members."
                 )
             )
-            self.check_wg(lo, school_name, wg_name, False, None, [], [])
+            self.check_wg(schoolenv.lo, school_name, wg_name, False, None, [], [])
 
             #  Test for creating a workgroup with share and email address
             udm.create_object("mail/domain", name="test.de")
@@ -107,7 +109,13 @@ class UMCTester(object):
                 )
             )
             self.check_wg(
-                lo, school_name, wg_name2, True, "{}-{}@test.de".format(school_name, wg_name2), [], []
+                schoolenv.lo,
+                school_name,
+                wg_name2,
+                True,
+                "{}-{}@test.de".format(school_name, wg_name2),
+                [],
+                [],
             )
             self.open_wg_module(False)
             self.selenium.enter_input_combobox("school", school_name)

@@ -1,11 +1,11 @@
 #!/usr/share/ucs-test/runner /usr/share/ucs-test/selenium
 # -*- coding: utf-8 -*-
 ## desc: Test the computerroom module. Specifically exiting it during exam mode
-## roles: [domaincontroller_master]
-## tags: [apptest,ucsschool,ucsschool_selenium]
+## roles: [domaincontroller_master, domaincontroller_slave]
+## tags: [apptest,ucsschool,ucsschool_selenium,ucs-school-umc-exam]
 ## exposure: dangerous
 ## packages:
-##   - ucs-school-multiserver | ucs-school-singleserver
+##   - ucs-school-replica | ucs-school-singleserver
 
 from datetime import datetime, timedelta
 

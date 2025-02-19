@@ -1,11 +1,11 @@
 #!/usr/share/ucs-test/runner /usr/share/ucs-test/selenium
 # -*- coding: utf-8 -*-
 ## desc: Test the password reset module
-## roles: [domaincontroller_master]
-## tags: [apptest,ucsschool,ucsschool_selenium]
+## roles: [domaincontroller_master, domaincontroller_slave]
+## tags: [apptest,ucsschool,ucsschool_selenium, ucs-school-umc-users]
 ## exposure: dangerous
 ## packages:
-##   - ucs-school-multiserver | ucs-school-singleserver
+##   - ucs-school-multiserver | ucs-school-singleserver | ucs-school-replica
 
 import univention.testing.ucsschool.ucs_test_school as utu
 from univention.admin import localization
@@ -32,7 +32,11 @@ class UMCTester(object):
     def test_umc(self):
         with utu.UCSTestSchool() as schoolenv:
             reset_password = "uni1vention1"
-            schoolname, schooldn = schoolenv.create_ou()
+            if schoolenv.ucr["server/role"] == "domaincontroller_slave":
+                name_edudc = schoolenv.ucr["hostname"]
+            else:
+                name_edudc = None
+            schoolname, schooldn = schoolenv.create_ou(name_edudc=name_edudc)
             username, userdn = schoolenv.create_user(schoolname)
             last_pw_change = get_pw_change_time(userdn, schoolenv.lo)
 
