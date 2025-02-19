@@ -37,7 +37,7 @@ def check_deny_nt_acls_permissions(sid, path, allowed=False):  # type: (str, str
     rv, stdout, stderr = exec_cmd(
         ["samba-tool", "ntacl", "get", "--as-sddl", path], log=True, raise_exc=True
     )
-    if re.match(r".*?(D;OICI.*?;.*?WOWD[^)]+{}).*".format(sid), stdout):
+    if re.match(r".*?(D;OICI.*?;.*?(?:WOWD|WDWO)[^)]+{}).*".format(sid), stdout):
         if allowed:
             utils.fail("The permissions of share {} can not be changed for {}.".format(path, sid))
     elif not allowed:
