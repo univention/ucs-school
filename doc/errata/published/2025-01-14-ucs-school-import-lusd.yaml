@@ -1,7 +1,0 @@
-product: ucsschool
-release: "5.0"
-version: [0]
-scope: ucs_5.0-0-ucs-school-5.0
-src: ucs-school-import-lusd
-fix: 1.0.4
-bug: [57803, 57804, 57805]
