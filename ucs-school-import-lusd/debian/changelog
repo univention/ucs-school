@@ -1,3 +1,9 @@
+ucs-school-import-lusd (2.0.1) unstable; urgency=medium
+
+  * Bug #57974: Switch to productive LUSD issuer
+
+ -- Jürn Brodersen <brodersen@univention.de>  Fri, 07 Mar 2025 15:06:25 +0100
+
 ucs-school-import-lusd (2.0.0) unstable; urgency=medium
 
   * UCS@school 5.2
