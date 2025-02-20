@@ -4,7 +4,7 @@
 # Univention Management Console
 #  module: Distribution Module
 #
-# Copyright 2007-2024 Univention GmbH
+# Copyright 2007-2025 Univention GmbH
 #
 # http://www.univention.de/
 #

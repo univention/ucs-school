@@ -3,7 +3,7 @@
 # Univention Management Console
 #  Configure the lessons times
 #
-# Copyright 2012-2024 Univention GmbH
+# Copyright 2012-2025 Univention GmbH
 #
 # http://www.univention.de/
 #

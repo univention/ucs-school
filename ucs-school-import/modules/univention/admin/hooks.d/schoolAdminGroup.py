@@ -2,7 +2,7 @@
 #
 # UCS@school Admin Group Hook
 #
-# Copyright (C) 2016-2024 Univention GmbH
+# Copyright (C) 2016-2025 Univention GmbH
 #
 # https://www.univention.de/
 #

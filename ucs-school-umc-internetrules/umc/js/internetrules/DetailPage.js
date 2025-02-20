@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2024 Univention GmbH
+ * Copyright 2011-2025 Univention GmbH
  *
  * http://www.univention.de/
  *

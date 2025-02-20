@@ -4,7 +4,7 @@
 # UCS@school lib
 #  module: UCS@school specific roles
 #
-# Copyright 2014-2024 Univention GmbH
+# Copyright 2014-2025 Univention GmbH
 #
 # http://www.univention.de/
 #

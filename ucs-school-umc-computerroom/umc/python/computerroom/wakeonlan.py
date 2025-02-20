@@ -3,7 +3,7 @@
 #
 # WakeOnLan/WOL helpers
 #
-# Copyright 2019-2024 Univention GmbH
+# Copyright 2019-2025 Univention GmbH
 #
 # http://www.univention.de/
 #
