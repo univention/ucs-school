@@ -93,6 +93,11 @@ def doPrinter(operation, printer_name, school, spool_host, domainname):
     if retval:
         utils.fail("Unexpected error while acting on Printer")
     utils.wait_for_replication_and_postrun()
+    if operation == "A":
+        utils.retry_on_error(
+            lambda: subprocess.check_call(["lpstat", "-v", printer_name]),
+            exceptions=(subprocess.CalledProcessError,),
+        )
 
 
 # check the existance of the created printer
@@ -192,7 +197,7 @@ def test_printermoderation(udm_session, schoolenv, ucr):
     udm.modify_object("groups/group", dn=klasse2_dn, append={"users": [stu2_dn]})
     udm.modify_object("groups/group", dn=klasse2_dn, append={"users": [stu4_dn]})
 
-    utils.wait_for_replication_and_postrun()
+    utils.wait_for_replication()
 
     connection = Client(host)
     connection.authenticate(tea, "univention")
