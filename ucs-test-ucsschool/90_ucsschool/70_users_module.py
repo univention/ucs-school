@@ -43,6 +43,7 @@ def _create_user(user_params: UserCreationParameters, ucr, remove_from_school=No
     )
 
     user.create()
+    wait_for_drs_replication(filter_format("cn=%s", (user.username,)))
     user.verify()
     user.check_get()
     user.check_query([user.dn])
