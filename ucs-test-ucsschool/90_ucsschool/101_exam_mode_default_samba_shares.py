@@ -2,7 +2,7 @@
 ## -*- coding: utf-8 -*-
 ## desc: Invalid smb conf files should raise UMC erros
 ## roles: [domaincontroller_master, domaincontroller_slave]
-## tags: [apptest,ucsschool,ucsschool_base1]
+## tags: [apptest,ucsschool,ucsschool_base1,ucs-school-umc-exam]
 ## exposure: dangerous
 ## bugs: [57367]
 ## packages: [univention-samba4, ucs-school-umc-computerroom, ucs-school-umc-exam]
@@ -10,7 +10,6 @@ from datetime import datetime, timedelta
 
 import univention.testing.strings as uts
 from ucsschool.lib.schoolldap import SchoolSearchBase
-from univention.lib.umc import BadRequest
 from univention.testing.ucsschool.computer import Computers
 from univention.testing.ucsschool.computerroom import Room
 from univention.testing.ucsschool.exam import Exam
@@ -50,7 +49,7 @@ def test_exam_broken_share_conf(udm_session, schoolenv, ucr):
     with open("/etc/samba/shares.conf") as fin:
         old_config = fin.read()
 
-    # Messing up shares.conf will raise an UMC error.
+    # Messing up shares.conf should not raise an exception
     try:
         with open("/etc/samba/shares.conf", "w") as fout:
             fout.write(old_config + "\n include = funky-conf")
@@ -61,15 +60,7 @@ def test_exam_broken_share_conf(udm_session, schoolenv, ucr):
             examEndTime=chosen_time.strftime("%H:%M"),
             recipients=[class_dn],
         )
-        raised_exception = False
         exam.start()
-    except BadRequest as exc:
-        raised_exception = True
-        assert exc.status == 400
-        assert (
-            "An error occurred while loading one of the samba share configuration files"
-        ) in exc.message
     finally:
         with open("/etc/samba/shares.conf", "w") as fout:
             fout.write(old_config)
-    assert raised_exception

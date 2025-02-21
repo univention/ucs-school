@@ -1,3 +1,10 @@
+ucs-test-ucsschool (8.0.13) unstable; urgency=medium
+
+  * Issue univention/ucsschool#1366: Missing includes in the share.conf
+    should be ignored instead of raising an exception.
+
+ -- Johannes Königer <koeniger@univention.de>  Mon, 24 Feb 2025 11:38:06 +0100
+
 ucs-test-ucsschool (8.0.12) unstable; urgency=medium
 
   * Issue univention/ucsschool#1362: wait for back replication as well
