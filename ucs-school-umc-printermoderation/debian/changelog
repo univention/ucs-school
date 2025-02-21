@@ -1,3 +1,9 @@
+ucs-school-umc-printermoderation (18.0.1) unstable; urgency=low
+
+  * Issue univention/ucsschool#1362: fix failing CUPS connections
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 21 Feb 2025 17:50:36 +0100
+
 ucs-school-umc-printermoderation (18.0.0) unstable; urgency=medium
 
   * Issue univention/ucsschool#1357: fix an issue were the "Printer Operators"

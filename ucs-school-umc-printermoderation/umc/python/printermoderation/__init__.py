@@ -274,6 +274,7 @@ class Instance(SchoolBaseModule):
             cups.setUser(request.username)
             cups.setEncryption(cups.HTTP_ENCRYPT_ALWAYS)
             cups.setPasswordCB(self.pw_callback)
+            cups.setServer(spoolhost)
             conn = cups.Connection(spoolhost)
             conn.printFile(printer, path, Printjob.filename2label(printjob), {})
         except RuntimeError:
