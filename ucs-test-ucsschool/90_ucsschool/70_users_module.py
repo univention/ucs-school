@@ -18,7 +18,7 @@ from ldap.filter import filter_format
 
 import univention.testing.strings as uts
 from univention.config_registry import handler_set
-from univention.testing.ucs_samba import wait_for_drs_replication
+from univention.testing.ucs_samba import wait_for_drs_replication, wait_for_s4connector
 from univention.testing.ucsschool.importusers import get_mail_domain
 from univention.testing.ucsschool.klasse import Klasse
 from univention.testing.ucsschool.user import User
@@ -43,7 +43,13 @@ def _create_user(user_params: UserCreationParameters, ucr, remove_from_school=No
     )
 
     user.create()
+
     wait_for_drs_replication(filter_format("cn=%s", (user.username,)))
+
+    # s4 connector writes back to ucs after the user has been created,
+    # which can overwrite the user attribute changes with the old values
+    wait_for_s4connector()
+
     user.verify()
     user.check_get()
     user.check_query([user.dn])
