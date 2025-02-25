@@ -80,7 +80,9 @@ def class_level_hook_instance():  # type: ignore[no-untyped-def]
         ("-/3", None),
     ],
 )
-def test_calculate_class_level(input_value, expected, class_level_hook_instance, mocker):  # type: ignore[no-untyped-def]
+def test_calculate_class_level(
+    input_value, expected, class_level_hook_instance, mocker
+):  # type: ignore[no-untyped-def]
     user = mocker.MagicMock()
     user.input_data = {"stufeSemester": input_value}
     class_level = class_level_hook_instance.calculate_class_level(user)
@@ -115,7 +117,9 @@ def test_calculate_class_level(input_value, expected, class_level_hook_instance,
         ("-/3", None),
     ],
 )
-def test_pre_create_udm_property_value(input_value, expected, class_level_hook_instance, mocker):  # type: ignore[no-untyped-def]
+def test_pre_create_udm_property_value(
+    input_value, expected, class_level_hook_instance, mocker
+):  # type: ignore[no-untyped-def]
     user = mocker.MagicMock(spec=ImportStudent)
     user.udm_properties = {}
     user.input_data = {"stufeSemester": input_value}

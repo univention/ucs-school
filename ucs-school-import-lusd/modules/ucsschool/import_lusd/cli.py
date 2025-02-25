@@ -27,7 +27,8 @@
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
-"""\
+"""
+\
 A UCS@school command line interface to fetch
 user and group data from LUSD and import the fetched data into
 the UCS@school domain.
