@@ -1,0 +1,42 @@
+ucs-school-import-lusd (1.99.1) unstable; urgency=medium
+
+  * UCS@school 5.1
+
+ -- Jürn Brodersen <brodersen@univention.de>  Tue, 25 Feb 2025 10:35:24 +0100
+
+ucs-school-import-lusd (1.0.4) unstable; urgency=medium
+
+  * Fix tests
+
+ -- Jürn Brodersen <brodersen@univention.de>  Mon, 16 Dec 2024 12:50:12 +0100
+
+ucs-school-import-lusd (1.0.3) unstable; urgency=medium
+
+  * Added an optional hook to import ``semesterStufe`` from LUSD.
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Fri, 13 Dec 2024 10:55:00 +0100
+
+ucs-school-import-lusd (1.0.2) unstable; urgency=medium
+
+  * Added the options to skip importing students or teachers.
+
+ -- Jürn Brodersen <brodersen@univention.de>  Thu, 12 Dec 2024 17:37:06 +0100
+
+ucs-school-import-lusd (1.0.1) unstable; urgency=medium
+
+  * Added a new configuration key "ucsschool/import/lusd/school_authority" to
+    check if all school mappings are part of the responsible school authority.
+
+    Issue univention/ucsschool#1317
+
+ -- Jürn Brodersen <brodersen@univention.de>  Wed, 11 Dec 2024 11:23:17 +0100
+
+ucs-school-import-lusd (1.0.0) unstable; urgency=medium
+
+  * The ucs-school-import-lusd debian package is created in the context of the
+    epic univention&629 "LUSD Importer" a project to import user data from the
+    LUSD JSON API into UCS@school within the UCS@school Importer framework.
+
+    Issue univention/ucsschool#1259
+
+ -- Johannes Königer <koeniger@univention.de>  Thu, 18 Jul 2024 15:21:04 +0200

@@ -1,0 +1,38 @@
+[
+  {
+    "antwort": {
+      "lernende": [
+        {
+          "dienststellennummer": "627000",
+          "klassenname": "12BFTT",
+          "schuelerIdEsz": "S1700217",
+          "schuelerNachname": "R\u00f6hrig",
+          "schuelerUID": "0f2c7d6a-bc35-46f5-ab93-8c33feafe096",
+          "schuelerVorname": "York-Finley",
+          "stufeSemester": "12/2",
+          "usfbk": "BFSB/----/MASC"
+        },
+        {
+          "dienststellennummer": "627000",
+          "klassenname": "11BFTT",
+          "schuelerIdEsz": "S0053720",
+          "schuelerNachname": "Tesfalem",
+          "schuelerUID": "e1147d03-ac63-4d79-92b1-95c46363388d",
+          "schuelerVorname": "Lewin",
+          "stufeSemester": "11/2",
+          "usfbk": "BFSB/----/MASC"
+        },
+        {
+          "dienststellennummer": "627000",
+          "klassenname": "12LM1",
+          "schuelerIdEsz": "S1699322",
+          "schuelerNachname": "Abel",
+          "schuelerUID": "cc4c1ba8-f3f3-4f51-8cdd-48ad592aa9e2",
+          "schuelerVorname": "Torsten",
+          "stufeSemester": "12/2",
+          "usfbk": "BSBT/SONS/----"
+        }
+      ]
+    }
+  }
+]
