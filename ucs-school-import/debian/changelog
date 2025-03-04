@@ -1,3 +1,9 @@
+ucs-school-import (19.0.4) unstable; urgency=medium
+
+  * Issue univention/ucsschool#1378: Fix technical import error
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Tue, 04 Mar 2025 12:06:00 +0100
+
 ucs-school-import (19.0.3) unstable; urgency=medium
 
   * Issue univention/ucsschool#1360: Use uas-import PAM service instead of

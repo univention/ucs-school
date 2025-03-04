@@ -226,7 +226,7 @@ class TextArtifactSerializer(serializers.HyperlinkedModelSerializer):
     def to_representation(self, instance):
         # when reading an item, read logfile from disk, when listing all LogFiles don't
         res = super(TextArtifactSerializer, self).to_representation(instance)
-        if not isinstance(self.instance, collections.Iterable):
+        if not isinstance(self.instance, collections.abc.Iterable):
             res["text"] = instance.get_text()
         return res
 
