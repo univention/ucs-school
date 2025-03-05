@@ -131,7 +131,7 @@ rst_epilog = """
 
 intersphinx_mapping = {
     "uv-ucsschool-import": (
-        "https://docs.software-univention.de/ucsschool-import/5.0/de/",
+        "https://docs.software-univention.de/ucsschool-import/5.2/de/",
         None,
     ),
 }

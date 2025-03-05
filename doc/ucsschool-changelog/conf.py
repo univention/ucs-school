@@ -161,11 +161,11 @@ figure_language_filename = "{root}-{language}{ext}"
 univention_use_doc_base = True
 
 intersphinx_mapping = {
-    "uv-manual": ("https://docs.software-univention.de/manual/5.0/de", None),
-    "uv-import": ("https://docs.software-univention.de/ucsschool-import/5.0/de", None),  # TODO
+    "uv-manual": ("https://docs.software-univention.de/manual/5.2/de", None),
+    "uv-import": ("https://docs.software-univention.de/ucsschool-import/5.2/de", None),  # TODO
     "uv-changelog-5.0v4": ("https://docs.software-univention.de/ucsschool-changelog/5.0v4/de", None),
     "uv-ucsschool-admin": (
-        "https://docs.software-univention.de/ucsschool-manual/5.0/de/",
+        "https://docs.software-univention.de/ucsschool-manual/5.2/de/",
         None,
     ),
 }

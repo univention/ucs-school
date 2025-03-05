@@ -127,11 +127,11 @@ univention_feedback = True
 univention_pdf_show_source_license = True
 
 intersphinx_mapping = {
-    "uv-manual": ("https://docs.software-univention.de/manual/5.0/de", None),
-    "uv-domain": ("https://docs.software-univention.de/ext-domain/5.0/en/", None),
-    "uv-inst": ("https://docs.software-univention.de/ext-installation/5.0/en/", None),
+    "uv-manual": ("https://docs.software-univention.de/manual/5.2/de", None),
+    "uv-domain": ("https://docs.software-univention.de/ext-domain/5.2/en/", None),
+    "uv-inst": ("https://docs.software-univention.de/ext-installation/5.2/en/", None),
     "uv-ucsschool-manual": (
-        "https://docs.software-univention.de/ucsschool-manual/5.0/de/",
+        "https://docs.software-univention.de/ucsschool-manual/5.2/de/",
         None,
     ),
 }
@@ -153,11 +153,11 @@ def adapt_settings_to_translation(app, config):
         config.tokenizer_lang = "en_US"
 
         config.intersphinx_mapping = {
-            "uv-manual": ("https://docs.software-univention.de/manual/5.0/en", None),
-            "uv-domain": ("https://docs.software-univention.de/ext-domain/5.0/en/", None),
-            "uv-inst": ("https://docs.software-univention.de/ext-installation/5.0/en/", None),
+            "uv-manual": ("https://docs.software-univention.de/manual/5.2/en", None),
+            "uv-domain": ("https://docs.software-univention.de/ext-domain/5.2/en/", None),
+            "uv-inst": ("https://docs.software-univention.de/ext-installation/5.2/en/", None),
             "uv-ucsschool-manual": (
-                "https://docs.software-univention.de/ucsschool-manual/5.0/de/",
+                "https://docs.software-univention.de/ucsschool-manual/5.2/de/",
                 None,
             ),
         }

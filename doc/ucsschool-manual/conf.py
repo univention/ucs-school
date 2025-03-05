@@ -139,13 +139,13 @@ univention_feedback = True
 univention_pdf_show_source_license = True
 
 intersphinx_mapping = {
-    "uv-manual": ("https://docs.software-univention.de/manual/5.0/de", None),
+    "uv-manual": ("https://docs.software-univention.de/manual/5.2/de", None),
     "uv-kelvin": (
         "https://docs.software-univention.de/ucsschool-kelvin-rest-api/",
         None,
     ),
     "uv-performance": (
-        "https://docs.software-univention.de/ext-performance/5.0/en/",
+        "https://docs.software-univention.de/ext-performance/5.2/en/",
         None,
     ),
     "python-docs": ("https://docs.python.org/3.11/", None),

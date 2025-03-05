@@ -144,13 +144,13 @@ univention_feedback = True
 univention_pdf_show_source_license = True
 
 intersphinx_mapping = {
-    "uv-manual": ("https://docs.software-univention.de/manual/5.0/de", None),
+    "uv-manual": ("https://docs.software-univention.de/manual/5.2/de", None),
     "uv-ucsschool-umc-user-import": (
-        "https://docs.software-univention.de/ucsschool-umc-user-import/5.0/de",
+        "https://docs.software-univention.de/ucsschool-umc-user-import/5.2/de",
         None,
     ),
     "uv-ucsschool-manual": (
-        "https://docs.software-univention.de/ucsschool-manual/5.0/de/",
+        "https://docs.software-univention.de/ucsschool-manual/5.2/de/",
         None,
     ),
 }

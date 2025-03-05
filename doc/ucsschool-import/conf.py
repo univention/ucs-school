@@ -123,10 +123,10 @@ univention_feedback = True
 univention_pdf_show_source_license = True
 
 intersphinx_mapping = {
-    "uv-manual": ("https://docs.software-univention.de/manual/5.0/de", None),
-    "uv-domain": ("https://docs.software-univention.de/ext-domain/5.0/en/", None),
-    "uv-inst": ("https://docs.software-univention.de/ext-installation/5.0/en/", None),
-    "python": ("https://docs.python.org/3.7/", None),
+    "uv-manual": ("https://docs.software-univention.de/manual/5.2/de", None),
+    "uv-domain": ("https://docs.software-univention.de/ext-domain/5.2/en/", None),
+    "uv-inst": ("https://docs.software-univention.de/ext-installation/5.2/en/", None),
+    "python": ("https://docs.python.org/3.11/", None),
 }
 
 rst_epilog = """
