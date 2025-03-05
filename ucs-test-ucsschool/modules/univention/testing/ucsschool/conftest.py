@@ -2,9 +2,11 @@ import enum
 import logging
 import os
 import random
+import shutil
 import subprocess
 import tempfile
 import time
+from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Type  # noqa: F401
 
 import pytest
@@ -550,3 +552,16 @@ def stop_module_process():
             "/usr/bin/python3 /usr/sbin/univention-management-console-module -m ",
         ]
     )
+
+
+@pytest.fixture()
+def copy_file():
+    cleanup_paths = []
+
+    def _copy_file(src, dest):
+        cleanup_paths.append(dest)
+        shutil.copy(src, dest)
+
+    yield _copy_file
+    for path in cleanup_paths:
+        Path(path).unlink()

@@ -1,3 +1,9 @@
+ucs-test-ucsschool (8.0.14) unstable; urgency=medium
+
+  * Issue univention/ucsschool#1378: Add test for file downloads
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Thu, 06 Mar 2025 07:55:00 +0100
+
 ucs-test-ucsschool (8.0.13) unstable; urgency=medium
 
   * Issue univention/ucsschool#1366: Missing includes in the share.conf
