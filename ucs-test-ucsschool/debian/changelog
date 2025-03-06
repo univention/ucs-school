@@ -1,3 +1,9 @@
+ucs-test-ucsschool (8.0.16) unstable; urgency=low
+
+  * Issue univention/ucsschool#1377: Adapt test to test query params of HTTP API
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 06 Mar 2025 17:33:05 +0100
+
 ucs-test-ucsschool (8.0.15) unstable; urgency=medium
 
   * Issue univention/ucsschool#1347: wait for s4 ping pong

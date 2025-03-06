@@ -65,3 +65,17 @@ def test_download_passwords(schoolenv, ucr, udm_session, copy_file):
     summary = client.call_api("get", f"imports/users/{job_id}/summary")
     assert "altman.koehl" in passwords["text"]
     assert "altman.koehl" in summary["text"]
+
+    all_jobs = client.call_api("get", "imports/users/")
+    dryrun_jobs = client.call_api("get", "imports/users/", params={"dryrun": True})
+    non_dryrun_jobs = client.call_api("get", "imports/users/", params={"dryrun": False})
+
+    assert {x["id"] for x in all_jobs["results"] if x["dryrun"]} == {
+        x["id"] for x in dryrun_jobs["results"]
+    }, "List of dryrun jobs is not identical with dryrun jobs within all_jobs"
+
+    # the test does not actually import users, so the list of jobs with dryrun=False might be
+    # empty all the time but this case is covered by the manual product tests
+    assert {x["id"] for x in all_jobs["results"] if not x["dryrun"]} == {
+        x["id"] for x in non_dryrun_jobs["results"]
+    }, "List of non-dryrun jobs is not identical with non-dryrun jobs within all_jobs"
