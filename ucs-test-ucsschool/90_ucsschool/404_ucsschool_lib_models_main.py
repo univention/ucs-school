@@ -11,12 +11,14 @@ import sys
 from typing import Dict, List, Tuple  # noqa: F401
 
 import pytest
+from ldap.filter import filter_format
 
 import univention.testing.strings as uts
 import univention.testing.ucsschool.ucs_test_school as utu
 from ucsschool.lib.models.utils import exec_cmd
 from univention.testing import utils
 from univention.testing.ucr import UCSTestConfigRegistry
+from univention.testing.ucs_samba import wait_for_drs_replication, wait_for_s4connector
 from univention.testing.ucsschool.importusers import Person
 
 
@@ -414,6 +416,8 @@ def test_modify(cmd_line_role, ucr_hostname, ucr_ldap_base):
             ]
             rv, stdout, stderr = exec_cmd(cmd, log=True, raise_exc=True)
             assert user_dn in stdout
+            wait_for_drs_replication(filter_format("cn=%s", (user_name,)))
+            wait_for_s4connector()
             utils.verify_ldap_object(
                 user_dn,
                 expected_attr={
