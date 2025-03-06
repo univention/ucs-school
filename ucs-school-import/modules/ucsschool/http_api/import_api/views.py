@@ -336,11 +336,13 @@ class UserImportJobViewSet(
         queryset = self.filter_queryset(self.get_queryset())
 
         # coming from GET SchoolViewSet.user_imports()?
-        try:
-            school = kwargs["school"]
-            queryset = queryset.filter(school=school)
-        except KeyError:
-            pass
+        query_filter = {}
+        if "school" in kwargs:
+            query_filter["school"] = kwargs["school"]
+        # workaround for django's change in behaviour (issue ucsschool#1377)
+        if "dryrun" in request.query_params:
+            query_filter["dryrun"] = request.query_params.get("dryrun")
+        queryset = queryset.filter(**query_filter)
 
         page = self.paginate_queryset(queryset)
         if page is not None:
