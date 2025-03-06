@@ -303,7 +303,7 @@ class UserImportJobViewSet(
         OrderingFilter,  # used for ordering
     )
     # filter principal by 'username' (DjangoFilterBackend works automatically only on pk):
-    filter_class = UserImportJobFilter
+    filterset_class = UserImportJobFilter
     permission_classes = (
         IsAuthenticated,  # user must be authenticated to use this view
         UserImportJobViewPermission,  # apply per view and per-object permission checks
@@ -470,7 +470,7 @@ class RoleViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Role.objects.all()
     serializer_class = RoleSerializer
     filter_backends = (RoleFilterBackend, DjangoFilterBackend, OrderingFilter)
-    filter_fields = ("name", "displayName")
+    filterset_fields = ("name", "displayName")
     ordering_fields = ("name", "displayName")
     permission_classes = (IsAuthenticated, RoleViewPermission)
 
@@ -503,7 +503,7 @@ class SchoolViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = School.objects.all()
     serializer_class = SchoolSerializer
     filter_backends = (SchoolFilterBackend, DjangoFilterBackend, OrderingFilter)
-    filter_fields = ("name", "displayName")
+    filterset_fields = ("name", "displayName")
     ordering_fields = ("name", "displayName")
     permission_classes = (IsAuthenticated, SchoolViewPermission)
 
