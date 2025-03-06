@@ -1,9 +1,11 @@
 ucs-school-import (19.0.5) unstable; urgency=low
 
-  * Issue univention/ucsschool#1377: due to a change of django's query
+  * Issue univention/ucsschool#1377: Due to a change of Django's query
     filter processing the dryrun kwarg has been ignored. A workaround has
     been implemented.
-  * Issue univention/ucsschool#1398: increased join script version to run
+  * Issue univention/ucsschool#1377: Several attributes have been renamed
+    due to Django changes caused by the update to UCS@school 5.2
+  * Issue univention/ucsschool#1398: Increased join script version to run
     the django migration commands after the update to UCS@school 5.2
 
  -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 06 Mar 2025 12:40:24 +0100
