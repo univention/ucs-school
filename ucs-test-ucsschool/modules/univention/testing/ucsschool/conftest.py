@@ -556,12 +556,20 @@ def stop_module_process():
 
 @pytest.fixture()
 def copy_file():
-    cleanup_paths = []
+    """Copy file to target location and cleans up afterwards."""
+    cleanup_paths = {}
 
     def _copy_file(src, dest):
-        cleanup_paths.append(dest)
+        if os.path.exists(dest):
+            backup_file = dest + f".pytest_backup_file_{time.time()}"
+            shutil.copy2(dest, backup_file)
+        else:
+            backup_file = None
+        cleanup_paths[dest] = backup_file
         shutil.copy(src, dest)
 
     yield _copy_file
-    for path in cleanup_paths:
-        Path(path).unlink()
+    for target, backup_file in cleanup_paths.items():
+        Path(target).unlink()
+        if backup_file is not None:
+            shutil.move(backup_file, target)
