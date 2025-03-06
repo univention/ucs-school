@@ -17,6 +17,8 @@ from ucsschool.lib.models import SchoolAdmin
 from univention.testing.ucs_samba import wait_for_drs_replication
 from univention.testing.utils import wait_for_s4_connector_to_be_inactive
 
+IMPORT_TIMEOUT = 10  # wait 10 seconds for imports to finish
+
 
 def test_download_passwords(schoolenv, ucr, udm_session, copy_file):
     password = "univention"
@@ -39,33 +41,39 @@ def test_download_passwords(schoolenv, ucr, udm_session, copy_file):
         f'"Schule","Vorname","Nachname","Klassen","Beschreibung","Telefon","EMail"\n'
         f'"{school}","Altman","Koehler","1a","A student.","+40-680-107371",""'
     )
+    csv_file_cleanup = io.StringIO(
+        '"Schule","Vorname","Nachname","Klassen","Beschreibung","Telefon","EMail"\n'
+    )
     copy_file(
         "/usr/share/ucs-school-import/configs/ucs-school-testuser-http-import.json",
         f"/var/lib/ucs-school-import/configs/{school}.json",
     )
-    job = client.userimportjob.create(
-        "some_file.csv",
-        source_uid="TEST_IMPORT",
-        school=school,
-        user_role="student",
-        dryrun=True,
-        file_obj=csv_file,
-    )
-    job_id = job.id
-    tries = 0
-    while True:
-        if tries > 9:
-            raise Exception("The import did not complete in time or failed.")
-        job = client.userimportjob.get(job_id)
-        if job.status == "Finished":
-            break
-        tries += 1
-        sleep(1.0)
-    passwords = client.call_api("get", f"imports/users/{job_id}/passwords")
-    summary = client.call_api("get", f"imports/users/{job_id}/summary")
-    assert "altman.koehl" in passwords["text"]
-    assert "altman.koehl" in summary["text"]
+    # perform a dryrun and a non-dryrun import and a non-dryrun cleanup import
+    for dryrun, csv_obj in ((True, csv_file), (False, csv_file), (False, csv_file_cleanup)):
+        job = client.userimportjob.create(
+            "some_file.csv",
+            source_uid="UCSTEST_IMPORT",
+            school=school,
+            user_role="student",
+            dryrun=dryrun,
+            file_obj=csv_obj,
+        )
+        job_id = job.id
+        for attempt in range(IMPORT_TIMEOUT):
+            job = client.userimportjob.get(job_id)
+            if job.status == "Finished":
+                break
+            sleep(1.0)
+        else:
+            raise Exception(f"The dryrun={dryrun} import did not complete in time or failed.")
 
+        if csv_obj == csv_file:
+            passwords = client.call_api("get", f"imports/users/{job_id}/passwords")
+            summary = client.call_api("get", f"imports/users/{job_id}/summary")
+            assert "altman.koehl" in passwords["text"]
+            assert "altman.koehl" in summary["text"]
+
+    # check if the dryrun filter for import/users/ is working properly
     all_jobs = client.call_api("get", "imports/users/")
     dryrun_jobs = client.call_api("get", "imports/users/", params={"dryrun": True})
     non_dryrun_jobs = client.call_api("get", "imports/users/", params={"dryrun": False})
@@ -74,8 +82,6 @@ def test_download_passwords(schoolenv, ucr, udm_session, copy_file):
         x["id"] for x in dryrun_jobs["results"]
     }, "List of dryrun jobs is not identical with dryrun jobs within all_jobs"
 
-    # the test does not actually import users, so the list of jobs with dryrun=False might be
-    # empty all the time but this case is covered by the manual product tests
     assert {x["id"] for x in all_jobs["results"] if not x["dryrun"]} == {
         x["id"] for x in non_dryrun_jobs["results"]
     }, "List of non-dryrun jobs is not identical with non-dryrun jobs within all_jobs"
