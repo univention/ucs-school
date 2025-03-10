@@ -22,11 +22,11 @@ for DIR in ~/git/*; do (cd $DIR; git pull); done
 ```
 
 Now push the changes to the Test Appcenter.
-For example, to upload `ucs-school-import ucs-school-umc-internetrules` and `ucs-school-import` to UCS@school 5.0 v4:
+For example, to upload `ucs-school-import ucs-school-umc-internetrules` and `ucs-school-import` to UCS@school 5.2 v1:
 
 ```shell
 cd ~/git/ucsschool/doc/errata/staging
-copy_app_binaries --yes-i-really-want-to-upload-to-published-components -r 5.0 -v "5.0 v6" -u \
+copy_app_binaries --yes-i-really-want-to-upload-to-published-components -r 5.2 -v "5.2 v1" -u \
     ucs-school-import.yaml \
     ucs-school-umc-internetrules.yaml
 ```
@@ -34,7 +34,7 @@ copy_app_binaries --yes-i-really-want-to-upload-to-published-components -r 5.0 -
 - Check if the displayed packages and versions are OK
   - Copy the list of displayed packages, so you can use it for confirming the versions later in production.
 - You will have to confirm in a funny way, by entering the numbers **backward**.
-- If the package version can't be found, rebuilding can help, e.g. `b50-scope ucs-school-5.0 ucs-school-lib`
+- If the package version can't be found, rebuilding can help, e.g. `b50-scope ucs-school-5.2 ucs-school-lib`
 
 ### ucs-test-ucsschool updates
 
@@ -51,7 +51,7 @@ You should only release if:
 To release `ucs-test-ucsschool`:
 
 ```shell
-univention-appcenter-control upload --upload-packages-although-published '5.0/ucsschool=5.0 v4' $(find /var/univention/buildsystem2/apt/ucs_5.0-0-ucs-school-5.0/ -name 'ucs-test-ucsschool*.deb')
+univention-appcenter-control upload --upload-packages-although-published '5.2/ucsschool=5.2 v4' $(find /var/univention/buildsystem2/apt/ucs_5.2-0-ucs-school-5.2/ -name 'ucs-test-ucsschool*.deb')
 ```
 
 ## First Time Preparations

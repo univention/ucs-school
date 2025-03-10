@@ -31,7 +31,7 @@ section in the manual release documentation.
 
 ## Prepare a VM for testing
 
-If you don't have one already, create a [UCS@school multi-server env](https://jenkins2022.knut.univention.de/view/UCS@school/job/UCSschool-5.0/view/Environments/job/SchoolMultiserverEnvironment/) to use for testing when [doing QA](README_qa_for_release.md).
+If you don't have one already, create a [UCS@school multi-server env](https://jenkins2022.knut.univention.de/view/UCS@school/job/UCSschool-5.2/view/Environments/job/SchoolMultiserverEnvironment/) to use for testing when [doing QA](README_qa_for_release.md).
 
 ## Prerequisites
 
@@ -53,11 +53,11 @@ Keep in mind:
 
 The following code can be executed on `omar`.
 
-The correct version string, for example `ucsschool_20230802094418`, can be found in the [Test AppCenter](https://appcenter-test.software-univention.de/meta-inf/5.0/ucsschool/) by navigating to the last (published) version.
+The correct version string, for example `ucsschool_20230802094418`, can be found in the [Test AppCenter](https://appcenter-test.software-univention.de/meta-inf/5.2/ucsschool/) by navigating to the last (published) version.
 
 ```shell
 cd /mnt/omar/vmwares/mirror/appcenter
-./copy_from_appcenter.test.sh 5.0 ucsschool_20240318112841  # copies the given version to public app center on local mirror!
+./copy_from_appcenter.test.sh 5.2 ucsschool_20240318112841  # copies the given version to public app center on local mirror!
 sudo update_mirror.sh -v appcenter  # syncs the local mirror to the public download server!
 ```
 
@@ -88,7 +88,7 @@ Follow the pipeline to be sure it completes correctly, and then check the
 
 ### Update the release announcement wiki
 
-Update [Release Ankündigungen für UCS@school 5.0](https://help.univention.com/t/release-ankundigungen-fur-ucs-school-5-0-stand-17-11-2022/20184)
+Update [Release Ankündigungen für UCS@school 5.2](https://help.univention.com/t/release-ankundigungen-fur-ucs-school-5.2-stand-17-11-2022/20184)
 by adding a new section below the existing ones and updating the change date in
 the headline.
 
@@ -102,12 +102,12 @@ Subject: App Center: UCS@school updated
 
 Hello everyone,
 
-Errata have just been released for UCS@school 5.0 v6.
+Errata have just been released for UCS@school 5.2 v1.
 
 The changelog is available here:
 
-- https://docs.software-univention.de/ucsschool-changelog/5.0v6/en/changelog.html
-- https://docs.software-univention.de/ucsschool-changelog/5.0v6/de/changelog.html
+- https://docs.software-univention.de/ucsschool-changelog/5.2v1/en/changelog.html
+- https://docs.software-univention.de/ucsschool-changelog/5.2v1/de/changelog.html
 
 Excerpts from the changelog:
 
@@ -134,10 +134,10 @@ This will enable you to select and modify the bugs you need.
 Use this text as the comment for closing the mentioned bugs:
 
 ```
-Errata updates for UCS@school 5.0 v6 have been released.
+Errata updates for UCS@school 5.2 v1 have been released.
 
-https://docs.software-univention.de/ucsschool-changelog/5.0v6/en/changelog.html
-https://docs.software-univention.de/ucsschool-changelog/5.0v6/de/changelog.html
+https://docs.software-univention.de/ucsschool-changelog/5.2v1/en/changelog.html
+https://docs.software-univention.de/ucsschool-changelog/5.2v1/de/changelog.html
 
 If this error occurs again, please clone this bug.
 ```

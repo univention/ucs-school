@@ -24,13 +24,13 @@ This document uses Sphinx for building the artifacts from the reStructeredText
 **NOTE:** If you are doing an errata release, skip this step.
 
 The following example illustrates the procedure on the example for the
-UCS@school 5.0 v6 release version.
+UCS@school 5.2 v2 release version.
 
 Update configuration settings in `doc/ucsschool-changelog/conf.py`:
 
-* Set `univention_changelog_previous_release` to `"5.0 v5"`.
-* Set `release` to `5.0 v6`. It may also have to be adapted in [base-doc.yml](../../.gitlab-ci/base-doc.yml).
-* Keep `version` at `5.0`.
+* Set `univention_changelog_previous_release` to `"5.2 v1"`.
+* Set `release` to `5.2 v2`. It may also have to be adapted in [base-doc.yml](../../.gitlab-ci/base-doc.yml).
+* Keep `version` at `5.2`.
 
 Add additional update information in the `*.rst` files. It might help to run `make clean` inside the docker container when your are doing a release.
 
@@ -108,5 +108,5 @@ The pipeline runs on an MR automatically and will tell you if something is wrong
 
 Once all pipelines are complete, you should visit the changelog pages and verify that the changes are there:
 
-* [English changelog](https://docs.software-univention.de/ucsschool-changelog/5.0v6/en/changelog.html)
-* [German changelog](https://docs.software-univention.de/ucsschool-changelog/5.0v6/de/changelog.html)
+* [English changelog](https://docs.software-univention.de/ucsschool-changelog/5.2v1/en/changelog.html)
+* [German changelog](https://docs.software-univention.de/ucsschool-changelog/5.2v1/de/changelog.html)
