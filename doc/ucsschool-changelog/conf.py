@@ -162,7 +162,8 @@ univention_use_doc_base = True
 
 intersphinx_mapping = {
     "uv-manual": ("https://docs.software-univention.de/manual/5.2/de", None),
-    "uv-import": ("https://docs.software-univention.de/ucsschool-import/5.2/de", None),  # TODO
+    "uv-import": ("https://docs.software-univention.de/ucsschool-import/5.2/de", None),
+    "uv-navigation": ("https://docs.software-univention.de/n/en/", None),
     "uv-changelog-5.0v4": ("https://docs.software-univention.de/ucsschool-changelog/5.0v4/de", None),
     "uv-ucsschool-admin": (
         "https://docs.software-univention.de/ucsschool-manual/5.2/de/",

@@ -11,9 +11,8 @@
 This document contains the changelogs with the detailed change information for
 the update of |UCSUAS| from version 5.0v7 or newer to 5.2v1.
 
-If necessary, important notes about the update are covered in a separate
-section. The change information for previous version jumps can be found at
-https://docs.software-univention.de/.
+Important notes about the update are covered in a :ref:`separate section<important-notes>`,
+the change information for previous version jumps can be found at :external+uv-navigation:ref:`the changelog overview page <ucsschool-changelog>`.
 
 .. _changelog-prepare:
 
