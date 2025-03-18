@@ -54,7 +54,6 @@ import univention.debug as ud
 import univention.udm
 from ucsschool.exam.exam_user_pyhook import ExamUserPyHook
 from ucsschool.importer.utils.import_pyhook import ImportPyHookLoader
-from ucsschool.lib.models.base import MultipleObjectsError
 from ucsschool.lib.models.computer import SchoolComputer
 from ucsschool.lib.models.group import ComputerRoom
 from ucsschool.lib.models.school import School
@@ -234,7 +233,21 @@ class Instance(SchoolBaseModule):
 
         user_orig = user.get_udm_object(ldap_admin_write)
 
-        if user_orig["disabled"] == "1":
+        # uid and DN of exam_user
+        exam_user_uid = "".join((self._examUserPrefix, user_orig["username"]))
+        exam_user_dn = "uid=%s,%s" % (
+            escape_dn_chars(exam_user_uid),
+            self.examUserContainerDN(ldap_admin_write, ldap_position, user.school or school),
+        )
+        exam_user = ExamStudent.get_only_udm_obj(
+            ldap_admin_write, filter_format("uid=%s", (exam_user_uid,))
+        )
+        if exam_user:
+            exam_user = ExamStudent.from_udm_obj(exam_user, None, ldap_admin_write)
+
+        if (
+            user_orig["disabled"] == "1" and exam_user is None
+        ):  # Only ignore if user is disabled and no exam user exists.
             logger.info("Ignored disabled user {}".format(userdn))
             self.finished(request.id, None)
             return
@@ -254,24 +267,8 @@ class Instance(SchoolBaseModule):
             user_orig["disabled"] = True
         user_orig.modify()
 
-        # uid and DN of exam_user
-        exam_user_uid = "".join((self._examUserPrefix, user_orig["username"]))
-        exam_user_dn = "uid=%s,%s" % (
-            escape_dn_chars(exam_user_uid),
-            self.examUserContainerDN(ldap_admin_write, ldap_position, user.school or school),
-        )
-
-        try:
-            exam_user = ExamStudent.get_only_udm_obj(
-                ldap_admin_write, filter_format("uid=%s", (exam_user_uid,))
-            )
-            if exam_user is None:
-                raise univention.admin.uexceptions.noObject(exam_user_uid)
-            exam_user = ExamStudent.from_udm_obj(exam_user, None, ldap_admin_write)
-        except (univention.admin.uexceptions.noObject, MultipleObjectsError):
-            pass  # we need to create the exam user
-        else:
-            logger.warning("The exam account does already exist for: %r", exam_user_uid)
+        if exam_user is not None:
+            logger.info("The exam account does already exist for: %r", exam_user_uid)
             if school not in exam_user.schools:
                 exam_user.schools.append(school)
             role_str = create_ucsschool_role_string(
