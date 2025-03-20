@@ -8,28 +8,46 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UCS@school - 5.0 v5 Changelog \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-11 08:28+0000\n"
+"POT-Creation-Date: 2025-03-20 09:34+0000\n"
 "PO-Revision-Date: 2023-08-02 09:20+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.16.0\n"
+"Generated-By: Babel 2.17.0\n"
 
 #: ../../changelog.rst:9
 msgid "Changelog"
 msgstr "Changelog"
 
-#: ../../changelog.rst:15
+#: ../../changelog.rst:14
+msgid "Released on 2025-XX-XX"
+msgstr "Veröffentlicht am XX. XX 2025"
+
+#: ../../changelog.rst:16
+msgid "Source package *ucs-school-umc-exam* in version ``12.0.2``:"
+msgstr "Quellpaket *ucs-school-umc-exam* in Version ``12.0.2``:"
+
+#: ../../changelog.rst:18
+msgid ""
+"Fixed a bug for students in multiple exams, if the "
+":envvar:`ucsschool/exam/user/disable` was set to ``yes``. Their exam "
+"users would not be configured properly (:uv:bug:`58093`)."
+msgstr ""
+"Es wurde ein Fehler behoben bei dem Studenten nicht korrekt an mehreren Klassenarbeiten "
+"teilnehmen konnte, wenn :envvar:`ucsschool/exam/user/disable` auf ``yes`` gesetzt wurde."
+"Klassenarbeitsbenutzer wurden nicht korrekt konfiguriert (:uv:bug:`58093`)."
+
+#: ../../changelog.rst:25
 msgid "Released on 2025-03-11"
 msgstr "Veröffentlicht am 11. März 2025"
 
-#: ../../changelog.rst:17
+#: ../../changelog.rst:27
 msgid "Source package *ucs-school-umc-exam* in version ``12.0.1``:"
 msgstr "Quellpaket *ucs-school-umc-exam* in Version ``12.0.1``:"
 
-#: ../../changelog.rst:19
+#: ../../changelog.rst:29
 msgid ""
 "Exam *shell* hooks are no longer supported. In UCS\\@school 5.0 exam "
 "shell hooks that are stored in ``/usr/share/ucs-school-"
@@ -46,7 +64,7 @@ msgstr ""
 "Verwendung eines *Python*-Hooks auf dem Primary Directory Node als "
 "Ersatz."
 
-#: ../../changelog.rst:22
+#: ../../changelog.rst:32
 msgid ""
 "Please note: This change does not affect the *Python* hooks for the exam "
 "mode that are executed on the Primary Directory Node and are located in "
@@ -58,19 +76,19 @@ msgstr ""
 "werden und im Verzeichnis ``/usr/share/ucs-school-exam-"
 "master/pyhooks/create_exam_user_pre/`` liegen."
 
-#: ../../changelog.rst:24
+#: ../../changelog.rst:34
 msgid "Source package *ucs-school-metapackage* in version ``15.0.1``:"
 msgstr "Quellpaket *ucs-school-metapackage* in Version ``15.0.1``:"
 
-#: ../../changelog.rst:26
+#: ../../changelog.rst:36
 msgid "Dropping support for Python 2."
 msgstr "Support für Python 2 entfernt."
 
-#: ../../changelog.rst:28
+#: ../../changelog.rst:38
 msgid "Source package *ucs-school-lib* in version ``15.0.1``:"
 msgstr "Quellpaket *ucs-school-lib* in Version ``15.0.1``:"
 
-#: ../../changelog.rst:30
+#: ../../changelog.rst:40
 msgid ""
 "The default value for the UCR variable ``ucsschool/validation/username"
 "/windows-check`` has been changed to ``yes``."
@@ -78,7 +96,7 @@ msgstr ""
 "Der Standardwert für die UCR-Variable ``ucsschool/validation/username"
 "/windows-check`` wurde auf ``yes`` geändert. "
 
-#: ../../changelog.rst:32
+#: ../../changelog.rst:42
 msgid ""
 "User names should not contain names reserved by Windows. See `Microsoft "
 "Documentation <https://learn.microsoft.com/en-"
@@ -97,21 +115,21 @@ msgstr ""
 "Siehe `Microsoft Dokumentation <https://learn.microsoft.com/de-"
 "de/windows/win32/fileio/naming-a-file>`_ für weitere Informationen über "
 "die betroffenen Namen. Benutzernamen, die diesen Regeln nicht "
-"entsprechen, gelten als nicht mehr unterstützt. Ab UCS\\@school 5.2 werden "
-"falsche Benutzernamen, einschließlich solcher, die automatisch durch "
-"Namensschemata erzeugt werden, standardmäßig verhindert. Sollte die "
-"Verwendung von reservierten Namen dennoch gewünscht sein, muss die "
+"entsprechen, gelten als nicht mehr unterstützt. Ab UCS\\@school 5.2 "
+"werden falsche Benutzernamen, einschließlich solcher, die automatisch "
+"durch Namensschemata erzeugt werden, standardmäßig verhindert. Sollte die"
+" Verwendung von reservierten Namen dennoch gewünscht sein, muss die "
 "entsprechende Prüfung durch Setzen der UCR-Variable auf ``no`` "
 "deaktiviert werden. Dies kann insbesondere bei der Anmeldung an und der "
 "Nutzung von Microsoft Windows-Clients zu Folgefehlern führen, weshalb von"
 " einer Aktivierung abgeraten wird. Im Falle eines Fehlers ist es nur "
 "möglich, die betroffenen Benutzernamen zu ändern. "
 
-#: ../../changelog.rst:40
+#: ../../changelog.rst:50
 msgid "Source package *ucs-school-umc-diagnostic* in version ``3.0.0``:"
 msgstr "Quellpaket *ucs-school-umc-diagnostic* in Version ``3.0.0``:"
 
-#: ../../changelog.rst:42
+#: ../../changelog.rst:52
 msgid ""
 "Usernames which do not comply with Windows naming conventions are now "
 "shown as critical errors in the system diagnostic tool."
@@ -119,11 +137,11 @@ msgstr ""
 "Benutzernamen, die nicht den Windows-Namenskonventionen entsprechen, "
 "werden nun als kritische Fehler im Systemdiagnosetool angezeigt."
 
-#: ../../changelog.rst:44
+#: ../../changelog.rst:54
 msgid "Source package *ucs-school-umc-printermoderation* in version ``18.0.1``:"
 msgstr "Quellpaket *ucs-school-umc-printermoderation* in Version ``18.0.1``:"
 
-#: ../../changelog.rst:46
+#: ../../changelog.rst:56
 msgid ""
 "Fixed an issue were the :spelling:ignore:`\"Printer Operators\"` group "
 "was left in a broken state after the join script had run."

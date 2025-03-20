@@ -53,6 +53,9 @@ Klassenarbeit teilnehmen, muss dessen Nutzerkonto aktiviert sein. Wie Benutzer
 aktiviert/deaktiviert werden können, wird in :cite:t:`ucs-manual` im Abschnitt
 :ref:`users-management-table-account` beschrieben.
 
+Nutzerkonten, die aufgrund der UCR-Variable :envvar:`ucsschool/exam/user/disable` bei
+einer laufenden Klassenarbeit deaktiviert wurden, werden erkannt und nicht ignoriert.
+
 Alle Klassenarbeitskonten der Schüler sowie alle Rechner des Computerraumes sind
 für den Zeitraum der Klassenarbeit Mitglieder der Gruppe
 :samp:`OU{OU-Name}-Klassenarbeit``. Durch diese Gruppe können spezifische
