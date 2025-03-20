@@ -1,3 +1,9 @@
+ucs-test-ucsschool (8.0.17) unstable; urgency=low
+
+  * Issue univention/ucsschool#1394: Add tests for multiple exams
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Thu, 20 Mar 2025 09:02:00 +0100
+
 ucs-test-ucsschool (8.0.16) unstable; urgency=low
 
   * Issue univention/ucsschool#1377: Adapt test to test query params of HTTP API
