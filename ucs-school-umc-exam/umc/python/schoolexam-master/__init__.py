@@ -663,25 +663,6 @@ class Instance(SchoolBaseModule):
         examUserPrefix = ucr.get("ucsschool/ldap/default/userprefix/exam", "exam-")
         user_uid = str2dn(userdn)[0][0][1].replace(examUserPrefix, "", 1)
         user_module = univention.udm.UDM(ldap_admin_write, 1).get("users/user")
-        search_result = list(user_module.search(filter_format("uid=%s", [user_uid])))
-        if len(search_result) == 1:
-            try:
-                orig_udm = search_result[0]
-                new_value = []
-                for ws in orig_udm.props.sambaUserWorkstations:
-                    new_ws = ws[1:] if ws.startswith("$") else ws
-                    new_value.append(new_ws)
-                orig_udm.props.sambaUserWorkstations = [ws for ws in new_value if len(ws) > 0]
-                # enable original user
-                if ucr.is_true("ucsschool/exam/user/disable"):
-                    logger.info("Enable original user {} again.".format(orig_udm))
-                    orig_udm.props.disabled = False
-                orig_udm.save()
-                logger.info("Original user access has been restored for %r.", orig_udm)
-            except univention.admin.uexceptions.noObject:
-                raise UMC_Error(_("Exam student %r not found.") % (userdn[len(examUserPrefix) :],))
-        elif len(search_result) == 0:
-            raise UMC_Error(_("Exam student %r not found.") % (userdn[len(examUserPrefix) :],))
         try:
             user = ExamStudent.from_dn(userdn, None, ldap_user_read)
         except univention.admin.uexceptions.noObject:
@@ -689,53 +670,54 @@ class Instance(SchoolBaseModule):
         except univention.admin.uexceptions.ldapError:
             raise
 
-        if exam:
-            try:
-                exam_role = create_ucsschool_role_string(
-                    role_exam_user, "{}-{}".format(exam, school), context_type_exam
-                )
-                exam_roles = [
-                    role for role in user.ucsschool_roles if get_role_info(role)[1] == context_type_exam
-                ]
-                if len(exam_roles) < 2:
-                    user.remove(ldap_admin_write)
-                    logger.info("Exam user was removed: %r", user)
-                else:
-                    logger.warning(
-                        "remove_exam_user() User %r will not be removed as he currently participates "
-                        "in another exam.",
-                        user.dn,
-                    )
+        try:
+            exam_role = create_ucsschool_role_string(
+                role_exam_user, "{}-{}".format(exam, school), context_type_exam
+            )
+            exam_roles = [
+                role for role in user.ucsschool_roles if get_role_info(role)[1] == context_type_exam
+            ]
+            if len(exam_roles) < 2:
+                search_result = list(user_module.search(filter_format("uid=%s", [user_uid])))
+                if len(search_result) == 1:
                     try:
-                        user.ucsschool_roles.remove(exam_role)
-                    except ValueError as exc:
+                        orig_udm = search_result[0]
+                        new_value = []
+                        for ws in orig_udm.props.sambaUserWorkstations:
+                            new_ws = ws[1:] if ws.startswith("$") else ws
+                            new_value.append(new_ws)
+                        orig_udm.props.sambaUserWorkstations = [ws for ws in new_value if len(ws) > 0]
+                        # enable original user
+                        if ucr.is_true("ucsschool/exam/user/disable"):
+                            logger.info("Enable original user {} again.".format(orig_udm))
+                            orig_udm.props.disabled = False
+                        orig_udm.save()
+                        logger.info("Original user access has been restored for %r.", orig_udm)
+                    except univention.admin.uexceptions.noObject:
                         raise UMC_Error(
-                            _('Could not remove exam role "%s" from %s: %s') % exam_role, userdn, exc
+                            _("Orig student %r not found.") % (userdn[len(examUserPrefix) :],)
                         )
-                    user.modify(ldap_admin_write)
-            except univention.admin.uexceptions.ldapError as exc:
-                raise UMC_Error(
-                    _("Could not remove exam user %(userdn)r: %(exc)s") % {"userdn": userdn, "exc": exc}
+                elif len(search_result) == 0:
+                    raise UMC_Error(_("Orig student %r not found.") % (userdn[len(examUserPrefix) :],))
+                user.remove(ldap_admin_write)
+                logger.info("Exam user was removed: %r", user)
+            else:
+                logger.warning(
+                    "remove_exam_user() User %r will not be removed as he currently participates "
+                    "in another exam.",
+                    user.dn,
                 )
-        else:  # for backwards compatibility with UCS@school prior Feb'20 exam might not be set
-            try:
-                schools = None
-                if school:
-                    schools = list(set(user.schools) - {school})
-                if schools:
-                    logger.warning(
-                        "remove_exam_user() User %r will not be removed as he currently participates "
-                        "in another exam.",
-                        user.dn,
+                try:
+                    user.ucsschool_roles.remove(exam_role)
+                except ValueError as exc:
+                    raise UMC_Error(
+                        _('Could not remove exam role "%s" from %s: %s') % exam_role, userdn, exc
                     )
-                    user.schools = schools
-                    user.modify(ldap_admin_write)
-                else:
-                    user.remove(ldap_admin_write)
-            except univention.admin.uexceptions.ldapError as exc:
-                raise UMC_Error(
-                    _("Could not remove exam user %(userdn)r: %(exc)s") % {"userdn": userdn, "exc": exc}
-                )
+                user.modify(ldap_admin_write)
+        except univention.admin.uexceptions.ldapError as exc:
+            raise UMC_Error(
+                _("Could not remove exam user %(userdn)r: %(exc)s") % {"userdn": userdn, "exc": exc}
+            )
 
         self.finished(request.id, {}, success=True)
 
