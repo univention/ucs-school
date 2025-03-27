@@ -77,7 +77,7 @@ class UMCTester(object):
             self.selenium.click_button(_("Reset password"))
             self.selenium.enter_input("newPassword", reset_password)
             self.selenium.click_button("Reset")
-            utils.verify_ldap_object(userdn, {"shadowMax": ("1",)}, retry_count=3)
+            utils.verify_ldap_object(userdn, {"shadowMax": ("0",)}, retry_count=3)
             self.selenium.end_umc_session()
             self.selenium.do_login(username, reset_password, check_successful_login=False)
             self.selenium.wait_for_text("The password has expired and must be renewed.", timeout=10)
