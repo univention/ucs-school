@@ -10,6 +10,17 @@ Changelog
 
 .. _changelog-ucsschool-2025-XX-XX:
 
+Released on 2025-XX-XX
+======================
+
+Source package *ucs-school-umc-computerroom* in version ``13.0.1``:
+
+* Fix: The zoomed in image on the "Watch" overview is now updated like the thumbnails.
+  The styling has been adapted to always show the enlarged image in the center of the screen.
+  The zoomed in image will now be shown after clicking on the thumbnail and not after a hovering on it (:uv:bug:`58160`).
+
+.. _changelog-ucsschool-2025-04-03:
+
 Released on 2025-04-03
 ======================
 

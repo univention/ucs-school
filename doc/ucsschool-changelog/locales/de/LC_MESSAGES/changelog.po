@@ -6,9 +6,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: UCS@school - 5.0 v5 Changelog \n"
+"Project-Id-Version: UCS@school - 5.2 v7 Changelog \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-03 09:08+0000\n"
+"POT-Creation-Date: 2025-04-03 14:52+0000\n"
 "PO-Revision-Date: 2023-08-02 09:20+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,34 +22,57 @@ msgid "Changelog"
 msgstr "Changelog"
 
 #: ../../changelog.rst:14
-msgid "Released on 2025-04-03"
-msgstr "Veröffentlicht am 03. April 2025"
+msgid "Released on 2025-XX-XX"
+msgstr "Veröffentlicht am XX XX 2025"
 
 #: ../../changelog.rst:16
+msgid "Source package *ucs-school-umc-computerroom* in version ``13.0.1``:"
+msgstr "Quellpaket *ucs-school-computerroom* in Version ``13.0.1``:"
+
+#: ../../changelog.rst:18
+msgid ""
+"Fix: The zoomed in image on the \"Watch\" overview is now updated like "
+"the thumbnails. The styling has been adapted to always show the enlarged "
+"image in the center of the screen. The zoomed in image will now be shown "
+"after clicking on the thumbnail and not after a hovering on it "
+"(:uv:bug:`58160`)."
+msgstr ""
+"Fix: Das vergrößerte Bild in der \"Überwachen\"-Übersicht wird nun, wie die "
+"die Vorschau, aktualisiert. "
+"Das Design wurde so angepasst, dass das vergrößerte Bild immer in der Mitte des Bildschirms angezeigt wird."
+"Das vergrößerte Bild wird nun nach einem Klick auf die Vorschau angezeigt und nicht mehr nach einem \"Schweben\" darauf"
+" (:uv:bug:`58160`)."
+
+#: ../../changelog.rst:25
+msgid "Released on 2025-04-03"
+msgstr "Veröffentlicht am 3. April 2025"
+
+#: ../../changelog.rst:27
 msgid "Source package *ucs-school-umc-exam* in version ``12.0.2``:"
 msgstr "Quellpaket *ucs-school-umc-exam* in Version ``12.0.2``:"
 
-#: ../../changelog.rst:18
+#: ../../changelog.rst:29
 msgid ""
 "Fixed a bug for students in multiple exams, if the "
 ":envvar:`ucsschool/exam/user/disable` was set to ``yes``. Their exam "
 "users would not be configured properly (:uv:bug:`58093`)."
 msgstr ""
-"Es wurde ein Fehler behoben bei dem Studenten nicht korrekt an mehreren "
-"Klassenarbeiten teilnehmen konnte, wenn "
-":envvar:`ucsschool/exam/user/disable` auf ``yes`` gesetzt "
-"wurde.Klassenarbeitsbenutzer wurden nicht korrekt konfiguriert "
-"(:uv:bug:`58093`)."
+"Es wurde ein Fehler behoben bei "
+"dem Studenten nicht korrekt an mehreren"
+" Klassenarbeiten teilnehmen konnte, wenn "
+":envvar:`ucsschool/exam/user/disable` auf ``yes`` "
+"gesetzt wurde.Klassenarbeitsbenutzer wurden nicht"
+" korrekt konfiguriert (:uv:bug:`58093`)."
 
-#: ../../changelog.rst:25
+#: ../../changelog.rst:36
 msgid "Released on 2025-03-11"
 msgstr "Veröffentlicht am 11. März 2025"
 
-#: ../../changelog.rst:27
+#: ../../changelog.rst:38
 msgid "Source package *ucs-school-umc-exam* in version ``12.0.1``:"
 msgstr "Quellpaket *ucs-school-umc-exam* in Version ``12.0.1``:"
 
-#: ../../changelog.rst:29
+#: ../../changelog.rst:40
 msgid ""
 "Exam *shell* hooks are no longer supported. In UCS\\@school 5.0 exam "
 "shell hooks that are stored in ``/usr/share/ucs-school-"
@@ -58,47 +81,54 @@ msgid ""
 "Please consider the use of a *Python* hook on the Primary Directory Node "
 "as a replacement."
 msgstr ""
-"*Shell* Hooks für den Klassenarbeitsmodus sind nicht mehr unterstützt. In"
-" UCS\\@school 5.0 werden Hooks, die in ``/usr/share/ucs-school-"
-"exam/hooks/create_exam_user_post`` gespeichert sind, während des Starts "
-"einer Prüfung für jeden Klassenarbeits-Benutzer ausgeführt. Diese "
-"Funktion wurde in UCS\\@school 5.2 entfernt. Bitte erwägen Sie die "
-"Verwendung eines *Python*-Hooks auf dem Primary Directory Node als "
-"Ersatz."
+"*Shell* Hooks für den Klassenarbeitsmodus "
+"sind nicht mehr unterstützt. In "
+"UCS\\@school 5.0 werden Hooks, die in"
+" ``/usr/share/ucs-school-"
+"exam/hooks/create_exam_user_post`` gespeichert sind, "
+"während des Starts einer Prüfung für "
+"jeden Klassenarbeits-Benutzer ausgeführt. "
+"Diese Funktion wurde in UCS\\@school 5.2"
+" entfernt. Bitte erwägen Sie die "
+"Verwendung eines *Python*-Hooks auf dem "
+"Primary Directory Node als Ersatz."
 
-#: ../../changelog.rst:32
+#: ../../changelog.rst:43
 msgid ""
 "Please note: This change does not affect the *Python* hooks for the exam "
 "mode that are executed on the Primary Directory Node and are located in "
 "the directory ``/usr/share/ucs-school-exam-"
 "master/pyhooks/create_exam_user_pre/``."
 msgstr ""
-"Anmerkung: Diese Änderung wirkt sich nicht auf die *Python*-Hooks für den"
-" Klassenarbeitsmodus aus, die auf dem Primary Directory Node ausgeführt "
-"werden und im Verzeichnis ``/usr/share/ucs-school-exam-"
-"master/pyhooks/create_exam_user_pre/`` liegen."
+"Anmerkung: Diese Änderung wirkt sich "
+"nicht auf die *Python*-Hooks für den "
+"Klassenarbeitsmodus aus, die auf dem "
+"Primary Directory Node ausgeführt werden "
+"und im Verzeichnis ``/usr/share/ucs-school-"
+"exam-master/pyhooks/create_exam_user_pre/`` liegen."
 
-#: ../../changelog.rst:34
+#: ../../changelog.rst:45
 msgid "Source package *ucs-school-metapackage* in version ``15.0.1``:"
 msgstr "Quellpaket *ucs-school-metapackage* in Version ``15.0.1``:"
 
-#: ../../changelog.rst:36
+#: ../../changelog.rst:47
 msgid "Dropping support for Python 2."
 msgstr "Support für Python 2 entfernt."
 
-#: ../../changelog.rst:38
+#: ../../changelog.rst:49
 msgid "Source package *ucs-school-lib* in version ``15.0.1``:"
 msgstr "Quellpaket *ucs-school-lib* in Version ``15.0.1``:"
 
-#: ../../changelog.rst:40
+#: ../../changelog.rst:51
 msgid ""
 "The default value for the UCR variable ``ucsschool/validation/username"
 "/windows-check`` has been changed to ``yes``."
 msgstr ""
-"Der Standardwert für die UCR-Variable ``ucsschool/validation/username"
-"/windows-check`` wurde auf ``yes`` geändert. "
+"Der Standardwert für die UCR-Variable"
+" ``ucsschool/validation/username/windows-check`` wurde"
+" auf ``yes`` geändert. "
 
-#: ../../changelog.rst:42
+#: ../../changelog.rst:53
 msgid ""
 "User names should not contain names reserved by Windows. See `Microsoft "
 "Documentation <https://learn.microsoft.com/en-"
@@ -113,45 +143,54 @@ msgid ""
 "it. In the event of an error, it is only possible to change the affected "
 "user names."
 msgstr ""
-"Benutzernamen sollten keine von Windows reservierten Namen enthalten. "
-"Siehe `Microsoft Dokumentation <https://learn.microsoft.com/de-"
-"de/windows/win32/fileio/naming-a-file>`_ für weitere Informationen über "
-"die betroffenen Namen. Benutzernamen, die diesen Regeln nicht "
-"entsprechen, gelten als nicht mehr unterstützt. Ab UCS\\@school 5.2 "
-"werden falsche Benutzernamen, einschließlich solcher, die automatisch "
-"durch Namensschemata erzeugt werden, standardmäßig verhindert. Sollte die"
-" Verwendung von reservierten Namen dennoch gewünscht sein, muss die "
-"entsprechende Prüfung durch Setzen der UCR-Variable auf ``no`` "
-"deaktiviert werden. Dies kann insbesondere bei der Anmeldung an und der "
-"Nutzung von Microsoft Windows-Clients zu Folgefehlern führen, weshalb von"
-" einer Aktivierung abgeraten wird. Im Falle eines Fehlers ist es nur "
-"möglich, die betroffenen Benutzernamen zu ändern. "
+"Benutzernamen sollten keine von Windows "
+"reservierten Namen enthalten. Siehe `Microsoft"
+" Dokumentation <https://learn.microsoft.com/de-"
+"de/windows/win32/fileio/naming-a-file>`_ für weitere "
+"Informationen über die betroffenen Namen. "
+"Benutzernamen, die diesen Regeln nicht "
+"entsprechen, gelten als nicht mehr "
+"unterstützt. Ab UCS\\@school 5.2 werden "
+"falsche Benutzernamen, einschließlich solcher, "
+"die automatisch durch Namensschemata erzeugt"
+" werden, standardmäßig verhindert. Sollte "
+"die Verwendung von reservierten Namen "
+"dennoch gewünscht sein, muss die "
+"entsprechende Prüfung durch Setzen der "
+"UCR-Variable auf ``no`` deaktiviert werden."
+" Dies kann insbesondere bei der "
+"Anmeldung an und der Nutzung von "
+"Microsoft Windows-Clients zu Folgefehlern "
+"führen, weshalb von einer Aktivierung "
+"abgeraten wird. Im Falle eines Fehlers"
+" ist es nur möglich, die betroffenen"
+" Benutzernamen zu ändern. "
 
-#: ../../changelog.rst:50
+#: ../../changelog.rst:61
 msgid "Source package *ucs-school-umc-diagnostic* in version ``3.0.0``:"
 msgstr "Quellpaket *ucs-school-umc-diagnostic* in Version ``3.0.0``:"
 
-#: ../../changelog.rst:52
+#: ../../changelog.rst:63
 msgid ""
 "Usernames which do not comply with Windows naming conventions are now "
 "shown as critical errors in the system diagnostic tool."
 msgstr ""
-"Benutzernamen, die nicht den Windows-Namenskonventionen entsprechen, "
-"werden nun als kritische Fehler im Systemdiagnosetool angezeigt."
+"Benutzernamen, die nicht den Windows-"
+"Namenskonventionen entsprechen, werden nun als"
+" kritische Fehler im Systemdiagnosetool "
+"angezeigt."
 
-#: ../../changelog.rst:54
+#: ../../changelog.rst:65
 msgid "Source package *ucs-school-umc-printermoderation* in version ``18.0.1``:"
 msgstr "Quellpaket *ucs-school-umc-printermoderation* in Version ``18.0.1``:"
 
-#: ../../changelog.rst:56
+#: ../../changelog.rst:67
 msgid ""
 "Fixed an issue were the :spelling:ignore:`\"Printer Operators\"` group "
 "was left in a broken state after the join script had run."
 msgstr ""
-"Es wurde ein Problem behoben, bei dem die Gruppe "
-":spelling:ignore:`\"Printer Operators\"` in einem defekten Zustand "
-"zurückgelassen wurde, nachdem das Join-Skript ausgeführt worden war."
-
-#~ msgid "Released on 2025-XX-XX"
-#~ msgstr "Veröffentlicht am XX. XX 2025"
-
+"Es wurde ein Problem behoben, bei "
+"dem die Gruppe :spelling:ignore:`\"Printer "
+"Operators\"` in einem defekten Zustand "
+"zurückgelassen wurde, nachdem das Join-"
+"Skript ausgeführt worden war."

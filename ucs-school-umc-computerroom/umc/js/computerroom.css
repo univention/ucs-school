@@ -92,28 +92,52 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	cursor: zoom-in;
+	aspect-ratio: 4 / 3;
+}
+.screenShotView__large_imgOverlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 9;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.7);
+	display: none;
+	cursor: zoom-out;
+}
+.screenShotView__figure {
+	margin: 0;
+	width: 100%;
+	height: 100%;
+}
+.screenShotView__large_imgWrapper {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: calc(100% - 4em);
+}
+.screenShotView__large_caption-container {
+	height: 2em;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.screenShotView__large_img {
+	height: 100%;
+	width: calc(100% - 4em);
+	object-fit: contain;
+	background-color: rgba(0, 0, 0, 0.7);
 }
 .screenShotView__img {
 	max-width: 100%;
 	max-height: 100%;
 }
-.screenShotView__imgTooltip {
-	width: 66vw;
-}
-.dijitTooltipContainer:has(.screenShotView__imgTooltip) {
-	max-width: 100%;
-}
-.screenShotView__imgTooltip--grid {
-	width: 240px;
-}
-
 .screenShotView__noComputersText {
 	display: flex;
 	justify-content: center;
 	color: var(--font-color-contrast-middle);
 }
-
-
 .computerroomComputerInfoTable td:first-child {
 	padding-right: var(--layout-spacing-unit)
 }

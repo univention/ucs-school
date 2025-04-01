@@ -32,143 +32,92 @@ define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
 	"dojo/_base/array",
-	"dojo/aspect",
 	"dojo/dom",
 	"dojo/dom-class",
+	"dojo/on",
+	"dojo/dom-style",
 	"dojox/html/entities",
 	"dijit/layout/ContentPane",
 	"dijit/_Contained",
-	"dijit/Tooltip",
 	"umc/tools",
 	"umc/widgets/ComboBox",
 	"umc/widgets/ContainerWidget",
-	"umc/widgets/Button",
 	"umc/widgets/Page",
 	"umc/widgets/StandbyMixin",
 	"umc/widgets/Text",
 	"put-selector/put",
 	"umc/i18n!umc/modules/computerroom"
-], function(declare, lang, array, aspect, dom, domClass, entities, ContentPane, _Contained, Tooltip, tools,
-		ComboBox, ContainerWidget, Button, Page, StandbyMixin, Text, put, _) {
-
-	// README: This is an alternative view
-	// var Item = declare( "umc.modules.computerroom.Item", [ dijit.TitlePane, _Contained ], {
-
-	// 	// the computer to show
-	// 	computer: '',
-
-	// 	// current user at the computer
-	// 	username: '',
-
-	// 	// image object
-	// 	image: null,
-
-	// 	// random extension to the URL to avoid caching
-	// 	random: null,
-
-	// 	// pattern for the image URI
-	// 	_pattern: '/univention/command/computerroom/screenshot?computer={computer}&random={random}',
-
-	// 	// tiemr to update the iamges
-	// 	_timer: null,
-
-	// 	uninitialize: function() {
-	// 		this.inherited( arguments );
-	// 		if ( this._timer !== null ) {
-	// 			window.clearTimeout( this._timer );
-	// 		}
-	// 	},
-
-	// 	postMixInProperties: function() {
-	// 		this.inherited( arguments );
-	// 	},
-
-	// 	_createURI: function() {
-	// 		this.random = Math.random();
-	// 		return lang.replace( this._pattern, this );
-	// 	},
-
-	// 	_updateImage: function() {
-	// 		var img = dom.byId( lang.replace( 'screenshot-{computer}', this ) );
-	// 		if ( !img ) {
-	// 			img = new Image( 500 );
-	// 			img.id = lang.replace( 'screenshot-{computer}', this );
-	// 			img.src = this._createURI();
-	// 			try {
-	// 				this.set( 'content', img );
-	// 			} catch ( error ) {
-	// 				// ignore
-	// 			}
-	// 		} else {
-	// 			img.src = this._createURI();
-	// 		}
-
-	// 		this._timer = window.setTimeout( lang.hitch( this, '_updateImage' ), 5000 );
-	// 		return img;
-	// 	},
-
-	// 	buildRendering: function() {
-	// 		this.inherited( arguments );
-
-	// 		lang.mixin( this, {
-	// 			title: lang.replace( _( '{username} at {computer}' ), this ),
-	// 			description: this.username,
-	// 			open: true,
-	// 			content: this._updateImage()
-	// 		} );
-	// 		this.startup();
-	// 	}
-	// } );
+], function(declare, lang, array, dom, domClass, on, domStyle, entities, ContentPane, _Contained, tools,
+		ComboBox, ContainerWidget, Page, StandbyMixin, Text, put, _) {
 
 	var Item = declare("umc.modules.computerroom.Item", [ ContentPane, _Contained ], {
 
 		// the computer to show
 		computer: '',
 
-		// current user at the computer
-		username: '',
+		// objStore containing infos about the computers
+		objStore: null,
 
-		// image object
-		image: null,
-
-		// random extension to the URL to avoid caching
-		random: Math.random(),
+		// fallback message if no user is logged in
+		noUsernameMsg: '<i>' + entities.encode(_('No user logged in')) + '</i>',
 
 		// pattern for the image URI
 		_pattern: '/univention/command/computerroom/screenshot?computer={computer}&random={random}&size={size}',
 
-		// timer to update the images
+		// fallback if no screenshot can be loaded
+		_initialSrc: require.toUrl(lang.replace('dijit/themes/umc/icons/scalable/{image}',
+			{ image: _('screenshot_notready.svg') }
+		)),
+
+		// store the last cached screenshot url
+		_lastImgUrl: null,
+
+		// timers to update the images
 		_timer: null,
+		_timerLarge: null,
 
 		uninitialize: function() {
 			this.inherited(arguments);
 			if (this._timer !== null) {
 				window.clearTimeout(this._timer);
 			}
+			if (this._timerLarge !== null) {
+				window.clearTimeout(this._timerLarge);
+			}
 		},
 
 		_createURI: function(size) {
 			return lang.replace(this._pattern, {
 				computer: encodeURIComponent(this.computer),
-				random: encodeURIComponent(this.random),
+				random: encodeURIComponent(Math.random()),
 				size: encodeURIComponent(size),
 			});
 		},
 
 		_updateImage: function() {
-			this.random = Math.random();
-			var img = dom.byId(lang.replace('img-{computer}', this));
 			var userTag = dom.byId(lang.replace('userTag-{computer}', this));
-
+			var img = dom.byId(lang.replace('img-{computer}', this));
 			if (userTag) {
-				userTag.innerHTML = entities.encode(this.username) || '<i>' + entities.encode(_('No user logged in')) + '</i>';
+				userTag.innerHTML = entities.encode(this.objStore.get(this.computer)["user"]) || this.noUsernameMsg;
 			}
 			if (img) {
 				var new_uri = this._createURI(dijit.byId("screenShotViewSize").value);
 				img.src = new_uri;
 			}
-			if (this._timer) {
-				window.clearTimeout(this._timer);
+		},
+		_updateImageLarge: function() {
+			var imgLarge = dom.byId(lang.replace('img-large-{computer}', this));
+			var imgLargeDiv = dom.byId(lang.replace('img-large-{computer}-overlay', this));
+			var userTag = dom.byId(lang.replace('userTag-large-{computer}', this));
+			if (domStyle.get(imgLargeDiv, "display") === "none") {
+				return;
+			}
+			if (userTag) {
+				userTag.innerHTML = entities.encode(this.objStore.get(this.computer)["user"]) || this.noUsernameMsg;
+			}
+			if (imgLarge) {
+				var new_uri = this._createURI(1);
+				imgLarge.src = new_uri;
 			}
 		},
 
@@ -176,50 +125,119 @@ define([
 			this.inherited(arguments);
 			domClass.add(this.domNode, 'screenShotView__imgThumbnail');
 			lang.mixin(this, {
-				content: lang.replace('<span class="screenShotView__userTag" id="userTag-{computer}"></span><div class="screenShotView__imgWrapper"><img class="screenShotView__img" id="img-{computer}" alt="{alternative}" src="{initialSrc}"></img></div>', {
+				content: lang.replace(
+					`
+<span class="screenShotView__userTag" id="userTag-{computer}">{username}</span>
+<div id="img-{computer}-wrapper" class="screenShotView__imgWrapper">
+	<img class="screenShotView__img" id="fallback-{computer}" alt="{alternative}" src="{initialSrc}">
+	<img class="screenShotView__img" id="img-{computer}" title="{title}" style="display: none">
+</div>
+<div id="img-large-{computer}-overlay" class="screenShotView__large_imgOverlay">
+	<figure class=screenShotView__figure>
+		<div class="screenShotView__large_caption-container"></div>
+		<div class="screenShotView__large_imgWrapper">
+			<img class="screenShotView__large_img" id="fallback-large-{computer}" alt="{alternative}" src="{initialSrc}">
+			<img class="screenShotView__large_img" id="img-large-{computer}" title="{titleLarge}" style="display: none">
+		</div>
+		<div class="screenShotView__large_caption-container">
+			<figcaption id='userTag-large-{computer}'>{username}</figcaption>
+		</div>
+	</figure>
+</div>
+					`, {
 					computer: entities.encode(this.computer),
 					alternative: entities.encode(_('Currently there is no screenshot available. Wait a few seconds.')),
-					initialSrc: require.toUrl(lang.replace('dijit/themes/umc/icons/scalable/{image}', {
-						image: _('screenshot_notready.svg')
-					}))
+					initialSrc: this._initialSrc,
+					username: entities.encode(this.objStore.get(this.computer)["user"]) || this.noUsernameMsg,
+					title: entities.encode(_("Click to zoom in")),
+					titleLarge: entities.encode(_("Click to close"))
 				})
 			});
-			// use dijit.Tooltip here to not hide screenshot tooltips if set up in user preferences
-			var tooltip = new Tooltip({
-				label: lang.replace('<div class="screenShotView__imgTooltip"><img class="screenShotView__img" alt="{1}" id="screenshotTooltip-{0}" src="{2}" /></div>', [
-					entities.encode(this.computer),
-					entities.encode(_('Currently there is no screenshot available. Wait a few seconds.')),
-					require.toUrl(lang.replace('dijit/themes/umc/icons/scalable/{image}', {
-						image: _('screenshot_notready.svg')
-					}))
-				]),
-				connectId: [this.domNode],
-				onShow: lang.hitch(this, function() {
-					var image = dom.byId('img-' + this.computer);
-					var imageTooltip = dom.byId('screenshotTooltip-' + this.computer);
-					if (!image || !imageTooltip) {
-						return;
+		},
+		startImageUpdate: function() {
+			var getUCR = tools.ucr(['ucsschool/umc/computerroom/screenshot/interval']);
+			var img = dom.byId(lang.replace('img-{computer}', this));
+			var imgLarge = dom.byId(lang.replace('img-large-{computer}', this));
+			var fallback = dom.byId(lang.replace('fallback-{computer}', this));
+			var fallbackLarge = dom.byId(lang.replace('fallback-large-{computer}', this));
+			return getUCR.then(lang.hitch(this, function(result) {
+				var updateInterval = result['ucsschool/umc/computerroom/screenshot/interval'] || 5;
+				img.addEventListener("load", (evt) => {
+					domStyle.set(fallback, "display", "none");
+					domStyle.set(img, "display", "");
+					this._lastImgUrl = img.src;
+					if (this._timer) {
+						window.clearTimeout(this._timer);
 					}
-					if (image.clientWidth / window.innerWidth > 0.66) {
-						tooltip.close();
-						return;
+					this._timer = window.setTimeout(
+						lang.hitch(this, '_updateImage'),
+						updateInterval * 1000
+					)
+				});
+				imgLarge.addEventListener("load", (evt) => {
+					domStyle.set(fallbackLarge, "display", "none");
+					domStyle.set(imgLarge, "display", "");
+					if (this._timerLarge) {
+						window.clearTimeout(this._timerLarge);
 					}
-					imageTooltip.src = this._createURI(1);
-				})
-			});
-			// destroy the tooltip when this widget is destroyed
-			aspect.after(this, 'destroy', function() { tooltip.destroy(); });
+					this._timerLarge = window.setTimeout(
+						lang.hitch(this, '_updateImageLarge'),
+						updateInterval * 1000
+					)
+				});
+				img.addEventListener("error", (evt) => {
+					domStyle.set(img, "display", "none");
+					domStyle.set(fallback, "display", "");
+					this._lastImgUrl = null;
+					if (this._timer) {
+						window.clearTimeout(this._timer);
+					}
+					this._timer = window.setTimeout(
+						lang.hitch(this, '_updateImage'),
+						updateInterval * 1000
+					)
+				});
+				imgLarge.addEventListener("error", (evt) => {
+					domStyle.set(imgLarge, "display", "none");
+					domStyle.set(fallbackLarge, "display", "");
+					if (this._timerLarge) {
+						window.clearTimeout(this._timerLarge);
+					}
+					this._timerLarge = window.setTimeout(
+						lang.hitch(this, '_updateImageLarge'),
+						updateInterval * 1000
+					)
+				});
+				this._updateImage();
+			}));
 		},
 		startup: function(){
-		    this.inherited(arguments);
-		    var getUCR = tools.ucr(['ucsschool/umc/computerroom/screenshot/interval']);
-		    getUCR.then(lang.hitch(this, function(result) {
+			this.inherited(arguments);
+			this.startImageUpdate();
 			var img = dom.byId(lang.replace('img-{computer}', this));
-			var updateInterval = result['ucsschool/umc/computerroom/screenshot/interval'] || 5;
-			img.addEventListener('load', () => this._timer = window.setTimeout(lang.hitch(this, '_updateImage'), updateInterval * 1000));
-			img.addEventListener('error', () => this._timer = window.setTimeout(lang.hitch(this, '_updateImage'), updateInterval * 1000));
-			this._updateImage();
-		    }));
+			var imgDiv = dom.byId(lang.replace('img-{computer}-wrapper', this));
+			var imgLarge = dom.byId(lang.replace('img-large-{computer}', this));
+			var fallbackLarge = dom.byId(lang.replace('fallback-large-{computer}', this));
+			var largeImgDiv = dom.byId(lang.replace('img-large-{computer}-overlay', this));
+			on(imgDiv, "click", lang.hitch(this, function(evt){
+				domStyle.set(largeImgDiv, "display", "block");
+				if (this._lastImgUrl) {
+					imgLarge.src = this._lastImgUrl;  // Should be cached and can be shown immediatly
+					domStyle.set(fallbackLarge, "display", "none");
+					domStyle.set(imgLarge, "display", "");
+					this._updateImageLarge();
+				} else {
+					domStyle.set(imgLarge, "display", "none");
+					domStyle.set(fallbackLarge, "display", "");
+					this._updateImageLarge();
+				}
+			}));
+			on(largeImgDiv, "click", lang.hitch(this, function(evt){
+				domStyle.set(largeImgDiv, "display", "none");
+				if (this._timerLarge) {
+					window.clearTimeout(this._timerLarge);
+				}
+			}));
 		},
 
 	} );

@@ -363,12 +363,12 @@ define([
 			this.selectChild(this._screenshotView);
 			this._screenshotView.load(array.map(array.filter(items, function(item) {
 				return isConnected(item);
-			}), function(item) {
+			}), lang.hitch(this, function(item) {
 				return {
 					computer: item.id,
-					username: item.user
+					objStore: this._objStore
 				};
-			}));
+			})));
 		},
 
 		_logout: function(ids, items) {

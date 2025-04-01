@@ -608,6 +608,14 @@ msgstr "{0} ausgeschaltet/nicht konfiguriert"
 msgid "{time} minutes"
 msgstr "{time} Minuten"
 
+#: umc/js/computerroom.js:142
+msgid "Click to zoom in"
+msgstr "Zum Vergrößern klicken"
+
+#: umc/js/computerroom.js:143
+msgid "Click to close"
+msgstr "Zum Schließen klicken"
+
 #~ msgid "(The computer does not support all iTALC features)"
 #~ msgstr "(Der Computer unterstützt nicht alle iTALC-Funktionen)"
 
