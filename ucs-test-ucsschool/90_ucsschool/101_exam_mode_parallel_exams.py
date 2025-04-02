@@ -7,9 +7,9 @@
 ## bugs: [55619]
 ## packages: [univention-samba4, ucs-school-umc-computerroom, ucs-school-umc-exam]
 
+import subprocess
 from datetime import datetime, timedelta
 
-import ldap
 import pytest
 
 from ucsschool.lib.models.user import Student
@@ -19,24 +19,74 @@ from ucsschool.lib.roles import (
     role_exam_user,
 )
 from ucsschool.lib.schoolldap import SchoolSearchBase
+from univention.testing import utils
 from univention.testing.ucsschool.computer import Computers
 from univention.testing.ucsschool.computerroom import Room
 from univention.testing.ucsschool.exam import Exam
 
 
-@pytest.mark.parametrize("disable_user", [True, False])
-def test_multi_exam_student_handling(udm_session, schoolenv, ucr, disable_user):
+@pytest.fixture()
+def disable_user(request, ucr):
+    # TODO Add remote ucr support to schoolenv?
+    root_pwdfile = ucr.get("tests/root/pwdfile")
+    ldap_master = ucr.get("ldap/master")
+    subprocess.check_call(
+        [
+            "univention-ssh",
+            root_pwdfile,
+            f"root@{ldap_master}",
+            "/usr/sbin/ucr",
+            "set",
+            "--schedule",
+            f"ucsschool/exam/user/disable={request.param}",
+        ]
+    )
+    subprocess.check_call(
+        [
+            "univention-ssh",
+            root_pwdfile,
+            f"root@{ldap_master}",
+            "systemctl",
+            "restart",
+            "univention-management-console-server",
+        ]
+    )
+    yield request.param
+    subprocess.check_call(
+        [
+            "univention-ssh",
+            root_pwdfile,
+            f"root@{ldap_master}",
+            "/usr/sbin/ucr",
+            "unset",
+            "--schedule",
+            "ucsschool/exam/user/disable",
+        ]
+    )
+    subprocess.check_call(
+        [
+            "univention-ssh",
+            root_pwdfile,
+            f"root@{ldap_master}",
+            "systemctl",
+            "restart",
+            "univention-management-console-server",
+        ]
+    )
+
+
+@pytest.mark.parametrize("disable_user", [True, False], indirect=True)
+def test_multi_exam_student_handling(udm_session, schoolenv, disable_user):
+    def assert_student_status(should_be_active):
+        assert Student.from_dn(studn, None, lo).is_active() is should_be_active
+
     udm = udm_session
     lo = schoolenv.open_ldap_connection()
-    if disable_user:
-        ucr.handler_set(["ucsschool/exam/user/disable=yes"])
-    else:
-        ucr.handler_set(["ucsschool/exam/user/disable=no"])
 
-    if ucr.is_true("ucsschool/singlemaster"):
+    if schoolenv.ucr.is_true("ucsschool/singlemaster"):
         edudc = None
     else:
-        edudc = ucr.get("hostname")
+        edudc = schoolenv.ucr.get("hostname")
     school, oudn = schoolenv.create_ou(name_edudc=edudc)
     search_base = SchoolSearchBase([school])
     klasse_dn = udm.create_object(
@@ -98,14 +148,24 @@ def test_multi_exam_student_handling(udm_session, schoolenv, ucr, disable_user):
         exam_student_dn = "uid=exam-%s,%s" % (stu, search_base.examUsers)
         result = lo.get(exam_student_dn, ["ucsschoolRole"], True)
         assert (role_str in result.get("ucsschoolRole") for role_str in (exam_role_str, exam2_role_str))
-        assert Student.from_dn(studn, None, lo).is_active() is not disable_user
+
+        utils.retry_on_error(
+            lambda: assert_student_status(not disable_user),
+            exceptions=(AssertionError,),
+        )
         exam1.finish()
         result = lo.get(exam_student_dn, ["ucsschoolRole"], True)
         assert exam_role_str not in result.get("ucsschoolRole")
-        assert Student.from_dn(studn, None, lo).is_active() is not disable_user
+        utils.retry_on_error(
+            lambda: assert_student_status(not disable_user),
+            exceptions=(AssertionError,),
+        )
         exam2.finish()
-        with pytest.raises(ldap.NO_SUCH_OBJECT):
-            lo.get(exam_student_dn, ["ucsschoolRole"], True)
+        utils.verify_ldap_object(exam_student_dn, should_exist=False)
+        utils.retry_on_error(
+            lambda: assert_student_status(True),
+            exceptions=(AssertionError,),
+        )
         assert Student.from_dn(studn, None, lo).is_active()
     finally:
         try:

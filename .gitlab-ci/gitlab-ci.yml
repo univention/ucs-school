@@ -52,10 +52,11 @@ integration_tests:
   variables:
     TARGET_VERSION: "5.2-1"
     OPENSTACK_CFG_FILE: ".gitlab-ci/branch_tests.cfg"
+    PACKAGES_TO_INSTALL: ""
   script:
     - mkdir results
     - git fetch --depth 1 origin $CI_MERGE_REQUEST_TARGET_BRANCH_NAME:compare
-    - export PACKAGES_TO_INSTALL=$(git diff --name-only $CI_COMMIT_BRANCH compare | grep debian/changelog | sed 's/\(.*\)\/debian\/changelog/\1/g' | tr '\n' ' ')
+    - export PACKAGES_TO_INSTALL="$(git diff --name-only $CI_COMMIT_BRANCH compare | grep debian/changelog | sed 's/\(.*\)\/debian\/changelog/\1/g' | tr '\n' ' ') $PACKAGES_TO_INSTALL"
     - !reference [.run_openstack_cfg, script]
     - .gitlab-ci/parse_junit.py
   artifacts:
