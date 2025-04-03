@@ -10,7 +10,7 @@ Changelog
 
 .. _changelog-ucsschool-2025-XX-XX:
 
-Released on 2025-XX-XX
+Released on 2025-04-03
 ======================
 
 Source package *ucs-school-umc-exam* in version ``12.0.2``:

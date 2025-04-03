@@ -1,0 +1,7 @@
+product: ucsschool
+release: "5.2"
+version: [0]
+scope: ucs_5.2-0-ucs-school-5.2
+src: ucs-school-umc-exam
+fix: 12.0.2
+bug: [58093]
