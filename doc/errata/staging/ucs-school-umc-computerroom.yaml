@@ -3,5 +3,5 @@ release: "5.2"
 version: [0]
 scope: ucs_5.2-0-ucs-school-5.2
 src: ucs-school-umc-computerroom
-fix: 13.0.1
-bug: [58160]
+fix: 13.0.2
+bug: [58160,58165]
