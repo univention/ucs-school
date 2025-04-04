@@ -337,3 +337,36 @@ define([
 		}
 	});
 });
+
+
+// Wrapper to resize the screenShotView to 100% width. To achieve this a parent
+// with CSS class "umcModuleWrapper" has to get "width: 100%" assigned.
+// This shall only happen, if the element with CSS class "screenShotView__screenshotContainer"
+// is visible, because "umcModuleWrapper" is used for multiple UMC modules.
+function styleUmcModuleWrapper() {
+  const childElements = document.querySelectorAll('.screenShotView__screenshotContainer');
+
+  childElements.forEach(childElement => {
+      const computedVisibility = window.getComputedStyle(childElement).visibility;
+
+       const parentElement = childElement.closest('.umcModuleWrapper');
+       if (parentElement) {
+        if (computedVisibility === 'visible') {
+                parentElement.style.width = '100%';
+        } else {
+                parentElement.style.width = '';
+        }
+      }
+  });
+}
+
+// update CSS class after loading the page
+document.addEventListener('DOMContentLoaded', styleUmcModuleWrapper);
+
+// update CSS class if visibility of elements on this page has changed
+const observer = new MutationObserver(styleUmcModuleWrapper);
+observer.observe(document.body, {
+  attributes: true,
+  attributeFilter: ['style', 'class'],
+  subtree: true,
+});
