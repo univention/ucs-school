@@ -628,7 +628,7 @@ class VeyonComputer(threading.Thread):
             return None
         width = getattr(self.screenshot_dimension, "width", None)
         height = getattr(self.screenshot_dimension, "height", None)
-        size_to_width = {"2": 640, "3": 480, "4": 320}
+        size_to_width = {"3": 640, "6": 480, "9": 320}
         if size in size_to_width:
             width = min(size_to_width[size], width) if width else size_to_width[size]
             height = None

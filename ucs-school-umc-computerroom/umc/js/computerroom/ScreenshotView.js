@@ -289,9 +289,9 @@ define([
 				region: 'nav',
 				name: _('Size'),
 				staticValues: [
-					{ id: 4, label: _('Tiny') },
-					{ id: 3, label: _('Small') },
-					{ id: 2, label: _('Normal') },
+					{ id: 9, label: _('Tiny') },
+					{ id: 6, label: _('Small') },
+					{ id: 3, label: _('Normal') },
 					{ id: 1, label: _('Large') }
 				],
 				value: 3,
