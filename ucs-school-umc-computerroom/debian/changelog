@@ -1,3 +1,10 @@
+ucs-school-umc-computerroom (13.0.2) unstable; urgency=low
+
+  * Issue univention/ucsschool#1404: use full screen width when using
+    screenshot view
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 04 Apr 2025 17:21:05 +0200
+
 ucs-school-umc-computerroom (13.0.1) unstable; urgency=medium
 
   * Issue univention/ucsschool#1291: replace dojo tooltip with an overlay
