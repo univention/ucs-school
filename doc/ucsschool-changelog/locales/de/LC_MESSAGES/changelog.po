@@ -26,8 +26,8 @@ msgid "Released on 2025-XX-XX"
 msgstr "Veröffentlicht am XX XX 2025"
 
 #: ../../changelog.rst:16
-msgid "Source package *ucs-school-umc-computerroom* in version ``13.0.2``:"
-msgstr "Quellpaket *ucs-school-computerroom* in Version ``13.0.2``:"
+msgid "Source package *ucs-school-umc-computerroom* in version ``14.0.2``:"
+msgstr "Quellpaket *ucs-school-computerroom* in Version ``14.0.2``:"
 
 #: ../../changelog.rst:18
 msgid ""

@@ -13,7 +13,7 @@ Changelog
 Released on 2025-XX-XX
 ======================
 
-Source package *ucs-school-umc-computerroom* in version ``13.0.2``:
+Source package *ucs-school-umc-computerroom* in version ``14.0.2``:
 
 * Feature: When observing multiple student computers, the full width of the browser window is now used to display the screenshots (:uv:bug:`58165`).
 * Fix: The zoomed in image on the "Watch" overview is now updated like the thumbnails.
