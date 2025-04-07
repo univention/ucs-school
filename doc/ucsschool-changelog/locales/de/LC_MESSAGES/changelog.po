@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UCS@school - 5.2 v7 Changelog \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-04 15:33+0000\n"
-"PO-Revision-Date: 2025-04-04 17:36+0200\n"
+"POT-Creation-Date: 2025-04-07 09:10+0000\n"
+"PO-Revision-Date: 2025-04-07 11:10+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -33,7 +33,10 @@ msgstr "Quellpaket *ucs-school-computerroom* in Version ``14.0.2``:"
 msgid ""
 "Feature: When observing multiple student computers, the full width of the"
 " browser window is now used to display the screenshots (:uv:bug:`58165`)."
-msgstr "Feature: Beim Beobachten von mehreren Schüler-Computern wird jetzt die volle Breite des Browserfensters für die Anzeige der Screenshots verwendet (:uv:bug:`58165`)"
+msgstr ""
+"Feature: Beim Beobachten von mehreren Schüler-Computern wird jetzt die "
+"volle Breite des Browserfensters für die Anzeige der Screenshots "
+"verwendet (:uv:bug:`58165`)"
 
 #: ../../changelog.rst:19
 msgid ""
@@ -49,15 +52,25 @@ msgstr ""
 "vergrößerte Bild wird nun nach einem Klick auf die Vorschau angezeigt und"
 " nicht mehr nach einem \"Schweben\" darauf (:uv:bug:`58160`)."
 
-#: ../../changelog.rst:26
+#: ../../changelog.rst:22
+msgid ""
+"*Please note*: For the two changes mentioned above, adjustments were made"
+" to JavaScript and CSS files. Due to the caching of these files by the "
+"browser, the changes may not be visible immediately. It is therefore "
+"advisable to invalidate the browser cache. Otherwise it will take at "
+"least 1 hour before the web browsers request the new version of the files"
+" from the server."
+msgstr "Bitte beachten: Für die beiden oben genannten Änderungen wurden Anpassungen an JavaScript- und CSS-Dateien vorgenommen. Aufgrund des vom Webbrowser durchgeführten Cachings dieser Dateien kann es dazu kommen, dass die Änderungen nicht sofort sichtbar werden. Es empfiehlt sich daher, den Webbrowsercache zu invalidieren. Anderenfalls dauert es mindestens 1 Stunde bevor die Webbrowser die neue Version der Dateien vom Server anfordern."
+
+#: ../../changelog.rst:27
 msgid "Released on 2025-04-03"
 msgstr "Veröffentlicht am 3. April 2025"
 
-#: ../../changelog.rst:28
+#: ../../changelog.rst:29
 msgid "Source package *ucs-school-umc-exam* in version ``12.0.2``:"
 msgstr "Quellpaket *ucs-school-umc-exam* in Version ``12.0.2``:"
 
-#: ../../changelog.rst:30
+#: ../../changelog.rst:31
 msgid ""
 "Fixed a bug for students in multiple exams, if the "
 ":envvar:`ucsschool/exam/user/disable` was set to ``yes``. Their exam "
@@ -69,15 +82,15 @@ msgstr ""
 "wurde.Klassenarbeitsbenutzer wurden nicht korrekt konfiguriert "
 "(:uv:bug:`58093`)."
 
-#: ../../changelog.rst:37
+#: ../../changelog.rst:38
 msgid "Released on 2025-03-11"
 msgstr "Veröffentlicht am 11. März 2025"
 
-#: ../../changelog.rst:39
+#: ../../changelog.rst:40
 msgid "Source package *ucs-school-umc-exam* in version ``12.0.1``:"
 msgstr "Quellpaket *ucs-school-umc-exam* in Version ``12.0.1``:"
 
-#: ../../changelog.rst:41
+#: ../../changelog.rst:42
 msgid ""
 "Exam *shell* hooks are no longer supported. In UCS\\@school 5.0 exam "
 "shell hooks that are stored in ``/usr/share/ucs-school-"
@@ -94,7 +107,7 @@ msgstr ""
 "Verwendung eines *Python*-Hooks auf dem Primary Directory Node als "
 "Ersatz."
 
-#: ../../changelog.rst:44
+#: ../../changelog.rst:45
 msgid ""
 "Please note: This change does not affect the *Python* hooks for the exam "
 "mode that are executed on the Primary Directory Node and are located in "
@@ -106,19 +119,19 @@ msgstr ""
 "werden und im Verzeichnis ``/usr/share/ucs-school-exam-"
 "master/pyhooks/create_exam_user_pre/`` liegen."
 
-#: ../../changelog.rst:46
+#: ../../changelog.rst:47
 msgid "Source package *ucs-school-metapackage* in version ``15.0.1``:"
 msgstr "Quellpaket *ucs-school-metapackage* in Version ``15.0.1``:"
 
-#: ../../changelog.rst:48
+#: ../../changelog.rst:49
 msgid "Dropping support for Python 2."
 msgstr "Support für Python 2 entfernt."
 
-#: ../../changelog.rst:50
+#: ../../changelog.rst:51
 msgid "Source package *ucs-school-lib* in version ``15.0.1``:"
 msgstr "Quellpaket *ucs-school-lib* in Version ``15.0.1``:"
 
-#: ../../changelog.rst:52
+#: ../../changelog.rst:53
 msgid ""
 "The default value for the UCR variable ``ucsschool/validation/username"
 "/windows-check`` has been changed to ``yes``."
@@ -126,7 +139,7 @@ msgstr ""
 "Der Standardwert für die UCR-Variable ``ucsschool/validation/username"
 "/windows-check`` wurde auf ``yes`` geändert. "
 
-#: ../../changelog.rst:54
+#: ../../changelog.rst:55
 msgid ""
 "User names should not contain names reserved by Windows. See `Microsoft "
 "Documentation <https://learn.microsoft.com/en-"
@@ -155,11 +168,11 @@ msgstr ""
 " einer Aktivierung abgeraten wird. Im Falle eines Fehlers ist es nur "
 "möglich, die betroffenen Benutzernamen zu ändern. "
 
-#: ../../changelog.rst:62
+#: ../../changelog.rst:63
 msgid "Source package *ucs-school-umc-diagnostic* in version ``3.0.0``:"
 msgstr "Quellpaket *ucs-school-umc-diagnostic* in Version ``3.0.0``:"
 
-#: ../../changelog.rst:64
+#: ../../changelog.rst:65
 msgid ""
 "Usernames which do not comply with Windows naming conventions are now "
 "shown as critical errors in the system diagnostic tool."
@@ -167,11 +180,11 @@ msgstr ""
 "Benutzernamen, die nicht den Windows-Namenskonventionen entsprechen, "
 "werden nun als kritische Fehler im Systemdiagnosetool angezeigt."
 
-#: ../../changelog.rst:66
+#: ../../changelog.rst:67
 msgid "Source package *ucs-school-umc-printermoderation* in version ``18.0.1``:"
 msgstr "Quellpaket *ucs-school-umc-printermoderation* in Version ``18.0.1``:"
 
-#: ../../changelog.rst:68
+#: ../../changelog.rst:69
 msgid ""
 "Fixed an issue were the :spelling:ignore:`\"Printer Operators\"` group "
 "was left in a broken state after the join script had run."
