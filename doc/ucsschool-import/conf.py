@@ -46,6 +46,7 @@ extensions = [
     "sphinx_last_updated_by_git",
     "sphinx.ext.intersphinx",
     "sphinxcontrib.bibtex",
+    "sphinx_sitemap",
 ]
 
 bibtex_bibfiles = ["../bibliography-de.bib"]
@@ -121,6 +122,7 @@ univention_use_doc_base = True
 univention_feedback = True
 # Information about the license statement for the source files
 univention_pdf_show_source_license = True
+univention_use_doc_base = True
 
 intersphinx_mapping = {
     "uv-manual": ("https://docs.software-univention.de/manual/5.2/de", None),
