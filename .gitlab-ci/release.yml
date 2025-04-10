@@ -1,8 +1,43 @@
-stages:
-  - release
+include:
+  - component: $CI_SERVER_FQDN/univention/internal/ucsschool-ci-utils/app-release@2.0.0
+    inputs:
+      app_id: "ucsschool"
+      mail_sender: "ucsschool-team@univention.de"
+      author_alias: "UCS@school Team"
+      mail_subject: "UCS@school package update"
+      changelog_link: "https://docs.software-univention.de/ucsschool-changelog/latest/en/index.html"
+      mail_recipient: "app-announcement@univention.de"
+      chat_destination: "#ucsschool"
+      ucs_base_version: "5.2"
+      release_tag_constraint: '\d.\d+ v\d+'
+      app_staging_version: "0.0.0-staging"
+  - component: $CI_SERVER_FQDN/univention/internal/ucsschool-ci-utils/debian-package@jkoeniger/add-debian-package-upload
+    inputs:
+      ucs_base_version: "5.2"
+      scope: "ucs-school-5.2"
+
+parse-advisories:
+  stage: build
+  before_script:
+    - apt update && apt install -y curl jq python3 python3-pip
+    - pip3 install packaging pyyaml --break-system-packages
+  script:
+    - .gitlab-ci/extract-info-from-advisory.py
+  artifacts:
+    reports:
+      dotenv: .dotenv
+
+check-tests:
+  stage: build
+  rules:
+    - if: "$CI_COMMIT_TAG"
+  script:
+    - echo "check tests"
+  manual_confirmation: "Are the tests green"
+  when: manual
 
 check-advisory-files-end-in-yaml:
-  stage: release
+  stage: build
   script:
     - non_yaml_files=( $(find doc/errata/staging -type f -not -name "*.yaml") )
     - |-
@@ -18,31 +53,45 @@ check-advisory-files-end-in-yaml:
       fi
 
 check-bugzilla-bugs:
-  stage: release
+  stage: build
+  rules:
+    - if: "$CI_COMMIT_TAG"
   before_script:
     - apt update && apt install -y curl jq
   script:
-    - ./.gitlab-ci/check-bugzilla-bugs "$release_bugs"
+    - .gitlab-ci/check-bugzilla-bugs "$RELEASE_BUGS"
+  needs: [parse-advisories]
 
-find-advisories:
-  stage: release
-  needs:
-    - check-advisory-files-end-in-yaml
-  script:
-    - ./.gitlab-ci/find-advisories "$release_bugs"
-  artifacts:
-    paths:
-      - release_advisories.txt
+deb_repo_import:
+  needs: [parse-advisories]
+
+deb_build_git:
+  needs: [parse-advisories]
 
 validate-advisories:
-  stage: release
+  stage: build
   rules:
-    - if: "$pipeline == 'release'"
-  needs:
-    - find-advisories
+    - if: "$CI_COMMIT_TAG"
   before_script:
     - apt update && apt install -y python3 python3-pip
     - pip3 install packaging pyyaml --break-system-packages
   script:
-    - advisories=$(cat release_advisories.txt)
+    - advisories=$(find doc/errata/staging/ -name "*.yaml" -not -name "0template.yaml")
     - ./.gitlab-ci/validate-advisories $advisories
+
+rename-advisories:
+  stage: cleanup
+  rules:
+    - if: "$CI_COMMIT_TAG"
+  image: gitregistry.knut.univention.de/univention/internal/ucsschool-ci-utils/deb-builder:latest
+  script:
+    - .gitlab-ci/rename-advisories
+
+close-bugzilla:
+  stage: cleanup
+  when: manual
+  rules:
+    - if: "$CI_COMMIT_TAG"
+  manual_confirmation: "Did you close all released bugzilla bugs?"
+  script:
+    - echo "close bugs in bugzilla"

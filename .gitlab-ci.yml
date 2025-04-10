@@ -4,14 +4,16 @@ workflow:
     - if: $CI_PIPELINE_SOURCE == "webide"
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_OPEN_MERGE_REQUESTS
     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_REF_PROTECTED == "true"
+    - if: $CI_COMMIT_TAG
+
+stages:
+  - prepare
+  - build
+  - test
+  - release
+  - cleanup
 
 variables:
-  RUN_RELEASE:
-    value: "no"
-    options:
-      - "yes"
-      - "no"
-    description: "Run release check pipeline"
   RUN_DOCS:
     value: "yes"
     options:
@@ -24,14 +26,7 @@ variables:
       - "yes"
       - "no"
     description: "Force docs pipeline"
-  release_bugs:
-    value: ""
-    description: "Space-separated list of bugs to be released. Used with `release` pipeline. E.g.: '56550 52443 43345'"
 
 include:
   - local: .gitlab-ci/gitlab-ci.yml
-    rules:
-      - if: $RUN_RELEASE != "yes"
   - local: .gitlab-ci/release.yml
-    rules:
-      - if: $RUN_RELEASE == "yes"
