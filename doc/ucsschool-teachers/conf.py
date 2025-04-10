@@ -42,6 +42,7 @@ extensions = [
     "univention_sphinx_extension",
     "sphinxcontrib.spelling",
     "sphinx_last_updated_by_git",
+    "sphinx_sitemap",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -112,6 +113,7 @@ univention_use_doc_base = True
 univention_feedback = True
 # Information about the license statement for the source files
 univention_pdf_show_source_license = True
+univention_use_doc_base = True
 
 rst_epilog = """
 .. include:: /../substitutions-de.txt
