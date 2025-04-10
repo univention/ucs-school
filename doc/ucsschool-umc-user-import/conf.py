@@ -46,6 +46,7 @@ extensions = [
     "sphinx_copybutton",
     "sphinx_last_updated_by_git",
     "sphinx.ext.intersphinx",
+    "sphinx_sitemap",
 ]
 
 copybutton_prompt_text = r"\$ "
@@ -124,6 +125,7 @@ univention_use_doc_base = True
 univention_feedback = True
 # Information about the license statement for the source files
 univention_pdf_show_source_license = True
+univention_use_doc_base = True
 
 rst_epilog = """
 .. include:: /../substitutions-de.txt
