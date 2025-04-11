@@ -1,0 +1,6 @@
+[ucsschool/join/create_demo]
+Type = Bool
+Description = Create a demo school with demo users (1x teacher, 1x student, 1x schooladmin) and a demo class.
+Description[de] = Automatisch eine Demoschule mit Demobenutzern (1x Lehrkraft, 1x Schüler, 1x Schuladministrator) und einer Demoklasse anlegen.
+Show = Settings
+InitialValue = true
