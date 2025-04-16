@@ -5,6 +5,7 @@ workflow:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_OPEN_MERGE_REQUESTS
     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_REF_PROTECTED == "true"
     - if: $CI_COMMIT_TAG
+    - if: $RUN_UPDATE_RELEASE_ISSUE
 
 stages:
   - prepare
@@ -26,7 +27,19 @@ variables:
       - "yes"
       - "no"
     description: "Force docs pipeline"
+  RUN_UPDATE_RELEASE_ISSUE:
+    value: "no"
+    options:
+      - "yes"
+      - "no"
 
 include:
   - local: .gitlab-ci/gitlab-ci.yml
+    rules:
+      - if: $RUN_UPDATE_RELEASE_ISSUE != "yes"
   - local: .gitlab-ci/release.yml
+    rules:
+      - if: $RUN_UPDATE_RELEASE_ISSUE != "yes"
+  - local: .gitlab-ci/update_release_issue.yml
+    rules:
+      - if: $RUN_UPDATE_RELEASE_ISSUE == "yes"
