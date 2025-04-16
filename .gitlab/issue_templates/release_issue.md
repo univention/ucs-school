@@ -47,3 +47,4 @@ How an issue is finished is defined in the [Definition of done](https://univenti
 
 /label ~"Team::UCS@school"
 /label ~"Status::Ready"
+/label ~Release
