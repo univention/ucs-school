@@ -38,7 +38,8 @@ integration_tests:
   stage: test
   needs: []
   rules:
-    - changes:
+    - if: $CI_MERGE_REQUEST_ID
+      changes:
         paths:
           - "*/**/debian/changelog"
       when: manual
