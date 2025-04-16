@@ -9,6 +9,7 @@ from configparser import ConfigParser
 from pathlib import Path
 
 import requests
+import yaml
 from debian.changelog import Changelog
 from debian.deb822 import Deb822
 from debian.debian_support import version_compare
@@ -99,8 +100,17 @@ class RelaeseIssue:
                 unreleased_packages[pkg_name] = {
                     "old": released_sources_pkgs[pkg_name],
                     "new": changelog.full_version,
+                    "bugs": self._get_bugs(pkg_name),
                 }
         return unreleased_packages
+
+    def _get_bugs(self, pkg_name):
+        try:
+            with open(f"doc/errata/staging/{pkg_name}.yaml") as f:
+                data = yaml.safe_load(f)
+        except FileNotFoundError:
+            return []
+        return data.get("bug", [])
 
     def _get_release_issue(self):
         schoolversion = self.latest_app["schoolversion"]
@@ -147,7 +157,7 @@ class RelaeseIssue:
             self.packages_re,
             self.packages_template.format(
                 packages="\n".join(
-                    f"- `{package}`: **{v['old']}** -> **{v['new']}**"
+                    f"- `{package}`: **{v['old']}** -> **{v['new']}** ({self._get_bug_string(package)})"
                     for package, v in self.unreleased_packages.items()
                 )
             ),
@@ -161,6 +171,14 @@ class RelaeseIssue:
             },
         )
         resp.raise_for_status()
+
+    def _get_bug_string(self, pkg_name):
+        bugs = self.unreleased_packages[pkg_name]["bugs"]
+        if not bugs:
+            return "⚠ No valid yaml ⚠"
+        return ", ".join(
+            f"[{bug}](https://forge.univention.org/bugzilla/show_bug.cgi?id={bug})" for bug in bugs
+        )
 
     def _has_major_update(self):
         for version in self.unreleased_packages.values():
