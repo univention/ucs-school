@@ -9,7 +9,7 @@ include:
       mail_recipient: "app-announcement@univention.de"
       chat_destination: "#ucsschool"
       ucs_base_version: "5.2"
-      release_tag_constraint: '\d.\d+ v\d+'
+      release_tag_constraint: '\d.\d+v\d+'
       app_staging_version: "0.0.0-staging"
   - component: $CI_SERVER_FQDN/univention/internal/ucsschool-ci-utils/debian-package@jkoeniger/add-debian-package-upload
     inputs:
