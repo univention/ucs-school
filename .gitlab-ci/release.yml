@@ -1,5 +1,5 @@
 include:
-  - component: $CI_SERVER_FQDN/univention/internal/ucsschool-ci-utils/app-release@2.1.2
+  - component: $CI_SERVER_FQDN/univention/internal/ucsschool-ci-utils/app-release@main
     inputs:
       app_id: "ucsschool"
       mail_sender: "ucsschool-team@univention.de"
@@ -11,7 +11,7 @@ include:
       ucs_base_version: "5.2"
       release_tag_constraint: '\d.\d+v\d+'
       app_staging_version: "0.0.0-staging"
-  - component: $CI_SERVER_FQDN/univention/internal/ucsschool-ci-utils/debian-package@2.1.2
+  - component: $CI_SERVER_FQDN/univention/internal/ucsschool-ci-utils/debian-package@main
     inputs:
       ucs_base_version: "5.2"
       scope: "ucs-school-5.2"
