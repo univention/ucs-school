@@ -6,10 +6,8 @@ git config user.email "${GIT_AUTHOR_EMAIL:?}"
 git remote set-url --push origin "$CI_SERVER_PROTOCOL://pipeline_token:$GITLAB_PROJECT_TOKEN@$CI_SERVER_FQDN/$CI_PROJECT_PATH_SLUG"
 git switch -c releasebot/release
 release_files=$(find doc/errata/staging/ -name "*.yaml" -not -name "0template.yaml")
-cd doc/errata/staging
 # move advisories from staging to published
-for file in "${release_files[@]}"; do git mv "$file" "$(echo "$file" | sed "s/^/..\/published\/$(date +%Y-%m-%d)-/")"; done
-cd "$CI_PROJECT_PATH"
+for file in $release_files; do git mv "$file" "doc/errata/published/$(date +%Y-%m-%d)-$(basename "$file")"; done
 git add doc/errata
 git commit -m "chore: move yaml advisories to published" -m "Issue univention/ucsschool#1406"
 # TODO: merge_when_pipeline_succeeds is deprecated with 17.11, but we are still on gitlab 17.10, replace with auto_merge
