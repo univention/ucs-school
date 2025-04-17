@@ -5,14 +5,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UCS@school - 5.0v3 Changelog \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-11 08:52+0000\n"
+"POT-Creation-Date: 2025-04-17 14:15+0000\n"
 "PO-Revision-Date: 2023-02-06 09:57+0100\n"
 "Last-Translator: Univention GmbH <packages@univention.de>\n"
 "Language-Team: Univention GmbH <packages@univention.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.16.0\n"
+"Generated-By: Babel 2.17.0\n"
 
 #: ../../index.rst:9
 msgid "|UCSUAS|-Update"
@@ -21,30 +21,27 @@ msgstr "|UCSUAS|-Update"
 #: ../../index.rst:11
 msgid ""
 "This document contains the changelogs with the detailed change "
-"information for the update of |UCSUAS| from version 5.0v7 or newer to "
-"5.2v1."
+"information for the update of |UCSUAS| from version 5.2v1 to 5.2v2."
 msgstr ""
 "Dieses Dokument enthält die Changelogs mit den detaillierten "
-"Änderungsinformationen zum Update von |UCSUAS| von Version 5.0v7 oder "
-"neuer nach 5.2v1."
+"Änderungsinformationen zum Update von |UCSUAS| von Version 5.2v1 "
+"nach 5.2v2."
 
 #: ../../index.rst:14
 msgid ""
-"Important notes about the update are covered in a :ref:`separate section"
-"<important-notes>`, the change information for previous version jumps can"
-" be found at :external+uv-navigation:ref:`the changelog overview page "
-"<ucsschool-changelog>`."
+"The change information for previous version jumps can be found at "
+":external+uv-navigation:ref:`the changelog overview page <ucsschool-"
+"changelog>`."
 msgstr ""
-"Wichtige Hinweise zum Update werden in einem :ref:`separaten Abschnitt"
-"<important-notes>` behandelt. Die Änderungsinformationen für vorherige "
-"Versionssprünge finden sich auf :external+uv-navigation:ref:`der Changelog-Übersichtsseite"
-"<ucsschool-changelog>`."
+"Die Änderungsinformationen für vorherige "
+"Versionssprünge finden sich auf :external+uv-navigation:ref:`der "
+"Changelog-Übersichtsseite<ucsschool-changelog>`."
 
-#: ../../index.rst:20
+#: ../../index.rst:19
 msgid "General notes on the update"
 msgstr "Generelle Hinweise zum Update"
 
-#: ../../index.rst:22
+#: ../../index.rst:21
 msgid ""
 "During the update, services within the domain may fail. For this reason, "
 "the update should be performed within a maintenance window. It is "
@@ -58,89 +55,11 @@ msgstr ""
 "zunächst in einer Testumgebung einzuspielen und zu testen. Die "
 "Testumgebung sollte dabei identisch zur Produktivumgebung sein."
 
-#: ../../index.rst:31
-msgid "Important notes about upgrading to |UCSUAS| 5.2v1"
-msgstr "Wichtige Hinweise zum Upgrade auf |UCSUAS| 5.2v1"
-
-#: ../../index.rst:34
-msgid "Python 2 support has been removed"
-msgstr "Python 2 Unterstützung wurde entfernt"
-
-#: ../../index.rst:36
-msgid ""
-"The support for Python 2 was deprecated with the release of UCS 5.0 and "
-"is removed in UCS 5.2. As a result, all UCS\\@school Debian packages for "
-"Python 2 are removed with UCS\\@school 5.2v1. Any custom software that is"
-" not delivered by Univention and which depends on UCS\\@school packages "
-"will need to migrate to the UCS\\@school Python 3 equivalent."
-msgstr ""
-"Die Unterstützung für Python 2 wurde mit der Veröffentlichung von UCS 5.0"
-" als veraltet markiert und in UCS 5.2 entfernt. Als Folge werden nun alle"
-" |UCSUAS|-Debian-Pakete für Python 2 mit |UCSUAS| 5.2v1 entfernt."
-" Jede benutzerdefinierte Software, die nicht von Univention geliefert "
-"wird und die von |UCSUAS|-Paketen abhängt, muss auf das Python-3-Äquivalent "
-"migrieren."
-
-#: ../../index.rst:42
-msgid "Windows naming conventions for user names are now enforced"
-msgstr "Windows-Namenskonventionen für Benutzernamen werden nun erzwungen"
-
-#: ../../index.rst:44
-msgid ""
-"Since 5.0v3, UCS\\@school user names are validated with respect to "
-"Windows naming conventions, as user names which don't comply with Windows"
-" naming conventions lead to login issues and other problems (see "
-":uv:bug:`53519`). This validation can be deactivated with the UCR-"
-"Variable ``ucsschool/validation/username/windows-check``. With 5.2v1, the"
-" default of this variable has been changed: UCS\\@school user names are "
-"now always validated to comply with `Windows naming conventions "
-"<https://learn.microsoft.com/en-us/windows/win32/fileio/naming-a-file"
-"#naming-conventions>`_. Before upgrading, check the system diagnostic "
-"tool for warnings about user names that do not comply with Windows naming"
-" conventions. See the :external+uv-changelog-5.0v4:ref:`5.0v4 changelog "
-"<changelog-windows-naming-conventions>` for more information on this "
-"UCR-V in 5.0."
-msgstr ""
-"Seit 5.0v3 werden |UCSUAS|-Benutzernamen mit Bezug zu Windows-"
-"Namenskonventionen validiert, da Benutzernamen, die nicht zu den Windows-"
-"Namenskonventionen passen, zu Problemen führen (siehe :uv:bug:`53519`). "
-"Diese Validierung kann mit der UCR-Variable ``ucsschool/validation/username"
-"/windows-check`` deaktiviert werden. Mit 5.2v1 wurde der Standardwert "
-"dieser Variablen geändert: |UCSUAS|-Benutzernamen werden nun immer "
-"bezüglich der Windows-Namenskonventionen validiert. Vor dem Upgrade "
-"sollte die Systemdiagnose auf Warnungen über Benutzernamen, die nicht zu "
-"den Windows-Namenskonventionen passen, geprüft werden. Siehe auch der "
-":external+uv-changelog-5.0v4:ref:`5.0v4 Changelog <changelog-windows-"
-"naming-conventions>` für weitere Informationen zu dieser UCR-V."
-
-#: ../../index.rst:54
-msgid "Exam shell hooks are removed"
-msgstr "Shell Hooks für den Klassenarbeitsmodus wurden entfernt"
-
-#: ../../index.rst:56
-msgid ""
-"Before UCS\\@school 5.2v1, during the start of an exam, exam shell hooks "
-"stored in ``/usr/share/ucs-school-exam/hooks/create_exam_user_post.d/`` "
-"were ran for each exam user. This functionality has been removed in "
-"5.2v1. Python hooks for the exam mode on the Primary Directory Node are "
-"not removed and are still available. Check the directory ``/usr/share"
-"/ucs-school-exam/hooks/create_exam_user_post.d/`` for any custom hooks "
-"before upgrading."
-msgstr ""
-"Vor UCS\\@school 5.2v1 wurden während des Starts des Klassenarbeitsmodus "
-"Shell Hooks, die in ``/usr/share/ucs-school-"
-"exam/hooks/create_exam_user_post.d/`` gespeichert waren, für jeden "
-"Klassenarbeitsbenutzer ausgeführt. Diese Funktionalität wurde in 5.2v1 "
-"entfernt. Python-Hooks für den Klassenarbeits-Modus auf dem Primary "
-"Directory Node der Domäne werden nicht entfernt und sind weiterhin "
-"verfügbar. Überprüfen Sie den Ordner ``/usr/share/ucs-school-"
-"exam/hooks/create_exam_user_post.d/`` bevor Sie das Upgrade durchführen."
-
-#: ../../index.rst:63
+#: ../../index.rst:29
 msgid "Update process"
 msgstr "Update-Prozess"
 
-#: ../../index.rst:65
+#: ../../index.rst:31
 msgid ""
 "Major updates for |UCSUAS| are released in the Univention App Center as a"
 " standalone app update. Minor updates and bug fixes (errata for |UCSUAS|)"
@@ -160,4 +79,3 @@ msgstr ""
 "werden dann entsprechend um einen neuen Abschnitt erweitert, aus dem "
 "ersichtlich wird, zu welchem Zeitpunkt welche Pakete veröffentlicht und "
 "welche Fehler dabei behoben wurden."
-
