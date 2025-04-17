@@ -81,7 +81,7 @@ rename-advisories:
   stage: cleanup
   rules:
     - if: "$CI_COMMIT_TAG"
-  image: gitregistry.knut.univention.de/univention/internal/ucsschool-ci-utils/deb-builder:latest
+  image: gitregistry.knut.univention.de/univention/internal/ucsschool-ci-utils/deb-builder-5.2:latest
   script:
     - .gitlab-ci/rename-advisories
 
