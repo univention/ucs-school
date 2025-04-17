@@ -18,9 +18,7 @@ include:
 
 parse-advisories:
   stage: build
-  before_script:
-    - apt update && apt install -y curl jq python3 python3-pip
-    - pip3 install packaging pyyaml --break-system-packages
+  image: gitregistry.knut.univention.de/univention/internal/ucsschool-ci-utils/python:latest
   script:
     - .gitlab-ci/extract-info-from-advisory.py
   artifacts:
