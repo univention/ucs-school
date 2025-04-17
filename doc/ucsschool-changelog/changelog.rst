@@ -8,10 +8,14 @@
 Changelog
 *********
 
-.. _changelog-ucsschool-2025-XX-XX:
+.. _changelog-ucsschool-2025-04-17:
 
-Released on 2025-XX-XX
+Released on 2025-04-17
 ======================
+
+Source package *univention-management-console-module-selective-udm* in version ``10.0.0``:
+
+* Technical: This package was updated to conform with new versioning guidelines (:uv:bug:`58213`).
 
 Source package *ucs-school-umc-computerroom* in version ``14.0.2``:
 
