@@ -75,7 +75,7 @@ from ucsschool.lib.schoollessons import SchoolLessons
 from univention.admin.uexceptions import noObject
 from univention.lib.i18n import Translation
 from univention.lib.misc import custom_groupname
-from univention.lib.umc import Client, ConnectionError, Forbidden, HTTPError
+from univention.lib.umc import Client, ConnectionError as UMCConnectionError, Forbidden, HTTPError
 from univention.management.console.config import ucr
 from univention.management.console.modules import UMC_Error, computerroom
 from univention.management.console.modules.decorators import (
@@ -460,8 +460,7 @@ class Instance(SchoolBaseModule):
                 recipients.append(
                     {
                         "id": recip.dn,
-                        "label": recip.type == util.distribution.TYPE_USER
-                        and Display.user(recip.dict)
+                        "label": (recip.type == util.distribution.TYPE_USER and Display.user(recip.dict))
                         or recip.name,
                     }
                 )
@@ -561,7 +560,7 @@ class Instance(SchoolBaseModule):
                 master = ucr["ldap/master"]
                 client = Client(master)
                 client.authenticate_with_machine_account()
-            except (ConnectionError, HTTPError) as exc:
+            except (UMCConnectionError, HTTPError) as exc:
                 logger.error("start_exam() Could not connect to UMC on %s: %s", master, exc)
                 raise UMC_Error(
                     _("Could not connect to Primary Directory Node %s.") % ucr.get("ldap/master")
@@ -626,7 +625,7 @@ class Instance(SchoolBaseModule):
                     examUsers.add(examuser_dn)
                     student_dns.add(iuser.dn)
                     logger.info("start_exam() Exam user has been created: %r", examuser_dn)
-                except (ConnectionError, HTTPError) as exc:
+                except (UMCConnectionError, HTTPError) as exc:
                     logger.warning(
                         "start_exam() Could not create exam user account for %r: %s", iuser.dn, exc
                     )
@@ -865,7 +864,7 @@ class Instance(SchoolBaseModule):
             try:
                 client = Client(master)
                 client.authenticate_with_machine_account()
-            except (ConnectionError, HTTPError) as exc:
+            except (UMCConnectionError, HTTPError) as exc:
                 logger.error("Could not connect to UMC on %s: %s", master, exc)
                 raise UMC_Error(_("Could not connect to Primary Directory Node %s.") % (master,))
 
@@ -982,7 +981,7 @@ class Instance(SchoolBaseModule):
                             if ucr.is_true("ucsschool/exam/user/homedir/autoremove", False):
                                 shutil.rmtree(iuser.unixhome, ignore_errors=True)
                             logger.info("Exam user has been removed: %r", iuser.dn)
-                    except (ConnectionError, HTTPError) as e:
+                    except (UMCConnectionError, HTTPError) as e:
                         logger.warning("Could not remove exam user account %r: %s", iuser.dn, e)
 
                     # indicate the user has been processed
