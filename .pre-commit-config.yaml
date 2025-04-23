@@ -18,7 +18,7 @@ repos:
       - id: pretty-format-json
         args: [--autofix]
         files: ^ucs-school-import-lusd/.*
-  - repo: https://git.knut.univention.de/univention/dist/pre-commit-ucr
+  - repo: https://git.knut.univention.de/univention/infrastructure/pre-commit-ucr
     rev: "0.0.10"
     hooks:
       - id: ucr-flake8
@@ -89,7 +89,7 @@ repos:
     hooks:
       - id: shellcheck
         files: ^ucs-school-import-lusd/.*
-  - repo: https://git.knut.univention.de/univention/dist/pre-commit-debian.git
+  - repo: https://git.knut.univention.de/univention/infrastructure/pre-commit-debian.git
     rev: v1.1.0
     hooks:
       - id: debian-control
