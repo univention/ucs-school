@@ -13,9 +13,9 @@ CMD="cd $PLUGIN_DIR; python3 -m pytest -l -v --junit-xml=/tmp/junit.xml --junit-
 if ! univention-app shell "$APP" sh -c "cd $PLUGIN_DIR; test -f requirements.txt && test requirements.txt -nt pyproject.toml" >/dev/null; then
   echo "Installing testing packages..."
   univention-app shell "$APP" python3 -m pip install -U pip wheel
-  univention-app shell "$APP" python3 -m pip install poetry
-  univention-app shell "$APP" sh -c "cd $PLUGIN_DIR; poetry export -f requirements.txt --output requirements.txt --dev --without-hashes"
-  univention-app shell "$APP" python3 -m pip uninstall --yes poetry
+  univention-app shell "$APP" python3 -m pip install poetry poetry-plugin-export
+  univention-app shell "$APP" sh -c "cd $PLUGIN_DIR; poetry export -f requirements.txt --output requirements.txt --with test --without-hashes"
+  univention-app shell "$APP" python3 -m pip uninstall --yes poetry poetry-plugin-export
   univention-app shell "$APP" python3 -m pip install -r $PLUGIN_DIR/requirements.txt
   # Avoid glitches in case pip just update a package
   univention-app restart "$APP"

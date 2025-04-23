@@ -1,3 +1,10 @@
+ucs-test-ucsschool (8.0.20) unstable; urgency=medium
+
+  * Issue univention/dev/education/id-broker/keycloak-id-broker#1: fix for
+    peotry2
+
+ -- Jürn Brodersen <brodersen@univention.de>  Wed, 23 Apr 2025 12:55:08 +0200
+
 ucs-test-ucsschool (8.0.19) unstable; urgency=medium
 
   * Issue univention/ucsschool#1394: fix test for multiple exams on multi
