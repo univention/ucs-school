@@ -10,7 +10,7 @@ include:
       chat_destination: "#ucsschool"
       ucs_base_version: "5.2"
       release_tag_constraint: '\d.\d+v\d+'
-      app_staging_version: "0.0.0-staging"
+      app_staging_version: "999.0.0-staging"
   - component: $CI_SERVER_FQDN/univention/internal/ucsschool-ci-utils/debian-package@main
     inputs:
       ucs_base_version: "5.2"
