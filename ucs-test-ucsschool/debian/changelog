@@ -1,3 +1,9 @@
+ucs-test-ucsschool (8.0.21) unstable; urgency=medium
+
+  * univention/ucsschool#1408: Add test for checking exam user spool directory permissions
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 24 Apr 2025 16:58:39 +0200
+
 ucs-test-ucsschool (8.0.20) unstable; urgency=medium
 
   * Issue univention/dev/education/id-broker/keycloak-id-broker#1: fix for
