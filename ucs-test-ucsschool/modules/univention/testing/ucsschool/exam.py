@@ -16,6 +16,7 @@ import subprocess
 import univention.testing.strings as uts
 from univention.testing import utils
 from univention.testing.ucs_samba import wait_for_s4connector
+from univention.testing.ucsschool.computerroom import Room
 from univention.testing.umc import Client, ClientSaml
 
 
@@ -67,7 +68,7 @@ class Exam(object):
     Contains the needed functionality for exam module.\n
     :param school: name of the school
     :type school: str
-    :param room: name of room of the exam
+    :param room: dn of room of the exam
     :type room: str
     :param examEndTime: exam end time
     :type examEndTime: str in format "HH:mm"
@@ -194,8 +195,16 @@ class Exam(object):
         print("Finishing exam %s in room %s" % (self.name, self.room))
         print("param = %s" % param)
         reqResult = self.client.umc_command("schoolexam/exam/finish", param).result
-        print("Finish exam response = ", reqResult)
-        assert reqResult["success"], "Unable to finish exam (%r)" % param
+        print("schoolexam/exam/finish response = ", reqResult)
+
+        # aquire room before calling "finish"
+        room = Room(self.school, dn=self.room)
+        room.aquire_room(self.client)
+
+        reqResult2 = self.client.umc_command("computerroom/exam/finish", param).result
+        print("computerroom/exam/finish response = ", reqResult2)
+        print("Exam finished.")
+        assert reqResult["success"] and reqResult2 is None, "Unable to finish exam (%r)" % param
 
     def genData(self, file_name, content_type, boundary, override_file_name=None):
         """
