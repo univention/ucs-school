@@ -99,28 +99,19 @@ def check_yaml_content(filename: str) -> List[str]:
     elif fix != expected_fix_version:
         errors.append(f"fix version is {fix}, expected {expected_fix_version}")
 
-    changelog = get_changelog()
-    if f"Source package *{src}* in version ``{fix}``" not in changelog:
-        errors.append(f"version {fix} is missing in changelog.rst")
-
-    raw_bugs = advisory.get("bug")
+    raw_bugs = advisory.get("bugs")
     if not raw_bugs:
-        errors.append("bug is missing")
-    elif not isinstance(raw_bugs, list):
-        errors.append("bug should be an array")
+        errors.append("bugs is missing")
+    elif not isinstance(raw_bugs, dict):
+        errors.append("bug should be a dictionary")
     else:
-        bugs = [str(bug) for bug in raw_bugs]
-        changelog = get_changelog()
-        for bug in bugs:
-            if not re.match(r"^\d+$", bug):
-                errors.append(
-                    "format of bug listing is not correct, field is a comma-separated "
-                    f"array of numbers: {bug}"
-                )
-            else:
-                expected_string = f":uv:bug:`{bug}`"
-                if expected_string not in changelog:
-                    errors.append(f"{expected_string} not found in changelog.rst")
+        for bug, texts in raw_bugs.items():
+            if not (bug == "notes" or isinstance(bug, int)):
+                errors.append(f"Bugs must either be a number or 'notes': {bug}")
+            if not texts.get("en", None):
+                errors.append(f"A bug must contain an english text: {bug}")
+            if not texts.get("de", None):
+                errors.append(f"A bug must contain a german text: {bug}")
 
     return errors
 

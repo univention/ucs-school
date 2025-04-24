@@ -4,4 +4,33 @@ version: [0]
 scope: ucs_5.2-0-ucs-school-5.2
 src: ucs-school-umc-computerroom
 fix: 14.0.2
-bug: [58160,58165]
+bugs:
+  58165:
+    en: >
+      Feature: When observing multiple student computers,
+      the full width of the browser window is now used to display the screenshots.
+    de: >
+      Feature: Beim Beobachten von mehreren Schüler-Computern wird jetzt die volle
+      Breite des Browserfensters für die Anzeige der Screenshots verwendet.
+  58160:
+    en: >
+      Fix: The zoomed in image on the "Watch" overview is now updated like the thumbnails.
+      The styling has been adapted to always show the enlarged image in the center of the screen.
+      The zoomed in image will now be shown after clicking on the thumbnail and not after a hovering on it.
+    de: >
+      Fix: Das vergrößerte Bild in der „Überwachen“-Übersicht wird nun, wie die die Vorschau, aktualisiert.
+      Das Design wurde so angepasst, dass das vergrößerte Bild immer in der Mitte des Bildschirms angezeigt wird.
+      Das vergrößerte Bild wird nun nach einem Klick auf die Vorschau angezeigt und
+      nicht mehr nach einem „Schweben“ darauf.
+  notes:
+    en: >
+      *Please note*: For the two changes mentioned above, adjustments were made to JavaScript and CSS files.
+      Due to the caching of these files by the browser, the changes may not be visible immediately.
+      It is therefore advisable to invalidate the browser cache.
+      Otherwise it will take at least 1 hour before the web browsers request the new version of the files from the server.
+    de: >
+      *Bitte beachten*: Für die beiden oben genannten Änderungen wurden Anpassungen an JavaScript- und CSS-Dateien vorgenommen.
+      Aufgrund des vom Webbrowser durchgeführten Cachings dieser Dateien kann es dazu kommen,
+      dass die Änderungen nicht sofort sichtbar werden. Es empfiehlt sich daher, den Webbrowsercache zu invalidieren.
+      Anderenfalls dauert es mindestens 1 Stunde bevor die Webbrowser die neue Version der Dateien vom Server anfordern.
+released: 5.2v2

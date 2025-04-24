@@ -4,4 +4,8 @@ version: [0]
 scope: ucs_5.2-0-ucs-school-5.2
 src: univention-management-console-module-selective-udm
 fix: 10.0.0
-bug: [58213]
+bugs:
+  58213:
+    en: "Technical: This package was updated to conform with new versioning guidelines."
+    de: "Technisch: Dieses Paket wurde aktualisiert, um neuen Versionsvorgaben zu genügen."
+released: 5.2v2

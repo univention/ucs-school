@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UCS@school - 5.2 v7 Changelog \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-17 14:14+0000\n"
+"POT-Creation-Date: 2025-04-24 13:06+0000\n"
 "PO-Revision-Date: 2025-04-07 11:10+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,67 +20,3 @@ msgstr ""
 #: ../../changelog.rst:9
 msgid "Changelog"
 msgstr "Changelog"
-
-#: ../../changelog.rst:14
-msgid "Released on 2025-04-17"
-msgstr "Veröffentlicht am 17. April 2025"
-
-#: ../../changelog.rst:16
-msgid ""
-"Source package *univention-management-console-module-selective-udm* in "
-"version ``10.0.0``:"
-msgstr ""
-"Quellpaket *univention-management-console-module-selective-udm* in "
-"Version ``10.0.0``:"
-
-#: ../../changelog.rst:18
-msgid ""
-"Technical: This package was updated to conform with new versioning "
-"guidelines (:uv:bug:`58213`)."
-msgstr ""
-"Technisch: Dieses Paket wurde aktualisiert, um neuen Versionsvorgaben zu "
-"genügen (:uv:bug:`58213`)."
-
-#: ../../changelog.rst:20
-msgid "Source package *ucs-school-umc-computerroom* in version ``14.0.2``:"
-msgstr "Quellpaket *ucs-school-computerroom* in Version ``14.0.2``:"
-
-#: ../../changelog.rst:22
-msgid ""
-"Feature: When observing multiple student computers, the full width of the"
-" browser window is now used to display the screenshots (:uv:bug:`58165`)."
-msgstr ""
-"Feature: Beim Beobachten von mehreren Schüler-Computern wird jetzt die "
-"volle Breite des Browserfensters für die Anzeige der Screenshots "
-"verwendet (:uv:bug:`58165`)"
-
-#: ../../changelog.rst:23
-msgid ""
-"Fix: The zoomed in image on the \"Watch\" overview is now updated like "
-"the thumbnails. The styling has been adapted to always show the enlarged "
-"image in the center of the screen. The zoomed in image will now be shown "
-"after clicking on the thumbnail and not after a hovering on it "
-"(:uv:bug:`58160`)."
-msgstr ""
-"Fix: Das vergrößerte Bild in der \"Überwachen\"-Übersicht wird nun, wie "
-"die die Vorschau, aktualisiert. Das Design wurde so angepasst, dass das "
-"vergrößerte Bild immer in der Mitte des Bildschirms angezeigt wird.Das "
-"vergrößerte Bild wird nun nach einem Klick auf die Vorschau angezeigt und"
-" nicht mehr nach einem \"Schweben\" darauf (:uv:bug:`58160`)."
-
-#: ../../changelog.rst:26
-msgid ""
-"*Please note*: For the two changes mentioned above, adjustments were made"
-" to JavaScript and CSS files. Due to the caching of these files by the "
-"browser, the changes may not be visible immediately. It is therefore "
-"advisable to invalidate the browser cache. Otherwise it will take at "
-"least 1 hour before the web browsers request the new version of the files"
-" from the server."
-msgstr ""
-"Bitte beachten: Für die beiden oben genannten Änderungen wurden "
-"Anpassungen an JavaScript- und CSS-Dateien vorgenommen. Aufgrund des vom "
-"Webbrowser durchgeführten Cachings dieser Dateien kann es dazu kommen, "
-"dass die Änderungen nicht sofort sichtbar werden. Es empfiehlt sich "
-"daher, den Webbrowsercache zu invalidieren. Anderenfalls dauert es "
-"mindestens 1 Stunde bevor die Webbrowser die neue Version der Dateien vom"
-" Server anfordern."

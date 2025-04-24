@@ -17,8 +17,9 @@
 import os
 import sys
 from datetime import date
+from pathlib import Path
 
-# sys.path.insert(0, os.path.abspath('.'))
+sys.path.append(str(Path("_ext").resolve()))
 
 
 def read_version_from_ci() -> str:
@@ -50,10 +51,6 @@ release = read_version_from_ci()
 # Need the exact version as it is part of the URL for the search
 version_for_search = release
 
-# insert space before "v" in release string
-position_v = release.find("v")
-release = release[0:position_v] + " " + release[position_v:]
-
 project = f"UCS@school - {release} Changelog"
 copyright = "2021-{}, Univention GmbH".format(date.today().year)
 author = ""
@@ -76,6 +73,7 @@ extensions = [
     "sphinx_sitemap",
     "sphinx_copybutton",
     "sphinxcontrib.bibtex",
+    "advisories",
 ]
 
 bibtex_bibfiles = ["../bibliography-de.bib"]
@@ -181,6 +179,6 @@ univention_changelog_builder = "ucsschool"
 # See Univention Sphinx Extension for its options.
 # https://git.knut.univention.de/univention/documentation/univention_sphinx_extension
 # Information about the feedback link.
-univention_feedback = True
+# univention_feedback = True  TODO: fix extension and reactivate
 # Information about the license statement for the source files
 univention_pdf_show_source_license = True
