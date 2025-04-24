@@ -69,28 +69,26 @@ class Test_ExamMode(object):
         created_computers = computers.create()
         created_computers_dn = computers.get_dns(created_computers)
 
-        # setting 2 computer rooms contain the created computers
-        room1 = Room(school, host_members=created_computers_dn[0])
-        room2 = Room(school, host_members=created_computers_dn[1])
+        # setting 1 computer rooms contain the created computers
+        room = Room(school, host_members=created_computers_dn[0])
 
-        # Creating the rooms
-        for room in [room1, room2]:
-            schoolenv.create_computerroom(
-                school,
-                name=room.name,
-                description=room.description,
-                host_members=room.host_members,
-            )
+        # Creating the room
+        schoolenv.create_computerroom(
+            school,
+            name=room.name,
+            description=room.description,
+            host_members=room.host_members,
+        )
 
         current_time = datetime.now()
         chosen_time = current_time + timedelta(hours=2)
 
-        print(" ** After creating the rooms")
+        print(" ** After creating the room")
         wait_replications_check_rejected_uniqueMember(existing_rejects)
 
         exam = Exam(
             school=school,
-            room=room2.dn,  # room dn
+            room=room.dn,  # room dn
             examEndTime=chosen_time.strftime("%H:%M"),  # in format "HH:mm"
             recipients=[klasse_dn],  # list of classes dns
         )
@@ -115,7 +113,7 @@ class Test_ExamMode(object):
 
         exam = Exam(
             school=school,
-            room=room1.dn,  # room dn
+            room=room.dn,  # room dn
             examEndTime=chosen_time.strftime("%H:%M"),  # in format "HH:mm"
             recipients=[klasse_dn],  # list of classes dns
         )
