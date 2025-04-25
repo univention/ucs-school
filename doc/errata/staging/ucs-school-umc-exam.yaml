@@ -1,0 +1,15 @@
+product: ucsschool
+release: "5.2"
+released: "5.2v2"
+version: [0]
+scope: ucs_5.2-0-ucs-school-5.2
+src: ucs-school-umc-exam
+fix: 12.0.3
+bugs:
+  58208:
+    en: |
+      Fix: The permissions of the PDF printer queue directory of exam users are now automatically corrected when the exam is started.
+      Previously, it could happen that print jobs were sent by the exam user, but no print jobs appeared in the print moderation
+    de: |
+      Fix: Die Berechtigungen der PDF-Drucker-Verzeichnisse von Prüfungsbenutzern werden jetzt automatisch beim Start einer Klassenarbeit korrigiert.
+      Zuvor konnte es vorkommen, dass Druckjobs zwar durch Prüfungsbenutzer abgesetzt wurden, diese aber nicht in der Druck-Moderation aufgetaucht sind.

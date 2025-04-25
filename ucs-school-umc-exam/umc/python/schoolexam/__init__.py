@@ -714,6 +714,18 @@ class Instance(SchoolBaseModule):
                 else:
                     logger.info("Update of local nss group cache finished successfully.")
 
+            # update permissions of PDFprinter queues
+            progress.component(_("Updating printer queue permissions"))
+            progress.info("")
+            for recipient in recipients:
+                print_queue = f"/var/spool/cups-pdf/{recipient.username}"
+                if os.path.exists(print_queue):
+                    try:
+                        logger.debug(f"Updating owner of {print_queue}")
+                        shutil.chown(print_queue, user=recipient.username)
+                    except Exception:
+                        logger.error("Cannot update permisions of {print_queue}: {exc}")
+
             # distribute exam files
             progress.component(_("Distributing exam files"))
             progress.info("")
