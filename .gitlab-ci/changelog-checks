@@ -44,14 +44,13 @@ def get_latest_package(package_name: str) -> str:
 
 @lru_cache(maxsize=1)
 def get_last_release_date():
-    with open("doc/ucsschool-changelog/changelog.rst") as f:
-        change_log = f.readlines()
-    pattern = re.compile(r"Released on (?P<release_date>\d{4}-\d{2}-\d{2})")
+    errata_files = [
+        file.name for file in pathlib.Path("doc/errata/published").iterdir() if file.is_file()
+    ]
     last_release_date = "1980-01-01"
-    for line in change_log:
-        m = pattern.match(line)
-        if m:
-            last_release_date = m["release_date"]
+    if errata_files:
+        name_parts = sorted(errata_files, reverse=True)[0].split("-")
+        last_release_date = f"{name_parts[0]}-{name_parts[1]}-{name_parts[2]}"
     return datetime.strptime(last_release_date + " +0000", "%Y-%m-%d %z")
 
 
