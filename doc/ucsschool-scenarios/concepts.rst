@@ -325,7 +325,7 @@ Zentrale Server:
 
   * |UCSMANAGEDNODE|: ``ucsrz05``
 
-Der Name darf eine Länge von 13 Zeichen nicht überschreiten und sollte nicht mit
+Der Name darf eine Länge von 15 Zeichen nicht überschreiten und sollte nicht mit
 einer Ziffer beginnen.
 
 .. _concepts-names-clients-and-servers:
@@ -359,7 +359,7 @@ Schulserver:
 
   * Schulserver Schulverwaltung: ``sadm-042-01``
 
-Der Name darf eine Länge von 13 Zeichen nicht überschreiten und sollte nicht mit
+Der Name darf eine Länge von 15 Zeichen nicht überschreiten und sollte nicht mit
 einer Ziffer beginnen.
 
 .. _concepts-names-user-classes:

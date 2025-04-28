@@ -48,7 +48,7 @@ if TYPE_CHECKING:
     from univention.admin.uldap import access as LoType  # noqa: F401
 
 
-MAX_HOSTNAME_LENGTH = 13
+MAX_HOSTNAME_LENGTH = 15
 
 
 def create_ou(

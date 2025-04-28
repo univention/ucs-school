@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (13.0.1) unstable; urgency=medium
+
+  * Bug #58237: Increase hostname length limit to 15
+
+ -- Jürn Brodersen <brodersen@univention.de>  Mon, 28 Apr 2025 16:08:14 +0200
+
 ucs-school-umc-wizards (13.0.0) unstable; urgency=medium
 
   * UCS@school 5.2

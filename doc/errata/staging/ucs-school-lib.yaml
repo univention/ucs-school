@@ -1,0 +1,11 @@
+product: ucsschool
+release: "5.2"
+released:
+version: [0]
+scope: ucs_5.2-0-ucs-school-5.2
+src: ucs-school-lib
+fix: 15.0.2
+bugs:
+  58237:
+    en: The hostname length limit has been increased from 13 to 15 characters. The old 13-character limit was introduced due to compatibility issues, which don't apply anymore. The new limit is adjusted to the limit for windows NETBIOS names.
+    de: Die Längenbegrenzung für Hostnamen wurde von 13 auf 15 Zeichen erhöht. Das alte 13-Zeichen-Limit wurde aufgrund von Kompatibilitätsproblemen eingeführt, die nun nicht mehr gelten. Das neue Limit ist an das Limit für Windows NETBIOS-Namen angepasst.

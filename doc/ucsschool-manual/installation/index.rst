@@ -64,7 +64,7 @@ ucsschool/join/create_demo=no` möglich.
    bestehen (``a-z``, ``0-9`` und ``-``) und zur Trennung nur einzelne Punkte
    enthalten. Der Hostname darf außerdem nur mit einem Kleinbuchstaben beginnen,
    mit einem Kleinbuchstaben oder einer Ziffer enden und ist auf eine Länge von
-   13 Zeichen beschränkt.
+   15 Zeichen beschränkt.
 
 .. toctree::
    :caption: Kapitelinhalte

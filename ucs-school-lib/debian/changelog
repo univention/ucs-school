@@ -1,3 +1,9 @@
+ucs-school-lib (15.0.2) unstable; urgency=medium
+
+  * Bug #58237: Increase hostname length limit to 15
+
+ -- Jürn Brodersen <brodersen@univention.de>  Mon, 28 Apr 2025 16:07:22 +0200
+
 ucs-school-lib (15.0.1) unstable; urgency=medium
 
   * Issue univention/ucsschool#1052: Enable windows username check by default

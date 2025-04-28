@@ -62,7 +62,7 @@ Software-Auswahl
    dem Bindestrich bestehen (``a-z``, ``0-9`` und ``-``) und zur Trennung nur
    einzelne Punkte enthalten darf. Der Hostname darf außerdem nur mit einem
    Kleinbuchstaben beginnen, mit einem Kleinbuchstaben oder einer Ziffer enden
-   und ist auf eine Länge von 13 Zeichen beschränkt.
+   und ist auf eine Länge von 15 Zeichen beschränkt.
 
 .. _quickstart-ucsschool-installation:
 
