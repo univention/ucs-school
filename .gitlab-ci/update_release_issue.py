@@ -14,6 +14,8 @@ from debian.changelog import Changelog
 from debian.deb822 import Deb822
 from debian.debian_support import version_compare
 
+RELEASE_EXCEPTIONS = ["ucs-test-ucsschool"]
+
 
 class RelaeseIssue:
 
@@ -38,6 +40,8 @@ class RelaeseIssue:
         self.unreleased_packages = self._get_unreleased_packages()
 
     def update(self):
+        if not [pkg for pkg in self.unreleased_packages if pkg not in RELEASE_EXCEPTIONS]:
+            return
         issue = self._get_release_issue()
         self._update_release_issue(issue)
 
