@@ -19,26 +19,26 @@ repos:
         args: [--autofix]
         files: ^ucs-school-import-lusd/.*
   - repo: https://git.knut.univention.de/univention/infrastructure/pre-commit-ucr
-    rev: "0.0.10"
+    rev: "0.1.2"
     hooks:
       - id: ucr-flake8
         additional_dependencies: ["flake8==5.0.4"]
       - id: ucr-ruff
-        additional_dependencies: ["ruff==0.2.2"]
+        additional_dependencies: ["ruff==0.11.2"]
       - id: ucr-autopep8
         additional_dependencies: ["autopep8<=2.0.2"]
         stages: [manual]
       - id: ucr-ruff-fix
-        additional_dependencies: ["ruff==0.2.2"]
+        additional_dependencies: ["ruff==0.11.2"]
         stages: [manual]
       - id: ucr-ruff-format-check
-        additional_dependencies: ["ruff==0.2.2"]
+        additional_dependencies: ["ruff==0.11.2"]
         stages: [manual]
       - id: ucr-ruff-format
-        additional_dependencies: ["ruff==0.2.2"]
+        additional_dependencies: ["ruff==0.11.2"]
         stages: [manual]
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: "v0.2.2"
+    rev: "v0.11.2"
     hooks:
       - id: ruff
         args: ["--fix"]
@@ -49,6 +49,10 @@ repos:
       - id: ruff-format
         alias: "ruff-format"
         stages: [manual]
+      - id: ruff
+        alias: "ruff-statistics"
+        stages: [ manual ]
+        args: ["--statistics", "--unsafe-fixes"]
   - repo: https://github.com/psf/black
     # Until all Python 3 incompatible code has been removed (-> u"") we have to stay at 21.9b0.
     # Version 21.11b0 adds super annoying Python 2 deprecation notice.

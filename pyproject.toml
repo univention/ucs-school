@@ -1,5 +1,5 @@
 [tool.ruff]
-# ruff 0.2.2
+# ruff 0.11.2
 line-length = 105
 
 target-version = "py37"
@@ -8,7 +8,6 @@ extend-exclude = ["django-pam"]
 
 [tool.ruff.lint]
 external = ["W601", "F812", "E403", "E704"]
-ignore-init-module-imports = true
 
 select = ["ALL"]
 ignore = [
@@ -64,7 +63,6 @@ ignore = [
  "RUF012",  # mutable-class-default
  "FLY002",  #
  "B007",  # unused-loop-control-variable
- "PLR1701",  # Merge these isinstance calls: `isinstance(pk, (int, string_types))`
  "PLW0120",  # Else clause on loop without a break statement, remove the else and de-indent all the code inside it
  "B011",  # Do not `assert False` (`python -O` removes these calls), raise `AssertionError()`
  "B023",  # Function definition does not bind loop variable `idomain`
@@ -83,6 +81,7 @@ ignore = [
  "COM812",  # Trailing comma missing
  "EXE002",  # The file is executable but no shebang is present
  "B026",  # Keyword argument `request` must come after starred arguments
+ "A004", # builtin-import-shadowing
 
 # # not py2 compatible
  "UP004", "UP008", "UP009", "UP010", "UP025", "UP029",  # be Python 2 compatible
@@ -111,6 +110,8 @@ ignore = [
 # F401: not py2 compat because of "typing" type hint comments: https://github.com/charliermarsh/ruff/issues/1619
 
  # would be nice but no autofix available
+ "LOG015",  # root-logger-call
+ "FAST002",  # fast-api-non-annotated-dependency
  "TID252",  # relative-imports
  "B904",  # allow raise-without-from-inside-except → too many violations
  "RET505",  # superfluous-else-return
@@ -122,7 +123,7 @@ ignore = [
  "SIM105",  # use-contextlib-suppress
  "G",  # logging
  "TRY",  # tryceratops
- "PT004", "PT007", "PT011", "PT012", "PT017", "PT018",  # pytest
+ "PT007", "PT011", "PT012", "PT017", "PT018",  # pytest
 # "PGH003",  # blanket-type-ignore
  "UP014",  # convert-named-tuple-functional-to-class
  "RET504",  # unnecessary-assign, https://github.com/astral-sh/ruff/issues/2263
@@ -189,6 +190,11 @@ parametrize-names-type = "csv"
 
 [tool.ruff.lint.flake8-annotations]
 ignore-fully-untyped = true
+
+[tool.ruff.lint.flake8-copyright]
+# notice-rgx = "(?i)Copyright\\s+((?:\\(C\\)|©)\\s+)?\\d{4}((-|,\\s)\\d{4})*"
+notice-rgx = "(?:Copyright(?:\\s+\\(C\\)|:)?|SPDX-FileCopyrightText:)\\s+([0-9, -]+)\\s+(?:by|Univention\\s+GmbH)"
+min-file-size = 2
 
 [tool.ruff.lint.isort]
 combine-as-imports = true
