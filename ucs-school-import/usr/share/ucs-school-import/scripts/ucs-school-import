@@ -2150,7 +2150,7 @@ def activate_groupmembers():
                         )
                     )
 
-                    print("")
+                    print()
 
 
 def export_computer():

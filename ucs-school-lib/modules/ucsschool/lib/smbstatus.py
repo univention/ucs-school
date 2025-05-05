@@ -182,4 +182,4 @@ if __name__ == "__main__":
         status = SMB_Status(testdata=args.file.read().split("\n"))
     for process in status:
         print(str(process))
-        print("")
+        print()

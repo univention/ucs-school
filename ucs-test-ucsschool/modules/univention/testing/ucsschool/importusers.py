@@ -778,14 +778,14 @@ def _import_users_basics(udm):
                                     ["ucsschool/import/set/serverprofile/path"]
                                 )
 
-                            print("")
+                            print()
                             print("**** import_users_basics:")
                             print("****    singlemaster: %s" % singlemaster)
                             print("****    samba_home_server: %s" % samba_home_server)
                             print("****    profile_path_server: %s" % profile_path_server)
                             print("****    home_server_at_ou: %s" % home_server_at_ou)
                             print("****    windows_profile_server: %s" % windows_profile_server)
-                            print("")
+                            print()
                             create_and_verify_users(school_name, 3, 3, 3, 3)
                         finally:
                             remove_ou(school_name)

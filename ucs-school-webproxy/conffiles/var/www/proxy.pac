@@ -29,7 +29,7 @@ if configRegistry.is_true('proxy/pac/exclude/networks/enabled', False):
         print('        if (isInNet(host, %s, %s)) {' % (json.dumps(items[0]), json.dumps(items[1])))
         print_parent_proxy_or_direct('proxy/pac/exclude/networks/parentproxy/enabled')
         print('        }')
-    print('')
+    print()
 
 if configRegistry.is_true('proxy/pac/exclude/domains/enabled', False):
     print('        // If the requested dns domain name matches, send "DIRECT" (no proxy is used) or use parent proxy:')
@@ -37,7 +37,7 @@ if configRegistry.is_true('proxy/pac/exclude/domains/enabled', False):
         print('        if (dnsDomainIs(host, %s)) {' % (json.dumps(dnsdomain), ))
         print_parent_proxy_or_direct('proxy/pac/exclude/domains/parentproxy/enabled')
         print('        }')
-    print('')
+    print()
 
 if configRegistry.is_true('proxy/pac/exclude/expressions/enabled', False):
     print('        // If the requested shell expression matches, send "DIRECT" (no proxy is used) or use parent proxy:')
@@ -45,7 +45,7 @@ if configRegistry.is_true('proxy/pac/exclude/expressions/enabled', False):
         print('        if (shExpMatch(url, %s)) {' % (json.dumps(shExp), ))
         print_parent_proxy_or_direct('proxy/pac/exclude/expressions/parentproxy/enabled')
         print('        }')
-    print('')
+    print()
 
 print('        // DEFAULT RULE : All other traffic will use these settings (default proxy):')
 print('        return %s;' % (json.dumps("PROXY %s.%s:%s" % (configRegistry.get('hostname'), configRegistry.get('domainname'), configRegistry.get('squid/httpport', '3128'))),))

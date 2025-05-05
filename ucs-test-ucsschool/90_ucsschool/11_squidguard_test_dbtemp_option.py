@@ -200,7 +200,7 @@ def test_squidguard_test_dbtemp_option():
                 ).encode("utf-8")
             )
             p.stdout.readline()
-        print("")
+        print()
         # p.stdin.close()
         p.communicate()
         print_sg_log()

@@ -113,7 +113,7 @@ def user(base=baseDN):
             print(_str + "%s(%s)" % (tabs, "; ".join(_options)))
         else:
             print(_str)
-    print("")
+    print()
 
 
 def computer(base=baseDN):
@@ -139,7 +139,7 @@ def computer(base=baseDN):
             print(_str + "\t(%s)" % "; ".join(_options))
         else:
             print(_str)
-    print("")
+    print()
 
 
 def network(base=baseDN):
@@ -204,7 +204,7 @@ def network(base=baseDN):
         for iprange in n["ipRange"]:
             print("\tIP-Range:\t%s" % "-".join(iprange))
 
-        print("")
+        print()
 
 
 if __name__ == "__main__":
