@@ -164,7 +164,7 @@ class UserMap(dict):
 class LockableAttribute(object):
     def __init__(self, initial_value=None, locking=True):
         # type: (Optional[LV], Optional[bool]) -> None
-        self._lock = locking and threading.Lock() or None
+        self._lock = (locking and threading.Lock()) or None
         # MODULE.info('Locking object: %s' % self._lock)
         self._old = initial_value
         self._has_changed = False

@@ -97,10 +97,8 @@ class SingleSourcePartialUserImport(UserImport):
         :rtype: ImportUser
         """
         # security check
-        if (
-            imported_user.school
-            and imported_user.school != self.config["school"]
-            or imported_user.schools
+        if (imported_user.school and imported_user.school != self.config["school"]) or (
+            imported_user.schools
             and imported_user.schools not in (self.config["school"], [self.config["school"]])
         ):
             raise InvalidSchools(
@@ -136,11 +134,9 @@ class SingleSourcePartialUserImport(UserImport):
                     old_user.school,
                     old_user.schools,
                 )
-                if (
-                    imported_user.school
-                    and imported_user.school != old_user.school
-                    or self.config["school"] not in old_user.schools
-                ):
+                if (imported_user.school and imported_user.school != old_user.school) or self.config[
+                    "school"
+                ] not in old_user.schools:
                     self.logger.info(
                         "User %r exists in other school(s). Adding %r to 'schools', not moving.",
                         old_user,

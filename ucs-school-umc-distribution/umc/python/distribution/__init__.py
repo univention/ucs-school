@@ -414,7 +414,8 @@ class Instance(SchoolBaseModule):
                 recipients.append(
                     {
                         "id": recip.dn,
-                        "label": recip.type == util.TYPE_USER and Display.user(recip.dict) or recip.name,
+                        "label": (recip.type == util.TYPE_USER and Display.user(recip.dict))
+                        or recip.name,
                     }
                 )
             props["recipients"] = recipients
