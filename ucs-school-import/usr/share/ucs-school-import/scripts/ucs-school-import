@@ -777,14 +777,13 @@ def create_school_ou(
                 container_policies[""].append(dn)
 
     # attach policies if needed
-    for cnpart in container_policies.keys():
+    for cnpart, pollist in container_policies.items():
         # verify for each container that container does exist
         containerdn = "%s,%s" % (cnpart, ou_base)
         if not cnpart:
             containerdn = ou_base
         else:
             verify_container(containerdn, cn_module, None, lo, superordinate, baseDN, "")
-        pollist = container_policies[cnpart]
 
         # test if all policy objects exist and if all referenced objects are policy objects
         for poldn in pollist:
