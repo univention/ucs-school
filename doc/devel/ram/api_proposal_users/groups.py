@@ -13,7 +13,6 @@ router = APIRouter(
 
 @router.get(
     "/{group_kind}",
-    response_model=List[Dict[str, Any]],
     responses={
         401: responses_authc[401],  # get_username
         403: responses_authc[403],  # get_username, get_authz_user (handling None's)

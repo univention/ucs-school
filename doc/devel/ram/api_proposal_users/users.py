@@ -24,7 +24,6 @@ router = APIRouter(
 
 @router.get(
     "/users/{username}",
-    response_model=UserDetailResponseModel,
     responses={
         403: responses_authc[403],  # get_username, get_authz_user (handling None's)
         404: other_common_responses[404],
@@ -246,7 +245,6 @@ async def create_user(
 
 @router.get(
     "/users",
-    response_model=List[UserListResponseModel],
     responses={
         422: {"model": Union[ValidationException, DetailException]},
         404: {

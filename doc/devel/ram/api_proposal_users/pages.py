@@ -15,7 +15,6 @@ _roles_cache: List[Dict[str, str]] = []
 
 @router.get(
     "/add-view",
-    response_model=PageAddViewResponseModel,
     responses={
         403: {
             "model": Union[responses_authc[403].get("model"), None],  # noqa: F821
@@ -35,7 +34,6 @@ async def get_add_view_settings(
 
 @router.get(
     "/list-view",
-    response_model=PageListViewResponseModel,
     responses={
         403: {
             "model": Union[responses_authc[403].get("model"), None],  # noqa: F821
