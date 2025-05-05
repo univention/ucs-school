@@ -37,7 +37,7 @@ def test_computerroom_wakeonlan(schoolenv, ucr):
 
     for _i in range(max_iterations):
         start = time.time()
-        wol_received = {b_ip: False for b_ip in target_broadcast_ips}
+        wol_received = dict.fromkeys(target_broadcast_ips, False)
         logger.info(
             "Send WoL signals to {} to broadcast-ips {}".format(mac_address, target_broadcast_ips)
         )

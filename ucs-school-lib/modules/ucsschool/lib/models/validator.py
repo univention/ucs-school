@@ -94,7 +94,7 @@ def obj_to_dict(obj):  # type: (UdmObject) -> Dict[str, Any]
     dict_obj["props"] = dict(obj.items())
     dict_obj["dn"] = obj.dn
     dict_obj["position"] = get_position_from(dict_obj["dn"])
-    dict_obj["options"] = {key: True for key in obj.options}
+    dict_obj["options"] = dict.fromkeys(obj.options, True)
     return dict_obj
 
 
