@@ -183,10 +183,7 @@ def is_valid_win_directory_name(name):  # type: (str) -> bool
     if len(name) > 0 and name[-1] in [" ", "."]:
         return False
 
-    if len(name) > 255:
-        return False
-
-    return True
+    return not len(name) > 255
 
 
 class Username(CommonName):
