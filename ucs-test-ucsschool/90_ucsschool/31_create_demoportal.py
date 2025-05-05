@@ -56,7 +56,7 @@ def hostname_demoschool():
             return "DEMOSCHOOL"
 
 
-@pytest.fixture()
+@pytest.fixture
 def random_school():
     return SchoolMock()
 

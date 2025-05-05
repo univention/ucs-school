@@ -54,7 +54,7 @@ def get_school_classes_for_user(ou_name, filter_s, ldap_connection):
     return school_classes
 
 
-@pytest.fixture()
+@pytest.fixture
 def reset_import_http_api():
     def _reset_import_http_api():
         subprocess.call(["/bin/systemctl", "restart", "ucs-school-import-http-api"])
@@ -63,14 +63,14 @@ def reset_import_http_api():
     return _reset_import_http_api
 
 
-@pytest.fixture()
+@pytest.fixture
 def create_ous(schoolenv, ucr):
     ou1 = schoolenv.create_ou("ou_A")
     ou2 = schoolenv.create_ou("ou_302", name_edudc=ucr["hostname"], use_cache=False)
     return (DNNameTuple(name=ou1[0], dn=ou1[1]), DNNameTuple(name=ou2[0], dn=ou2[1]))
 
 
-@pytest.fixture()
+@pytest.fixture
 def create_security_group(schoolenv):
     def _create_security_group(ou_dn, allowed_ou_names, user_dns):
         g1 = schoolenv.udm.create_group(
@@ -102,7 +102,7 @@ def create_security_group(schoolenv):
     return _create_security_group
 
 
-@pytest.fixture()
+@pytest.fixture
 def testusercreator():
     def _testusercreator(ou_name):
         return TestUserCreator(
@@ -112,7 +112,7 @@ def testusercreator():
     return _testusercreator
 
 
-@pytest.fixture()
+@pytest.fixture
 def make_import_file():
     def _make_import_file(exporter, creator):
         tmpfile = tempfile.NamedTemporaryFile()
@@ -169,7 +169,7 @@ def validate_import(filename, ou_name, import_job, ldap_connection):
     return False
 
 
-@pytest.fixture()
+@pytest.fixture
 def setup_test(
     schoolenv,
     create_ous,

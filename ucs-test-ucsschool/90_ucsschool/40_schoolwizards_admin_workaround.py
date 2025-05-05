@@ -42,7 +42,7 @@ def school_admin_school_wizard_policy(ucr_ldap_base):
     uas_umc_admin_policy.save()
 
 
-@pytest.fixture()
+@pytest.fixture
 def umc_wizards_admin_workaround():
     original_value = list(handler_get(["ucsschool/wizards/schoolwizards/workaround/admin-connection"]))
     handler_set(["ucsschool/wizards/schoolwizards/workaround/admin-connection=yes"])
@@ -55,7 +55,7 @@ def umc_wizards_admin_workaround():
         )
 
 
-@pytest.fixture()
+@pytest.fixture
 def create_ou_user(user_school_attributes, lo, model_school_object_class):
     def _create_ou_user(ous, user_type, password="univention"):  # type: (List[str]) -> User
         ou_user = model_school_object_class(user_type)(**user_school_attributes(ous, user_type))
@@ -66,7 +66,7 @@ def create_ou_user(user_school_attributes, lo, model_school_object_class):
     return _create_ou_user
 
 
-@pytest.fixture()
+@pytest.fixture
 def create_umc_client(ucr):
     def _create_umc_client(username, password="univention", host_name=None):
         return Client(username=username, password=password, hostname=host_name, language="en_US")

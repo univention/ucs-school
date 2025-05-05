@@ -206,7 +206,7 @@ class ServerTestHandler(BaseHTTPRequestHandler):
         self.wfile.write(response)
 
 
-@pytest.fixture()
+@pytest.fixture
 def private_rsa_key(backup_files: None) -> None:
     private_key = rsa.generate_private_key(
         public_exponent=65537, key_size=2048, backend=crypto_default_backend()
@@ -220,7 +220,7 @@ def private_rsa_key(backup_files: None) -> None:
     )
 
 
-@pytest.fixture()
+@pytest.fixture
 def backup_files(tmp_path: pathlib.Path) -> Generator[None, None, None]:
     backup_suffix = f".backup_{int(time())}"
     backup_auth_key = Configuration.authentication_key_file_path.with_suffix(backup_suffix)
@@ -258,7 +258,7 @@ def backup_files(tmp_path: pathlib.Path) -> Generator[None, None, None]:
         pass
 
 
-@pytest.fixture()
+@pytest.fixture
 def schools() -> Generator[List[str], None, None]:
     with testing_ucsschool.UCSTestSchool() as schoolenv:
         ucr = schoolenv.ucr
@@ -268,7 +268,7 @@ def schools() -> Generator[List[str], None, None]:
         yield [school[0] for school in schools]
 
 
-@pytest.fixture()
+@pytest.fixture
 def config(
     tmp_path: pathlib.Path, backup_files: None, private_rsa_key: None, schools: List[str]
 ) -> None:
@@ -323,7 +323,7 @@ def activate_hook(request: Any, tmp_path: pathlib.Path) -> Generator[None, None,
         pass
 
 
-@pytest.fixture()
+@pytest.fixture
 def server(private_rsa_key: None) -> Generator[threading.Thread, None, None]:
     server_address = ("", 32327)
     httpd = HTTPServer(server_address, ServerTestHandler)
@@ -334,7 +334,7 @@ def server(private_rsa_key: None) -> Generator[threading.Thread, None, None]:
     httpd.shutdown()
 
 
-@pytest.fixture()
+@pytest.fixture
 def existing_data(schools: List[str]) -> Generator[None, None, None]:
     (Configuration.lusd_data_save_path / schools[0]).mkdir()
     shutil.copy(TEST_DATA_STUDENT_PATH, Configuration.lusd_data_save_path / schools[0])

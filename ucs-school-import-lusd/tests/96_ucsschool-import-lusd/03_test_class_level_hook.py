@@ -68,7 +68,7 @@ def import_config() -> Generator[None, None, None]:
     Configuration._instance = None
 
 
-@pytest.fixture()
+@pytest.fixture
 def class_level_hook_instance():  # type: ignore[no-untyped-def]
     sys.path.append("/usr/share/ucs-school-import-lusd/hooks/")
     from lusd_class_level_hook import LUSDClassLevel

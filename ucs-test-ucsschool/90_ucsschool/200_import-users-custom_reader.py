@@ -59,7 +59,7 @@ class TestReader(CsvReader):
 """
 
 
-@pytest.fixture()
+@pytest.fixture
 def test_config(tmp_path) -> Path:
     config_path = tmp_path / "test_config.json"
     with open(config_path, "w") as fp:
@@ -67,7 +67,7 @@ def test_config(tmp_path) -> Path:
     return config_path
 
 
-@pytest.fixture()
+@pytest.fixture
 def test_data(tmp_path) -> Path:
     config_path = tmp_path / "test_data.csv"
     with open(config_path, "w") as fp:
@@ -75,7 +75,7 @@ def test_data(tmp_path) -> Path:
     return config_path
 
 
-@pytest.fixture()
+@pytest.fixture
 def test_reader():
     reader_path = Path("/usr/lib/python3/dist-packages/test_reader.py")
     with open(reader_path, "w") as fp:

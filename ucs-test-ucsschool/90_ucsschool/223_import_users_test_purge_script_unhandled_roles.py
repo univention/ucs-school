@@ -17,7 +17,7 @@ import pytest
 from ucsschool.lib.models.user import User
 
 
-@pytest.fixture()
+@pytest.fixture
 def run_purge_script():
     def _run_purge_script():
         cmd = ["/usr/share/ucs-school-import/scripts/ucs-school-purge-expired-users", "-v"]

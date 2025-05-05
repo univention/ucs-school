@@ -25,7 +25,7 @@ from univention.testing.ucsschool.computerroom import Room
 from univention.testing.ucsschool.exam import Exam
 
 
-@pytest.fixture()
+@pytest.fixture
 def disable_user(request, ucr):
     # TODO Add remote ucr support to schoolenv?
     root_pwdfile = ucr.get("tests/root/pwdfile")
