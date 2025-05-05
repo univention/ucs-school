@@ -242,7 +242,7 @@ def openRecipients(entryDN, ldap_connection):
             return
         group = Group(group_.get_udm_object(ldap_connection).info, dn=group_.dn)
         if group_.school:
-            name_pattern = re.compile("^%s-" % (re.escape(group_.school)), flags=re.I)
+            name_pattern = re.compile("^%s-" % (re.escape(group_.school)), flags=re.IGNORECASE)
             group.name = name_pattern.sub("", group.name)
         for userdn in group_.users:
             try:

@@ -300,7 +300,8 @@ class UsernameHandler(object):
         self.storage_backend = self.get_storage_backend()
         self.logger.debug("%r storage_backend=%r", self, self.storage_backend.__class__.__name__)
         self.replacement_variable_pattern = re.compile(
-            r"(%s)" % "|".join(map(re.escape, self.counter_variable_to_function.keys())), flags=re.I
+            r"(%s)" % "|".join(map(re.escape, self.counter_variable_to_function.keys())),
+            flags=re.IGNORECASE,
         )
 
     def __repr__(self):  # type: () -> str

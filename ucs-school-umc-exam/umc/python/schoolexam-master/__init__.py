@@ -107,7 +107,7 @@ class Instance(SchoolBaseModule):
         try:
             value = ucr.get("ucsschool/exam/group/ldap/blacklist/regex", "")
             if value.strip():
-                self._examGroupExcludeRegEx = re.compile(value, re.I)
+                self._examGroupExcludeRegEx = re.compile(value, re.IGNORECASE)
         except Exception as ex:
             logger.error(
                 "Failed to get/compile regexp provided by ucsschool/exam/group/ldap/blacklist/regex: %s",

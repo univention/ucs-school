@@ -441,7 +441,7 @@ class Instance(SchoolBaseModule):
             if not x.self_is_computerroom()
         ]
         internet_rules = rules.getGroupRuleName([i.name for i in groups])
-        name = re.compile("-%s$" % (re.escape(school)), flags=re.I)
+        name = re.compile("-%s$" % (re.escape(school)), flags=re.IGNORECASE)
         result = [
             {
                 "name": i.get_relative_name()

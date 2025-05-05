@@ -146,7 +146,7 @@ class SchoolBaseModule(Base):
         groupresult = udm_modules.lookup(
             "groups/group", None, ldap_connection, scope=scope, base=ldap_base, filter=ldapFilter
         )
-        name_pattern = re.compile(r"^%s-" % (re.escape(school)), flags=re.I)
+        name_pattern = re.compile(r"^%s-" % (re.escape(school)), flags=re.IGNORECASE)
         return [{"id": grp.dn, "label": name_pattern.sub("", grp["name"])} for grp in groupresult]
 
     @sanitize(school=SchoolSanitizer(required=True), pattern=StringSanitizer(default=""))

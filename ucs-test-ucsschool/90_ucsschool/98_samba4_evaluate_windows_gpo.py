@@ -190,7 +190,7 @@ def windows_check_registry_key(reg_key, subkey, expected_value):
         # raw_input()
         utils.fail("Exception during Get-ItemProperty: %r" % exc)
 
-    reg_key_pattern = re.compile(r"^%s +: (.*)$" % subkey, re.M)
+    reg_key_pattern = re.compile(r"^%s +: (.*)$" % subkey, re.MULTILINE)
     m = reg_key_pattern.search(stdout)
     if m and m.group(1).strip() == expected_value:
         return True

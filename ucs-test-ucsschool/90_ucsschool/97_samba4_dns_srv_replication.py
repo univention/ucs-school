@@ -186,7 +186,7 @@ class TestS4DNSSRVReplication(TestSamba4):
         zone_searchbase = "DC=%s,%s" % (zone_name, dns_searchbase)
 
         ldif = self.get_dns_srv_via_univention_s4search(record_name, zone_searchbase)
-        dns_record_re = re.compile(r"^dnsRecord:: (.*)$", re.M)
+        dns_record_re = re.compile(r"^dnsRecord:: (.*)$", re.MULTILINE)
         priority = []
         weight = []
         port = []
