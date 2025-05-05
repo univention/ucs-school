@@ -130,7 +130,7 @@ class SkippedTestWrapper:
 
         with open(path) as fp:
             last_line_commented: bool = False
-            for line in fp.readlines():
+            for line in fp:
                 if not line.startswith("#") and last_line_commented is False:
                     content += line
                 last_line_commented = line.startswith("#")
