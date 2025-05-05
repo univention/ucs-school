@@ -78,8 +78,7 @@ class Test(CLI_Import_v2_Tester):
                 usernames.update(set(group.split(",")))
                 num_current_usernames = group.count("', '") + 1
 
-                if num_current_usernames > max_users_in_line:
-                    max_users_in_line = num_current_usernames
+                max_users_in_line = max(max_users_in_line, num_current_usernames)
                 assert (
                     num_current_usernames <= columns
                 ), f"Too many usernames in one line: {num_current_usernames} (should be {columns})"

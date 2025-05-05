@@ -58,8 +58,7 @@ def debugmsg(component, level, msg):
 def main():
     exitcode = 0
     debug_level = int(configRegistry.get("umc/module/debug/level", "1"))
-    if debug_level < 1:
-        debug_level = 1
+    debug_level = max(debug_level, 1)
     if configRegistry.get("ucsschool/datadistribution/debug/level", None):
         debug_level = int(configRegistry.get("ucsschool/datadistribution/debug/level"))
 

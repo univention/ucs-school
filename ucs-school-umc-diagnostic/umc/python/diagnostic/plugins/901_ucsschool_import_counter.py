@@ -78,7 +78,7 @@ def run(_umc_instance):
         else:
             suffix = int(suffix)
         if prefix in user_prefix2counter:
-            if user_prefix2counter[prefix] < suffix:
+            if user_prefix2counter[prefix] < suffix:  # noqa: PLR1730
                 user_prefix2counter[prefix] = suffix
         else:
             user_prefix2counter[prefix] = suffix
@@ -94,7 +94,7 @@ def run(_umc_instance):
         else:
             suffix = int(suffix)
         if prefix in email_prefix2counter:
-            if email_prefix2counter[prefix] < suffix:
+            if email_prefix2counter[prefix] < suffix:  # noqa: PLR1730
                 email_prefix2counter[prefix] = suffix
         else:
             email_prefix2counter[prefix] = suffix
