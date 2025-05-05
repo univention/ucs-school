@@ -490,9 +490,7 @@ class CsvReader(BaseReader):
             if (
                 key in self.fieldnames
                 and value not in attrib_names
-                and value != "__ignore"
-                and value != "__action"
-                and value != self._csv_roles_key
+                and value not in ("__ignore", "__action", self._csv_roles_key)
                 and value in udm_user_module.property_descriptions
             )
         ]
