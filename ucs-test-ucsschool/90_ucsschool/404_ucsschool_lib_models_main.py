@@ -37,14 +37,48 @@ def test_list_models():
     cmd = [sys.executable, "-m", "ucsschool.lib.models", "list-models"]
     rv, stdout, stderr = exec_cmd(cmd, log=True, raise_exc=True)
     # space saving list (black would make it completely vertical):
-    for model in (
-        "AnyComputer AnyDHCPService BasicGroup BasicSchoolGroup ClassShare ComputerRoom Container "
-        "DHCPDNSPolicy DHCPServer DHCPService DHCPSubnet DNSReverseZone ExamStudent Group GroupShare "
-        "IPComputer ImportStaff ImportStudent ImportTeacher ImportTeachersAndStaff MacComputer "
-        "MailDomain MarketplaceShare Network Policy School SchoolAdmin SchoolClass SchoolComputer "
-        "SchoolDC SchoolDCSlave SchoolGroup Staff Student Teacher TeachersAndStaff "
-        "UMCPolicy WindowsComputer WorkGroup WorkGroupShare"
-    ).split():
+    for model in [
+        "AnyComputer",
+        "AnyDHCPService",
+        "BasicGroup",
+        "BasicSchoolGroup",
+        "ClassShare",
+        "ComputerRoom",
+        "Container",
+        "DHCPDNSPolicy",
+        "DHCPServer",
+        "DHCPService",
+        "DHCPSubnet",
+        "DNSReverseZone",
+        "ExamStudent",
+        "Group",
+        "GroupShare",
+        "IPComputer",
+        "ImportStaff",
+        "ImportStudent",
+        "ImportTeacher",
+        "ImportTeachersAndStaff",
+        "MacComputer",
+        "MailDomain",
+        "MarketplaceShare",
+        "Network",
+        "Policy",
+        "School",
+        "SchoolAdmin",
+        "SchoolClass",
+        "SchoolComputer",
+        "SchoolDC",
+        "SchoolDCSlave",
+        "SchoolGroup",
+        "Staff",
+        "Student",
+        "Teacher",
+        "TeachersAndStaff",
+        "UMCPolicy",
+        "WindowsComputer",
+        "WorkGroup",
+        "WorkGroupShare",
+    ]:
         assert model in stdout
 
 
