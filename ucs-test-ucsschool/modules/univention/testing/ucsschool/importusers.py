@@ -207,8 +207,7 @@ class Person(object):
             value_map.get("birthday", "__EMPTY__"): self.birthday,
             value_map.get("expiration_date", "__EMPTY__"): self.expiration_date,
         }
-        if "__EMPTY__" in result:
-            del result["__EMPTY__"]
+        result.pop("__EMPTY__", None)
         return result
 
     def __str__(self):
