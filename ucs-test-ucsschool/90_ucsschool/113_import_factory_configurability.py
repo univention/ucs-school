@@ -39,7 +39,7 @@ class Bunch(object):
 class Test_FactoryConf(object):
     @pytest.fixture(scope="class", autouse=True)
     def _setup(self, request):
-        self = request.cls
+        self = request.cls  # noqa: PLW0642
         self.tmpdir = tempfile.mkdtemp(prefix="113factest.", dir="/tmp")
         self.ldap_status = None
         self.ou_name = None

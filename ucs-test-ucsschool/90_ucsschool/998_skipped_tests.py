@@ -102,7 +102,7 @@ class SkippedTestWrapper:
                 return None
             try:
                 for k, v in yaml_data.items():
-                    header[k] = v
+                    header[k] = v  # noqa: PERF403
             except AttributeError:
                 self.logger.warning(f"No header data: Could not retrieve header data of {filepath} .")
                 return None

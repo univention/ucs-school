@@ -214,7 +214,7 @@ class LDAPDiffCheck(AutoMultiSchoolEnv):
                 ]
             )
         ]
-        for result_dir, i, binddn, _ in work_items:
+        for result_dir, i, binddn, _ in work_items:  # noqa: PLR1704
             with open(os.path.join(result_dir, "dn.txt"), "a+") as fd:
                 fd.write("%02d ==> %s\n" % (i, binddn))
 

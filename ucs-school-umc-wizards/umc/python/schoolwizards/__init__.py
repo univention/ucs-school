@@ -459,7 +459,7 @@ class Instance(SchoolBaseModule, SchoolImport):
         if easy_filter:
             filter_str = _sanitize_filter_str(filter_str, add_asterisks=True)
         objs = []
-        for school in schools:
+        for school in schools:  # noqa: PLR1704
             try:
                 objs.extend(
                     klass.get_all(
