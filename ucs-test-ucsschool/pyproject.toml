@@ -1,4 +1,4 @@
 [tool.ruff]
 extend = "../pyproject.toml"
 [tool.ruff.lint]
-extend-ignore = ["EXE003"]
+extend-ignore = ["EXE003", "E266"]

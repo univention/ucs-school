@@ -157,6 +157,42 @@ ignore = [
 
  # issues in ruff:
  "RUF100",  # https://github.com/astral-sh/ruff/issues/2406, https://github.com/astral-sh/ruff/issues/2407
+
+ # violating rules from preview
+ "DOC201",  # docstring-missing-returns
+ "DOC501",  # docstring-missing-exception
+ "DOC402",  # docstring-missing-yields
+ "RUF039",  # unraw-re-pattern
+ "RUF052",  # used-dummy-variable
+ "FURB103",  # write-whole-file
+ "PLR0904",  # too-many-public-methods
+ "PLR0917",  # too-many-positional
+ "PLR1702",  # too-many-nested-blocks
+ "PLR0914",  # too-many-locals
+ "PLR6301",  # no-self-use
+ "PLR6201",  # literal-membership
+ "PLC2801",  # unnecessary-dunder-call
+ "PLC2701",  # import-private-name
+ "PLW1514",  # unspecified-encoding
+ "FURB101",  # read-whole-file
+ "FURB140",  # reimplemented-starmap
+ "FURB148",  # unnecessary-enumerate
+ "FURB171",  # single-item-membership-test
+ "FURB189",  # subclass-builtin
+ "S404", # suspicious-subprocess-import
+ "PLC0415",  # import-outside-top-level
+ "RUF031",  # incorrectly-parenthesized-tuple-in-subscript
+ "PLR6104",  # non-augmented-assignment
+ "FURB118",  # reimplemented-operator
+ "FURB113",  # repeated-append
+ "FURB192",  # sorted-min-max, https://github.com/astral-sh/ruff/issues/16964
+ "RUF027",  # missing-f-string-syntax, https://github.com/astral-sh/ruff/issues/10023
+ "PLC0415",
+ "CPY001",
+ "PLC0415",
+ "CPY001",
+ "CPY001",
+ "RUF029",
 ]
 
 unfixable = ["RUF100", "T20"]
