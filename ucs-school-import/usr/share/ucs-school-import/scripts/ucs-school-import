@@ -2105,7 +2105,7 @@ def activate_groupmembers():
                     )
                     for grpobj in grpobjlist:
                         if grpobj.dn != grp.dn:
-                            if len(membergrplist):
+                            if membergrplist:
                                 membergrplist += "," + grpobj.oldattr["cn"][0].decode("UTF-8")
                             else:
                                 membergrplist += grpobj.oldattr["cn"][0].decode("UTF-8")

@@ -202,7 +202,7 @@ class User(_Dict):
         )
 
         # update specified entries
-        if len(args):
+        if args:
             self.update(args[0])
         self.update(_props)
 
@@ -219,7 +219,7 @@ class Group(_Dict):
     def __init__(self, *args, **_props):
         super(Group, self).__init__(TYPE_GROUP, dn="", name="", members=[])
         # update specified entries
-        if len(args):
+        if args:
             self.update(args[0])
         self.update(_props)
 
@@ -281,7 +281,7 @@ class Project(_Dict):
         )
 
         # update specified entries
-        if len(args):
+        if args:
             self.update(args[0])
         else:
             self.update(_props)
