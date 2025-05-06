@@ -1,3 +1,9 @@
+ucs-school-lib (15.0.3) unstable; urgency=low
+
+  * Bug #58250: fix logic error in group.py
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 06 May 2025 18:09:40 +0200
+
 ucs-school-lib (15.0.2) unstable; urgency=medium
 
   * Bug #58237: Increase hostname length limit to 15

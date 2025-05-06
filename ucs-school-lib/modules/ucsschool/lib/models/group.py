@@ -57,7 +57,7 @@ if TYPE_CHECKING:
 
 class _MayHaveSchoolPrefix(object):
     def get_relative_name(self):  # type: () -> str
-        # schoolname-1a => 1a
+        # "schoolname-1a" => "1a"
         if self.school and self.name.lower().startswith("%s-" % self.school.lower()):
             return self.name[len(self.school) + 1 :]
         return self.name
@@ -70,10 +70,11 @@ class _MayHaveSchoolPrefix(object):
 
 class _MayHaveSchoolSuffix(object):
     def get_relative_name(self):  # type: () -> str
-        # schoolname-1a => 1a
-        if (
-            self.school
-            and self.name.lower().endswith("-%s" % self.school.lower())
+        # "1a-schoolname" => "1a"
+        # or
+        # "1a schoolname" => "1a"
+        if self.school and (
+            self.name.lower().endswith("-%s" % self.school.lower())
             or self.name.lower().endswith(" %s" % self.school.lower())
         ):
             return self.name[: -(len(self.school) + 1)]
