@@ -20,6 +20,7 @@ include:
             - "doc/ucsschool-scenarios/**/*"
             - "doc/ucsschool-umc-user-import/**/*"
             - "doc/ucsschool-changelog/**/*"
+            - "doc/errata/**/*"
         when: always
 
 run pre-commit:
