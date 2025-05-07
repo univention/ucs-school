@@ -116,21 +116,26 @@ class RelaeseIssue:
             return []
         return list(data.get("bugs", {}).keys())
 
-    def _get_release_issue(self):
+    def _get_issue_title(self):
         schoolversion = self.latest_app["schoolversion"]
+        update_type = "PACKAGE"
         if self._has_major_update():
             schoolversion = str(int(schoolversion) + 1)
+            update_type = "APP"
+        return f"[{update_type}] Release UCS@school {self.latest_app['ucsversion']}v{schoolversion}"
+
+    def _get_release_issue(self):
         resp = requests.get(
             "https://git.knut.univention.de/api/v4/projects/4/search",
             data={
                 "scope": "issues",
-                "search": f"Release UCS@school {self.latest_app['ucsversion']}v{schoolversion}",
+                "search": self._get_issue_title(),
                 "state": "opened",
                 "fields": "title",
             },
             headers=self.headers,
         )
-        if resp.status_code != 200:
+        if resp.status_code != 200 or len(resp.json()) == 0:
             resp = requests.get(
                 "https://git.knut.univention.de/api/v4/projects/4/templates/issues/release_issue",
                 headers=self.headers,
@@ -139,7 +144,7 @@ class RelaeseIssue:
                 "https://git.knut.univention.de/api/v4/projects/4/issues",
                 headers=self.headers,
                 data={
-                    "title": f"Release UCS@school {self.latest_app['ucsversion']}v{schoolversion}",
+                    "title": self._get_issue_title(),
                     "description": resp.json()["content"],
                 },
             )
