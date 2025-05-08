@@ -536,7 +536,7 @@ Support-Kanäle
 
 Für den erfolgreichen Betrieb von |UCSUAS| ist es erforderlich, dass ein
 Helpdesk aufgebaut wird, der Fragen aus den Schulen direkt annehmen kann.
-Abhängig von der gewünschten :ref:`Servicestufe <scenario-0>` kann es darüber
+Abhängig von der gewünschten Servicestufe kann es darüber
 hinaus notwendig sein, ein Team von technischen Mitarbeiter*innen zu schulen,
 die den Betrieb der Umgebung durchführen.
 

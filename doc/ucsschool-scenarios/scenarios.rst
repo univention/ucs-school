@@ -16,38 +16,6 @@ bestimmten in diesem Papier beschriebenen Szenarios schließt somit nicht aus,
 dass Sie im Laufe der Zeit weitere Szenarien auf Basis der bestehenden Umgebung
 umsetzen können.
 
-.. _scenario-0:
-
-Servicestufen: |UCSUAS|
-=======================
-
-Univention bietet für die Szenarien 1 bis 4 unterschiedliche Servicestufen für
-die Unterstützung in Projekten an. Kunden entscheiden beim Kauf von |UCSUAS|,
-welche Servicestufe für Sie in der aktuellen Situation am passendsten ist. Ein
-Wechsel auf eine andere Servicestufe ist jederzeit möglich. Voraussetzung in
-allen Servicestufen ist das Vorhandensein eines User Helpdesks, der die
-Supportanfragen aus den Schulen entgegen nimmt und die weitere Bearbeitung
-einleitet.
-
-Welche Servicestufen gibt es?
-
-A. **Software und Support**: Univention liefert Software und Support, der Kunde
-   kümmert sich selbst um Betrieb, Updates und Backup.
-
-#. **Betrieb im Rechenzentrum des Kunden**: Univention liefert Software und
-   Support und übernimmt Betrieb, Updates und Backup im Rechenzentrum des Kunden.
-
-#. **UCS\@school as a Service**: Univention liefert Software und Support und
-   übernimmt Betrieb, Updates und Backup im eigenen Rechenzentrum. Kunden können
-   sofort starten, ohne Investitionen in Hardware oder Software tätigen zu müssen.
-
-.. _fig-scenario-0:
-
-.. figure:: /images/0_ucsatschool_as_a_service.png
-   :alt: Servicestufen: |UCSUAS|
-
-   Servicestufen: |UCSUAS|
-
 .. _scenario-1:
 
 Szenario 1: Bildungscloud
