@@ -2,7 +2,7 @@ variables:
   IMAGE_UCS_EC2_TOOLS: "gitregistry.knut.univention.de/univention/dist/ucs-ec2-tools:latest"
 
 include:
-  - project: univention/dist/docker-services
+  - project: univention/infrastructure/docker-services
     file: pre-commit.yml
   - project: univention/internal/ucsschool-ci-utils
     file: fragments/openstack.yaml
