@@ -128,11 +128,11 @@ define([
 			var columns = [{
 				name: 'description',
 				label: _('Description'),
-				width: 'auto'
+				width: 'auto',
 			}, {
 				name: 'sender',
 				label: _('Owner'),
-				width: '175px'
+				width: '175px',
 			}, {
 				name: 'isDistributed',
 				label: _('Status'),
@@ -149,6 +149,7 @@ define([
 			this._grid = new Grid({
 				actions: actions,
 				columns: columns,
+				allowHTML: false,
 				moduleStore: this.moduleStore,
 				query: { pattern: '' }
 			});
@@ -240,7 +241,7 @@ define([
 					if (response.result instanceof Array && response.result.length > 0) {
 						var res = response.result[0];
 						if (!res.success) {
-							dialog.alert(_('The following error occurred: %s', res.details));
+							dialog.alert(_('The following error occurred: %s', entities.encode(res.details)));
 						}
 						else {
 							if (items[0].isDistributed) {
