@@ -77,8 +77,8 @@ msgid "Print job"
 msgstr "Druckauftrag"
 
 #: umc/js/printermoderation.js:259
-msgid "Print job <i>{printjob}</i> of <i>{user}</i>"
-msgstr "Druckauftrag <i>{printjob}</i> des Benutzers <i>{user}</i>"
+msgid "Print job {printjob} of {user}"
+msgstr "Druckauftrag {printjob} des Benutzers {user}"
 
 #: umc/js/printermoderation.js:221
 msgid "Print job {0} from {1}"

@@ -144,6 +144,7 @@ define([
 				hideContextActionsWhenNoSelection: false,
 				columns: columns,
 				moduleStore: this.moduleStore,
+				allowHTML: false,
 				sortIndex: -4
 			});
 
@@ -257,7 +258,7 @@ define([
 
 				array.forEach( items, function( item, i ) {
 					deferred = deferred.then( lang.hitch( this, function() {
-						this._progressBar.setInfo( null, lang.replace( _( 'Print job <i>{printjob}</i> of <i>{user}</i>' ), item ), (i / ids.length) * 100 );
+						this._progressBar.setInfo( null, lang.replace( _( 'Print job {printjob} of {user}' ), item ), (i / ids.length) * 100 );
 						return tools.umcpCommand( 'printermoderation/print', {
 							username: item.username,
 							printjob: item.filename,

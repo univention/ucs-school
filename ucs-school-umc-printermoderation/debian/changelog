@@ -1,3 +1,9 @@
+ucs-school-umc-printermoderation (18.0.2) unstable; urgency=medium
+
+  * Bug 58209: fix possible xss in grid
+
+ -- Jürn Brodersen <brodersen@univention.de>  Tue, 27 May 2025 16:05:27 +0200
+
 ucs-school-umc-printermoderation (18.0.1) unstable; urgency=low
 
   * Issue univention/ucsschool#1362: fix failing CUPS connections

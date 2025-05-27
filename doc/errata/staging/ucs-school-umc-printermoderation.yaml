@@ -1,0 +1,11 @@
+product: ucsschool
+release: "5.2"
+released:
+version: [0]
+scope: ucs_5.2-0-ucs-school-5.2
+src: ucs-school-umc-printermoderation
+fix: 18.0.2
+bugs:
+  58209:
+    en: "Security fix: The package has been checked and additional measures have been added to prevent possible cross-site scripting in the UMC module(s)."
+    de: "Sicherheitsfix: Das Paket wurde geprüft und um weitere Maßnahmen ergänzt, um ein mögliches Cross-Site-Scripting in den UMC-Modulen zu vermeiden."
