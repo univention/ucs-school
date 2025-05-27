@@ -32,6 +32,7 @@ define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
 	"dojo/_base/array",
+	"dojox/html/entities",
 	"dojo/aspect",
 	"dojo/promise/all",
 	"dojo/topic",
@@ -59,7 +60,7 @@ define([
 	"umc/widgets/StandbyMixin",
 	"umc/widgets/ProgressBar",
 	"umc/i18n!umc/modules/schoolexam"
-], function(declare, lang, array, aspect, all, topic, Deferred, domClass, app, dialog, tools, RebootGrid, RecipientsGrid, Wizard, Module,
+], function(declare, lang, array, entities, aspect, all, topic, Deferred, domClass, app, dialog, tools, RebootGrid, RecipientsGrid, Wizard, Module,
 			Page, Grid, SearchForm, SearchBox, TextBox, Text, TextArea, ComboBox, TimeBox, CheckBox, MultiObjectSelect, MultiUploader, StandbyMixin, ProgressBar, _) {
 	// helper function that sanitizes a given filename
 	var sanitizeFilename = function(name) {
@@ -176,7 +177,7 @@ define([
 						if (msg) {
 							msg = lang.replace('<b>{note}:</b> {msg}', {
 								note: _('Note'),
-								msg: this._getRoomMessage(this._getCurrentRoom())
+								msg: entities.encode(this._getRoomMessage(this._getCurrentRoom()))
 							});
 						}
 
@@ -217,7 +218,7 @@ define([
 					}),
 					autoSearch: true,
 					onChange: lang.hitch(this, function(newValue) {
-						var groups = newValue.map(function(obj) {return obj['id']});
+						var groups = newValue.map(function(obj) {return entities.encode(obj['id'])});
                         this._recipientsGrid.setGroups(groups, this);
 					})
 				}, {
@@ -262,7 +263,7 @@ define([
 					dynamicValues: 'schoolexam/internetrules',
 					staticValues: [
 						{ id: 'none', label: _('Default (global settings)') },
-						{ id: 'custom', label: myRules }
+						{ id: 'custom', label: entities.encode(myRules) }
 					],
 					onChange: lang.hitch(this, function(value) {
 						this.getWidget('proxy_settings', 'customRule').set('disabled', value != 'custom');
@@ -271,7 +272,7 @@ define([
 					type: TextArea,
 					name: 'customRule',
 					label: lang.replace(_('List of allowed websites for "{myRules}"'), {
-						myRules: myRules
+						myRules: entities.encode(myRules)
 					}),
 					description: _('<p>In this text box you can list websites that are allowed to be used by the students. Each line should contain one website. Example: </p><p style="font-family: monospace">univention.com<br/>wikipedia.org<br/></p>'),
 					validate: lang.hitch(this, function() {
@@ -370,7 +371,7 @@ define([
 			]).then(lang.hitch(this, function(result) {
 				// cache the user prefix and update help text
 				this._userPrefix = result['ucsschool/ldap/default/userprefix/exam'] || 'exam-';
-				this.getPage('finished').set('helpText', lang.replace(this.getPage('finished').get('helpText'), {prefix: this._userPrefix}));
+				this.getPage('finished').set('helpText', lang.replace(this.getPage('finished').get('helpText'), {prefix: entities.encode(this._userPrefix)}));
 				this._showRestart = tools.isTrue(result['ucsschool/exam/default/show/restart']);
 				// max upload size and some form values
 				setMaxSize(result['umc/server/upload/max'] || 10240);
@@ -570,8 +571,8 @@ define([
 
 				// update HTML table for summary
 				html += lang.replace('<tr><td style="border:none; width:160px;"><b>{label}:</b></td><td style="border:none;">{value}</td></tr>',{
-					label: title,
-					value: newValue.join(', ')
+					label: entities.encode(title),
+					value: entities.encode(newValue.join(', '))
 				});
 			}));
 			html += '</table>';
@@ -681,7 +682,7 @@ define([
 
 			if (room && room.exam) {
 				// block room if an exam is being written
-				dialog.alert(_('The room %s cannot be chosen as the exam "%s" is currently being conducted. Please make sure that the exam is finished via the module "Computer room" before a new exam can be started again.', room.label, room.examDescription));
+				dialog.alert(_('The room %s cannot be chosen as the exam "%s" is currently being conducted. Please make sure that the exam is finished via the module "Computer room" before a new exam can be started again.', entities.encode(room.label), entities.encode(room.examDescription)));
 				invalidNextPage.reject('advanced');
 				return invalidNextPage;
 			}
@@ -700,7 +701,7 @@ define([
 
 			if (room && room.locked) {
 				// room is in use -> ask user to confirm the choice
-				dialog.confirm(_('This computer room is currently in use by %s. You can take control over the room, however, the current teacher will be prompted a notification and its session will be closed.', room.user), [{
+				dialog.confirm(_('This computer room is currently in use by %s. You can take control over the room, however, the current teacher will be prompted a notification and its session will be closed.', entities.encode(room.user)), [{
 					name: 'cancel',
 					label: _('Cancel'),
 					'default': true
@@ -786,14 +787,14 @@ define([
 			var info = this._progressBar.getErrors();
 			if (info.errors.length == 1) {
 				// one error can be displayed as text
-				this.getWidget('error', 'info').set('content', info.errors[0]);
+				this.getWidget('error', 'info').set('content', entities.encode(info.errors[0]));
 				deferred.reject();
 			}
 			else if (info.errors.length > 1) {
 				// display multiple errors as unordered list
 				var html = '<ul>';
 				array.forEach(info.errors, function(txt) {
-					html += lang.replace('<li>{0}</li>\n', [txt]);
+					html += lang.replace('<li>{0}</li>\n', [entities.encode(txt)]);
 				});
 				html += '</ul>';
 				this.getWidget('error', 'info').set('content', html);
@@ -919,7 +920,8 @@ define([
 			var columns = [{
 				name: 'name',
 				label: _('Name'),
-				width: 'auto'
+				width: 'auto',
+				formatter: unencoded_value => entities.encode(unencoded_value)
 			}, {
 				name: 'isDistributed',
 				label: _('Status'),
@@ -947,7 +949,8 @@ define([
 			}, {
 				name: 'room',
 				label: _('Room'),
-				width: 'auto'
+				width: 'auto',
+				formatter: unencoded_value => entities.encode(unencoded_value)
 			}];
 
 			this._grid = new Grid({
@@ -1020,7 +1023,7 @@ define([
 
 		_deleteExams: function() {
 			var exams = this._grid.getSelectedIDs();
-			dialog.confirm(_('Do you really want to delete %s?', exams.join(', ')), [{
+			dialog.confirm(_('Do you really want to delete %s?', entities.encode(exams.join(', '))), [{
 				label: _('Cancel'),
 				default: true
 			}, {

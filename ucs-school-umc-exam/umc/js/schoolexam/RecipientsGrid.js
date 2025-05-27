@@ -31,12 +31,13 @@
 define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
+	"dojox/html/entities",
 	"dojo/store/Observable",
 	"dojo/store/Memory",
 	"umc/widgets/Grid",
 	"umc/widgets/Text",
 	"umc/i18n!umc/modules/schoolexam"
-], function(declare, lang, Observable, Memory, Grid, Text, _) {
+], function(declare, lang, entities, Observable, Memory, Grid, Text, _) {
 	return declare("umc.modules.schoolexam.RecipientsGrid", [Grid], {
 		/**
 		 * This grid lists all students, that are members of a provided list of groups (classes, working groups)
@@ -52,14 +53,14 @@ define([
 					name: 'name',
 					label: _('Name'),
 					formatter: function(value, user) {
-						return user.firstname + ' ' + user.lastname
+						return entities.encode(user.firstname + ' ' + user.lastname);
 					}
 				},
 				{
 					name: 'school_classes',
 					label: _('School classes'),
 					formatter: function(value, user) {
-						return user['school_classes'].join(', ');
+						return entities.encode(user['school_classes'].join(', '));
 					}
 				}
 			]

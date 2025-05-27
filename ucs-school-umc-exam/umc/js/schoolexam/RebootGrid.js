@@ -32,6 +32,7 @@ define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
 	"dojo/_base/array",
+	"dojox/html/entities",
 	"dojo/Deferred",
 	"dojo/store/Observable",
 	"dojo/store/Memory",
@@ -39,7 +40,7 @@ define([
 	"umc/widgets/Grid",
 	"umc/widgets/Text",
 	"umc/i18n!umc/modules/schoolexam"
-], function(declare, lang, array, Deferred, Observable, Memory, tools, Grid, Text, _) {
+], function(declare, lang, array, entities, Deferred, Observable, Memory, tools, Grid, Text, _) {
 	return declare("umc.modules.schoolexam.RebootGrid", [ Grid ], {
 		minUpdateDelay: 20,
 		maxUpdateDelay: 120,
@@ -85,7 +86,7 @@ define([
 					var widget = new Text({});
 					widget.set('content', lang.replace('<img src="{src}" height="16" width="16" style="float:left; margin-right: 5px" /> {value}', {
 						src: require.toUrl(lang.replace('dijit/themes/umc/icons/16x16/computerroom-{0}.png', [icon])),
-						value: value
+						value: entities.encode(value)
 					}));
 					return widget;
 				})
