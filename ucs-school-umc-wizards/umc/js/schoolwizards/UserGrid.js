@@ -33,13 +33,14 @@ define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
 	"dojo/_base/array",
+	"dojox/html/entities",
 	"umc/widgets/SearchBox",
 	"umc/widgets/ComboBox",
 	"umc/modules/schoolwizards/UserWizard",
 	"umc/modules/schoolwizards/Grid",
 	"umc/modules/schoolwizards/utils",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, array, SearchBox, ComboBox, UserWizard, Grid, utils, _) {
+], function(declare, lang, array, entities, SearchBox, ComboBox, UserWizard, Grid, utils, _) {
 
 	return declare("umc.modules.schoolwizards.UserGrid", [Grid], {
 
@@ -102,9 +103,9 @@ define([
 		},
 
 		getDeleteConfirmMessage: function(objects) {
-			var msg = _('Please confirm to delete the %(num)d selected %(objectNamePlural)s from school %(school)s.', {num: objects.length, objectNamePlural: this.objectNamePlural, school: this.schoolLabel});
+			var msg = _('Please confirm to delete the %(num)d selected %(objectNamePlural)s from school %(school)s.', {num: objects.length, objectNamePlural: this.objectNamePlural, school: entities.encode(this.schoolLabel)});
 			if (objects.length === 1) {
-				msg = _('Please confirm to delete %(objectNameSingular)s "%(objectName)s" from school %(school)s.', {objectNameSingular: this.objectNameSingular, objectName: this.getObjectIdName(objects[0]), school: this.schoolLabel});
+				msg = _('Please confirm to delete %(objectNameSingular)s "%(objectName)s" from school %(school)s.', {objectNameSingular: this.objectNameSingular, objectName: this.getObjectIdName(objects[0]), school: entities.encode(this.schoolLabel)});
 			}
 			return msg;
 		},

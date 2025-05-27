@@ -32,12 +32,13 @@
 define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
+	"dojox/html/entities",
 	"umc/dialog",
 	"umc/widgets/TextBox",
 	"umc/widgets/ComboBox",
 	"umc/modules/schoolwizards/Wizard",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, dialog, TextBox, ComboBox, Wizard, _) {
+], function(declare, lang, entities, dialog, TextBox, ComboBox, Wizard, _) {
 
 	return declare("umc.modules.schoolwizards.SchoolWizard", [Wizard], {
 		getGeneralPage: function() {
@@ -148,7 +149,7 @@ define([
 
 		addNote: function() {
 			var display_name = this.getWidget('item', 'display_name').get('value');
-			var message = _('The school "%s" has been successfully created. Continue to create another school or press "Cancel" to close this wizard.', display_name);
+			var message = _('The school "%s" has been successfully created. Continue to create another school or press "Cancel" to close this wizard.', entities.encode(display_name));
 			dialog.contextNotify(message);
 		}
 	});

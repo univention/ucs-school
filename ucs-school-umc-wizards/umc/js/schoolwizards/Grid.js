@@ -102,6 +102,7 @@ define([
 				columns: this.getGridColumns(),
 				moduleStore: this.getGridStore(),
 				sortIndex: 1,
+				allowHTML: false,
 				standbyDuring: lang.hitch(this, 'standbyDuring')
 			});
 			return grid;
@@ -312,7 +313,7 @@ define([
 		getDeleteConfirmMessage: function(objects) {
 			var msg = _('Please confirm to delete the %(num)d selected %(objectNamePlural)s.', {num: objects.length, objectNamePlural: this.objectNamePlural});
 			if (objects.length === 1) {
-				msg = _('Please confirm to delete %(objectNameSingular)s "%(objectName)s".', {objectNameSingular: this.objectNameSingular, objectName: this.getObjectIdName(objects[0])});
+				msg = _('Please confirm to delete %(objectNameSingular)s "%(objectName)s".', {objectNameSingular: this.objectNameSingular, objectName: entities.encode(this.getObjectIdName(objects[0]))});
 			}
 			return msg;
 		},

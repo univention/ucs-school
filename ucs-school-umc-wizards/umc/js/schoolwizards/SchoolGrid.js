@@ -35,13 +35,14 @@ define([
 	"dojo/_base/array",
 	"dojo/topic",
 	"dojo/Deferred",
+	"dojox/html/entities",
 	"umc/tools",
 	"umc/dialog",
 	"umc/widgets/SearchBox",
 	"umc/modules/schoolwizards/SchoolWizard",
 	"umc/modules/schoolwizards/Grid",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, array, topic, Deferred, tools, dialog, SearchBox, SchoolWizard, Grid, _) {
+], function(declare, lang, array, topic, Deferred, entities, tools, dialog, SearchBox, SchoolWizard, Grid, _) {
 
 	return declare("umc.modules.schoolwizards.SchoolGrid", [Grid], {
 
@@ -121,12 +122,12 @@ define([
 			var msg;
 			if (objects.length === 1) {
 				var school = objects[0];
-				msg = _('Please confirm to delete the school "%(displayName)s" (%(name)s).', {displayName: school.display_name, name: school.name});
+				msg = _('Please confirm to delete the school "%(displayName)s" (%(name)s).', {displayName: entities.encode(school.display_name), name: entities.encode(school.name)});
 			} else {
 				msg = _('Please confirm to delete the following schools:');
 				msg += '<ul>';
 				array.forEach(objects, function(school) {
-					msg += lang.replace('<li>"{displayName}" ({name})</li>', {displayName: school.display_name, name: school.name});
+					msg += lang.replace('<li>"{displayName}" ({name})</li>', {displayName: entities.encode(school.display_name), name: entities.encode(school.name)});
 				});
 				msg += '</ul>';
 			}
