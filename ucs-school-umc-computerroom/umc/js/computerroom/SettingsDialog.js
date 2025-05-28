@@ -31,6 +31,7 @@
 define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
+	"dojox/html/entities",
 	"umc/tools",
 	"umc/widgets/Dialog",
 	"umc/widgets/Form",
@@ -39,7 +40,7 @@ define([
 	"umc/widgets/TextArea",
 	"umc/widgets/StandbyMixin",
 	"umc/i18n!umc/modules/computerroom"
-], function(declare, lang, tools, Dialog, Form, ComboBox, TimeBox, TextArea, StandbyMixin, _) {
+], function(declare, lang, entities, tools, Dialog, Form, ComboBox, TimeBox, TextArea, StandbyMixin, _) {
 
 	return declare("umc.modules.computerroom.SettingsDialog", [ Dialog, StandbyMixin ], {
 		// summary:
@@ -56,9 +57,9 @@ define([
 		buildRendering: function() {
 			this.inherited(arguments);
 			// add remaining elements of the search form
-			this.set('title', _('Personal settings for the computer room'));
+			this.set('title', entities.encode(_('Personal settings for the computer room')));
 
-			var myRules = _('Personal internet rules');
+			var myRules = entities.encode(_('Personal internet rules'));
 			var widgets = [{
 				type: ComboBox,
 				name: 'internetRule',
@@ -75,9 +76,9 @@ define([
 			}, {
 				type: TextArea,
 				name: 'customRule',
-				label: lang.replace(_('List of allowed web sites for "{myRules}"'), {
+				label: entities.encode(lang.replace(_('List of allowed web sites for "{myRules}"'), {
 					myRules: myRules
-				}),
+				})),
 				sizeClass: 'One',
 				description: _('<p>In this text box you can list web sites that are allowed to be used by the students. Each line should contain one web site. Example: </p><p style="font-family: monospace">univention.com<br/>wikipedia.org<br/></p>'),
 				validate: lang.hitch(this, function() {
@@ -91,14 +92,14 @@ define([
 				type: ComboBox,
 				name: 'shareMode',
 				sizeClass: 'One',
-				label: _('Share access'),
+				label: entities.encode(_('Share access')),
 				description: _('Defines restriction for the share access'),
 				staticValues: [] // Will be set in update
 			}, {
 				type: ComboBox,
 				name: 'printMode',
 				sizeClass: 'One',
-				label: _('Print mode'),
+				label: entities.encode(_('Print mode')),
 				staticValues: [
 					{ id: 'default', label: _('Default (global settings)') },
 					{ id: 'none', label: _('Printing deactivated') }
@@ -106,7 +107,7 @@ define([
 			}, {
 				type: TimeBox,
 				name: 'period',
-				label: _('Valid until')
+				label: entities.encode(_('Valid until'))
 			}];
 
 			var buttons = [{
@@ -125,11 +126,11 @@ define([
 				onClick: lang.hitch(this, 'reset')
 			}, {
 				name: 'submit',
-				label: _('Set'),
+				label: entities.encode(_('Set')),
 				onClick: lang.hitch(this, function() {
 					var customRule = this._form.getWidget('customRule');
 					if (!customRule.validate()) {
-						dijit.showTooltip(_('<b>At least one web site is required!</b>') + '<br/>' + customRule.description, customRule.domNode); // FIXME
+						dijit.showTooltip(_('<b>At least one web site is required!</b>') + '<br/>' + entities.encode(customRule.description), customRule.domNode); // FIXME
 						return;
 					}
 					dijit.hideTooltip(this._form.getWidget('customRule').domNode); // FIXME

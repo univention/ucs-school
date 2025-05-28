@@ -347,7 +347,7 @@ define([
 				});
 			}, this);
 			if (plugin.state_message) {
-				this.addNotification(plugin.state_message);
+				this.addNotification(entities.encode(plugin.state_message));
 			}
 		},
 
@@ -379,7 +379,7 @@ define([
 				this.umcpCommand('computerroom/user/logout', { computer: comp.id });
 			}));
 
-			this.addNotification(_('The selected users are logging off.'));
+			this.addNotification(entities.encode(_('The selected users are logging off.')));
 		},
 
 		_computerChangeState: function(state, ids, items) {
@@ -398,7 +398,7 @@ define([
 				restart: _('The selected computers are rebooting.')
 			}[state];
 			if (msg) {
-				this.addNotification(msg);
+				this.addNotification(entities.encode(msg));
 			}
 		},
 
@@ -415,12 +415,12 @@ define([
 					});
 				}), 300 * i);
 			}));
-			this.addNotification(_('The selected computers are booting up.'));
+			this.addNotification(entities.encode(_('The selected computers are booting up.')));
 		},
 
 		_demoStart: function(ids, items) {
 			this.umcpCommand('computerroom/demo/start', { server: ids[0] });
-			dialog.alert(_("The presentation is starting. This may take a few moments. When the presentation server is started a column presentation is shown that contains a button 'Stop' to end the presentation."), _('Presentation'));
+			dialog.alert(entities.encode(_("The presentation is starting. This may take a few moments. When the presentation server is started a column presentation is shown that contains a button 'Stop' to end the presentation.")), entities.encode(_('Presentation')));
 		},
 
 		_canExecuteLockInput: function(comp, current_locking_state) {
@@ -441,7 +441,9 @@ define([
 					this._objStore.put({ id: comp.id, InputLock: null });
 				}
 			}));
-			this.addNotification(lock ? _('The selected computers are being locked.') : _('The selected computers are being unlocked.'));
+			this.addNotification(entities.encode(
+				lock ? _('The selected computers are being locked.') : _('The selected computers are being unlocked.')
+			));
 		},
 
 		_canExecuteLockScreen: function(comp, current_locking_state) {
@@ -467,7 +469,9 @@ define([
 					this._objStore.put({ id: comp.id, ScreenLock: null });
 				}
 			}));
-			this.addNotification(lock ? _('The selected computers are being locked.') : _('The selected computers are being unlocked.'));
+			this.addNotification(entities.encode(
+				lock ? _('The selected computers are being locked.') : _('The selected computers are being unlocked.')
+			));
 		},
 
 		buildRendering: function() {
@@ -578,8 +582,8 @@ define([
 				// normal mode
 				header = _('Computer room: %s', room);
 			}
-//			this._searchPage.set('headerText', header);
-			this.set('title', header);
+			// this._searchPage.set('headerText', entities.encode(header));
+			this.set('title', entities.encode(header));
 
 			// update visibility of header buttons
 			if (this._headButtons.finishExam.domNode) {
@@ -596,7 +600,7 @@ define([
 			}
 
 			// hide time period input field in settings dialog
-			this._settingsDialog.set('exam', roomInfo.exam);
+			this._settingsDialog.set('exam', entities.encode(roomInfo.exam));
 		},
 
 		_setRoomInfoAttr: function(roomInfo) {
@@ -613,7 +617,7 @@ define([
 		renderSearchPage: function() {
 			this._searchPage = new Page({
 				fullWidth: true,
-				helpText: _("Here you can watch the students' computers, lock the computers, show presentations, control the internet access and define the available printers and shares.")
+				helpText: entities.encode(_("Here you can watch the students' computers, lock the computers, show presentations, control the internet access and define the available printers and shares."))
 			});
 
 			this.addChild(this._searchPage);
@@ -621,7 +625,7 @@ define([
 			var columns = [{
 				name: 'name',
 				width: '35%',
-				label: _('Name'),
+				label: entities.encode(_('Name')),
 				formatter: lang.hitch(this, function(value, item) {
 					var icon = 'offline';
 					var status_ = _('The computer is not running');
@@ -649,7 +653,7 @@ define([
 					var widget = new Text({});
 					widget.set('content', lang.replace('<img src="{src}" height="16" width="16" style="float:left; margin-right: 5px" /> {value}', {
 						src: require.toUrl(lang.replace('dijit/themes/umc/icons/16x16/computerroom-{0}.png', [icon])),
-						value: value
+						value: entities.encode(value)
 					}));
 					this.own(widget);
 
@@ -665,13 +669,13 @@ define([
 
 					label = lang.replace(label, {
 						lblComputerType: _('Computer type'),
-						computertype: computertype,
+						computertype: entities.encode(computertype),
 						lblStatus: _('Status'),
-						status: status_,
+						status: entities.encode(status_),
 						lblIP: _('IP address'),
-						ip: item.ip,
+						ip: entities.encode(item.ip),
 						lblMAC: _('MAC address'),
-						mac: item.mac ? item.mac : ''
+						mac: entities.encode(item.mac ? item.mac : '')
 					});
 					var tooltip = new Tooltip({
 						label: label,
@@ -694,7 +698,7 @@ define([
 					}
 					var id = item.id;
 					var label = lang.replace('<div class="screenShotView__imgTooltip--grid"><img class="screenShotView__img" alt="{1}" id="screenshotTooltip-{0}" src="" /></div>', [
-						id,
+						entities.encode(id),
 						entities.encode(_('Currently there is no screenshot available. Wait a few seconds.'))
 					]);
 
@@ -737,7 +741,7 @@ define([
 					if (failed) {
 						msg += ' ('+ lang.replace(_('{0} powered off/misconfigured'), [failed]) + ')';
 					}
-					return msg;
+					return entities.encode(msg);
 				}
 			});
 
@@ -814,15 +818,17 @@ define([
 					if (promptAlert) {
 						// prompt a message if wanted
 						if (response.result.message === 'EMPTY_ROOM') {
-							dialog.alert(_('The room is empty or the computers are not configured correctly. Please select another room.'));
+							dialog.alert(entities.encode(
+								_('The room is empty or the computers are not configured correctly. Please select another room.')
+							));
 						}
 						else {
-							dialog.alert(_('Failed to open a new session for the room.'));
+							dialog.alert(entities.encode(_('Failed to open a new session for the room.')));
 						}
 					}
 					throw new Error('Could not acquire room');
 				}
-				this.set('room', room);
+				this.set('room', entities.encode(room));
 				this.set('roomInfo', response.result.info);
 
 				// reload the grid
@@ -850,16 +856,18 @@ define([
 		},
 
 		_showExamFinishedDialog: function() {
-			dialog.confirm(_('The allowed time for this examination has been reached. The exam can now be extended or collected. Should be reminded again in 5 minutes?'), [{
+			dialog.confirm(entities.encode(
+				_('The allowed time for this examination has been reached. The exam can now be extended or collected. Should be reminded again in 5 minutes?')
+			), [{
 				name: 'remember',
-				label: _('Remind again'),
+				label: entities.encode(_('Remind again')),
 				'default': true,
 				callback: lang.hitch(this, function() {
 					this._examEndTimer = window.setTimeout(lang.hitch(this, '_showExamFinishedDialog'), 5 * 60 * 1000);
 				})
 			}, {
 				name: 'dont_remember',
-				label: _("Do not remind again"),
+				label: entities.encode(_("Do not remind again")),
 				callback: lang.hitch(this, function() {
 					window.clearTimeout(this._examEndTimer);
 					this._examEndTimer = null;
@@ -867,7 +875,7 @@ define([
 				style: 'margin-right: auto'
 			}, {
 				name: 'finish_exam',
-				label: _('Finish exam'),
+				label: entities.encode(_('Finish exam')),
 				callback: lang.hitch(this, '_finishExam')
 			}], _('Remind'));
 		},
@@ -898,12 +906,14 @@ define([
 				});
 
 				var progressBar = new ProgressBar({});
-				progressBar.setInfo(_('Please wait while all exam documents are being collected.'), null, Infinity);
+				progressBar.setInfo(entities.encode(_('Please wait while all exam documents are being collected.')), null, Infinity);
 
 				// start standby animation
 				this.standbyDuring(deferred, progressBar).then(lang.hitch(this, function() {
 					progressBar.destroyRecursive();
-					dialog.alert(_("All related exam documents have been collected successfully from the students' home directories."));
+					dialog.alert(entities.encode(
+						_("All related exam documents have been collected successfully from the students' home directories.")
+					));
 				}), lang.hitch(this, function() {
 					progressBar.destroyRecursive();
 				}));
@@ -913,11 +923,11 @@ define([
 		_finishExam: function() {
 			dialog.confirm(_("<p>Please confirm to irrevocably finish the current exam.</p><p>All corresponding exam files will be collected from the students' home directories and stored in the corresponding exam folder of your home directory.</p>"), [{
 				name: 'cancel',
-				label: _('Cancel'),
+				label: entities.encode(_('Cancel')),
 				'default': true
 			}, {
 				name: 'finish',
-				label: _('Finish exam')
+				label: entities.encode(_('Finish exam'))
 			}]).then(lang.hitch(this, function(response) {
 				if (response === 'cancel') {
 					// user canceled the dialog
@@ -929,7 +939,9 @@ define([
 				this._updateRoom().then(lang.hitch(this, function () {
 					var info = lang.clone(this.get('roomInfo') || {});
 					if (!info.exam) {
-						dialog.alert(_('There is no exam running in this room anymore. It seems like the exam was finished properly from somewhere else.'));
+						dialog.alert(entities.encode(
+							_('There is no exam running in this room anymore. It seems like the exam was finished properly from somewhere else.')
+						));
 						return;
 					}
 					this.umcpCommand('schoolexam/exam/finish', {
@@ -939,7 +951,7 @@ define([
 
 					// create a 'real' ProgressBar
 					var deferred = new Deferred();
-					this._progressBar.reset(_('Finishing exam...'));
+					this._progressBar.reset(entities.encode(_('Finishing exam...')));
 					this.standbyDuring(deferred, this._progressBar);
 					this._progressBar.auto('schoolexam/progress', {}, function() {
 						// when progress is finished, resolve the given Deferred object
@@ -973,7 +985,7 @@ define([
 
 		_stopPresentation: function() {
 			this.umcpCommand('computerroom/demo/stop', {});
-			this.addNotification(_('The presentation will stop now.'));
+			this.addNotification(entities.encode(_('The presentation will stop now.')));
 		},
 
 		changeRoom: function() {
@@ -1033,16 +1045,16 @@ define([
 			var widgets = [{
 				type: ComboBox,
 				name: 'school',
-				description: _('Choose the school'),
+				description: entities.encode(_('Choose the school')),
 				size: 'One',
-				label: _('School'),
+				label: entities.encode(_('School')),
 				dynamicValues: 'computerroom/schools',
 				autoHide: true
 			}, {
 				type: ComboBox,
 				name: 'room',
-				label: _('Computer room'),
-				description: _('Choose the computer room to monitor'),
+				label: entities.encode(_('Computer room')),
+				description: entities.encode(_('Choose the computer room to monitor')),
 				size: 'One',
 				depends: 'school',
 				dynamicValues: 'computerroom/rooms',
@@ -1080,11 +1092,11 @@ define([
 			var buttons = [{
 				align: 'left',
 				name: 'cancel',
-				label: _('Cancel'),
+				label: entities.encode(_('Cancel')),
 				callback: _cleanup
 			}, {
 				name: 'submit',
-				label: _('Select room'),
+				label: entities.encode(_('Select room')),
 				callback: _callback
 			}];
 
@@ -1118,7 +1130,7 @@ define([
 
 
 			_dialog = new Dialog({
-				title: _('Select computer room'),
+				title: entities.encode(_('Select computer room')),
 				content: form,
 				style: 'width: 400px;'
 			});
@@ -1136,13 +1148,15 @@ define([
 			var closeModuleComputerroom = lang.hitch(this, function() {
 				topic.publish('/umc/tabs/close', this);
 			});
-			var txt = moduleAccess ?
-				_('Do you want to create a computer room now or close the module?') :
-				_('Please contact your system administrator for the creation of computer rooms.');
-			var title = _('There are no computer rooms available');
-			var options = [{name: 'close', label: _('Close module'), default: true}];
+			var txt = entities.encode(
+				moduleAccess ?
+					_('Do you want to create a computer room now or close the module?') :
+					_('Please contact your system administrator for the creation of computer rooms.')
+			);
+			var title = entities.encode(_('There are no computer rooms available'));
+			var options = [{name: 'close', label: entities.encode(_('Close module')), default: true}];
 			if (moduleAccess) {
-				options.push({name: 'create', label: _('Manage computer rooms')});
+				options.push({name: 'create', label: entities.encode(_('Manage computer rooms'))});
 			}
 			dialog.confirm(txt, options, title).then(lang.hitch(this, function(response) {
 				if (response === 'close') {
@@ -1154,13 +1168,13 @@ define([
 		},
 
 		displayRoomTakeoverDialog: function(room) {
-			return dialog.confirm(_('This computer room is currently in use by %s. You can take control over the room, however, the current teacher will be prompted a notification and its session will be closed.', room.user), [{
+			return dialog.confirm(_('This computer room is currently in use by %s. You can take control over the room, however, the current teacher will be prompted a notification and its session will be closed.', entities.encode(room.user)), [{
 				name: 'cancel',
-				label: _('Cancel'),
+				label: entities.encode(_('Cancel')),
 				'default': true
 			}, {
 				name: 'takeover',
-				label: _('Take over')
+				label: entities.encode(_('Take over'))
 			}]).then(function(response) {
 				if (response !== 'takeover') {
 					// cancel deferred chain
@@ -1232,9 +1246,9 @@ define([
 						window.clearInterval(this._screenLockTimer);
 						this._screenLockTimer = null;
 					}
-					dialog.confirm(_('Control over the computer room has been taken by "%s", your session has been closed. In case this behaviour was not intended, please contact the other user. You can regain control over the computer room, by choosing it from the list of rooms again.', response.result.user), [{
+					dialog.confirm(_('Control over the computer room has been taken by "%s", your session has been closed. In case this behaviour was not intended, please contact the other user. You can regain control over the computer room, by choosing it from the list of rooms again.', entities.encode(response.result.user)), [{
 						name: 'ok',
-						label: _('Ok'),
+						label: entities.encode(_('Ok')),
 						'default': true
 					}]).then(lang.hitch(this, function() {
 						this.changeRoom();
@@ -1261,7 +1275,7 @@ define([
 						time: response.result.settingEndsIn,
 						label: this._changeSettingsLabel
 					});
-					this._headButtons.settings.set('label', labelValidUntil);
+					this._headButtons.settings.set('label', entities.encode(labelValidUntil));
 					areSettingsExpiring = (response.result.settingEndsIn <= 5);
 				} else {
 					if (this._headButtons.settings.get('label') !== this._changeSettingsLabel) {
@@ -1286,7 +1300,7 @@ define([
 					if (delta > 0) {
 						content = (delta <= 60000) ? _('1 minute left') : _('%s minutes left', String(1+(delta / 1000 / 60)).split('.')[0]);
 					}
-					this._headButtons.examEndTime.set('content', content);
+					this._headButtons.examEndTime.set('content', entities.encode(content));
 					this._headButtons.examEndTime.set('visible', !!this._headButtons.examEndTime.get('content'));
 				}
 
@@ -1343,7 +1357,7 @@ define([
 					this._nUpdateFailures = 0;
 					this.set('room', null);
 					this.changeRoom();
-					dialog.alert(_('Lost the connection to the computer room. Please try to reopen the computer room.'));
+					dialog.alert(entities.encode(_('Lost the connection to the computer room. Please try to reopen the computer room.')));
 				}
 			}));
 		}
