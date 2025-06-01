@@ -31,6 +31,7 @@
 define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
+	"dojox/html/entities",
 	"umc/dialog",
 	"umc/store",
 	"umc/widgets/Page",
@@ -41,7 +42,7 @@ define([
 	"umc/widgets/TextBox",
 	"umc/widgets/StandbyMixin",
 	"umc/i18n!umc/modules/internetrules"
-], function(declare, lang, dialog, store, Page, Form, MultiInput, CheckBox, ComboBox, TextBox, StandbyMixin, _) {
+], function(declare, lang, entities, dialog, store, Page, Form, MultiInput, CheckBox, ComboBox, TextBox, StandbyMixin, _) {
 
 	return declare("umc.modules.internetrules.DetailPage", [ Page, StandbyMixin ], {
 		// summary:
@@ -166,7 +167,7 @@ define([
 				this.standby(false);
 				if (result && !result.success) {
 					// display error message
-					dialog.alert(result.details);
+					dialog.alert(entities.encode(result.details));
 					return;
 				}
 				this.onClose();

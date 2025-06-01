@@ -32,6 +32,7 @@ define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
 	"dojo/_base/array",
+	"dojox/html/entities",
 	"umc/dialog",
 	"umc/store",
 	"umc/widgets/Page",
@@ -39,7 +40,7 @@ define([
 	"umc/widgets/SearchBox",
 	"umc/widgets/SearchForm",
 	"umc/i18n!umc/modules/internetrules"
-], function(declare, lang, array, dialog, store, Page, Grid, SearchBox, SearchForm, _) {
+], function(declare, lang, array, entities, dialog, store, Page, Grid, SearchBox, SearchForm, _) {
 
 	return declare("umc.modules.internetrules.AdminPage", [ Page ], {
 		// summary:
@@ -128,7 +129,8 @@ define([
 			this._grid = new Grid({
 				actions: actions,
 				columns: columns,
-				moduleStore: this.moduleStore
+				moduleStore: this.moduleStore,
+				allowHTML: false
 			});
 
 			// add the grid to the title pane
@@ -189,7 +191,7 @@ define([
 
 			// get a string of all rule names and the correct confirmation message
 			var rulesStr = array.map(items, function(iitem) {
-				return iitem.name;
+				return entities.encode(iitem.name);
 			}).join('</li><li>');
 			rulesStr = '<ul style="max-height:200px; overflow:auto;"><li>' + rulesStr + '</li></ul>';
 			var confirmMsg = items.length > 1 ? _('Please confirm to remove the following %d filter rules: %s', items.length, rulesStr) : _('Please confirm to remove the following filter rule: %s', rulesStr);
@@ -216,7 +218,7 @@ define([
 						if (failedRules.length) {
 							// something went wrong... display the rules for which the removal failed
 							var rulesStr = array.map(failedRules, function(iresult) {
-								return iresult.name;
+								return entities.encode(iresult.name);
 							}).join('</li><li>');
 							rulesStr = '<ul style="max-height:200px; overflow:auto;"><li>' + rulesStr + '</li></ul>';
 							dialog.alert(_('Removal of the following rules failed:%s', rulesStr));

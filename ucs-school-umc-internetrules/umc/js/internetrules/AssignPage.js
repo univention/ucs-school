@@ -32,6 +32,7 @@ define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
 	"dojo/_base/array",
+	"dojox/html/entities",
 	"umc/tools",
 	"umc/store",
 	"umc/widgets/Dialog",
@@ -44,7 +45,7 @@ define([
 	"umc/widgets/SearchForm",
 	"umc/widgets/StandbyMixin",
 	"umc/i18n!umc/modules/internetrules"
-], function(declare, lang, array, tools, store, Dialog, Page, Form,
+], function(declare, lang, array, entities, tools, store, Dialog, Page, Form,
             Grid, SearchBox, Text, ComboBox, SearchForm, StandbyMixin, _) {
 
 	return declare("umc.modules.internetrules.AssignPage", [ Page ], {
@@ -105,6 +106,7 @@ define([
 				columns: columns,
 				moduleStore: this.moduleStore,
 				defaultAction: 'assign',
+				allowHTML: false,
 				hideContextActionsWhenNoSelection: false
 			});
 
@@ -165,7 +167,7 @@ define([
 			// prepare displayed list of groups
 			var message = '';
 			var groups = array.map(items, function(iitem) {
-				return iitem.name;
+				return entities.encode(iitem.name);
 			});
 			if (ids.length > 1) {
 				// show groups as a list ul-list
