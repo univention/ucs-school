@@ -89,6 +89,7 @@ define([
 				type: TextBox,
 				name: 'name',
 				label: _('Name'),
+				regExp: "^\\w([\\w -.’]*\\w)?$",  // rooms are groups and have therefore the same limitations
 				required: true
 			}, {
 				type: TextBox,
@@ -207,7 +208,7 @@ define([
 				// may return false in case room.name was already taken
 				deferred.then(lang.hitch(this, function(success) {
 					if (!success) {
-						this.addNotification(_('Room %s not created. It already exists.', values.name));
+						this.addNotification(_('Room %s not created. It already exists.', entities.encode(values.name)));
 					}
 				}));
 			}

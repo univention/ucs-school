@@ -32,6 +32,7 @@ define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
 	"dojo/aspect",
+	"dojox/html/entities",
 	"umc/dialog",
 	"umc/widgets/Grid",
 	"umc/widgets/Module",
@@ -41,7 +42,7 @@ define([
 	"umc/widgets/ComboBox",
 	"umc/modules/schoolrooms/DetailPage",
 	"umc/i18n!umc/modules/schoolrooms"
-], function(declare, lang, aspect, dialog, Grid, Module, Page, SearchForm, SearchBox, ComboBox, DetailPage, _) {
+], function(declare, lang, aspect, entities, dialog, Grid, Module, Page, SearchForm, SearchBox, ComboBox, DetailPage, _) {
 
 	return declare("umc.modules.schoolrooms", [ Module ], {
 
@@ -105,6 +106,7 @@ define([
 				actions: actions,
 				columns: columns,
 				moduleStore: this.moduleStore,
+				allowHTML: false,
 				query: {}
 			});
 
@@ -224,7 +226,7 @@ define([
 		},
 
 		_deleteObjects: function(ids, items) {
-			dialog.confirm(lang.replace(_('Should the room {name} be deleted?'), items[0]), [{
+			dialog.confirm(lang.replace(_('Should the room {name} be deleted?'), {name: entities.encode(items[0].name)}), [{
 				name: 'cancel',
 				'default' : true,
 				label: _('Cancel')
@@ -239,7 +241,7 @@ define([
 					if (response.success === true) {
 						dialog.alert(_('The room has been deleted successfully'));
 					} else {
-						dialog.alert(lang.replace(_('The room could not be deleted ({message})'), response));
+						dialog.alert(lang.replace(_('The room could not be deleted ({message})'), {message: entities.encode(response.message)}));
 					}
 				})));
 
