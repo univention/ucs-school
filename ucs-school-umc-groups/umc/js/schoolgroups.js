@@ -84,7 +84,8 @@ define([
 				actions: this.getGridActions(),
 				columns: this.getGridColumns(),
 				moduleStore: this.moduleStore,
-				hideContextActionsWhenNoSelection: false
+				hideContextActionsWhenNoSelection: false,
+				allowHTML: false
 			});
 			this._searchPage.addChild(this._grid);
 
@@ -301,7 +302,7 @@ define([
 					if (response.success === true) {
 						dialog.alert(_('The workgroups have been deleted successfully'));
 					} else {
-						dialog.alert(lang.replace(_('The workgroups could not be deleted ({message})'), response));
+						dialog.alert(lang.replace(_('The workgroups could not be deleted ({message})'), {message: entities.encode(response.message)}));
 					}
 				}));
 			}));
