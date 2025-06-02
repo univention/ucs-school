@@ -337,13 +337,13 @@ define([
 
 			if (info.errors.length === 1) {
 				// one error can be displayed as text
-				this.getWidget(nextPage, 'info').set('content', info.errors[0]);
+				this.getWidget(nextPage, 'info').set('content', entities.encode(info.errors[0]));
 			}
 			else if (info.errors.length > 1) {
 				// display multiple errors as unordered list
 				var html = '<ul>';
 				array.forEach(info.errors, function(txt) {
-					html += lang.replace('<li>{0}</li>\n', [txt]);
+					html += lang.replace('<li>{0}</li>\n', [entities.encode(txt)]);
 				});
 				html += '</ul>';
 				this.getWidget(nextPage, 'info').set('content', html);
@@ -440,7 +440,7 @@ define([
 							// check if there are other UCS@school Replica Directory Nodes defined
 							if ((schoolinfo.educational_slaves.length > 0) && (array.indexOf(schoolinfo.educational_slaves, this._hostname) < 0)) {
 								// show error message and then jump back to server role selection
-								return dialog.confirm('<div style="max-width: 500px">' + _('UCS@school supports only one educational server per school. Please check if the educational server "') + schoolinfo.educational_slaves[0] + _('" is still in use. Otherwise the corresponding host object has to be deleted first.') + '</div>', [{
+								return dialog.confirm('<div style="max-width: 500px">' + _('UCS@school supports only one educational server per school. Please check if the educational server "') + entities.encode(schoolinfo.educational_slaves[0]) + _('" is still in use. Otherwise the corresponding host object has to be deleted first.') + '</div>', [{
 									name: 'ok',
 									label: _('Ok'),
 									'default': true
@@ -455,7 +455,7 @@ define([
 							// check if there are other UCS@school Replica Directory Nodes defined
 							if ((schoolinfo.administrative_slaves.length > 0) && (array.indexOf(schoolinfo.administrative_slaves, this._hostname) < 0)) {
 								// show error message and then jump back to server role selection
-								return dialog.confirm('<div style="max-width: 500px">' + _('UCS@school supports only one administrative server per school. Please check if the administrative server "') + schoolinfo.administrative_slaves[0] + _('" is still in use. Otherwise the corresponding host object has to be deleted first.') + '</div>', [{
+								return dialog.confirm('<div style="max-width: 500px">' + _('UCS@school supports only one administrative server per school. Please check if the administrative server "') + entities.encode(schoolinfo.administrative_slaves[0]) + _('" is still in use. Otherwise the corresponding host object has to be deleted first.') + '</div>', [{
 									name: 'ok',
 									label: _('Ok'),
 									'default': true
