@@ -1,3 +1,9 @@
+ucs-school-umc-users (17.0.1) unstable; urgency=medium
+
+  * Bug 58209: escape values to fix possible xss
+
+ -- Jürn Brodersen <brodersen@univention.de>  Mon, 02 Jun 2025 09:41:13 +0200
+
 ucs-school-umc-users (17.0.0) unstable; urgency=medium
 
   * UCS@school 5.2

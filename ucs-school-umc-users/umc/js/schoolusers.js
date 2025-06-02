@@ -110,6 +110,7 @@ define([
 				hideContextActionsWhenNoSelection: false,
 				columns: columns,
 				moduleStore: this.moduleStore,
+				allowHTML: false,
 				defaultAction: 'reset'
 			});
 
