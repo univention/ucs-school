@@ -1,3 +1,9 @@
+ucs-school-umc-computerroom (14.0.4) unstable; urgency=low
+
+  * Bug #58209: fix escaping of backend data to prevent XSS
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 04 Jun 2025 10:58:45 +0200
+
 ucs-school-umc-computerroom (14.0.3) unstable; urgency=low
 
   * Bug #58209: escape relevant backend data to prevent XSS

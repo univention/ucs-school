@@ -828,7 +828,7 @@ define([
 					}
 					throw new Error('Could not acquire room');
 				}
-				this.set('room', entities.encode(room));
+				this.set('room', room);
 				this.set('roomInfo', response.result.info);
 
 				// reload the grid
