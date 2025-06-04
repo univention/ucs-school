@@ -97,9 +97,8 @@ class RelaeseIssue:
             if pkg_name in unreleased_packages:
                 double_package_name_error = f"Package: {pkg_name} exists multiple times!"
                 raise RuntimeError(double_package_name_error)
-            if (
-                pkg_name not in released_sources_pkgs
-                or released_sources_pkgs[pkg_name] != changelog.full_version
+            if pkg_name not in released_sources_pkgs or not released_sources_pkgs[pkg_name].startswith(
+                changelog.full_version
             ):
                 unreleased_packages[pkg_name] = {
                     "old": released_sources_pkgs[pkg_name],
