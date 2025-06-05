@@ -77,6 +77,14 @@ def get_resource_representation_classes(resource_name):
     return __resource_representation_class_registry[resource_name]
 
 
+def invalidate_resource_representation_classes_cache():
+    for cls in [
+        get_resource_representation_classes(class_name)
+        for class_name in __resource_representation_class_registry
+    ]:
+        cls.invalidate_cache()
+
+
 class ApiError(Exception):
     def __init__(self, msg, status_code=None):
         super(ApiError, self).__init__(msg)
@@ -188,13 +196,28 @@ class ResourceRepresentation(object):
         """Base class of resource representation classes."""
 
         resource_name = ""
+        resource_cache = {}
         _attribute_repr = {}  # type: Dict[str, Callable[[str], Any]]
 
         def __init__(self, resource_client, resource):
             self._resource_client = resource_client
             self._resource = resource
-            self._cache = {}
             self._set_attrs(self._resource)
+
+        @classmethod
+        def get(cls, resource_client, resource_url):
+            cached_resource = cls.resource_cache.get(resource_url, None)
+
+            if cached_resource is not None:
+                return cached_resource
+
+            resource = cls(resource_client, resource_client._resource_from_url(resource_url))
+            cls.resource_cache[resource_url] = resource
+            return resource
+
+        @classmethod
+        def invalidate_cache(cls):
+            cls.resource_cache = {}
 
         def __repr__(self):
             return "{}({})".format(self.__class__.__name__, getattr(self, self._resource_client.pk_name))
@@ -270,8 +293,8 @@ class ResourceRepresentation(object):
             return "{}({}, {}, {}, {}, {})".format(
                 self.__class__.__name__,
                 getattr(self, self._resource_client.pk_name),
-                self._cached_school,  # side effect: this will create a request (the first time) to get
-                # the schools name
+                self.school.name,  # side effect: this will create a request (the first time) to get
+                # the school resource
                 self.user_role,
                 self.principal,
                 self.status,
@@ -295,11 +318,9 @@ class ResourceRepresentation(object):
 
         @property
         def school(self):
-            school_r = ResourceRepresentation.SchoolResource(
-                self._resource_client, self._resource_client._resource_from_url(self._resource["school"])
+            return ResourceRepresentation.SchoolResource.get(
+                self._resource_client, self._resource["school"]
             )
-            self._cache["school_name"] = school_r.name
-            return school_r
 
         @property
         def summary_file(self):
@@ -318,16 +339,6 @@ class ResourceRepresentation(object):
                 )
             else:
                 return None
-
-        @property
-        def _cached_school(self):
-            if "school_name" not in self._cache:
-                try:
-                    self._cache["school_name"] = self.school.name
-                except ApiError as exc:
-                    print("Error retrieving school name of UserImportJobResource: {}".format(exc))
-                    return "school name n/a"
-            return self._cache["school_name"]
 
     @classmethod
     def get_repr(cls, resource_client, resource):
@@ -372,6 +383,7 @@ class Client(object):
             `Client.LOG_REQUEST` to log API requests, `Client.LOG_RESPONSE` to
             log both requests and responses
         """
+        self.session = requests.Session()
         self.username = name
         self.password = password
         self.server = server or "{}.{}".format(ucr["hostname"], ucr["domainname"])
@@ -395,6 +407,12 @@ class Client(object):
                     ]
                 ),
             )
+
+    def close(self):
+        self.session.close()
+
+    def invalidate_caches(self):
+        invalidate_resource_representation_classes_cache()
 
     @property
     def resource_urls(self):
@@ -466,7 +484,7 @@ class Client(object):
         self.logger.request(
             "%s(%s)", method, ", ".join("{}={!r}".format(k, v) for k, v in log_request_kwargs.items())
         )
-        meth = getattr(requests, method)
+        meth = getattr(self.session, method)
         try:
             response = meth(**request_kwargs)
         except requests.ConnectionError as exc:

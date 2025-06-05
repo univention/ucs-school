@@ -68,6 +68,10 @@ class Instance(SchoolBaseModule, ProgressMixin):
         self._progress_objs = {}
         self.client = None
 
+    def destroy(self):
+        if self.client is not None and hasattr(self.client, "close"):
+            self.client.close()
+
     def get_client(self, request):
         if self.client is not None:
             return self.client
@@ -250,6 +254,8 @@ class Instance(SchoolBaseModule, ProgressMixin):
     @require_password
     @simple_response(with_request=True)
     def jobs(self, request):
+        if self.client is not None:
+            self.client.invalidate_caches()
         return [
             {
                 "id": job.id,
@@ -265,8 +271,9 @@ class Instance(SchoolBaseModule, ProgressMixin):
     def _jobs(self, request):
         try:
             return self.get_client(request).userimportjob.list(
-                limit=20, dryrun=False, ordering="date_created"
+                limit=50, dryrun=False, ordering="date_created"
             )
+
         except ServerError as exc:
             raise UMC_Error(
                 _("The UCS@school Import API HTTP server is not reachable: %s") % (exc,), status=500
