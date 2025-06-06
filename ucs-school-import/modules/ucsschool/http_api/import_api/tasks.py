@@ -40,13 +40,18 @@
 
 from __future__ import unicode_literals
 
+import itertools
 import logging
+import pathlib
+import shutil
 import time
 import traceback
 
 from celery import shared_task
 from celery.utils.log import get_task_logger
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Q
 from django_celery_results.models import TaskResult
 
 from ucsschool.importer.exceptions import (
@@ -54,11 +59,13 @@ from ucsschool.importer.exceptions import (
     UcsSchoolImportError,
     UcsSchoolImportFatalError,
 )
+from univention.config_registry import ucr
 
 from .constants import JOB_ABORTED, JOB_FINISHED, JOB_SCHEDULED, JOB_STARTED
 from .http_api_import_frontend import HttpApiImportFrontend
 from .models import Logfile, PasswordsFile, SummaryFile, UserImportJob
 
+IMPORT_JOB_BASEDIR = pathlib.Path(settings.UCSSCHOOL_IMPORT["import_jobs_basedir"]).resolve()
 logger = get_task_logger(__name__)
 logger.level = logging.DEBUG
 logging.root.setLevel(
@@ -137,11 +144,59 @@ def run_import_job(task, importjob_id):
     )
 
 
+def cleanup_import_jobs():
+    """Delete old stopped import jobs if ucsschool/import/http_api/import_jobs_to_keep is set."""
+    max_import_jobs = ucr.get_int("ucsschool/import/http_api/import_jobs_to_keep")
+    if max_import_jobs <= 0:
+        return
+
+    all_stopped_non_dryrun_jobs = UserImportJob.objects.filter(
+        (Q(status=JOB_ABORTED) | Q(status=JOB_FINISHED)) & Q(dryrun=False)
+    ).order_by("-date_created")
+
+    all_stopped_dryrun_jobs = UserImportJob.objects.filter(
+        (Q(status=JOB_ABORTED) | Q(status=JOB_FINISHED)) & Q(dryrun=True)
+    ).order_by("-date_created")
+
+    if (
+        all_stopped_non_dryrun_jobs.count() <= max_import_jobs
+        and all_stopped_dryrun_jobs.count() <= max_import_jobs
+    ):
+        return
+
+    logger.info("Cleaning up old import jobs.")
+    jobs_to_delete = all_stopped_non_dryrun_jobs[max_import_jobs:]
+    dry_run_jobs_to_delete = all_stopped_dryrun_jobs[max_import_jobs:]
+    logger.info(
+        f"Removing {jobs_to_delete.count()} import and {dry_run_jobs_to_delete.count()} dry run jobs."
+    )
+    for job in itertools.chain(jobs_to_delete, dry_run_jobs_to_delete):
+        path = pathlib.Path(job.basedir).resolve()
+        try:
+            if (
+                path.exists()
+                and path.is_dir()
+                and path.is_relative_to(IMPORT_JOB_BASEDIR)
+                and path != IMPORT_JOB_BASEDIR
+            ):
+                logger.info(f"Removing folder {path} of {job=!s}")
+                shutil.rmtree(path)
+        except Exception as exc:
+            logger.error(f"Error during removal of folder {path} of {job=}:\n{exc}")
+
+        job.delete()
+    logger.info("Finished cleanup_import_jobs.")
+
+
 @shared_task(bind=True)
 def import_users(self, importjob_id):
     logger.info("Starting UserImportJob %d (%r).", importjob_id, self)
     success, summary_str = run_import_job(self, importjob_id)
     logger.info("Finished UserImportJob %d.", importjob_id)
+    try:
+        cleanup_import_jobs()
+    except Exception as exc:
+        logger.error("Error during cleanup_import_jobs(): %s", exc)
     return HttpApiImportFrontend.make_job_state(
         description="UserImportJob #{} ended {}.\n\n{}".format(
             importjob_id, "successfully" if success else "with error", summary_str

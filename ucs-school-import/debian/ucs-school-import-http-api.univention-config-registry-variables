@@ -10,6 +10,13 @@ Description[en]=Activates web application debug output when errors occur. This i
 Type=bool
 Categories=ucsschool-base
 
+[ucsschool/import/http_api/import_jobs_to_keep]
+Description[de]=Die maximale Anzahl von archivierten Importaufträgen. Die Import HTTP-API wird ältere archivierte Aufträge aus der internen Applikations-Datenbank und zugehörige Dateien löschen. Ist diese Variable auf 0 gesetzt, wird keine Löschung älterer Aufträge durchgeführt. Es ist empfohlen diese UCR-V zu setzen, um Speicherplatz freizugeben und die Performance der Import-HTTP API zu verbessern.
+Description[en]=The maximum number of archived import jobs. The Import HTTP-API will delete older archived jobs from the internal application database and related files. If this variable is set to 0, no deletion of older jobs will be performed. It is recommended to set this UCR-V, as this will free up disk space and improve the performance of the Import-HTTP API.
+Type=int
+Categories=ucsschool-base
+Default=0
+
 [ucsschool/import/http_api/ALLOWED_HOSTS]
 Description[de]=Kommaseparierte Liste vom IPs und Hostnamen denen es erlaubt ist, sich zum Webapplikationsserver zu verbinden. Wenn nicht gesetzt, wird nur der Server selbst erlaubt. Standard: nicht gesetzt.
 Description[en]=Comma separated list of IPs and hostnames that are allowed to connect to the web application server. If not set only the server itself is allowed. Default: unset.
