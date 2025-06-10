@@ -89,6 +89,16 @@ unter :file:`/var/lib/ucs-school-import/jobs/{$JAHR}/{$JOB-ID}/`:
 Konfigurationsdateien, Hooks, Logdateien, CSV-Dateien (Eingabedaten, Passwörter
 neuer Benutzer, Zusammenfassung).
 
+Um die maximale Anzahl der Import-Jobs zu begrenzen, kann die UCR-Variable
+:envvar:`ucsschool/import/http_api/import_jobs_to_keep` gesetzt werden.
+Wenn nach einem Import die Gesamtanzahl der Jobs diese übersteigt,
+werden die ältesten Jobs inklusive ihrer Verzeichnisse gelöscht.
+
+Weiterhin kann durch die UCR-Variable :envvar:`ucsschool/umc/import/import_jobs_to_show` die
+Anzahl der in der Oberfläche des grafischen Benutzerimports anzuzeigenden
+Import-Jobs begrenzt werden. Voreingestellt ist diese auf 300, was typischerweise
+wenige Sekunden Modul-Ladezeit entspricht.
+
 .. note::
 
    Sollte auf dem |UCSPRIMARYDN| ein SSL-Zertifikat mit abweichenden FQDNs
