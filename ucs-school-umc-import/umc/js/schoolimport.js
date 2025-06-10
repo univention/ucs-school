@@ -377,7 +377,8 @@ define([
 							)
 						});
 					}
-				}]
+				}],
+                sortIndex: -1
 			});
 
 			grid.filter({query: ''});
