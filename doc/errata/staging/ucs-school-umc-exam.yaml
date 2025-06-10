@@ -1,0 +1,11 @@
+product: ucsschool
+release: "5.2"
+released:
+version: [0]
+scope: ucs_5.2-0-ucs-school-5.2
+src: ucs-school-umc-exam
+fix: 12.0.5
+bugs:
+  58382:
+    en: "As of UCS 5.2-2 every LDAP object will have a unique ``univentionObjectIdentifier`` attribute. The UMC module for the exam mode has been adapted, to implement this for exam users as well."
+    de: "Ab UCS 5.2-2 erhält jedes LDAP-Objekt ein eindeutiges ``univentionObjectIdentifier``-Attribut. Das UMC-Modul für den Klassenarbeitsmodus wurde so angepasst, um dies auch für Prüfungsbenutzer umzusetzen."

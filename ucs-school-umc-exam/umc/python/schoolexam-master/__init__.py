@@ -40,6 +40,7 @@ import os
 import os.path
 import re
 import traceback
+import uuid
 from collections import defaultdict
 from typing import Dict, List, Tuple  # noqa: F401
 
@@ -321,6 +322,9 @@ class Instance(SchoolBaseModule):
         # deepcopy(user_orig) does not help much, as we cannot use users.user.object.create()
         # because it currently cannot be convinced to preserve the password. So we do it manually:
         try:
+            # create new univentionObjectIdentifier
+            univentionObjectIdentifier = str(uuid.uuid4())
+
             # Allocate new uidNumber
             uidNum = univention.admin.allocators.request(ldap_admin_write, ldap_position, "uidNumber")
             alloc.append(("uidNumber", uidNum))
@@ -380,6 +384,7 @@ class Instance(SchoolBaseModule):
             # Now create the addlist, fixing up attributes as we go
             al = []
             foundUniventionObjectFlag = False
+            foundUniventionObjectIdentifier = False
             for key, value in user_orig.oldattr.items():
                 # ignore blacklisted attributes
                 if key in blacklisted_attributes:
@@ -467,6 +472,9 @@ class Instance(SchoolBaseModule):
                             )
                         ).encode("UTF-8")
                     ]
+                elif key == "univentionObjectIdentifier":
+                    value = [univentionObjectIdentifier.encode("UTF-8")]
+                    foundUniventionObjectIdentifier = True
                 elif key == "uidNumber":
                     value = [uidNum.encode("UTF-8")]
                 elif key == "sambaSID":
@@ -488,6 +496,9 @@ class Instance(SchoolBaseModule):
                             ",".join([c.name for c in self._room_host_cache[room]]).encode("UTF-8"),
                         )
                     )
+
+            if not foundUniventionObjectIdentifier:
+                al.append(("univentionObjectIdentifier", [univentionObjectIdentifier.encode("UTF-8")]))
 
             if not foundUniventionObjectFlag and "univentionObjectFlag" not in blacklisted_attributes:
                 al.append(("univentionObjectFlag", [b"temporary"]))

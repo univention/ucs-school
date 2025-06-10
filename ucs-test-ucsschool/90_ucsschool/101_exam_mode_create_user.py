@@ -59,6 +59,25 @@ def test_exam_mode_create_exam_user(udm_session, schoolenv, ucr):
 
     _, exam_user_attrs = udm.list_objects("users/user", position=exam_user_dn)[0]
 
+    print("# check if univentionObjectIdentifier is set correctly")
+    open_ldap_co = schoolenv.open_ldap_connection()
+    user_attrs = open_ldap_co.get(user_dn, attr=["uid", "univentionObjectIdentifier"])
+    exam_attrs = open_ldap_co.get(exam_user_dn, attr=["uid", "univentionObjectIdentifier"])
+    print(
+        "- user_attrs.get('univentionObjectIdentifier') =",
+        repr(user_attrs.get("univentionObjectIdentifier")),
+    )
+    print(
+        "- exam_attrs.get('univentionObjectIdentifier') =",
+        repr(exam_attrs.get("univentionObjectIdentifier")),
+    )
+    assert (
+        "univentionObjectIdentifier" in exam_attrs and len(exam_attrs["univentionObjectIdentifier"]) == 1
+    )
+    assert user_attrs.get("univentionObjectIdentifier", []) != exam_attrs.get(
+        "univentionObjectIdentifier"
+    )
+
     print("# Extra cleanup: Remove created exam user")
     user_mod = UDM.admin().version(2).get("users/user")
     exam_user = user_mod.get(exam_user_dn)

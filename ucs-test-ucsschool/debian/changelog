@@ -1,3 +1,10 @@
+ucs-test-ucsschool (8.0.22) unstable; urgency=medium
+
+  * Bug #58382: exam-master now creates new/unique values for
+    univentionObjectIdentifier for exam users
+
+ -- Jürn Brodersen <brodersen@univention.de>  Wed, 11 Jun 2025 16:49:27 +0200
+
 ucs-test-ucsschool (8.0.21) unstable; urgency=medium
 
   * univention/ucsschool#1408: Add test for checking exam user spool directory permissions
