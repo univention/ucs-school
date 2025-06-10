@@ -53,18 +53,21 @@ class AdvisoriesDirective(SphinxDirective):
         self.state.nested_parse(nodes.paragraph(text=text), 0, generated)
         section += generated
         list_node = nodes.bullet_list()
-        for bug, entry in advisory["bugs"].items():
-            content = nodes.list_item()
-            entry_raw = entry[lang].strip()
-            entry_text = f"{entry_raw[:-1] if entry_raw.endswith('.') else entry_raw}" + (
-                "." if bug == "notes" else f" (:uv:bug:`{bug}`)."
-            )
-            self.state.nested_parse(
-                nodes.paragraph(text=entry_text),
-                0,
-                content,
-            )
-            list_node += content
+        for bug, entries in advisory["bugs"].items():
+            if not isinstance(entries, list):
+                entries = [entries]
+            for entry in entries:
+                content = nodes.list_item()
+                entry_raw = entry[lang].strip()
+                entry_text = f"{entry_raw[:-1] if entry_raw.endswith('.') else entry_raw}" + (
+                    "." if bug == "notes" else f" (:uv:bug:`{bug}`)."
+                )
+                self.state.nested_parse(
+                    nodes.paragraph(text=entry_text),
+                    0,
+                    content,
+                )
+                list_node += content
         section += list_node
 
     def run(self) -> list[nodes.Node]:

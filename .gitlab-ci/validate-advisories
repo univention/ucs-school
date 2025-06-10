@@ -108,10 +108,15 @@ def check_yaml_content(filename: str) -> List[str]:
         for bug, texts in raw_bugs.items():
             if not (bug == "notes" or isinstance(bug, int)):
                 errors.append(f"Bugs must either be a number or 'notes': {bug}")
-            if not texts.get("en", None):
-                errors.append(f"A bug must contain an english text: {bug}")
-            if not texts.get("de", None):
-                errors.append(f"A bug must contain a german text: {bug}")
+            if not (isinstance(texts, list) or isinstance(texts, dict)):
+                errors.append(f"Values for bug {bug} must be either a list or a dictionary")
+            if not isinstance(texts, list):
+                texts = [texts]
+            for text in texts:
+                if not text.get("en", None):
+                    errors.append(f"A bug must contain an english text: {bug}")
+                if not text.get("de", None):
+                    errors.append(f"A bug must contain a german text: {bug}")
 
     return errors
 
