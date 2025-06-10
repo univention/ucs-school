@@ -1,0 +1,11 @@
+product: ucsschool
+release: "5.2"
+released:
+version: [0]
+scope: ucs_5.2-0-ucs-school-5.2
+src: ucs-school-umc-import
+fix: 4.1.0
+bugs:
+  52173:
+    - en: Introduced the UCR variable `ucsschool/umc/import/import_jobs_to_show`. This variable is used to limit the number of import jobs shown in the UCS@school graphical user import. This variable is set to 300 by default.
+      de: Die UCR-Variable `ucsschool/umc/import/import_jobs_to_show` wurde eingeführt. Diese Variable wird verwendet, um die Anzahl der angezeigten Importjobs im grafischen Benutzerimport von UCS@school zu begrenzen. Diese Variable ist auf den Wert 300 voreingestellt.

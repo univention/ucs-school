@@ -1,0 +1,13 @@
+product: ucsschool
+release: "5.2"
+released:
+version: [0]
+scope: ucs_5.2-0-ucs-school-5.2
+src: ucs-school-import
+fix: 19.1.0
+bugs:
+  52173:
+    - en: Introduced UCR variable ``ucsschool/import/http_api/import_jobs_to_keep`` which sets the amount of import jobs which will be retained in the database.
+      de: Die UCR-Variable ``ucsschool/import/http_api/import_jobs_to_keep`` wurde eingeführt, mit der die Anzahl der Import Jobs festgelegt werden kann, die in der Datenbank behalten werden.
+    - en: Improved the performance of the import job list view by a factor of up to 30.
+      de: Die Performance der Listenanzeige des grafischen Benutzerimports wurde um einen Faktor von bis zu 30 verbessert.

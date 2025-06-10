@@ -1,3 +1,14 @@
+ucs-school-umc-import (4.1.0) unstable; urgency=medium
+
+  * Issue univention/ucsschool#293: Improve performance when listing user
+    import jobs
+  * Issue univention/ucsschool#293: Add UCR-V to show only the most recent
+    import jobs
+  * Issue univention/ucsschool#293: Sort rows by descending job number instead
+    of ascending
+
+ -- Johannes Königer <koeniger@univention.de>  Tue, 10 Jun 2025 11:22:00 +0200
+
 ucs-school-umc-import (4.0.0) unstable; urgency=medium
 
   * UCS@school 5.2

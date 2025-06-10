@@ -1,3 +1,11 @@
+ucs-school-import (19.1.0) unstable; urgency=low
+
+  * Issue univention/ucsschool#293: Add cleanup function to limit number of
+    user import jobs
+  * Issue univention/ucsschool#293: Cache school resource in HTTP API client
+
+ -- Johannes Königer <koeniger@univention.de>  Tue, 10 Jun 2025 11:18:24 +0100
+
 ucs-school-import (19.0.5) unstable; urgency=low
 
   * Issue univention/ucsschool#1377: Due to a change of Django's query
