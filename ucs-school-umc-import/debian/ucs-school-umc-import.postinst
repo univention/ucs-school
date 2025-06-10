@@ -32,6 +32,9 @@
 
 #DEBHELPER#
 
+# Update default layer bug #57958
+ucr update
+
 chmod 0700 /var/cache/ucs-school-umc-import/
 
 exit 0

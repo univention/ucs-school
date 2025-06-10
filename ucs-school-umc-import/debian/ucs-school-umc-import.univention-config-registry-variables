@@ -15,3 +15,10 @@ Description[de]=Aktiviert das Überprüfen des SSL-Zertifikats des HTTP-API-Serv
 Description[en]=Activates the verification of the server's SSL certificate using the installed CAs. Deactivating this allows undetected man-in-the-middle attacks (Default: true)
 Type=bool
 Categories=ucsschool-base
+
+[ucsschool/umc/import/import_jobs_to_show]
+Description[de]=Die maximale Anzahl von angezeigten Importaufträgen.
+Description[en]=The maximum number of displayed import jobs.
+Type=int
+Categories=ucsschool-base
+Default=300

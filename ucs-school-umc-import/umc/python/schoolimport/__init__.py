@@ -256,22 +256,28 @@ class Instance(SchoolBaseModule, ProgressMixin):
     def jobs(self, request):
         if self.client is not None:
             self.client.invalidate_caches()
-        return [
-            {
-                "id": job.id,
-                "school": job.school.displayName,
-                "creator": job.principal,
-                "userrole": self._parse_user_role(job.user_role),
-                "date": job.date_created.isoformat(),
-                "status": self._parse_status(job.status),
-            }
-            for job in self._jobs(request)
-        ]
+
+        import_jobs_to_show = ucr.get_int("ucsschool/umc/import/import_jobs_to_show")
+        jobs = []
+        for job in self._jobs(request):
+            jobs.append(
+                {
+                    "id": job.id,
+                    "school": job.school.displayName,
+                    "creator": job.principal,
+                    "userrole": self._parse_user_role(job.user_role),
+                    "date": job.date_created.isoformat(),
+                    "status": self._parse_status(job.status),
+                }
+            )
+            if len(jobs) >= import_jobs_to_show:
+                break
+        return jobs
 
     def _jobs(self, request):
         try:
             return self.get_client(request).userimportjob.list(
-                limit=50, dryrun=False, ordering="date_created"
+                limit=50, dryrun=False, ordering="-date_created"
             )
 
         except ServerError as exc:
