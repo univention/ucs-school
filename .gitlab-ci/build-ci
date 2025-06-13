@@ -12,6 +12,7 @@ doc_job () { # <extends> [<suffix> [<language>]]
     echo '  variables:'
     echo "    DOCS_DIR: $path"
     echo "    DOC_TARGET_NAME: ${path##*/}"
+    echo "    CHANGELOG_TARGET_VERSION: ${APP_VERSION:-$CHANGELOG_TARGET_VERSION}"
     [ -n "${3+empty}" ] && echo "    language: $3"
 
     if [ "$pkg" = "ucsschool-changelog" ] && ( [ "$2" = "html" ] || [ "$2" = "pdf" ] )
@@ -62,6 +63,8 @@ create_production_merge_request () {
     document_paths
     echo '      when: manual'
     echo '    - if: $FORCE_DOCS == "yes"'
+    echo '      when: manual'
+    echo '    - if: "$CI_COMMIT_TAG"'
     echo '      when: manual'
 }
 
