@@ -40,6 +40,9 @@ include:
   - local: .gitlab-ci/release.yml
     rules:
       - if: $RUN_UPDATE_RELEASE_ISSUE != "yes"
+  - local: .gitlab-ci/SonarQube.yml
+    rules:
+      - if: $RUN_UPDATE_RELEASE_ISSUE != "yes"
   - local: .gitlab-ci/update_release_issue.yml
     rules:
       - if: $RUN_UPDATE_RELEASE_ISSUE == "yes"
