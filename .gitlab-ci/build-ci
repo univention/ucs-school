@@ -12,7 +12,6 @@ doc_job () { # <extends> [<suffix> [<language>]]
     echo '  variables:'
     echo "    DOCS_DIR: $path"
     echo "    DOC_TARGET_NAME: ${path##*/}"
-    echo "    CHANGELOG_TARGET_VERSION: ${APP_VERSION:-'$CHANGELOG_TARGET_VERSION'}"
     [ -n "${3+empty}" ] && echo "    language: $3"
 
     if [ "$pkg" = "ucsschool-changelog" ] && ( [ "$2" = "html" ] || [ "$2" = "pdf" ] )
