@@ -52,6 +52,7 @@ extensions = [
     "sphinx_copybutton",
     "sphinxcontrib.bibtex",
     "advisories",
+    "config_value",
 ]
 
 bibtex_bibfiles = ["../bibliography-de.bib"]

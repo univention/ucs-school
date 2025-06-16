@@ -2,9 +2,9 @@
 ..
 .. SPDX-License-Identifier: AGPL-3.0-only
 
-############################
-|UCSUAS| |release| Changelog
-############################
+######################################################
+|UCSUAS| :config-value-no-spelling:`release` Changelog
+######################################################
 
 .. toctree::
    :numbered:
