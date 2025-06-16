@@ -22,32 +22,10 @@ from pathlib import Path
 sys.path.append(str(Path("_ext").resolve()))
 
 
-def read_version_from_ci() -> str:
-    """
-    Read the version for the documentation from the pipeline definition
-
-    To not maintain the documentation version in different places, just define
-    at one place and use it in different places.
-
-    The documentation version influences the version shown in the content of
-    the document and the path of the published documentation.
-
-    :returns: The version number for the documentation as defined in the CI/CD
-        pipeline.
-
-    :rtype: str
-    """
-    import yaml
-
-    with open("../../.gitlab-ci/base-doc.yml") as f:
-        ci = yaml.safe_load(f)
-        return ci.get(".sphinx-doc").get("variables").get("CHANGELOG_TARGET_VERSION")
-
-
 # -- Project information -----------------------------------------------------
 
 # The full version, including alpha/beta/rc tags
-release = read_version_from_ci()
+release = os.environ.get("CHANGELOG_TARGET_VERSION", "999.0.0-staging")
 # Need the exact version as it is part of the URL for the search
 version_for_search = release
 

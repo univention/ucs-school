@@ -13,8 +13,10 @@ doc-pipeline:
   stage: build
   variables:
     PARENT_CI_PIPELINE_SOURCE: $CI_PIPELINE_SOURCE
+    PARENT_PIPELINE_ID: $CI_PIPELINE_ID
   needs:
     - job: generate-config
+    - job: create_app_version
   trigger:
     include:
       - artifact: generated-config-doc.yml

@@ -15,7 +15,9 @@ stages:
     CHANGELOG_TARGET_VERSION: $APP_VERSION
     language: "de"
   needs:
-    - create_app_version
+    - pipeline: $PARENT_PIPELINE_ID
+      job: create_app_version
+      artifacts: true
 
 .sphinx-html:
   extends:
