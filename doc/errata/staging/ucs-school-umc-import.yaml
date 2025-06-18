@@ -9,3 +9,6 @@ bugs:
   52173:
     - en: Introduced the UCR variable `ucsschool/umc/import/import_jobs_to_show`. This variable is used to limit the number of import jobs shown in the UCS@school graphical user import. This variable is set to 300 by default.
       de: Die UCR-Variable `ucsschool/umc/import/import_jobs_to_show` wurde eingeführt. Diese Variable wird verwendet, um die Anzahl der angezeigten Importjobs im grafischen Benutzerimport von UCS@school zu begrenzen. Diese Variable ist auf den Wert 300 voreingestellt.
+  48658:
+    - en: By default, import jobs are now sorted by date in descending order - the newest import job is shown at the top.
+      de: Es ist jetzt voreingestellt, dass Benutzerimporte nach Datum in absteigender Reihenfolge sortiert werden - der neueste Benutzerimport wird oben angezeigt.
