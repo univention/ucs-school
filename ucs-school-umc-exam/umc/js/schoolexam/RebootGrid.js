@@ -50,6 +50,7 @@ define([
 		_lastUpdate: 0,
 		_firstUpdate: 0,
 		_updateTimer: null,
+		_autoUpdate: false,
 		teacherIPs: null,
 
 		constructor: function() {
@@ -127,6 +128,7 @@ define([
 					this._lastUpdate = new Date();
 					this._firstUpdate = new Date();
 //					this.standby(true);
+					this._autoUpdate = true;
 					this._updateRooms();
 				}));
 			})));
@@ -180,10 +182,16 @@ define([
 
 		_updateRooms: function() {
 			var update = function() {
-				this._updateTimer = window.setTimeout(lang.hitch(this, '_updateRooms'), 1000);
+				if (this._autoUpdate) {
+					this._updateTimer = window.setTimeout(lang.hitch(this, '_updateRooms'), 1000);
+				}
 			};
 
 			this.umcpCommand('computerroom/update', {}, false).then(lang.hitch(this, function(response) {
+                if (!this._autoUpdate) {
+                    // The wizard has been closed while the request was still unfinished
+                    return;
+                }
 				var result = response.result;
 				if (result.locked) {
 					// somebody stole our session... acquire the room again
@@ -217,6 +225,7 @@ define([
 
 		uninitialize: function() {
 			this.inherited(arguments);
+			this._autoUpdate = false;
 			if (this._updateTimer !== null) {
 				window.clearTimeout(this._updateTimer);
 			}

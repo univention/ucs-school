@@ -1,0 +1,11 @@
+product: ucsschool
+release: "5.2"
+released:
+version: [0]
+scope: ucs_5.2-0-ucs-school-5.2
+src: ucs-school-umc-exam
+fix: 12.0.6
+bugs:
+  49939:
+    en: Fixed an error during exam creation which could prevent other users from managing the computer room that is assigned to the exam.
+    de: Ein Fehler während der Erstellung einer Klassenarbeit wurde behoben, welcher andere Benutzer davon abhalten konnte, den der Klassenarbeit zugewiesenen Computerraum zu verwalten.
