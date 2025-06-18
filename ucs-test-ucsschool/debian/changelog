@@ -1,3 +1,10 @@
+ucs-test-ucsschool (8.0.23) unstable; urgency=medium
+
+  * Issue univention/ucsschool#293: Add test for UCS@school import job cleanup
+    (see UCR-V ucsschool/import/http_api/import_jobs_to_keep)
+
+ -- Johannes Königer <koeniger@univention.de>  Wed, 18 Jun 2025 08:13:27 +0200
+
 ucs-test-ucsschool (8.0.22) unstable; urgency=medium
 
   * Bug #58382: exam-master now creates new/unique values for
