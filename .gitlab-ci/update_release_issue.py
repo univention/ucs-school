@@ -125,7 +125,7 @@ class RelaeseIssue:
 
     def _get_release_issue(self):
         resp = requests.get(
-            "https://git.knut.univention.de/api/v4/projects/4/search",
+            "https://git.knut.univention.de/api/v4/projects/1574/search",
             data={
                 "scope": "issues",
                 "search": self._get_issue_title(),
@@ -136,11 +136,11 @@ class RelaeseIssue:
         )
         if resp.status_code != 200 or len(resp.json()) == 0:
             resp = requests.get(
-                "https://git.knut.univention.de/api/v4/projects/4/templates/issues/release_issue",
+                "https://git.knut.univention.de/api/v4/projects/1574/templates/issues/release_issue",
                 headers=self.headers,
             )
             resp = requests.post(
-                "https://git.knut.univention.de/api/v4/projects/4/issues",
+                "https://git.knut.univention.de/api/v4/projects/1574/issues",
                 headers=self.headers,
                 data={
                     "title": self._get_issue_title(),
@@ -172,7 +172,7 @@ class RelaeseIssue:
             description,
         )
         resp = requests.put(
-            f"https://git.knut.univention.de/api/v4/projects/4/issues/{issue['iid']}",
+            f"https://git.knut.univention.de/api/v4/projects/1574/issues/{issue['iid']}",
             headers=self.headers,
             data={
                 "description": description,
