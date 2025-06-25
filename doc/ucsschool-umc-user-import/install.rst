@@ -97,7 +97,7 @@ werden die ältesten Jobs inklusive ihrer Verzeichnisse gelöscht.
 Weiterhin kann durch die UCR-Variable :envvar:`ucsschool/umc/import/import_jobs_to_show` die
 Anzahl der in der Oberfläche des grafischen Benutzerimports anzuzeigenden
 Import-Jobs begrenzt werden. Voreingestellt ist diese auf 300, was typischerweise
-wenige Sekunden Modul-Ladezeit entspricht.
+einige Sekunden Modul-Ladezeit entspricht.
 
 .. note::
 
