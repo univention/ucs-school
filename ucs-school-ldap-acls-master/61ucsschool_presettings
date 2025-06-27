@@ -139,6 +139,7 @@ access to dn.children="cn=unique-email,cn=ucsschool,cn=univention,@%@ldap/base@%
 '''
 
 if configRegistry.get('server/role') in ('domaincontroller_master', 'domaincontroller_backup'):
+	print("refint_attributes ucsschoolLegalGuardian")
 	print(aclset)
 else:
 	print('# no ACL required on Replica Directory Node')
