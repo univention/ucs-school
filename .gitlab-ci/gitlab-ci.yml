@@ -4,9 +4,9 @@ variables:
 include:
   - project: univention/infrastructure/docker-services
     file: pre-commit.yml
-  - project: univention/internal/ucsschool-ci-utils
+  - project: univention/dev/internal/ucsschool-ci-utils
     file: fragments/openstack.yaml
-  - project: univention/internal/ucsschool-ci-utils
+  - project: univention/dev/internal/ucsschool-ci-utils
     file: fragments/misc.yaml
   - local: .gitlab-ci/docs.yml
     rules:
