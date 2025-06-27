@@ -1,3 +1,9 @@
+ucs-school-metapackage (15.1.0) unstable; urgency=medium
+
+  * univention/dev/education/ucsschool#1453: Add index for ucsschoolLegalGuardian attribute
+
+ -- Ole Schwiegert <schwiegert@univention.de>  Fri, 20 Jun 2025 11:01:00 +0100
+
 ucs-school-metapackage (15.0.1) unstable; urgency=medium
 
   * Issue univention/ucsschool#1370: ignore CN=Keys in s4 sync

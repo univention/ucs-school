@@ -7,5 +7,5 @@ src: ucs-school-ldap-acls-master
 fix: 19.1.0
 bugs:
   notes:
-    en: This is a note without bug.
-    de: Dies ist eine Notiz ohne Bugreferenz.
+    en: The ``ucsschoolLegalGuardian`` attribute has been added to the LDAP index.
+    de: Das Attribut ``ucsschoolLegalGuardian`` wurde zum LDAP Index hinzugefügt

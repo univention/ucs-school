@@ -1,0 +1,11 @@
+product: ucsschool
+release: "5.2"
+released:
+version: [0]
+scope: ucs_5.2-0-ucs-school-5.2
+src: ucs-school-metapackage
+fix: 15.1.0
+bugs:
+  notes:
+    en: Add LDAP equality index for new attribute ``ucsschoolLegalGuardian``.
+    de: Es gibt einen LDAP Index für das neue Attribut ``ucsschoolLegalGuardian``.

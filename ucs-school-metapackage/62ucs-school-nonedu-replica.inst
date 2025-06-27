@@ -32,7 +32,7 @@
 
 ## joinscript api: bindpwdfile
 
-VERSION=5
+VERSION=6
 . /usr/share/univention-join/joinscripthelper.lib
 joinscript_init
 
@@ -122,14 +122,15 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 1 ]; then
 fi
 
 
-if [ $JS_LAST_EXECUTED_VERSION -lt 4 ] ; then
+if [ $JS_LAST_EXECUTED_VERSION -lt 6 ] ; then
 	if [ -x /etc/init.d/slapd ] &&
 		   [ -x /usr/share/univention-ldap/ldap_setup_index ] &&
 		   [ -e /var/univention-join/joined ] &&
 		   univention-ldapsearch -LLL -o ldif-wrap=no -b cn=Subschema -s base attributeTypes | grep -Fq "NAME 'ucsschoolSchool'" &&
 		   univention-ldapsearch -LLL -o ldif-wrap=no -b cn=Subschema -s base attributeTypes | grep -Fq "NAME 'ucsschoolSourceUID'" &&
 		   univention-ldapsearch -LLL -o ldif-wrap=no -b cn=Subschema -s base attributeTypes | grep -Fq "NAME 'ucsschoolRecordUID'" &&
-		   univention-ldapsearch -LLL -o ldif-wrap=no -b cn=Subschema -s base attributeTypes | grep -Fq "NAME 'ucsschoolRole'"
+		   univention-ldapsearch -LLL -o ldif-wrap=no -b cn=Subschema -s base attributeTypes | grep -Fq "NAME 'ucsschoolRole'" &&
+		   univention-ldapsearch -LLL -o ldif-wrap=no -b cn=Subschema -s base attributeTypes | grep -Fq "NAME 'ucsschoolLegalGuardian'"
 	then
 		echo "Updating LDAP indices..."
 		unset stop_and_start_slapd
@@ -137,7 +138,7 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 4 ] ; then
 		[ -n "$stop_and_start_slapd" ] && service slapd stop
 		/usr/share/univention-ldap/ldap_setup_index \
 			--verbose \
-			--add-eq ucsschoolSchool --add-eq ucsschoolSourceUID --add-eq ucsschoolRecordUID --add-eq ucsschoolRole \
+			--add-eq ucsschoolSchool --add-eq ucsschoolSourceUID --add-eq ucsschoolRecordUID --add-eq ucsschoolRole --add-eq ucsschoolLegalGuardian \
 			--add-pres ucsschoolSchool --add-pres ucsschoolSourceUID --add-pres ucsschoolRecordUID --add-pres ucsschoolRole \
 			--add-sub ucsschoolRecordUID --add-sub ucsschoolRole || die
 		[ -n "$stop_and_start_slapd" ] && service slapd start
