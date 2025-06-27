@@ -1,3 +1,9 @@
+ucs-school-import (19.2.0) unstable; urgency=medium
+
+  * Issue univention/dev/education/ucsschool#1453: Add legal guardian.
+
+ -- Jürn Brodersen <brodersen@univention.de>  Thu, 19 Jun 2025 13:55:41 +0200
+
 ucs-school-import (19.1.0) unstable; urgency=low
 
   * Issue univention/ucsschool#293: Add cleanup function to limit number of

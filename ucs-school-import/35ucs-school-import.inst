@@ -32,7 +32,7 @@
 
 ## joinscript api: bindpwdfile
 
-VERSION=35
+VERSION=36
 
 . /usr/share/univention-join/joinscripthelper.lib
 . /usr/share/univention-lib/all.sh
@@ -120,6 +120,8 @@ ucs_registerLDAPExtension "$@" --ucsversionstart "4.4-0" --ucsversionend "5.99-0
 ucs_registerLDAPExtension "$@" --ucsversionstart "4.4-0" --ucsversionend "5.99-0" --udm_hook /usr/share/ucs-school-import/schema/ucsschool_user_options.py --udm_hook_messagecatalog /usr/share/ucs-school-import/schema/de.mo || die
 ucs_registerLDAPExtension "$@" --ucsversionstart "4.4-0" --ucsversionend "5.99-0" --udm_hook /usr/share/ucs-school-import/schema/ucsschool_purge_timestamp.py || die
 ucs_registerLDAPExtension "$@" --ucsversionstart "4.4-0" --ucsversionend "5.99-0" --udm_hook /usr/share/ucs-school-import/schema/ucsschool_role_computers.py || die
+ucs_registerLDAPExtension "$@" --ucsversionstart "4.4-0" --ucsversionend "5.99-0" --udm_hook /usr/share/ucs-school-import/schema/ucsschool_legal_guardian.py || die
+ucs_registerLDAPExtension "$@" --ucsversionstart "4.4-0" --ucsversionend "5.99-0" --udm_hook /usr/share/ucs-school-import/schema/ucsschool_legal_ward.py || die
 
 # create extended attributes for UCS@school container if missing
 univention-directory-manager container/cn create "$@" --ignore_exists \
@@ -320,6 +322,19 @@ univention-directory-manager settings/extended_options create "$@" --ignore_exis
 	--append translationLongDescription='"de_DE" "Spezifiziert, dass dieser Benutzer ein UCS@school-Klassenarbeitsbenutzer ist"' \
 	--append translationLongDescription='"fr_FR" "Spécifie que cet utilisateur ou cette utilisatrice est un·e participant·e à un examen dans UCS@school"' || die
 
+univention-directory-manager settings/extended_options create "$@" --ignore_exists \
+	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+	--set name="ucsschoolLegalGuardian" \
+	--append module=users/user \
+	--append module=settings/usertemplate \
+	--set objectClass=ucsschoolLegalGuardian \
+	--set default=0 \
+	--set editable=1 \
+	--set shortDescription="UCS@school Legal Guardian" \
+	--set longDescription="Specifies that this user is a UCS@school Legal Guardian" \
+	--append translationShortDescription='"de_DE" "Gesetzlicher Vertreter in UCS@school"' \
+	--append translationLongDescription='"de_DE" "Spezifiziert, dass dieser Benutzer ein gesetzlicher Vertreter im Kontext von UCS@school ist."' \
+
 univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
 	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
 	--set name="ucsschoolSchool" \
@@ -465,6 +480,54 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
 	--set mayChange="1" \
 	--set multivalue="1" \
 	--set disableUDMWeb=1 || die
+
+univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
+	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+	--set name="ucsschoolLegalWard" \
+	--append module="users/user" \
+	--append options="ucsschoolLegalGuardian" \
+	--set tabName="UCS@school" \
+	--set tabPosition=8 \
+	--set groupName="General" \
+	--set groupPosition="1" \
+	--append translationGroupName='"de_DE" "Allgemein"' \
+	--set shortDescription="Legal wards" \
+	--set longDescription="Legal wards" \
+	--append translationShortDescription='"de_DE" "Schutzbefohlene"' \
+	--append translationLongDescription='"de_DE" "Schutzbefohlene"' \
+	--set CLIName="ucsschoolLegalWard" \
+	--set objectClass="ucsschoolLegalGuardian" \
+	--set ldapMapping="__VirtualAttribute__" \
+	--set syntax="UCSSchoolStudentDN" \
+	--set hook=UcsschoolLegalGuardian \
+	--set mayChange="0" \
+	--set multivalue="1" \
+	--set doNotSearch="1" \
+	--set disableUDMWeb=0 || die
+
+univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
+	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+	--set name="ucsschoolLegalGuardianAttribute" \
+	--append module="users/user" \
+	--append options="ucsschoolStudent" \
+	--set tabName="UCS@school" \
+	--set tabPosition=8 \
+	--set groupName="General" \
+	--set groupPosition="1" \
+	--append translationGroupName='"de_DE" "Allgemein"' \
+	--set shortDescription="Legal guardians" \
+	--set longDescription="Legal guardians" \
+	--append translationShortDescription='"de_DE" "Gesetzliche Vertreter"' \
+	--append translationLongDescription='"de_DE" "Gesetzliche Vertreter"' \
+	--set CLIName="ucsschoolLegalGuardian" \
+	--set objectClass="ucsschoolStudent" \
+	--set ldapMapping="ucsschoolLegalGuardian" \
+	--set syntax="UCSSchoolLegalGuardianDN" \
+	--set hook=UcsschoolLegalWard \
+	--set mayChange="1" \
+	--set multivalue="1" \
+	--set doNotSearch="1" \
+	--set disableUDMWeb=0 || die
 
 #### groups/group ####
 

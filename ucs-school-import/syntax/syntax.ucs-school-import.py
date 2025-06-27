@@ -68,3 +68,15 @@ class ucsschoolTypes(select):
         ("staff", _local("Staff")),
         ("teacher_and_staff", _local("Teacher and Staff")),
     ]
+
+
+class UCSSchoolLegalGuardianDN(UDM_Objects):
+    udm_modules = ("users/user",)
+    use_objects = False
+    udm_filter = "(objectClass=ucsschoolLegalGuardian)"
+
+
+class UCSSchoolStudentDN(UDM_Objects):
+    udm_modules = ("users/user",)
+    use_objects = False
+    udm_filter = "(objectClass=ucsschoolStudent)"

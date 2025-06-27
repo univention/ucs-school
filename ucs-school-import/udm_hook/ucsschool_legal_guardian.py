@@ -1,14 +1,14 @@
-#!/bin/bash
+#!/usr/bin/python3
 #
-# Univention UCS@school
+# UCS@school legal guardian hook
 #
-# Copyright 2007-2025 Univention GmbH
+# Copyright (C) 2025 Univention GmbH
 #
 # https://www.univention.de/
 #
 # All rights reserved.
 #
-# The source code of this program is made available
+# source code of this program is made available
 # under the terms of the GNU Affero General Public License version 3
 # (GNU AGPL V3) as published by the Free Software Foundation.
 #
@@ -26,29 +26,18 @@
 #
 # You should have received a copy of the GNU Affero General Public
 # License with the Debian GNU/Linux or Univention distribution in file
-# /usr/share/common-licenses/AGPL-3; if not, see
-# <http://www.gnu.org/licenses/>.
+# /usr/share/common-licenses/AGPL-3. If not, see <http://www.gnu.org/licenses/>.
 
-## joinscript api: bindpwdfile
+from ldap.filter import filter_format
 
-VERSION=19
-. /usr/share/univention-join/joinscripthelper.lib
-. /usr/share/univention-lib/all.sh
+from univention.admin.hook import simpleHook
 
-joinscript_init
 
-eval "$(ucr shell)"
-
-# create service type "Windows Profile Server"
-univention-directory-manager container/cn create "$@" --ignore_exists \
-	--position "cn=univention,$ldap_base" \
-	--set name="services" || die
-univention-directory-manager settings/service create "$@" --ignore_exists \
-	--position "cn=services,cn=univention,$ldap_base" \
-	--set name="Windows Profile Server" || die
-
-ucs_registerLDAPExtension "$@" --ucsversionstart "4.4-0" --ucsversionend "5.99-0" --udm_syntax /usr/share/ucs-school-import/schema/syntax.ucs-school-import.py || die
-
-joinscript_save_current_version
-
-exit 0
+class UcsschoolLegalGuardian(simpleHook):
+    def hook_open(self, obj):
+        if "ucsschoolLegalGuardian" not in obj.options:
+            return
+        if obj.dn:
+            obj.info["ucsschoolLegalWard"] = obj.lo.searchDn(
+                filter=filter_format("(ucsschoolLegalGuardian=%s)", (obj.dn,))
+            )
