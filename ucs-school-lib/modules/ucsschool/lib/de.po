@@ -344,6 +344,9 @@ msgstr "Gesetzlicher Vertreter"
 msgid "Legal Wards"
 msgstr "Schutzbefohlene"
 
+msgid "Legal guardian"
+msgstr "Gesetzlicher Vertreter"
+
 #: modules/ucsschool/lib/models/user.py:922
 msgid "Teacher and Staff"
 msgstr "Lehrer und Mitarbeiter"
@@ -472,6 +475,9 @@ msgstr "Arbeitsgruppe"
 #: modules/ucsschool/lib/models/computer.py:225
 msgid "Zone"
 msgstr "Zone"
+
+msgid "The following legal guardians do not exist:"
+msgstr "Die folgenden gesetzlichen Vertreter existieren nicht:"
 
 #~ msgid "Role {role}:{context_type}:{context} is not supported for {dn}."
 #~ msgstr ""

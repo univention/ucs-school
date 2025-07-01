@@ -91,8 +91,8 @@ def test_list_models_details():
     rv, stdout, stderr = exec_cmd(cmd, log=True, raise_exc=True)
     assert (
         "Student\n    birthday\n    disabled\n    email\n    expiration_date\n    firstname [required]\n"
-        "    lastname [required]\n    name [required]\n    password\n    school [required]\n    "
-        "school_classes\n    schools\n    ucsschool_roles"
+        "    lastname [required]\n    legal_guardians\n    name [required]\n    password\n    "
+        "school [required]\n    school_classes\n    schools\n    ucsschool_roles"
     ) in stdout
     assert (
         "ClassShare\n    name [required]\n    school [required]\n    school_group [required]\n    "

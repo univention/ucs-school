@@ -7,5 +7,9 @@ src: ucs-school-lib
 fix: 15.1.0
 bugs:
   58460:
-    en: Add new UCS@school role "Legal Guardian".
-    de: Es gibt eine neue UCS@school Rolle "Gesetzlicher Vertreter".
+    en: |
+      Add new UCS@school role "Legal Guardian".
+      Added the new attribute `legal_guardians`` to student objects.
+    de: |
+      Es gibt eine neue UCS@school Rolle "Gesetzlicher Vertreter".
+      Das neue Attribut ``legal_guardians`` wurde zu Schülerobjekten hinzugefügt.

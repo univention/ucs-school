@@ -5,6 +5,13 @@ ucs-school-lib (15.1.0) unstable; urgency=medium
 
  -- Jürn Brodersen <brodersen@univention.de>  Wed, 02 Jul 2025 09:52:50 +0200
 
+ucs-school-lib (15.0.4) unstable; urgency=low
+
+  * Issue univention/dev/education/ucsschool#1454: Add legal_guardians
+    attribute
+
+ -- Johannes Königer <koeniger@univention.de>  Tue, 01 Jul 2025 16:38:25 +0200
+
 ucs-school-lib (15.0.3) unstable; urgency=low
 
   * Bug #58250: fix logic error in group.py

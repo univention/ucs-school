@@ -35,7 +35,7 @@ from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Set, Tuple, Type  # noqa: F401
 
 from ldap.dn import escape_dn_chars, explode_rdn
-from ldap.filter import filter_format
+from ldap.filter import escape_filter_chars, filter_format
 from six import iteritems
 
 import univention.admin.modules as udm_modules
@@ -58,6 +58,7 @@ from .attributes import (
     Email,
     Firstname,
     Lastname,
+    LegalGuardians,
     LegalWards,
     Password,
     SchoolClassesAttribute,
@@ -852,6 +853,24 @@ class Student(User):
     roles = [role_pupil]
     default_options = ("ucsschoolStudent",)
     default_roles = [role_student]
+
+    legal_guardians = LegalGuardians(_("Legal guardian"))
+
+    def validate(self, lo, validate_unlikely_changes: Optional[bool] = False, check_name=True) -> None:
+        super().validate(lo, validate_unlikely_changes=validate_unlikely_changes, check_name=check_name)
+
+        if not self.legal_guardians:
+            return
+
+        dn_filter = [f"(entryDN={escape_filter_chars(dn)})" for dn in self.legal_guardians]
+        search_result = lo.search(f"(|{''.join(dn_filter)})")
+        dns = [result[0] for result in search_result]
+        if len(dns) < len(self.legal_guardians):
+            missing_dns = [dn for dn in self.legal_guardians if dn not in dns]
+            missing_dns_str = "\n".join(missing_dns)
+
+            error_msg = _("The following legal guardians do not exist:")
+            self.add_error("legal_guardians", f"{error_msg}\n{missing_dns_str}")
 
     def do_school_change(self, udm_obj, lo, old_school):  # type: (UdmObject, LoType, str) -> None
         try:
