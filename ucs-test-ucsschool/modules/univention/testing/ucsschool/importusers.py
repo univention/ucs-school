@@ -35,6 +35,9 @@ configRegistry.load()
 
 cn_pupils = configRegistry.get("ucsschool/ldap/default/container/pupils", "schueler")
 cn_teachers = configRegistry.get("ucsschool/ldap/default/container/teachers", "lehrer")
+cn_legal_guardians = configRegistry.get(
+    "ucsschool/ldap/default/container/legal_guardians", "gesetzliche vertreter"
+)
 cn_teachers_staff = configRegistry.get(
     "ucsschool/ldap/default/container/teachers-and-staff", "lehrer und mitarbeiter"
 )
@@ -42,6 +45,9 @@ cn_staff = configRegistry.get("ucsschool/ldap/default/container/staff", "mitarbe
 
 grp_prefix_pupils = configRegistry.get("ucsschool/ldap/default/groupprefix/pupils", "schueler-")
 grp_prefix_teachers = configRegistry.get("ucsschool/ldap/default/groupprefix/teachers", "lehrer-")
+grp_prefix_legal_guardians = configRegistry.get(
+    "ucsschool/ldap/default/groupprefix/legal_guardians", "gesetzliche vertreter-"
+)
 grp_prefix_admins = configRegistry.get("ucsschool/ldap/default/groupprefix/admins", "admins-")
 grp_prefix_staff = configRegistry.get("ucsschool/ldap/default/groupprefix/staff", "mitarbeiter-")
 
@@ -77,6 +83,9 @@ class Person(object):
         elif self.is_teacher():
             self.cn = cn_teachers
             self.grp_prefix = grp_prefix_teachers
+        elif self.is_legal_guardian():
+            self.cn = cn_legal_guardians
+            self.grp_prefix = grp_prefix_legal_guardians
         elif self.is_teacher_staff():
             self.cn = cn_teachers_staff
             self.grp_prefix = grp_prefix_teachers
@@ -257,6 +266,9 @@ class Person(object):
 
     def is_teacher(self):
         return self.role == "teacher"
+
+    def is_legal_guardian(self):
+        return self.role == "legal_guardian"
 
     def is_staff(self):
         return self.role == "staff"
@@ -478,6 +490,11 @@ class Student(Person):
 class Teacher(Person):
     def __init__(self, school):
         Person.__init__(self, school, "teacher")
+
+
+class LegalGuardian(Person):
+    def __init__(self, school):
+        Person.__init__(self, school, "legal_guardian")
 
 
 class Staff(Person):

@@ -103,7 +103,7 @@ fi
 univention-directory-manager container/cn create "$@" --ignore_exists --position "cn=policies,$ldap_base" --set name=UMC --set policyPath=1 || die
 
 # create empty UMC access policies if missing
-for policyname in ucsschool-umc-pupils-default ucsschool-umc-teachers-default ucsschool-umc-staff-default ucsschool-umc-admins-default ; do
+for policyname in ucsschool-umc-pupils-default ucsschool-umc-teachers-default ucsschool-legal_guardians-default ucsschool-umc-staff-default ucsschool-umc-admins-default ; do
         univention-directory-manager policies/umc create "$@" --ignore_exists \
                 --position cn=UMC,cn=policies,"$ldap_base" \
                 --set name="${policyname}" || die
@@ -122,8 +122,8 @@ ucs_registerLDAPExtension "$@" --ucsversionstart "4.4-0" --ucsversionend "5.99-0
 ucs_registerLDAPExtension "$@" --ucsversionstart "4.4-0" --ucsversionend "5.99-0" --udm_hook /usr/share/ucs-school-import/schema/ucsschool_user_options.py --udm_hook_messagecatalog /usr/share/ucs-school-import/schema/de.mo || die
 ucs_registerLDAPExtension "$@" --ucsversionstart "4.4-0" --ucsversionend "5.99-0" --udm_hook /usr/share/ucs-school-import/schema/ucsschool_purge_timestamp.py || die
 ucs_registerLDAPExtension "$@" --ucsversionstart "4.4-0" --ucsversionend "5.99-0" --udm_hook /usr/share/ucs-school-import/schema/ucsschool_role_computers.py || die
-ucs_registerLDAPExtension "$@" --ucsversionstart "4.4-0" --ucsversionend "5.99-0" --udm_hook /usr/share/ucs-school-import/schema/ucsschool_legal_guardian.py || die
-ucs_registerLDAPExtension "$@" --ucsversionstart "4.4-0" --ucsversionend "5.99-0" --udm_hook /usr/share/ucs-school-import/schema/ucsschool_legal_ward.py || die
+ucs_registerLDAPExtension "$@" --ucsversionstart "5.0-0" --ucsversionend "5.99-0" --udm_hook /usr/share/ucs-school-import/schema/ucsschool_legal_guardian.py || die
+ucs_registerLDAPExtension "$@" --ucsversionstart "5.0-0" --ucsversionend "5.99-0" --udm_hook /usr/share/ucs-school-import/schema/ucsschool_legal_ward.py || die
 
 # create extended attributes for UCS@school container if missing
 univention-directory-manager container/cn create "$@" --ignore_exists \
@@ -344,6 +344,7 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
     --append module=settings/usertemplate \
     --append options="ucsschoolStudent" \
     --append options="ucsschoolTeacher" \
+    --append options="ucsschoolLegalGuardian" \
     --append options="ucsschoolStaff" \
     --append options="ucsschoolAdministrator" \
     --set tabName="UCS@school" \
@@ -373,6 +374,7 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
     --append module=settings/usertemplate \
     --append options="ucsschoolStudent" \
     --append options="ucsschoolTeacher" \
+    --append options="ucsschoolLegalGuardian" \
     --append options="ucsschoolStaff" \
     --append options="ucsschoolAdministrator" \
     --set tabName="UCS@school" \
@@ -402,6 +404,7 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
     --append module=settings/usertemplate \
     --append options="ucsschoolStudent" \
     --append options="ucsschoolTeacher" \
+    --append options="ucsschoolLegalGuardian" \
     --append options="ucsschoolStaff" \
     --append options="ucsschoolAdministrator" \
     --set tabName="UCS@school" \
@@ -431,6 +434,7 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
     --append module=settings/usertemplate \
     --append options="ucsschoolStudent" \
     --append options="ucsschoolTeacher" \
+    --append options="ucsschoolLegalGuardian" \
     --append options="ucsschoolStaff" \
     --append options="ucsschoolAdministrator" \
     --set tabName="UCS@school" \
@@ -461,6 +465,7 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
     --append module=settings/usertemplate \
     --append options="ucsschoolStudent" \
     --append options="ucsschoolTeacher" \
+    --append options="ucsschoolLegalGuardian" \
     --append options="ucsschoolStaff" \
     --append options="ucsschoolAdministrator" \
     --set tabName="UCS@school" \
@@ -662,7 +667,32 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
     --set multivalue="1" \
     --set disableUDMWeb=1 || die
 
+if [ "$JS_LAST_EXECUTED_VERSION" -gt 0 ] && [ "$JS_LAST_EXECUTED_VERSION" -lt 36 ]; then
+    python3 <<EOF
+from univention.admin.uldap import getAdminConnection
+from ucsschool.lib.models.school import School
 
+lo, _ = getAdminConnection()
+for school in School.get_all(lo):
+    school.create_default_containers(lo)
+    school.create_default_groups(lo)
+EOF
+    univention-directory-manager settings/extended_attribute modify "$@" \
+        --dn "cn=ucsschoolSchool,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+        --append options="ucsschoolLegalGuardian" || die
+    univention-directory-manager settings/extended_attribute modify "$@" \
+        --dn "cn=ucsschoolSourceUID,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+        --append options="ucsschoolLegalGuardian" || die
+    univention-directory-manager settings/extended_attribute modify "$@" \
+        --dn "cn=ucsschoolRecordUID,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+        --append options="ucsschoolLegalGuardian" || die
+    univention-directory-manager settings/extended_attribute modify "$@" \
+        --dn "cn=ucsschoolPurgeTimestamp,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+        --append options="ucsschoolLegalGuardian" || die
+    univention-directory-manager settings/extended_attribute modify "$@" \
+        --dn "cn=ucsschoolRoleUsers,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+        --append options="ucsschoolLegalGuardian" || die
+fi
 
 stop_udm_cli_server
 

@@ -53,6 +53,7 @@ from ucsschool.lib.roles import (
     get_role_info,
     role_computer_room,
     role_exam_user,
+    role_legal_guardian,
     role_marketplace_share,
     role_school_admin,
     role_school_class,
@@ -167,6 +168,7 @@ class UserValidator(SchoolValidator):
     is_student = False
     is_exam_user = False
     is_teacher = False
+    is_legal_guardian = False
     is_staff = False
     is_school_admin = False
     attributes = [
@@ -238,7 +240,7 @@ class UserValidator(SchoolValidator):
     @classmethod
     def validate_student_roles(cls, roles):  # type: (List[Tuple[str]]) -> Optional[str]
         """Students should not have teacher, staff or school_admin role."""
-        not_allowed_for_students = [role_teacher, role_staff, role_school_admin]
+        not_allowed_for_students = [role_teacher, role_legal_guardian, role_staff, role_school_admin]
         for r, _c, _s in roles:
             if (cls.is_student and r in not_allowed_for_students) or (
                 not cls.is_student and r in [role_student, role_exam_user]
@@ -273,6 +275,7 @@ class UserValidator(SchoolValidator):
                 or (SchoolSearchBase.get_is_teachers_group_regex().match(dn) and not cls.is_teacher)
                 or (SchoolSearchBase.get_is_staff_group_regex().match(dn) and not cls.is_staff)
                 or (SchoolSearchBase.get_is_admins_group_regex().match(dn) and cls.is_student)
+                or (SchoolSearchBase.get_is_legal_guardians_group_regex().match(dn) and cls.is_student)
             )
         ]
 
@@ -303,6 +306,16 @@ class TeacherValidator(UserValidator):
     @classmethod
     def role_groups(cls, schools):  # type: (List[str]) -> List[str]
         return [cls.get_search_base(school).teachers_group for school in schools]
+
+
+class LegalGuardianValidator(UserValidator):
+    position_regex = SchoolSearchBase.get_legal_guardians_pos_regex()
+    is_legal_guardian = True
+    roles = [role_legal_guardian]
+
+    @classmethod
+    def role_groups(cls, schools):  # type: (List[str]) -> List[str]
+        return [cls.get_search_base(school).legal_guardians_group for school in schools]
 
 
 class ExamStudentValidator(StudentValidator):
@@ -469,6 +482,8 @@ def get_class(obj):  # type: (Dict[str, Any]) -> Optional[Type[SchoolValidator]]
         return StudentValidator
     if options.get("ucsschoolTeacher", False):
         return TeacherValidator
+    if options.get("ucsschoolLegalGuardian", False):
+        return LegalGuardianValidator
     if options.get("ucsschoolStaff", False):
         return StaffValidator
     if options.get("ucsschoolAdministrator", False):

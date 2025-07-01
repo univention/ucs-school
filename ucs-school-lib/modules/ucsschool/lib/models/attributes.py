@@ -55,6 +55,17 @@ from univention.admin.syntax import (
     uid_umlauts,
     v4netmask,
 )
+
+try:
+    from univention.admin.syntax import UCSSchoolStudentDN
+except ImportError:
+    # Fallback for unjoined Directory Nodes
+    from univention.admin.syntax import string as UCSSchoolStudentDN
+try:
+    from univention.admin.syntax import ucsschoolSchools
+except ImportError:
+    # Fallback for unjoined Directory Nodes
+    from univention.admin.syntax import string as ucsschoolSchools
 from univention.admin.uexceptions import valueError
 
 from ..roles import all_roles
@@ -414,9 +425,7 @@ class Schools(Attribute):
     udm_name = "school"
     value_type = list
     value_default = list
-    # ucsschoolSchools (cannot be used because it's not available on import time on a unjoined Replica
-    # Directory Node):
-    syntax = string
+    syntax = ucsschoolSchools
     extended = True
 
 
@@ -457,3 +466,11 @@ class Roles(Attribute):
 
     def __init__(self, *args, **kwargs):
         super(Roles, self).__init__(*args, **kwargs)
+
+
+class LegalWards(Attribute):
+    udm_name = "ucsschoolLegalWard"
+    value_type = list
+    value_default = list
+    syntax = UCSSchoolStudentDN
+    extended = True

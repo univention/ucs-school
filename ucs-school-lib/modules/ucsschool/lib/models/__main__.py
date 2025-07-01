@@ -104,6 +104,7 @@ model_classes = {
     "staff": ModuleAndClass("ucsschool.lib.models.user", "Staff"),
     "student": ModuleAndClass("ucsschool.lib.models.user", "Student"),
     "teacher": ModuleAndClass("ucsschool.lib.models.user", "Teacher"),
+    "legalguardian": ModuleAndClass("ucsschool.lib.models.user", "LegalGuardian"),
     "teachersandstaff": ModuleAndClass("ucsschool.lib.models.user", "TeachersAndStaff"),
     "umcpolicy": ModuleAndClass("ucsschool.lib.models.policy", "UMCPolicy"),
     "windowscomputer": ModuleAndClass("ucsschool.lib.models.computer", "WindowsComputer"),

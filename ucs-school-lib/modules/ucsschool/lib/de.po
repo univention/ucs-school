@@ -338,6 +338,12 @@ msgstr "Subnetzmaske"
 msgid "Teacher"
 msgstr "Lehrer"
 
+msgid "Legal Guardian"
+msgstr "Gesetzlicher Vertreter"
+
+msgid "Legal Wards"
+msgstr "Schutzbefohlene"
+
 #: modules/ucsschool/lib/models/user.py:922
 msgid "Teacher and Staff"
 msgstr "Lehrer und Mitarbeiter"

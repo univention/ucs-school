@@ -31,12 +31,13 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-from ucsschool.lib.roles import role_pupil, role_staff, role_teacher
+from ucsschool.lib.roles import role_legal_guardian, role_pupil, role_staff, role_teacher
 
 ucs_school_l10n_languages_de = {
     role_pupil: "schueler",
     role_teacher: "lehrer",
     role_staff: "mitarbeiter",
+    role_legal_guardian: "gesetzliche vertreter",
 }
 
 ucs_school_l10n_languages = {

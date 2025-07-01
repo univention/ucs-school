@@ -43,13 +43,22 @@ from univention.admin import syntax
 from univention.admin.filter import conjunction, parse
 from univention.admin.uexceptions import noObject, valueError
 
-from ..roles import role_exam_user, role_pupil, role_school_admin, role_staff, role_student, role_teacher
+from ..roles import (
+    role_exam_user,
+    role_legal_guardian,
+    role_pupil,
+    role_school_admin,
+    role_staff,
+    role_student,
+    role_teacher,
+)
 from .attributes import (
     Birthday,
     Disabled,
     Email,
     Firstname,
     Lastname,
+    LegalWards,
     Password,
     SchoolClassesAttribute,
     Schools,
@@ -184,6 +193,9 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
     def is_teacher(self, lo):  # type: (LoType) -> bool
         return self.__check_object_class(lo, "ucsschoolTeacher", self._legacy_is_teacher)
 
+    def is_legal_guardian(self, lo):  # type: (LoType) -> bool
+        return self.__check_object_class(lo, "ucsschoolLegalGuardian", self._legacy_is_legal_guardian)
+
     def is_staff(self, lo):  # type: (LoType) -> bool
         return self.__check_object_class(lo, "ucsschoolStaff", self._legacy_is_staff)
 
@@ -209,6 +221,11 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             or dn.lower().endswith(search_base.teachersAndStaff.lower())
             or dn.lower().endswith(search_base.admins.lower())
         )
+
+    @classmethod
+    def _legacy_is_legal_guardian(cls, school, dn):  # type: (str, str) -> bool
+        cls.logger.warning("Using deprecated method is_legal_guardian()")
+        return dn.lower().endswith(cls.get_search_base(school).legal_guardians.lower())
 
     @classmethod
     def _legacy_is_staff(cls, school, dn):  # type: (str, str) -> bool
@@ -241,6 +258,8 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             return ExamStudent
         if "ucsschoolTeacher" in ocs:
             return Teacher
+        if "ucsschoolLegalGuardian" in ocs:
+            return LegalGuardian
         if "ucsschoolStaff" in ocs:
             return Staff
         if "ucsschoolStudent" in ocs:
@@ -255,6 +274,8 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             if cls._legacy_is_staff(school, udm_obj.dn):
                 return TeachersAndStaff
             return Teacher
+        if cls._legacy_is_legal_guardian(school, udm_obj.dn):
+            return LegalGuardian
         if cls._legacy_is_staff(school, udm_obj.dn):
             return Staff
         if cls._legacy_is_exam_student(school, udm_obj.dn):
@@ -673,6 +694,12 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             self.get_group_dn("%s%s" % (prefix, school), school) for school in (schools or self.schools)
         ]
 
+    def get_legal_guardians_groups(self, schools=None):  # type: (Optional[List[str]]) -> List[str]
+        prefix = ucr.get("ucsschool/ldap/default/groupprefix/legal_guardians", "gesetzliche vertreter-")
+        return [
+            self.get_group_dn("%s%s" % (prefix, school), school) for school in (schools or self.schools)
+        ]
+
     def get_staff_groups(self, schools=None):  # type: (Optional[List[str]]) -> List[str]
         prefix = ucr.get("ucsschool/ldap/default/groupprefix/staff", "mitarbeiter-")
         return [
@@ -865,6 +892,25 @@ class Teacher(User):
     def get_specific_groups(self, lo):  # type: (LoType) -> List[str]
         groups = super(Teacher, self).get_specific_groups(lo)
         groups.extend(self.get_teachers_groups())
+        return groups
+
+
+class LegalGuardian(User):
+    type_name = _("Legal Guardian")
+    type_filter = "(objectClass=ucsschoolLegalGuardian)"
+    roles = [role_legal_guardian]
+    default_roles = [role_legal_guardian]
+    default_options = ("ucsschoolLegalGuardian",)
+
+    legal_wards = LegalWards(_("Legal Wards"))
+
+    @classmethod
+    def get_container(cls, school):  # type: (str) -> str
+        return cls.get_search_base(school).legal_guardians
+
+    def get_specific_groups(self, lo):  # type: (LoType) -> List[str]
+        groups = super(LegalGuardian, self).get_specific_groups(lo)
+        groups.extend(self.get_legal_guardians_groups())
         return groups
 
 

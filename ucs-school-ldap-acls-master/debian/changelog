@@ -2,6 +2,8 @@ ucs-school-ldap-acls-master (19.1.0) unstable; urgency=medium
 
   * Issue univention/dev/education/ucsschool#1453: add refint for
     ucsschoolLegalGuardian
+  * Issue univention/dev/education/ucsschool#1456: add acl for
+    ucsschoolLegalGuardian
 
  -- Jürn Brodersen <brodersen@univention.de>  Thu, 19 Jun 2025 14:53:58 +0200
 

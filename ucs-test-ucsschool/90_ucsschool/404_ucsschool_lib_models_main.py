@@ -27,6 +27,8 @@ def cmd_line_role():
     def _func(role):
         if role == "teacher_and_staff":
             return "TeachersAndStaff"
+        elif role == "legal_guardian":
+            return "LegalGuardian"
         else:
             return "{}{}".format(role[0].upper(), role[1:])
 
@@ -73,6 +75,7 @@ def test_list_models():
         "Staff",
         "Student",
         "Teacher",
+        "LegalGuardian",
         "TeachersAndStaff",
         "UMCPolicy",
         "WindowsComputer",
@@ -117,7 +120,7 @@ def test_list(cmd_line_role, ucr_hostname, ucr_ldap_base):
         (ou_name, ou_dn), (ou_name2, ou_dn2) = schoolenv.create_multiple_ous(2, name_edudc=ucr_hostname)
         # list one user by school and name
         user_names = {}
-        for role in ("student", "teacher", "staff", "teacher_and_staff"):
+        for role in ("student", "teacher", "legal_guardian", "staff", "teacher_and_staff"):
             create_func = getattr(schoolenv, "create_{}".format(role))
             user_name, user_dn = create_func(ou_name)
             user_names.setdefault(role, []).append(user_name)
@@ -146,7 +149,7 @@ def test_list(cmd_line_role, ucr_hostname, ucr_ldap_base):
                 assert "ucsschool_roles: ['{}:school:{}']".format(role, ou_name) in stdout
 
         # list multiple users for same OU
-        for role in ("student", "teacher", "staff", "teacher_and_staff"):
+        for role in ("student", "teacher", "legal_guardian", "staff", "teacher_and_staff"):
             create_func = getattr(schoolenv, "create_{}".format(role))
             user_name, user_dn = create_func(ou_name)
             user_names.setdefault(role, []).append(user_name)
@@ -206,7 +209,7 @@ def test_list(cmd_line_role, ucr_hostname, ucr_ldap_base):
 def test_create_user(cmd_line_role, ucr_hostname, ucr_ldap_base):
     with utu.UCSTestSchool() as schoolenv:
         ou_name, ou_dn = schoolenv.create_ou(name_edudc=ucr_hostname)
-        for role in ("student", "teacher", "staff", "teacher_and_staff"):
+        for role in ("student", "teacher", "legal_guardian", "staff", "teacher_and_staff"):
             person = Person(ou_name, role)
             person.set_random_birthday()
             cmd = [
@@ -237,6 +240,7 @@ def test_create_user(cmd_line_role, ucr_hostname, ucr_ldap_base):
             container = {
                 "student": "schueler",
                 "teacher": "lehrer",
+                "legal_guardian": "gesetzliche vertreter",
                 "staff": "mitarbeiter",
                 "teacher_and_staff": "lehrer und mitarbeiter",
             }[role]
@@ -272,10 +276,11 @@ def test_create_user_windows_reserved_name(
             ["ucsschool/validation/username/windows-check={}".format(windows_check_enabled)]
         )
         ou_name, ou_dn = schoolenv.create_ou(name_edudc=ucr_hostname)
-        for role in ("student", "teacher", "staff", "teacher_and_staff"):
+        for role in ("student", "teacher", "legal_guardian", "staff", "teacher_and_staff"):
             container = {
                 "student": "schueler",
                 "teacher": "lehrer",
+                "legal_guardian": "gesetzliche vertreter",
                 "staff": "mitarbeiter",
                 "teacher_and_staff": "lehrer und mitarbeiter",
             }[role]
@@ -376,7 +381,7 @@ def test_create_school_class(ucr_hostname, ucr_ldap_base):
 def test_modify(cmd_line_role, ucr_hostname, ucr_ldap_base):
     with utu.UCSTestSchool() as schoolenv:
         ou_name, ou_dn = schoolenv.create_ou(name_edudc=ucr_hostname)
-        for role in ("student", "teacher", "staff", "teacher_and_staff"):
+        for role in ("student", "teacher", "legal_guardian", "staff", "teacher_and_staff"):
             create_func = getattr(schoolenv, "create_{}".format(role))
             user_name, user_dn = create_func(ou_name)
             person = Person(ou_name, role)

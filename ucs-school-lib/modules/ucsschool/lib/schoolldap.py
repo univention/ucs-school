@@ -50,12 +50,14 @@ class SchoolSearchBase(object):
     _containerStaff = ""
     _containerTeachersAndStaff = ""
     _containerTeachers = ""
+    _containerLegalGuardians = ""
     _containerClass = ""
     _containerRooms = ""
     _examUserContainerName = ""
     _examGroupNameTemplate = ""
     group_prefix_students = ""
     group_prefix_teachers = ""
+    group_prefix_legal_guardians = ""
     group_prefix_admins = ""
     group_prefix_staff = ""
 
@@ -84,6 +86,9 @@ class SchoolSearchBase(object):
             "ucsschool/ldap/default/container/teachers-and-staff", "lehrer und mitarbeiter"
         )
         cls._containerTeachers = cls.ucr.get("ucsschool/ldap/default/container/teachers", "lehrer")
+        cls._containerLegalGuardians = cls.ucr.get(
+            "ucsschool/ldap/default/container/legal_guardians", "gesetzliche vertreter"
+        )
         cls._containerClass = cls.ucr.get("ucsschool/ldap/default/container/class", "klassen")
         cls._containerRooms = cls.ucr.get("ucsschool/ldap/default/container/rooms", "raeume")
         cls._examUserContainerName = cls.ucr.get("ucsschool/ldap/default/container/exam", "examusers")
@@ -92,6 +97,9 @@ class SchoolSearchBase(object):
         )
         cls.group_prefix_students = cls.ucr.get("ucsschool/ldap/default/groupprefix/pupils", "schueler-")
         cls.group_prefix_teachers = cls.ucr.get("ucsschool/ldap/default/groupprefix/teachers", "lehrer-")
+        cls.group_prefix_legal_guardians = cls.ucr.get(
+            "ucsschool/ldap/default/groupprefix/legal_guardians", "gesetzliche vertreter-"
+        )
         cls.group_prefix_admins = cls.ucr.get("ucsschool/ldap/default/groupprefix/admins", "admins-")
         cls.group_prefix_staff = cls.ucr.get("ucsschool/ldap/default/groupprefix/staff", "mitarbeiter-")
 
@@ -181,6 +189,14 @@ class SchoolSearchBase(object):
         )
 
     @property
+    def legal_guardians_group(self):  # type: () -> str
+        return "cn=%s%s,cn=groups,%s" % (
+            escape_dn_chars(self.group_prefix_legal_guardians),
+            escape_dn_chars(self.school.lower()),
+            self.schoolDN,
+        )
+
+    @property
     def staff_group(self):  # type: () -> str
         return "cn=%s%s,cn=groups,%s" % (
             escape_dn_chars(self.group_prefix_staff),
@@ -219,6 +235,10 @@ class SchoolSearchBase(object):
     @property
     def teachers(self):  # type: () -> str
         return "cn=%s,cn=users,%s" % (escape_dn_chars(self._containerTeachers), self.schoolDN)
+
+    @property
+    def legal_guardians(self):  # type: () -> str
+        return "cn=%s,cn=users,%s" % (escape_dn_chars(self._containerLegalGuardians), self.schoolDN)
 
     @property
     def teachersAndStaff(self):  # type: () -> str
@@ -323,6 +343,19 @@ class SchoolSearchBase(object):
         return cls._regex_cache["is_teachers_group"]
 
     @classmethod
+    def get_is_legal_guardians_group_regex(cls):  # type: () -> Pattern
+        if "is_legal_guardians_group" not in cls._regex_cache:
+            if not cls._containerLegalGuardians:
+                cls._load_containers_and_prefixes()
+            cls._regex_cache["is_legal_guardians_group"] = re.compile(
+                r"cn={}-(?P<ou>[^,]+?),cn=groups,ou=(?P=ou),{}".format(
+                    cls._containerLegalGuardians, cls.ucr["ldap/base"]
+                ),
+                flags=re.IGNORECASE,
+            )
+        return cls._regex_cache["is_legal_guardians_group"]
+
+    @classmethod
     def get_is_admins_group_regex(cls):  # type: () -> Pattern
         if "is_admins_group" not in cls._regex_cache:
             if not cls._containerAdmins:
@@ -411,6 +444,17 @@ class SchoolSearchBase(object):
                 flags=re.IGNORECASE,
             )
         return cls._regex_cache["teachers_pos"]
+
+    @classmethod
+    def get_legal_guardians_pos_regex(cls):  # type: () -> Pattern
+        if "legal_guardians_pos" not in cls._regex_cache:
+            if not cls._containerLegalGuardians:
+                cls._load_containers_and_prefixes()
+            cls._regex_cache["legal_guardians_pos"] = re.compile(
+                r"cn={},cn=users,ou=[^,]+,{}".format(cls._containerLegalGuardians, cls.ucr["ldap/base"]),
+                flags=re.IGNORECASE,
+            )
+        return cls._regex_cache["legal_guardians_pos"]
 
     @classmethod
     def get_staff_pos_regex(cls):  # type: () -> Pattern

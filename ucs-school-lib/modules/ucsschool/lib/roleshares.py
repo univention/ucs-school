@@ -41,7 +41,7 @@ import univention.admin.uldap as udm_uldap
 from ucsschool.lib.i18n import ucs_school_name_i18n
 from ucsschool.lib.models.group import Group
 from ucsschool.lib.models.school import School
-from ucsschool.lib.roles import role_pupil, role_staff, role_teacher
+from ucsschool.lib.roles import role_legal_guardian, role_pupil, role_staff, role_teacher
 from ucsschool.lib.school_umc_ldap_connection import MACHINE_READ, USER_READ, USER_WRITE, LDAP_Connection
 from univention.config_registry import ConfigRegistry
 from univention.lib.misc import custom_groupname
@@ -73,7 +73,7 @@ def roleshare_home_subdir(
         ucr.load()
 
     if ucr.is_true("ucsschool/import/roleshare", True):
-        for role in (role_pupil, role_teacher, role_staff):
+        for role in (role_pupil, role_teacher, role_legal_guardian, role_staff):
             if role in roles:
                 return roleshare_path(role, school_ou, ucr)
     return ""
@@ -189,7 +189,7 @@ def create_roleshares(role_list, school_list=None, ucr=None, ldap_machine_read=N
         ucr = ConfigRegistry()
         ucr.load()
 
-    supported_roles = (role_pupil, role_teacher, role_staff)
+    supported_roles = (role_pupil, role_teacher, role_legal_guardian, role_staff)
     supported_role_aliases = {"student": "pupil"}
 
     roles = []

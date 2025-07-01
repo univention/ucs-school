@@ -110,11 +110,16 @@ cn_teachers_staff = ucr.get(
 )
 cn_admins = ucr.get("ucsschool/ldap/default/container/admins", "admins")
 cn_staff = ucr.get("ucsschool/ldap/default/container/staff", "mitarbeiter")
+cn_legal_guardians = ucr.get("ucsschool/ldap/default/container/legal_guardians", "gesetzliche vertreter")
 
 grp_prefix_pupils = ucr.get("ucsschool/ldap/default/groupprefix/pupils", "schueler-")
 grp_prefix_teachers = ucr.get("ucsschool/ldap/default/groupprefix/teachers", "lehrer-")
 grp_prefix_admins = ucr.get("ucsschool/ldap/default/groupprefix/admins", "admins-")
 grp_prefix_staff = ucr.get("ucsschool/ldap/default/groupprefix/staff", "mitarbeiter-")
+grp_prefix_legal_guardians = ucr.get(
+    "ucsschool/ldap/default/groupprefix/legal_guardians", "gesetzliche_vertreter-"
+)
+
 
 TYPE_DC_ADMINISTRATIVE = "administrative"
 TYPE_DC_EDUCATIONAL = "educational"
@@ -123,7 +128,9 @@ TYPE_DC_EDUCATIONAL = "educational"
 # IP address prefix len conecerning the netmask
 default_prefixlen = 24
 
-if not (cn_pupils and cn_teachers and cn_teachers_staff and cn_admins and cn_staff):
+if not (
+    cn_pupils and cn_teachers and cn_teachers_staff and cn_admins and cn_staff and cn_legal_guardians
+):
     print(
         """ERROR: Unable to proceed: one of the following UCR variables is not set correctly:
     ucsschool/ldap/default/container/pupils
@@ -131,6 +138,7 @@ if not (cn_pupils and cn_teachers and cn_teachers_staff and cn_admins and cn_sta
     ucsschool/ldap/default/container/teachers-and-staff
     ucsschool/ldap/default/container/staff
     ucsschool/ldap/default/container/admins
+    ucsschool/ldap/default/container/legal_guardians
 """
     )
     sys.exit(1)

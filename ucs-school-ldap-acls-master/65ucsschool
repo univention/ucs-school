@@ -21,6 +21,7 @@ def replace_ucr_variables(template):
 		'DISTRICT': 'ou=[^,]+,' if configRegistry.is_true('ucsschool/ldap/district/enable', False) else '',
 		'PUPILS': configRegistry.get('ucsschool/ldap/default/container/pupils', 'schueler'),
 		'TEACHERS': configRegistry.get('ucsschool/ldap/default/container/teachers', 'lehrer'),
+		'LEGAL-GUARDIAN': configRegistry.get('ucsschool/ldap/default/container/legal_guardian', 'gesetzliche vertreter'),
 		'STAFF': configRegistry.get('ucsschool/ldap/default/container/staff', 'mitarbeiter'),
 		'TEACHERS-STAFF': configRegistry.get('ucsschool/ldap/default/container/teachers-and-staff', 'lehrer und mitarbeiter'),
 		'ADMINS': configRegistry.get('ucsschool/ldap/default/container/admins', 'admins'),
@@ -67,21 +68,21 @@ aclset += """
 access to filter="(|(objectClass=ucsschoolAdministrator)(&(univentionObjectType=users/user)(!(objectClass=ucsschoolType))))" attrs=sambaNTPassword,userPassword,krb5Key,sambaPasswordHistory,pwhistory
 	by self +0 break
 	by group/univentionGroup/uniqueMember="cn=@$@DOMAIN_ADMINS@$@,cn=groups,@%@ldap/base@%@" +0 break
-	by set="user/objectClass & ([ucsschoolAdministrator] | [ucsschoolTeacher] | [ucsschoolStaff] | [ucsschoolStudent])" none
+	by set="user/objectClass & ([ucsschoolAdministrator] | [ucsschoolTeacher] | [ucsschoolStaff] | [ucsschoolStudent] | [ucsschoolLegalGuardian])" none
 	by * +0 break
 
 access to filter="(|(objectClass=ucsschoolStaff)(objectClass=ucsschoolTeacher))" attrs=sambaNTPassword,userPassword,krb5Key,sambaPasswordHistory,pwhistory
 	by self +0 break
 	by group/univentionGroup/uniqueMember="cn=@$@DOMAIN_ADMINS@$@,cn=groups,@%@ldap/base@%@" +0 break
 	by set="user/objectClass & [ucsschoolAdministrator]" +0 break
-	by set="user/objectClass & ([ucsschoolTeacher] | [ucsschoolStaff] | [ucsschoolStudent])" none
+	by set="user/objectClass & ([ucsschoolTeacher] | [ucsschoolStaff] | [ucsschoolStudent] | [ucsschoolLegalGuardian])" none
 	by * +0 break
 
 access to filter="objectClass=ucsschoolStudent" attrs=sambaNTPassword,userPassword,krb5Key,sambaPasswordHistory,pwhistory
 	by self +0 break
 	by group/univentionGroup/uniqueMember="cn=@$@DOMAIN_ADMINS@$@,cn=groups,@%@ldap/base@%@" +0 break
 	by set="user/objectClass & ([ucsschoolAdministrator] | [ucsschoolTeacher])" +0 break
-	by set="user/objectClass & ([ucsschoolStudent] | [ucsschoolStaff])" none
+	by set="user/objectClass & ([ucsschoolStudent] | [ucsschoolStaff] | [ucsschoolLegalGuardian])" none
 	by * +0 break
 
 # Replica Directory Nodes need write access to the members of the group Domain Computers
@@ -134,8 +135,8 @@ access to dn.regex="cn=.*,cn=server,cn=computers,ou=([^,]+),@$@DISTRICT@$@@%@lda
 	by self write
 	by * +0 break
 
-# OU-Admins duerfen Passwoerter von Schülern, Lehrern und Mitarbeitern (mit Position ausserhalb der OU) aendern
-access to filter="(&(|(objectClass=ucsschoolTeacher)(objectClass=ucsschoolStudent)(objectClass=ucsschoolStaff))(!(objectClass=ucsschoolAdministrator)))" attrs=krb5KeyVersionNumber,krb5KDCFlags,krb5Key,krb5PasswordEnd,sambaAcctFlags,sambaPwdLastSet,sambaLMPassword,sambaNTPassword,shadowLastChange,shadowMax,userPassword,pwhistory,sambaPwdCanChange,sambaPwdMustChange,sambaPasswordHistory,sambaBadPasswordCount
+# OU-Admins duerfen Passwoerter von Schülern, Lehrern, gesetzlichen Vertretern und Mitarbeitern (mit Position ausserhalb der OU) aendern
+access to filter="(&(|(objectClass=ucsschoolTeacher)(objectClass=ucsschoolLegalGuardian)(objectClass=ucsschoolStudent)(objectClass=ucsschoolStaff))(!(objectClass=ucsschoolAdministrator)))" attrs=krb5KeyVersionNumber,krb5KDCFlags,krb5Key,krb5PasswordEnd,sambaAcctFlags,sambaPwdLastSet,sambaLMPassword,sambaNTPassword,shadowLastChange,shadowMax,userPassword,pwhistory,sambaPwdCanChange,sambaPwdMustChange,sambaPasswordHistory,sambaBadPasswordCount
 	by set="this/ucsschoolSchool & ([ldap:///@%@ldap/base@%@?entryDN?sub?%28%26%28objectClass%3DucsschoolAdministratorGroup%29%28uniqueMember%3D]+user/entryDN+[%29%29])/ucsschoolSchool" write
 	by * +0 break
 
@@ -194,13 +195,14 @@ access to dn.regex="^zoneName=[^,]+,cn=dns,@%@ldap/base@%@$$" attrs=sOARecord
 	by set="user/objectClass & [ucsschoolAdministrator]" write
 	by * +0 break
 
-# Replica Directory Nodes and Managed Nodes of management group are not allowed to replicate pupils and teachers
-access to dn.regex="^.+,cn=(@$@TEACHERS@$@|@$@PUPILS@$@),cn=users,ou=[^,]+,@$@DISTRICT@$@@%@ldap/base@%@$$"
+# Replica Directory Nodes and Managed Nodes of management group are not allowed to replicate pupils, teachers and legal
+# guardians
+access to dn.regex="^.+,cn=(@$@TEACHERS@$@|@$@PUPILS@$@|@$@LEGAL-GUARDIAN@$@),cn=users,ou=[^,]+,@$@DISTRICT@$@@%@ldap/base@%@$$"
 	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
 	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
 	by * +0 break
 
-access to filter="(|(objectClass=ucsschoolStudent)(&(objectClass=ucsschoolTeacher)(!(objectClass=ucsschoolStaff))))"
+access to filter="(|(objectClass=ucsschoolStudent)(objectClass=ucsschoolLegalGuardian)(&(objectClass=ucsschoolTeacher)(!(objectClass=ucsschoolStaff))))"
 	by group/univentionGroup/uniqueMember="cn=DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
 	by group/univentionGroup/uniqueMember="cn=Member-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" none
 	by * +0 break
@@ -236,14 +238,14 @@ access to dn.regex="^([^,]+),cn=groups,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$
 	by dn.regex="^cn=.*,cn=server,cn=computers,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" +rscxd
 	by * +rscxd break
 
-access to dn.regex="^cn=(@$@PUPILS@$@|@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=entry,children,@$@CONTAINERATTRS@$@
+access to dn.regex="^cn=(@$@PUPILS@$@|@$@TEACHERS@$@|@$@LEGAL-GUARDIAN@$@|@$@TEACHERS-STAFF@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=entry,children,@$@CONTAINERATTRS@$@
 	by group/univentionGroup/uniqueMember.expand="cn=OU$2-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by group/univentionGroup/uniqueMember.expand="cn=OU$2-DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@" write
 	by dn.regex="^cn=.*,cn=server,cn=computers,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" +rscxd
 	by * +rscxd break
 
 # Replica Directory Nodes muessen die Benutzer ihrer Schule lesen und schreiben duerfen
-access to dn.regex="^uid=([^,]+),cn=(@$@PUPILS@$@|@$@TEACHERS@$@|@$@TEACHERS-STAFF@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=entry,@$@USERATTRS@$@
+access to dn.regex="^uid=([^,]+),cn=(@$@PUPILS@$@|@$@TEACHERS@$@|@$@LEGAL-GUARDIAN@$@|@$@TEACHERS-STAFF@$@|@$@STAFF@$@|@$@ADMINS@$@),cn=users,ou=([^,]+),@$@DISTRICT@$@@%@ldap/base@%@$$" attrs=entry,@$@USERATTRS@$@
 	by set="([cn=OU]+this/ucsschoolSchool+[-DC-Edukativnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@])/uniqueMember & user" write
 	by set="([cn=OU]+this/ucsschoolSchool+[-DC-Verwaltungsnetz,cn=ucsschool,cn=groups,@%@ldap/base@%@])/uniqueMember & user" write
 	by * +0 break

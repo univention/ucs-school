@@ -1,3 +1,10 @@
+ucs-test-ucsschool (8.0.26) unstable; urgency=medium
+
+  * Tests for new role legal guardian
+    Issue univention/dev/education/ucsschool#1456
+
+ -- Jürn Brodersen <brodersen@univention.de>  Wed, 09 Jul 2025 20:46:58 +0200
+
 ucs-test-ucsschool (8.0.25) unstable; urgency=medium
 
   * Bug #58432: fix wrong use of uldap.access

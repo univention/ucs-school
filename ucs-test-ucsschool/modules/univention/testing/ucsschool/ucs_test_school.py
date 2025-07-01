@@ -62,7 +62,7 @@ import univention.testing.udm as udm_test
 from ucsschool.lib.models.computer import SchoolComputer
 from ucsschool.lib.models.group import ComputerRoom, SchoolClass, WorkGroup
 from ucsschool.lib.models.school import School
-from ucsschool.lib.models.user import Staff, Student, Teacher, TeachersAndStaff, User
+from ucsschool.lib.models.user import LegalGuardian, Staff, Student, Teacher, TeachersAndStaff, User
 from ucsschool.lib.models.utils import (
     UniStreamHandler,
     add_stream_logger_to_schoollib,
@@ -179,6 +179,11 @@ class UCSTestSchool(object):
     )
     CN_TEACHERS = lazy_object_proxy.Proxy(
         lambda: UCSTestSchool.ucr.get("ucsschool/ldap/default/container/teachers", "lehrer")
+    )
+    CN_LEGAL_GUARDIANS = lazy_object_proxy.Proxy(
+        lambda: UCSTestSchool.ucr.get(
+            "ucsschool/ldap/default/container/leagal_guardians", "gesetzliche vertreter"
+        )
     )
     CN_TEACHERS_STAFF = lazy_object_proxy.Proxy(
         lambda: UCSTestSchool.ucr.get(
@@ -782,7 +787,7 @@ class UCSTestSchool(object):
             else "",
         }
 
-    def get_user_container(self, ou_name, is_teacher=False, is_staff=False):
+    def get_user_container(self, ou_name, is_teacher=False, is_staff=False, is_legal_guardian=False):
         """Returns user container for specified user role and ou_name."""
         if is_teacher and is_staff:
             return "cn=%s,cn=users,%s" % (self.CN_TEACHERS_STAFF, self.get_ou_base_dn(ou_name))
@@ -790,6 +795,8 @@ class UCSTestSchool(object):
             return "cn=%s,cn=users,%s" % (self.CN_TEACHERS, self.get_ou_base_dn(ou_name))
         if is_staff:
             return "cn=%s,cn=users,%s" % (self.CN_STAFF, self.get_ou_base_dn(ou_name))
+        if is_legal_guardian:
+            return "cn=%s,cn=users,%s" % (self.CN_LEGAL_GUARDIANS, self.get_ou_base_dn(ou_name))
         return "cn=%s,cn=users,%s" % (self.CN_STUDENT, self.get_ou_base_dn(ou_name))
 
     def get_workinggroup_dn(self, ou_name, group_name):
@@ -806,6 +813,13 @@ class UCSTestSchool(object):
         and `is_teacher`accordingly.
         """
         return self.create_user(*args, is_teacher=True, is_staff=False, **kwargs)
+
+    def create_legal_guardian(self, *args, **kwargs):
+        """
+        Accepts same arguments as :py:func:`create_user()`, and sets `is_staff`
+        and `is_teacher`accordingly.
+        """
+        return self.create_user(*args, is_legal_guardian=True, **kwargs)
 
     def create_student(self, *args, **kwargs):
         """
@@ -843,6 +857,7 @@ class UCSTestSchool(object):
         mailaddress=None,  # type: Optional[str]
         is_teacher=False,  # type: Optional[bool]
         is_staff=False,  # type: Optional[bool]
+        is_legal_guardian=False,  # type: Optional[bool]
         is_active=True,  # type: Optional[bool]
         password="univention",  # type: Optional[str]
         ucsschool_roles=None,  # type: Optional[List]
@@ -873,7 +888,10 @@ class UCSTestSchool(object):
         if schools is None:
             schools = [ou_name]
 
-        user_dn = "uid=%s,%s" % (username, self.get_user_container(ou_name, is_teacher, is_staff))
+        user_dn = "uid=%s,%s" % (
+            username,
+            self.get_user_container(ou_name, is_teacher, is_staff, is_legal_guardian),
+        )
         school_classes = defaultdict(list)
         if classes:
             for kls in classes.split(","):
@@ -894,6 +912,8 @@ class UCSTestSchool(object):
             cls = TeachersAndStaff
         elif is_teacher and not is_staff:
             cls = Teacher
+        elif is_legal_guardian:
+            cls = LegalGuardian
         elif not is_teacher and is_staff:
             cls = Staff
         logger.info("*** Creating new %s %r with %r.", cls.__name__, username, kwargs)
@@ -1240,6 +1260,7 @@ class AutoMultiSchoolEnv_School(object):
         self.dn = None  # type: Optional[str]
         self.name = None  # type: Optional[str]
         self.teacher = None  # type: Optional[NameDnObj]
+        self.legal_guardian = None  # type: Optional[NameDnObj]
         self.teacher_staff = None  # type: Optional[NameDnObj]
         self.staff = None  # type: Optional[NameDnObj]
         self.student = None  # type: Optional[NameDnObj]
@@ -1351,6 +1372,14 @@ class AutoMultiSchoolEnv(UCSTestSchool):
                     schools=schools,
                     is_teacher=True,
                     classes="%s-class1" % (school.name,),
+                )
+            )
+            school.legal_guardian = NameDnObj(
+                *self.create_user(
+                    school.name,
+                    username="legal_guardian%s" % (suffix,),
+                    schools=schools,
+                    is_legal_guardian=True,
                 )
             )
             school.teacher_staff = NameDnObj(

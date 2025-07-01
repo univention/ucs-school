@@ -51,6 +51,7 @@ from ..roles import (
     role_school,
     role_school_admin_group,
     role_school_domain_group,
+    role_school_legal_guardian_group,
     role_school_staff_group,
     role_school_student_group,
     role_school_teacher_group,
@@ -150,9 +151,10 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         cn_pupils = self.cn_name("pupils", "schueler")
         cn_teachers = self.cn_name("teachers", "lehrer")
         cn_admins = self.cn_name("admins", "admins")
+        cn_legal_guardians = self.cn_name("legal_guardians", "gesetzliche vertreter")
         cn_classes = self.cn_name("class", "klassen")
         cn_rooms = self.cn_name("rooms", "raeume")
-        user_containers = [cn_pupils, cn_teachers, cn_admins]
+        user_containers = [cn_pupils, cn_teachers, cn_admins, cn_legal_guardians]
         group_containers = [cn_pupils, [cn_classes], cn_teachers, cn_rooms]
         if self.shall_create_administrative_objects():
             cn_staff = self.cn_name("staff", "mitarbeiter")
@@ -261,6 +263,14 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         group.ucsschool_roles = [create_ucsschool_role_string(role_school_teacher_group, self.name)]
         group.create(lo)
         group.add_umc_policy(self.get_umc_policy_dn("teachers"), lo)
+
+        # cn=gesetzliche vertreter
+        group = Group.cache(self.group_name("legal_guardians", "gesetzliche vertreter-"), self.name)
+        group.ucsschool_roles = [
+            create_ucsschool_role_string(role_school_legal_guardian_group, self.name)
+        ]
+        group.create(lo)
+        group.add_umc_policy(self.get_umc_policy_dn("legal_guardians"), lo)
 
         # cn=mitarbeiter
         if self.shall_create_administrative_objects():

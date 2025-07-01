@@ -1,3 +1,10 @@
+ucs-school-lib (15.1.0) unstable; urgency=medium
+
+  * feat: add legal guardian role to ucsschool lib
+    Issue univention/dev/education/ucsschool#1456
+
+ -- Jürn Brodersen <brodersen@univention.de>  Wed, 02 Jul 2025 09:52:50 +0200
+
 ucs-school-lib (15.0.3) unstable; urgency=low
 
   * Bug #58250: fix logic error in group.py

@@ -26,7 +26,7 @@ Depends:
  python3-ldap,
  python3-ucsschool (>= 13.0.30),
  python3-ucsschool-importer,
- python3-ucsschool-lib (>= 13.0.30),
+ python3-ucsschool-lib (>= 15.1.0),
  python3-univention,
  python3-univention-config-registry,
  python3-univention-lib,
