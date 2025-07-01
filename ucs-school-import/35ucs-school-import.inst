@@ -32,10 +32,14 @@
 
 ## joinscript api: bindpwdfile
 
+# shellcheck disable=SC2034
 VERSION=36
 
+# shellcheck source=/dev/null
 . /usr/share/univention-join/joinscripthelper.lib
+# shellcheck source=/dev/null
 . /usr/share/univention-lib/all.sh
+# shellcheck source=/dev/null
 . /usr/share/ucs-school-lib/base.sh
 joinscript_init
 
@@ -44,18 +48,18 @@ eval "$(ucr shell)"
 CONF_DIR="/etc/ucsschool-import"
 
 LDAP_SECRET_FILE="$CONF_DIR/ldap_unprivileged.secret"
-if [ $server_role = domaincontroller_master ]; then
+if [ "${server_role:?}" = domaincontroller_master ]; then
     LDAP_USER_NAME="importhttpapi"
 else
     # Backup Directory Node
-    LDAP_USER_NAME="importhttpapi-$hostname"
+    LDAP_USER_NAME="importhttpapi-${hostname:?}"
 fi
-LDAP_USER_POSITION="cn=users,$ldap_base"
+LDAP_USER_POSITION="cn=users,${ldap_base:?}"
 LDAP_USER_DN="uid=$LDAP_USER_NAME,$LDAP_USER_POSITION"
 
 write_secret () {
     local filename="$1" secret="${2:-}"
-    mkdir -p "$(dirname $filename)"
+    mkdir -p "$(dirname "$filename")"
     touch "$filename"
     chmod 0600 "$filename"
     chown uas-import:uas-import "$filename"
@@ -69,17 +73,17 @@ write_secret () {
 }
 
 # create new password if none exists or as fix for Bug #47683
-if [ -e "$LDAP_SECRET_FILE" ] && [ $JS_LAST_EXECUTED_VERSION -gt 17 ];
+if [ -e "$LDAP_SECRET_FILE" ] && [ "$JS_LAST_EXECUTED_VERSION" -gt 17 ];
 then
     echo "Using existing password for unprivileged LDAP user $LDAP_USER_NAME."
     LDAP_SECRET_PW="$(cat $LDAP_SECRET_FILE | cut -f 3 -d :)"
 else
     echo "Creating password for unprivileged LDAP user $LDAP_USER_NAME."
     LDAP_SECRET_PW="$(echo "$(makepasswd --chars=40)$(makepasswd --chars=10 --string=',.-_')" | fold -w1 | shuf | tr -d '\n')"
-    write_secret "$LDAP_SECRET_FILE" "$LDAP_USER_DN:$ldap_base:$LDAP_SECRET_PW" || die
+    write_secret "$LDAP_SECRET_FILE" "$LDAP_USER_DN:${ldap_base:?}:$LDAP_SECRET_PW" || die
 fi
 
-if [ -z "$(univention-ldapsearch -LLL uid=$LDAP_USER_NAME dn)" ];
+if [ -z "$(univention-ldapsearch -LLL uid="$LDAP_USER_NAME" dn)" ];
 then
     echo "Creating unprivileged LDAP user $LDAP_USER_NAME..."
     udm users/ldap create "$@" \
@@ -95,7 +99,7 @@ else
         --set overridePWHistory=1
 fi
 
-if [ $JS_LAST_EXECUTED_VERSION -lt 1 ]; then
+if [ "$JS_LAST_EXECUTED_VERSION" -lt 1 ]; then
     # create policy container if missing
     univention-directory-manager container/cn create "$@" --ignore_exists --position "cn=policies,$ldap_base" --set name=UMC --set policyPath=1 || die
 
@@ -660,10 +664,10 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
     --set multivalue="1" \
     --set disableUDMWeb=1 || die
 
-if [ $JS_LAST_EXECUTED_VERSION -le 19 ] && [ $server_role = domaincontroller_master ]; then
+if [ "$JS_LAST_EXECUTED_VERSION" -le 19 ] && [ "$server_role" = domaincontroller_master ]; then
     /usr/share/ucs-school-import/scripts/fix_ucsschool_roles
 fi
-if [ $JS_LAST_EXECUTED_VERSION -lt 19 ] && [ $server_role = domaincontroller_master ]; then
+if [ "$JS_LAST_EXECUTED_VERSION" -lt 19 ] && [ "$server_role" = domaincontroller_master ]; then
     univention-directory-manager settings/extended_attribute modify "$@" \
         --dn "cn=ucsschoolRoleComputers,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
         --set hook=UcsschoolRoleComputers || die
@@ -678,7 +682,7 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 19 ] && [ $server_role = domaincontroller_mas
     fi
 fi
 
-if [ $JS_LAST_EXECUTED_VERSION -lt 6 ]; then
+if [ "$JS_LAST_EXECUTED_VERSION" -lt 6 ]; then
     # append UCSschool-School-OU option to Home/ClassShareServer
     for dn in "cn=UCSschool-School-HomeShareFileServer,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
         "cn=UCSschool-School-ClassShareFileServer,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base"; do
@@ -689,7 +693,7 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 6 ]; then
     done
 fi
 
-if [ $JS_LAST_EXECUTED_VERSION -lt 7 ] ; then
+if [ "$JS_LAST_EXECUTED_VERSION" -lt 7 ] ; then
     # switch order of groups during update
     for dn in "cn=UCSschool-School-HomeShareFileServer,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
         "cn=UCSschool-School-ClassShareFileServer,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base"; do
@@ -699,7 +703,7 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 7 ] ; then
     done
 fi
 
-if [ $JS_LAST_EXECUTED_VERSION -lt 10 ] ; then
+if [ "$JS_LAST_EXECUTED_VERSION" -lt 10 ] ; then
     # convert existing UCS@school user objects to new LDAP structure
     univention-directory-manager settings/extended_attribute modify "$@" \
           --dn "cn=UCSschool-School-displayName,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
@@ -707,7 +711,7 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 10 ] ; then
 
     LOGFILE="/var/log/univention/ucs-school-migrate-users-to-4.1R2.log"
     if is_ucr_false ucsschool/update/ldap/41R2; then
-        echo "$(date)" | tee -a "$LOGFILE"
+        date | tee -a "$LOGFILE"
         echo "Automatic update of user objects to new LDAP structure of UCS@school 4.1 R2" | tee -a "$LOGFILE"
         echo "has been disabled via UCR variable 'ucsschool/update/ldap/41R2'. Make sure" | tee -a "$LOGFILE"
         echo "that this required step is performed manually afterwards." | tee -a "$LOGFILE"
@@ -718,7 +722,7 @@ if [ $JS_LAST_EXECUTED_VERSION -lt 10 ] ; then
     fi
 fi
 
-if [ $JS_LAST_EXECUTED_VERSION -lt 12 ] ; then
+if [ "$JS_LAST_EXECUTED_VERSION" -lt 12 ] ; then
     # Bug #41351: UDM hook to prevent invalid combinations of UCS@school options
     univention-directory-manager settings/extended_attribute modify "$@" \
     --dn="cn=ucsschoolSchool,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
@@ -728,14 +732,14 @@ fi
 # Bug #50116: correct wrong domaincontroller_slaves object during initial installation
 # and during  updates from 4.4v3 and before. This code block should be the last one
 # within the join script.
-if [ $JS_LAST_EXECUTED_VERSION -lt 23 ] && [ $server_role = domaincontroller_master ]; then
+if [ "$JS_LAST_EXECUTED_VERSION" -lt 23 ] && [ "$server_role" = domaincontroller_master ]; then
     if ! is_ucr_true ucsschool/update/skip-slave-object-correction ; then
         /usr/share/ucs-school-import/scripts/fix_ucsschool_slaves
     fi
 fi
 
 # Bug #51301: set ucsschoolRole on all Marktplatz shares
-if [ $JS_LAST_EXECUTED_VERSION -lt 24 ] && [ $server_role = domaincontroller_master ]; then
+if [ "$JS_LAST_EXECUTED_VERSION" -lt 24 ] && [ "$server_role" = domaincontroller_master ]; then
   echo "Setting ucsschoolRole of all 'Marktplatz' shares..."
   for DN in $(univention-ldapsearch -LLL '(&(objectClass=univentionShareSamba)(cn=Marktplatz))' dn | cut -f 2- -d ' '); do
     ouname="$(school_ou "$DN")"
