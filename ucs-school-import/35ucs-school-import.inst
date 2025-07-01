@@ -45,24 +45,24 @@ CONF_DIR="/etc/ucsschool-import"
 
 LDAP_SECRET_FILE="$CONF_DIR/ldap_unprivileged.secret"
 if [ $server_role = domaincontroller_master ]; then
-	LDAP_USER_NAME="importhttpapi"
+    LDAP_USER_NAME="importhttpapi"
 else
-	# Backup Directory Node
-	LDAP_USER_NAME="importhttpapi-$hostname"
+    # Backup Directory Node
+    LDAP_USER_NAME="importhttpapi-$hostname"
 fi
 LDAP_USER_POSITION="cn=users,$ldap_base"
 LDAP_USER_DN="uid=$LDAP_USER_NAME,$LDAP_USER_POSITION"
 
 write_secret () {
-	local filename="$1" secret="${2:-}"
-	mkdir -p "$(dirname $filename)"
-	touch "$filename"
-	chmod 0600 "$filename"
-	chown uas-import:uas-import "$filename"
-	if [ -n "$secret" ];
-	then
-	    echo "$secret" >"$filename"
-	else
+    local filename="$1" secret="${2:-}"
+    mkdir -p "$(dirname $filename)"
+    touch "$filename"
+    chmod 0600 "$filename"
+    chown uas-import:uas-import "$filename"
+    if [ -n "$secret" ];
+    then
+        echo "$secret" >"$filename"
+    else
         echo "ERROR: refusing to write empty string to $filename"
         return 1
     fi
@@ -81,30 +81,30 @@ fi
 
 if [ -z "$(univention-ldapsearch -LLL uid=$LDAP_USER_NAME dn)" ];
 then
-	echo "Creating unprivileged LDAP user $LDAP_USER_NAME..."
+    echo "Creating unprivileged LDAP user $LDAP_USER_NAME..."
     udm users/ldap create "$@" \
-    	--set username="$LDAP_USER_NAME" \
-    	--position "$LDAP_USER_POSITION" \
-    	--set password="$LDAP_SECRET_PW" \
-    	--set description="Unprivileged account used by UCS@school import to authenticate against LDAP directory."  || die
+        --set username="$LDAP_USER_NAME" \
+        --position "$LDAP_USER_POSITION" \
+        --set password="$LDAP_SECRET_PW" \
+        --set description="Unprivileged account used by UCS@school import to authenticate against LDAP directory."  || die
 else
-	echo "Setting password on existing LDAP user $LDAP_USER_NAME..."
-	udm users/ldap modify "$@" \
-		--dn "$LDAP_USER_DN" \
-		--set password="$LDAP_SECRET_PW" \
-		--set overridePWHistory=1
+    echo "Setting password on existing LDAP user $LDAP_USER_NAME..."
+    udm users/ldap modify "$@" \
+        --dn "$LDAP_USER_DN" \
+        --set password="$LDAP_SECRET_PW" \
+        --set overridePWHistory=1
 fi
 
 if [ $JS_LAST_EXECUTED_VERSION -lt 1 ]; then
-	# create policy container if missing
-	univention-directory-manager container/cn create "$@" --ignore_exists --position "cn=policies,$ldap_base" --set name=UMC --set policyPath=1 || die
+    # create policy container if missing
+    univention-directory-manager container/cn create "$@" --ignore_exists --position "cn=policies,$ldap_base" --set name=UMC --set policyPath=1 || die
 
-	# create empty UMC access policies if missing
-	for policyname in ucsschool-umc-pupils-default ucsschool-umc-teachers-default ucsschool-umc-staff-default ucsschool-umc-admins-default ; do
-	 	univention-directory-manager policies/umc create "$@" --ignore_exists \
-	 			--position cn=UMC,cn=policies,"$ldap_base" \
-	 			--set name="${policyname}" || die
-	done
+    # create empty UMC access policies if missing
+    for policyname in ucsschool-umc-pupils-default ucsschool-umc-teachers-default ucsschool-umc-staff-default ucsschool-umc-admins-default ; do
+         univention-directory-manager policies/umc create "$@" --ignore_exists \
+                 --position cn=UMC,cn=policies,"$ldap_base" \
+                 --set name="${policyname}" || die
+    done
 fi
 
 univention-directory-manager container/cn      create "$@" --ignore_exists --set name="services" --position "cn=univention,$ldap_base"
@@ -125,613 +125,613 @@ ucs_registerLDAPExtension "$@" --ucsversionstart "4.4-0" --ucsversionend "5.99-0
 
 # create extended attributes for UCS@school container if missing
 univention-directory-manager container/cn create "$@" --ignore_exists \
-	--position="cn=custom attributes,cn=univention,$ldap_base" \
-	--set name="UCSschool" \
-	--set description="Attributes for UCS@school configuration" || die
+    --position="cn=custom attributes,cn=univention,$ldap_base" \
+    --set name="UCSschool" \
+    --set description="Attributes for UCS@school configuration" || die
 
 #### container/ou ####
 
 univention-directory-manager settings/extended_options create "$@" --ignore_exists \
-	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
-	--set name="UCSschool-School-OU" \
-	--set module=container/ou \
-	--set objectClass=ucsschoolOrganizationalUnit \
-	--set default=0 \
-	--set editable=1 \
-	--set shortDescription="UCS@school Organizational Unit" \
-	--set longDescription="Specifies that this Organizational Unit is a UCS@school OU" \
-	--append translationShortDescription='"de_DE" "UCS@school Organisationseinheit"' \
-	--append translationShortDescription='"fr_FR" "Unité organisationnelle UCS@school"' \
-	--append translationLongDescription='"de_DE" "Spezifiziert, dass die Organisationseinheit eine UCS@school-Schule ist"' \
-	--append translationLongDescription='"fr_FR" "Spécifie que cette unité organisationnelle est une école UCS@school"' || die
+    --position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+    --set name="UCSschool-School-OU" \
+    --set module=container/ou \
+    --set objectClass=ucsschoolOrganizationalUnit \
+    --set default=0 \
+    --set editable=1 \
+    --set shortDescription="UCS@school Organizational Unit" \
+    --set longDescription="Specifies that this Organizational Unit is a UCS@school OU" \
+    --append translationShortDescription='"de_DE" "UCS@school Organisationseinheit"' \
+    --append translationShortDescription='"fr_FR" "Unité organisationnelle UCS@school"' \
+    --append translationLongDescription='"de_DE" "Spezifiziert, dass die Organisationseinheit eine UCS@school-Schule ist"' \
+    --append translationLongDescription='"fr_FR" "Spécifie que cette unité organisationnelle est une école UCS@school"' || die
 
 univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
-	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
-	--set name="UCSschool-School-HomeShareFileServer" \
-	--set module=container/ou \
-	--set options="UCSschool-School-OU" \
-	--set hook="schoolOU" \
-	--set tabName="UCS@school" \
-	--set tabPosition=1 \
-	--set groupName="File servers" \
-	--set groupPosition="2" \
-	--append translationGroupName='"de_DE" "Freigabeserver"' \
-	--append translationGroupName='"fr_FR" "Serveurs de fichiers"' \
-	--set shortDescription="Server for Windows home directories" \
-	--set longDescription="The specified server will be used as home share fileserver for new users of this OU." \
-	--append translationShortDescription='"de_DE" "Server für Windows-Heimatverzeichnisse"' \
-	--append translationShortDescription='"fr_FR" "Serveur pour les répertoires personnels Windows"' \
-	--append translationLongDescription='"de_DE" "Der angegebene Server wird bei neuen Benutzern der OU als Freigabeserver für das Windows-Heimatverzeichnis eingetragen."' \
-	--append translationLongDescription='"fr_FR" "Le serveur spécifié sera utilisé comme serveur de partage pour le répertoire personnel Windows des nouveaux comptes d’utilisation de cette UO (unité organisationnelle)."' \
-	--set CLIName="ucsschoolHomeShareFileServer" \
-	--set objectClass=ucsschoolOrganizationalUnit \
-	--set syntax=UCSSchool_Server_DN \
-	--set mayChange=1 \
-	--set ldapMapping=ucsschoolHomeShareFileServer \
-	--set multivalue=0 || die
+    --position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+    --set name="UCSschool-School-HomeShareFileServer" \
+    --set module=container/ou \
+    --set options="UCSschool-School-OU" \
+    --set hook="schoolOU" \
+    --set tabName="UCS@school" \
+    --set tabPosition=1 \
+    --set groupName="File servers" \
+    --set groupPosition="2" \
+    --append translationGroupName='"de_DE" "Freigabeserver"' \
+    --append translationGroupName='"fr_FR" "Serveurs de fichiers"' \
+    --set shortDescription="Server for Windows home directories" \
+    --set longDescription="The specified server will be used as home share fileserver for new users of this OU." \
+    --append translationShortDescription='"de_DE" "Server für Windows-Heimatverzeichnisse"' \
+    --append translationShortDescription='"fr_FR" "Serveur pour les répertoires personnels Windows"' \
+    --append translationLongDescription='"de_DE" "Der angegebene Server wird bei neuen Benutzern der OU als Freigabeserver für das Windows-Heimatverzeichnis eingetragen."' \
+    --append translationLongDescription='"fr_FR" "Le serveur spécifié sera utilisé comme serveur de partage pour le répertoire personnel Windows des nouveaux comptes d’utilisation de cette UO (unité organisationnelle)."' \
+    --set CLIName="ucsschoolHomeShareFileServer" \
+    --set objectClass=ucsschoolOrganizationalUnit \
+    --set syntax=UCSSchool_Server_DN \
+    --set mayChange=1 \
+    --set ldapMapping=ucsschoolHomeShareFileServer \
+    --set multivalue=0 || die
 
 univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
-	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
-	--set name="UCSschool-School-ClassShareFileServer" \
-	--set module=container/ou \
-	--set options="UCSschool-School-OU" \
-	--set hook="schoolOU" \
-	--set tabName="UCS@school" \
-	--set tabPosition=3 \
-	--set groupName="File servers" \
-	--set groupPosition="2" \
-	--append translationGroupName='"de_DE" "Freigabeserver"' \
-	--append translationGroupName='"fr_FR" "Serveurs de fichiers"' \
-	--set shortDescription="Server for class shares" \
-	--set longDescription="The specified server will be used as fileserver for new class shares of this OU." \
-	--append translationShortDescription='"de_DE" "Server für Klassenfreigaben"' \
-	--append translationShortDescription='"fr_FR" "Serveur pour les partages de classe"' \
-	--append translationLongDescription='"de_DE" "Der angegebene Server wird bei neuen Klassen der OU als Freigabeserver für die Klassenfreigabe eingetragen."' \
-	--append translationLongDescription='"fr_FR" "Le serveur spécifié sera utilisé comme serveur de fichiers pour les partages des nouvelles classes de cette UO (unité organisationnelle)."' \
-	--set CLIName="ucsschoolClassShareFileServer" \
-	--set objectClass=ucsschoolOrganizationalUnit \
-	--set syntax=UCSSchool_Server_DN \
-	--set mayChange=1 \
-	--set ldapMapping=ucsschoolClassShareFileServer \
-	--set multivalue=0 || die
+    --position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+    --set name="UCSschool-School-ClassShareFileServer" \
+    --set module=container/ou \
+    --set options="UCSschool-School-OU" \
+    --set hook="schoolOU" \
+    --set tabName="UCS@school" \
+    --set tabPosition=3 \
+    --set groupName="File servers" \
+    --set groupPosition="2" \
+    --append translationGroupName='"de_DE" "Freigabeserver"' \
+    --append translationGroupName='"fr_FR" "Serveurs de fichiers"' \
+    --set shortDescription="Server for class shares" \
+    --set longDescription="The specified server will be used as fileserver for new class shares of this OU." \
+    --append translationShortDescription='"de_DE" "Server für Klassenfreigaben"' \
+    --append translationShortDescription='"fr_FR" "Serveur pour les partages de classe"' \
+    --append translationLongDescription='"de_DE" "Der angegebene Server wird bei neuen Klassen der OU als Freigabeserver für die Klassenfreigabe eingetragen."' \
+    --append translationLongDescription='"fr_FR" "Le serveur spécifié sera utilisé comme serveur de fichiers pour les partages des nouvelles classes de cette UO (unité organisationnelle)."' \
+    --set CLIName="ucsschoolClassShareFileServer" \
+    --set objectClass=ucsschoolOrganizationalUnit \
+    --set syntax=UCSSchool_Server_DN \
+    --set mayChange=1 \
+    --set ldapMapping=ucsschoolClassShareFileServer \
+    --set multivalue=0 || die
 
 univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
-	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
-	--set name="UCSschool-School-displayName" \
-	--set module=container/ou \
-	--set options="UCSschool-School-OU" \
-	--set tabName="UCS@school" \
-	--set tabPosition=4 \
-	--set groupName="General" \
-	--set groupPosition="1" \
-	--append translationGroupName='"de_DE" "Allgemein"' \
-	--append translationGroupName='"fr_FR" "Général"' \
-	--set shortDescription="Display name" \
-	--set longDescription="Display name for school OU that is used by UCS@school modules" \
-	--append translationShortDescription='"de_DE" "Anzeigename"' \
-	--append translationShortDescription='"fr_FR" "Nom affiché"' \
-	--append translationLongDescription='"de_DE" "Der angegebene Anzeigename der Schul-OU wird innerhalb der UCS@school-Module verwendet."' \
-	--append translationLongDescription='"fr_FR" "Le nom affiché est utilisé dans les différents modules de UCS@school."' \
-	--set CLIName="displayName" \
-	--set objectClass=ucsschoolOrganizationalUnit \
-	--set syntax=string \
-	--set mayChange=1 \
-	--set valueRequired=1 \
-	--set ldapMapping=displayName \
-	--set multivalue=0 || die
+    --position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+    --set name="UCSschool-School-displayName" \
+    --set module=container/ou \
+    --set options="UCSschool-School-OU" \
+    --set tabName="UCS@school" \
+    --set tabPosition=4 \
+    --set groupName="General" \
+    --set groupPosition="1" \
+    --append translationGroupName='"de_DE" "Allgemein"' \
+    --append translationGroupName='"fr_FR" "Général"' \
+    --set shortDescription="Display name" \
+    --set longDescription="Display name for school OU that is used by UCS@school modules" \
+    --append translationShortDescription='"de_DE" "Anzeigename"' \
+    --append translationShortDescription='"fr_FR" "Nom affiché"' \
+    --append translationLongDescription='"de_DE" "Der angegebene Anzeigename der Schul-OU wird innerhalb der UCS@school-Module verwendet."' \
+    --append translationLongDescription='"fr_FR" "Le nom affiché est utilisé dans les différents modules de UCS@school."' \
+    --set CLIName="displayName" \
+    --set objectClass=ucsschoolOrganizationalUnit \
+    --set syntax=string \
+    --set mayChange=1 \
+    --set valueRequired=1 \
+    --set ldapMapping=displayName \
+    --set multivalue=0 || die
 
 univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
-	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
-	--set name="ucsschoolRoleOU" \
-	--append module="container/ou" \
-	--set options="UCSschool-School-OU" \
-	--set tabName="UCS@school" \
-	--set tabPosition=5 \
-	--set groupName="General" \
-	--set groupPosition="1" \
-	--append translationGroupName='"de_DE" "Allgemein"' \
-	--append translationGroupName='"fr_FR" "Général"' \
-	--set shortDescription="Role of UCS@school object." \
-	--set longDescription="Role of UCS@school object." \
-	--append translationShortDescription='"de_DE" "Rolle des UCS@school objects."' \
-	--append translationShortDescription='"fr_FR" "Rôle de l’objet UCS@school."' \
-	--append translationLongDescription='"de_DE" "Rolle des UCS@school objects."' \
-	--append translationLongDescription='"fr_FR" "Rôle de l’objet UCS@school."' \
-	--set CLIName="ucsschoolRole" \
-	--set objectClass="ucsschoolOrganizationalUnit" \
-	--set ldapMapping="ucsschoolRole" \
-	--set syntax="string" \
-	--set mayChange="1" \
-	--set multivalue="1" \
-	--set disableUDMWeb=1 || die
+    --position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+    --set name="ucsschoolRoleOU" \
+    --append module="container/ou" \
+    --set options="UCSschool-School-OU" \
+    --set tabName="UCS@school" \
+    --set tabPosition=5 \
+    --set groupName="General" \
+    --set groupPosition="1" \
+    --append translationGroupName='"de_DE" "Allgemein"' \
+    --append translationGroupName='"fr_FR" "Général"' \
+    --set shortDescription="Role of UCS@school object." \
+    --set longDescription="Role of UCS@school object." \
+    --append translationShortDescription='"de_DE" "Rolle des UCS@school objects."' \
+    --append translationShortDescription='"fr_FR" "Rôle de l’objet UCS@school."' \
+    --append translationLongDescription='"de_DE" "Rolle des UCS@school objects."' \
+    --append translationLongDescription='"fr_FR" "Rôle de l’objet UCS@school."' \
+    --set CLIName="ucsschoolRole" \
+    --set objectClass="ucsschoolOrganizationalUnit" \
+    --set ldapMapping="ucsschoolRole" \
+    --set syntax="string" \
+    --set mayChange="1" \
+    --set multivalue="1" \
+    --set disableUDMWeb=1 || die
 
 #### users/user & settings/usertemplate ####
 
 univention-directory-manager settings/extended_options create "$@" --ignore_exists \
-	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
-	--set name="ucsschoolStudent" \
-	--append module=users/user \
-	--append module=settings/usertemplate \
-	--set objectClass=ucsschoolStudent \
-	--set default=0 \
-	--set editable=1 \
-	--set shortDescription="UCS@school Student" \
-	--set longDescription="Specifies that this user is a UCS@school student" \
-	--append translationShortDescription='"de_DE" "UCS@school-Schüler"' \
-	--append translationShortDescription='"fr_FR" "Élève UCS@school"' \
-	--append translationLongDescription='"de_DE" "Spezifiziert, dass dieser Benutzer ein UCS@school-Schüler ist"' \
-	--append translationLongDescription='"fr_FR" "Spécifie que cet utilisateur ou cette utilisatrice est un·e élève UCS@school"' || die
+    --position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+    --set name="ucsschoolStudent" \
+    --append module=users/user \
+    --append module=settings/usertemplate \
+    --set objectClass=ucsschoolStudent \
+    --set default=0 \
+    --set editable=1 \
+    --set shortDescription="UCS@school Student" \
+    --set longDescription="Specifies that this user is a UCS@school student" \
+    --append translationShortDescription='"de_DE" "UCS@school-Schüler"' \
+    --append translationShortDescription='"fr_FR" "Élève UCS@school"' \
+    --append translationLongDescription='"de_DE" "Spezifiziert, dass dieser Benutzer ein UCS@school-Schüler ist"' \
+    --append translationLongDescription='"fr_FR" "Spécifie que cet utilisateur ou cette utilisatrice est un·e élève UCS@school"' || die
 
 univention-directory-manager settings/extended_options create "$@" --ignore_exists \
-	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
-	--set name="ucsschoolTeacher" \
-	--append module=users/user \
-	--append module=settings/usertemplate \
-	--set objectClass=ucsschoolTeacher \
-	--set default=0 \
-	--set editable=1 \
-	--set shortDescription="UCS@school Teacher" \
-	--set longDescription="Specifies that this user is a UCS@school teacher" \
-	--append translationShortDescription='"de_DE" "UCS@school-Lehrer"' \
-	--append translationShortDescription='"fr_FR" "Enseignant·e UCS@school"' \
-	--append translationLongDescription='"de_DE" "Spezifiziert, dass dieser Benutzer ein UCS@school-Lehrer ist"' \
-	--append translationLongDescription='"fr_FR" "Spécifie que cet utilisateur ou cette utilisatrice est un·e enseignant·e UCS@school"' || die
+    --position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+    --set name="ucsschoolTeacher" \
+    --append module=users/user \
+    --append module=settings/usertemplate \
+    --set objectClass=ucsschoolTeacher \
+    --set default=0 \
+    --set editable=1 \
+    --set shortDescription="UCS@school Teacher" \
+    --set longDescription="Specifies that this user is a UCS@school teacher" \
+    --append translationShortDescription='"de_DE" "UCS@school-Lehrer"' \
+    --append translationShortDescription='"fr_FR" "Enseignant·e UCS@school"' \
+    --append translationLongDescription='"de_DE" "Spezifiziert, dass dieser Benutzer ein UCS@school-Lehrer ist"' \
+    --append translationLongDescription='"fr_FR" "Spécifie que cet utilisateur ou cette utilisatrice est un·e enseignant·e UCS@school"' || die
 
 univention-directory-manager settings/extended_options create "$@" --ignore_exists \
-	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
-	--set name="ucsschoolStaff" \
-	--append module=users/user \
-	--append module=settings/usertemplate \
-	--set objectClass=ucsschoolStaff \
-	--set default=0 \
-	--set editable=1 \
-	--set shortDescription="UCS@school Staff" \
-	--set longDescription="Specifies that this user is a UCS@school staff" \
-	--append translationShortDescription='"de_DE" "UCS@school-Mitarbeiter"' \
-	--append translationShortDescription='"fr_FR" "Personnel administratif UCS@school"' \
-	--append translationLongDescription='"de_DE" "Spezifiziert, dass dieser Benutzer ein UCS@school-Mitarbeiter ist"' \
-	--append translationLongDescription='"fr_FR" "Spécifie que cet utilisateur ou cette utilisatrice est un personnel administratif dans UCS@school"' || die
+    --position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+    --set name="ucsschoolStaff" \
+    --append module=users/user \
+    --append module=settings/usertemplate \
+    --set objectClass=ucsschoolStaff \
+    --set default=0 \
+    --set editable=1 \
+    --set shortDescription="UCS@school Staff" \
+    --set longDescription="Specifies that this user is a UCS@school staff" \
+    --append translationShortDescription='"de_DE" "UCS@school-Mitarbeiter"' \
+    --append translationShortDescription='"fr_FR" "Personnel administratif UCS@school"' \
+    --append translationLongDescription='"de_DE" "Spezifiziert, dass dieser Benutzer ein UCS@school-Mitarbeiter ist"' \
+    --append translationLongDescription='"fr_FR" "Spécifie que cet utilisateur ou cette utilisatrice est un personnel administratif dans UCS@school"' || die
 
 univention-directory-manager settings/extended_options create "$@" --ignore_exists \
-	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
-	--set name="ucsschoolAdministrator" \
-	--append module=users/user \
-	--append module=settings/usertemplate \
-	--set objectClass=ucsschoolAdministrator \
-	--set default=0 \
-	--set editable=1 \
-	--set shortDescription="UCS@school Administrator" \
-	--set longDescription="Specifies that this user is a UCS@school Administrator" \
-	--append translationShortDescription='"de_DE" "UCS@school-Administrator"' \
-	--append translationShortDescription='"fr_FR" "Responsable UCS@school"' \
-	--append translationLongDescription='"de_DE" "Spezifiziert, dass dieser Benutzer ein UCS@school-Administrator ist"' \
-	--append translationLongDescription='"fr_FR" "Spécifie que cet utilisateur ou cette utilisatrice est un administrateur ou une administratrice de UCS@school"' || die
+    --position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+    --set name="ucsschoolAdministrator" \
+    --append module=users/user \
+    --append module=settings/usertemplate \
+    --set objectClass=ucsschoolAdministrator \
+    --set default=0 \
+    --set editable=1 \
+    --set shortDescription="UCS@school Administrator" \
+    --set longDescription="Specifies that this user is a UCS@school Administrator" \
+    --append translationShortDescription='"de_DE" "UCS@school-Administrator"' \
+    --append translationShortDescription='"fr_FR" "Responsable UCS@school"' \
+    --append translationLongDescription='"de_DE" "Spezifiziert, dass dieser Benutzer ein UCS@school-Administrator ist"' \
+    --append translationLongDescription='"fr_FR" "Spécifie que cet utilisateur ou cette utilisatrice est un administrateur ou une administratrice de UCS@school"' || die
 
 univention-directory-manager settings/extended_options create "$@" --ignore_exists \
-	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
-	--set name="ucsschoolExam" \
-	--append module=users/user \
-	--append module=settings/usertemplate \
-	--set objectClass=ucsschoolExam \
-	--set default=0 \
-	--set editable=1 \
-	--set shortDescription="UCS@school Examuser" \
-	--set longDescription="Specifies that this user is a UCS@school Examuser" \
-	--append translationShortDescription='"de_DE" "UCS@school-Klassenarbeitsbenutzer"' \
-	--append translationShortDescription='"fr_FR" "Participant·e à un examen UCS@school"' \
-	--append translationLongDescription='"de_DE" "Spezifiziert, dass dieser Benutzer ein UCS@school-Klassenarbeitsbenutzer ist"' \
-	--append translationLongDescription='"fr_FR" "Spécifie que cet utilisateur ou cette utilisatrice est un·e participant·e à un examen dans UCS@school"' || die
+    --position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+    --set name="ucsschoolExam" \
+    --append module=users/user \
+    --append module=settings/usertemplate \
+    --set objectClass=ucsschoolExam \
+    --set default=0 \
+    --set editable=1 \
+    --set shortDescription="UCS@school Examuser" \
+    --set longDescription="Specifies that this user is a UCS@school Examuser" \
+    --append translationShortDescription='"de_DE" "UCS@school-Klassenarbeitsbenutzer"' \
+    --append translationShortDescription='"fr_FR" "Participant·e à un examen UCS@school"' \
+    --append translationLongDescription='"de_DE" "Spezifiziert, dass dieser Benutzer ein UCS@school-Klassenarbeitsbenutzer ist"' \
+    --append translationLongDescription='"fr_FR" "Spécifie que cet utilisateur ou cette utilisatrice est un·e participant·e à un examen dans UCS@school"' || die
 
 univention-directory-manager settings/extended_options create "$@" --ignore_exists \
-	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
-	--set name="ucsschoolLegalGuardian" \
-	--append module=users/user \
-	--append module=settings/usertemplate \
-	--set objectClass=ucsschoolLegalGuardian \
-	--set default=0 \
-	--set editable=1 \
-	--set shortDescription="UCS@school Legal Guardian" \
-	--set longDescription="Specifies that this user is a UCS@school Legal Guardian" \
-	--append translationShortDescription='"de_DE" "Gesetzlicher Vertreter in UCS@school"' \
-	--append translationLongDescription='"de_DE" "Spezifiziert, dass dieser Benutzer ein gesetzlicher Vertreter im Kontext von UCS@school ist."' \
+    --position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+    --set name="ucsschoolLegalGuardian" \
+    --append module=users/user \
+    --append module=settings/usertemplate \
+    --set objectClass=ucsschoolLegalGuardian \
+    --set default=0 \
+    --set editable=1 \
+    --set shortDescription="UCS@school Legal Guardian" \
+    --set longDescription="Specifies that this user is a UCS@school Legal Guardian" \
+    --append translationShortDescription='"de_DE" "Gesetzlicher Vertreter in UCS@school"' \
+    --append translationLongDescription='"de_DE" "Spezifiziert, dass dieser Benutzer ein gesetzlicher Vertreter im Kontext von UCS@school ist."' \
 
 univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
-	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
-	--set name="ucsschoolSchool" \
-	--append module=users/user \
-	--append module=settings/usertemplate \
-	--append options="ucsschoolStudent" \
-	--append options="ucsschoolTeacher" \
-	--append options="ucsschoolStaff" \
-	--append options="ucsschoolAdministrator" \
-	--set tabName="UCS@school" \
-	--set tabPosition=4 \
-	--set groupName="General" \
-	--set groupPosition="1" \
-	--append translationGroupName='"de_DE" "Allgemein"' \
-	--append translationGroupName='"fr_FR" "Général"' \
-	--set shortDescription="Schools" \
-	--set longDescription="List of school OU names that this user belongs to." \
-	--append translationShortDescription='"de_DE" "Schulen"' \
-	--append translationShortDescription='"fr_FR" "Écoles"' \
-	--append translationLongDescription='"de_DE" "Liste der zugehörigen Schul-OU-Namen dieses Benutzers."' \
-	--append translationLongDescription='"fr_FR" "Liste nominative des unités organisationnelles des écoles auxquelles cet utilisateur ou cette utilisatice appartient."' \
-	--set CLIName="school" \
-	--set objectClass=ucsschoolType \
-	--set ldapMapping=ucsschoolSchool \
-	--set syntax=ucsschoolSchools \
-	--set mayChange=1 \
-	--set hook=UcsschoolUserOptions \
-	--set multivalue=1 || die
+    --position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+    --set name="ucsschoolSchool" \
+    --append module=users/user \
+    --append module=settings/usertemplate \
+    --append options="ucsschoolStudent" \
+    --append options="ucsschoolTeacher" \
+    --append options="ucsschoolStaff" \
+    --append options="ucsschoolAdministrator" \
+    --set tabName="UCS@school" \
+    --set tabPosition=4 \
+    --set groupName="General" \
+    --set groupPosition="1" \
+    --append translationGroupName='"de_DE" "Allgemein"' \
+    --append translationGroupName='"fr_FR" "Général"' \
+    --set shortDescription="Schools" \
+    --set longDescription="List of school OU names that this user belongs to." \
+    --append translationShortDescription='"de_DE" "Schulen"' \
+    --append translationShortDescription='"fr_FR" "Écoles"' \
+    --append translationLongDescription='"de_DE" "Liste der zugehörigen Schul-OU-Namen dieses Benutzers."' \
+    --append translationLongDescription='"fr_FR" "Liste nominative des unités organisationnelles des écoles auxquelles cet utilisateur ou cette utilisatice appartient."' \
+    --set CLIName="school" \
+    --set objectClass=ucsschoolType \
+    --set ldapMapping=ucsschoolSchool \
+    --set syntax=ucsschoolSchools \
+    --set mayChange=1 \
+    --set hook=UcsschoolUserOptions \
+    --set multivalue=1 || die
 
 univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
-	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
-	--set name="ucsschoolSourceUID" \
-	--append module="users/user" \
-	--append module=settings/usertemplate \
-	--append options="ucsschoolStudent" \
-	--append options="ucsschoolTeacher" \
-	--append options="ucsschoolStaff" \
-	--append options="ucsschoolAdministrator" \
-	--set tabName="UCS@school" \
-	--set tabPosition=7 \
-	--set groupName="General" \
-	--set groupPosition="1" \
-	--append translationGroupName='"de_DE" "Allgemein"' \
-	--append translationGroupName='"fr_FR" "Général"' \
-	--set shortDescription="External database identifier" \
-	--set longDescription="Identifier of external database from which the user was imported." \
-	--append translationShortDescription='"de_DE" "Externe Datenbank ID"' \
-	--append translationShortDescription='"fr_FR" "Identifiant de la base de données externe"' \
-	--append translationLongDescription='"de_DE" "ID der externen Datenbank, von welcher der Benutzer importiert wurde."' \
-	--append translationLongDescription='"fr_FR" "Identifiant de la base de données externe depuis laquelle le compte d’utilisation a été importé."' \
-	--set CLIName="ucsschoolSourceUID" \
-	--set objectClass="ucsschoolType" \
-	--set ldapMapping="ucsschoolSourceUID" \
-	--set syntax="string" \
-	--set mayChange="1" \
-	--set multivalue="0" \
-	--set disableUDMWeb=1 || die
+    --position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+    --set name="ucsschoolSourceUID" \
+    --append module="users/user" \
+    --append module=settings/usertemplate \
+    --append options="ucsschoolStudent" \
+    --append options="ucsschoolTeacher" \
+    --append options="ucsschoolStaff" \
+    --append options="ucsschoolAdministrator" \
+    --set tabName="UCS@school" \
+    --set tabPosition=7 \
+    --set groupName="General" \
+    --set groupPosition="1" \
+    --append translationGroupName='"de_DE" "Allgemein"' \
+    --append translationGroupName='"fr_FR" "Général"' \
+    --set shortDescription="External database identifier" \
+    --set longDescription="Identifier of external database from which the user was imported." \
+    --append translationShortDescription='"de_DE" "Externe Datenbank ID"' \
+    --append translationShortDescription='"fr_FR" "Identifiant de la base de données externe"' \
+    --append translationLongDescription='"de_DE" "ID der externen Datenbank, von welcher der Benutzer importiert wurde."' \
+    --append translationLongDescription='"fr_FR" "Identifiant de la base de données externe depuis laquelle le compte d’utilisation a été importé."' \
+    --set CLIName="ucsschoolSourceUID" \
+    --set objectClass="ucsschoolType" \
+    --set ldapMapping="ucsschoolSourceUID" \
+    --set syntax="string" \
+    --set mayChange="1" \
+    --set multivalue="0" \
+    --set disableUDMWeb=1 || die
 
 univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
-	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
-	--set name="ucsschoolRecordUID" \
-	--append module="users/user" \
-	--append module=settings/usertemplate \
-	--append options="ucsschoolStudent" \
-	--append options="ucsschoolTeacher" \
-	--append options="ucsschoolStaff" \
-	--append options="ucsschoolAdministrator" \
-	--set tabName="UCS@school" \
-	--set tabPosition=8 \
-	--set groupName="General" \
-	--set groupPosition="1" \
-	--append translationGroupName='"de_DE" "Allgemein"' \
-	--append translationGroupName='"fr_FR" "Général"' \
-	--set shortDescription="External database primary key." \
-	--set longDescription="Primary key of the external database from which the user was imported." \
-	--append translationShortDescription='"de_DE" "Primärer Schlüssel in externer Datenbank"' \
-	--append translationShortDescription='"fr_FR" "Clé primaire de la base de données externe."' \
-	--append translationLongDescription='"de_DE" "Primärer Schlüssel in der externen Datenbank, von welcher der Benutzer importiert wurde."' \
-	--append translationLongDescription='"fr_FR" "Clé primaire de la base de données externe depuis laquelle le compte d’utilisation a été importé."' \
-	--set CLIName="ucsschoolRecordUID" \
-	--set objectClass="ucsschoolType" \
-	--set ldapMapping="ucsschoolRecordUID" \
-	--set syntax="string" \
-	--set mayChange="1" \
-	--set multivalue="0" \
-	--set disableUDMWeb=1 || die
+    --position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+    --set name="ucsschoolRecordUID" \
+    --append module="users/user" \
+    --append module=settings/usertemplate \
+    --append options="ucsschoolStudent" \
+    --append options="ucsschoolTeacher" \
+    --append options="ucsschoolStaff" \
+    --append options="ucsschoolAdministrator" \
+    --set tabName="UCS@school" \
+    --set tabPosition=8 \
+    --set groupName="General" \
+    --set groupPosition="1" \
+    --append translationGroupName='"de_DE" "Allgemein"' \
+    --append translationGroupName='"fr_FR" "Général"' \
+    --set shortDescription="External database primary key." \
+    --set longDescription="Primary key of the external database from which the user was imported." \
+    --append translationShortDescription='"de_DE" "Primärer Schlüssel in externer Datenbank"' \
+    --append translationShortDescription='"fr_FR" "Clé primaire de la base de données externe."' \
+    --append translationLongDescription='"de_DE" "Primärer Schlüssel in der externen Datenbank, von welcher der Benutzer importiert wurde."' \
+    --append translationLongDescription='"fr_FR" "Clé primaire de la base de données externe depuis laquelle le compte d’utilisation a été importé."' \
+    --set CLIName="ucsschoolRecordUID" \
+    --set objectClass="ucsschoolType" \
+    --set ldapMapping="ucsschoolRecordUID" \
+    --set syntax="string" \
+    --set mayChange="1" \
+    --set multivalue="0" \
+    --set disableUDMWeb=1 || die
 
 univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
-	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
-	--set name="ucsschoolPurgeTimestamp" \
-	--append module="users/user" \
-	--append module=settings/usertemplate \
-	--append options="ucsschoolStudent" \
-	--append options="ucsschoolTeacher" \
-	--append options="ucsschoolStaff" \
-	--append options="ucsschoolAdministrator" \
-	--set tabName="UCS@school" \
-	--set tabPosition=5 \
-	--set groupName="General" \
-	--set groupPosition="1" \
-	--append translationGroupName='"de_DE" "Allgemein"' \
-	--append translationGroupName='"fr_FR" "Général"' \
-	--set shortDescription="Scheduled deletion date" \
-	--set longDescription="On the date specified here, this user is irrevocably deleted from the directory service." \
-	--append translationShortDescription='"de_DE" "Geplantes Löschdatum"' \
-	--append translationShortDescription='"fr_FR" "Date de suppression programmée"' \
-	--append translationLongDescription='"de_DE" "An dem hier angegebenen Datum wird dieser Benutzer unwiderruflich aus dem LDAP-Verzeichnis gelöscht."' \
-	--append translationLongDescription='"fr_FR" "À la date spécifiée ici, ce compte d’utilisation sera définitivement supprimé de l’annuaire LDAP."' \
-	--set CLIName="ucsschoolPurgeTimestamp" \
-	--set objectClass="ucsschoolType" \
-	--set ldapMapping="ucsschoolPurgeTimestamp" \
-	--set syntax="iso8601Date" \
-	--set mayChange="1" \
-	--set multivalue="0" \
-	--set hook=UcsschoolPurgeTimestamp \
-	--set disableUDMWeb=0 || die
+    --position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+    --set name="ucsschoolPurgeTimestamp" \
+    --append module="users/user" \
+    --append module=settings/usertemplate \
+    --append options="ucsschoolStudent" \
+    --append options="ucsschoolTeacher" \
+    --append options="ucsschoolStaff" \
+    --append options="ucsschoolAdministrator" \
+    --set tabName="UCS@school" \
+    --set tabPosition=5 \
+    --set groupName="General" \
+    --set groupPosition="1" \
+    --append translationGroupName='"de_DE" "Allgemein"' \
+    --append translationGroupName='"fr_FR" "Général"' \
+    --set shortDescription="Scheduled deletion date" \
+    --set longDescription="On the date specified here, this user is irrevocably deleted from the directory service." \
+    --append translationShortDescription='"de_DE" "Geplantes Löschdatum"' \
+    --append translationShortDescription='"fr_FR" "Date de suppression programmée"' \
+    --append translationLongDescription='"de_DE" "An dem hier angegebenen Datum wird dieser Benutzer unwiderruflich aus dem LDAP-Verzeichnis gelöscht."' \
+    --append translationLongDescription='"fr_FR" "À la date spécifiée ici, ce compte d’utilisation sera définitivement supprimé de l’annuaire LDAP."' \
+    --set CLIName="ucsschoolPurgeTimestamp" \
+    --set objectClass="ucsschoolType" \
+    --set ldapMapping="ucsschoolPurgeTimestamp" \
+    --set syntax="iso8601Date" \
+    --set mayChange="1" \
+    --set multivalue="0" \
+    --set hook=UcsschoolPurgeTimestamp \
+    --set disableUDMWeb=0 || die
 
 univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
-	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
-	--set name="ucsschoolRoleUsers" \
-	--append module="users/user" \
-	--append module=settings/usertemplate \
-	--append options="ucsschoolStudent" \
-	--append options="ucsschoolTeacher" \
-	--append options="ucsschoolStaff" \
-	--append options="ucsschoolAdministrator" \
-	--set tabName="UCS@school" \
-	--set tabPosition=6 \
-	--set groupName="General" \
-	--set groupPosition="1" \
-	--append translationGroupName='"de_DE" "Allgemein"' \
-	--append translationGroupName='"fr_FR" "Général"' \
-	--set shortDescription="Role of UCS@school object." \
-	--set longDescription="Role of UCS@school object." \
-	--append translationShortDescription='"de_DE" "Rolle des UCS@school objects."' \
-	--append translationShortDescription='"fr_FR" "Rôle de l’objet UCS@school."' \
-	--append translationLongDescription='"de_DE" "Rolle des UCS@school objects."' \
-	--append translationLongDescription='"fr_FR" "Rôle de l’objet UCS@school."' \
-	--set CLIName="ucsschoolRole" \
-	--set objectClass="ucsschoolType" \
-	--set ldapMapping="ucsschoolRole" \
-	--set syntax="string" \
-	--set mayChange="1" \
-	--set multivalue="1" \
-	--set disableUDMWeb=1 || die
+    --position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+    --set name="ucsschoolRoleUsers" \
+    --append module="users/user" \
+    --append module=settings/usertemplate \
+    --append options="ucsschoolStudent" \
+    --append options="ucsschoolTeacher" \
+    --append options="ucsschoolStaff" \
+    --append options="ucsschoolAdministrator" \
+    --set tabName="UCS@school" \
+    --set tabPosition=6 \
+    --set groupName="General" \
+    --set groupPosition="1" \
+    --append translationGroupName='"de_DE" "Allgemein"' \
+    --append translationGroupName='"fr_FR" "Général"' \
+    --set shortDescription="Role of UCS@school object." \
+    --set longDescription="Role of UCS@school object." \
+    --append translationShortDescription='"de_DE" "Rolle des UCS@school objects."' \
+    --append translationShortDescription='"fr_FR" "Rôle de l’objet UCS@school."' \
+    --append translationLongDescription='"de_DE" "Rolle des UCS@school objects."' \
+    --append translationLongDescription='"fr_FR" "Rôle de l’objet UCS@school."' \
+    --set CLIName="ucsschoolRole" \
+    --set objectClass="ucsschoolType" \
+    --set ldapMapping="ucsschoolRole" \
+    --set syntax="string" \
+    --set mayChange="1" \
+    --set multivalue="1" \
+    --set disableUDMWeb=1 || die
 
 univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
-	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
-	--set name="ucsschoolLegalWard" \
-	--append module="users/user" \
-	--append options="ucsschoolLegalGuardian" \
-	--set tabName="UCS@school" \
-	--set tabPosition=8 \
-	--set groupName="General" \
-	--set groupPosition="1" \
-	--append translationGroupName='"de_DE" "Allgemein"' \
-	--set shortDescription="Legal wards" \
-	--set longDescription="Legal wards" \
-	--append translationShortDescription='"de_DE" "Schutzbefohlene"' \
-	--append translationLongDescription='"de_DE" "Schutzbefohlene"' \
-	--set CLIName="ucsschoolLegalWard" \
-	--set objectClass="ucsschoolLegalGuardian" \
-	--set ldapMapping="__VirtualAttribute__" \
-	--set syntax="UCSSchoolStudentDN" \
-	--set hook=UcsschoolLegalGuardian \
-	--set mayChange="0" \
-	--set multivalue="1" \
-	--set doNotSearch="1" \
-	--set disableUDMWeb=0 || die
+    --position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+    --set name="ucsschoolLegalWard" \
+    --append module="users/user" \
+    --append options="ucsschoolLegalGuardian" \
+    --set tabName="UCS@school" \
+    --set tabPosition=8 \
+    --set groupName="General" \
+    --set groupPosition="1" \
+    --append translationGroupName='"de_DE" "Allgemein"' \
+    --set shortDescription="Legal wards" \
+    --set longDescription="Legal wards" \
+    --append translationShortDescription='"de_DE" "Schutzbefohlene"' \
+    --append translationLongDescription='"de_DE" "Schutzbefohlene"' \
+    --set CLIName="ucsschoolLegalWard" \
+    --set objectClass="ucsschoolLegalGuardian" \
+    --set ldapMapping="__VirtualAttribute__" \
+    --set syntax="UCSSchoolStudentDN" \
+    --set hook=UcsschoolLegalGuardian \
+    --set mayChange="0" \
+    --set multivalue="1" \
+    --set doNotSearch="1" \
+    --set disableUDMWeb=0 || die
 
 univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
-	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
-	--set name="ucsschoolLegalGuardianAttribute" \
-	--append module="users/user" \
-	--append options="ucsschoolStudent" \
-	--set tabName="UCS@school" \
-	--set tabPosition=8 \
-	--set groupName="General" \
-	--set groupPosition="1" \
-	--append translationGroupName='"de_DE" "Allgemein"' \
-	--set shortDescription="Legal guardians" \
-	--set longDescription="Legal guardians" \
-	--append translationShortDescription='"de_DE" "Gesetzliche Vertreter"' \
-	--append translationLongDescription='"de_DE" "Gesetzliche Vertreter"' \
-	--set CLIName="ucsschoolLegalGuardian" \
-	--set objectClass="ucsschoolStudent" \
-	--set ldapMapping="ucsschoolLegalGuardian" \
-	--set syntax="UCSSchoolLegalGuardianDN" \
-	--set hook=UcsschoolLegalWard \
-	--set mayChange="1" \
-	--set multivalue="1" \
-	--set doNotSearch="1" \
-	--set disableUDMWeb=0 || die
+    --position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+    --set name="ucsschoolLegalGuardianAttribute" \
+    --append module="users/user" \
+    --append options="ucsschoolStudent" \
+    --set tabName="UCS@school" \
+    --set tabPosition=8 \
+    --set groupName="General" \
+    --set groupPosition="1" \
+    --append translationGroupName='"de_DE" "Allgemein"' \
+    --set shortDescription="Legal guardians" \
+    --set longDescription="Legal guardians" \
+    --append translationShortDescription='"de_DE" "Gesetzliche Vertreter"' \
+    --append translationLongDescription='"de_DE" "Gesetzliche Vertreter"' \
+    --set CLIName="ucsschoolLegalGuardian" \
+    --set objectClass="ucsschoolStudent" \
+    --set ldapMapping="ucsschoolLegalGuardian" \
+    --set syntax="UCSSchoolLegalGuardianDN" \
+    --set hook=UcsschoolLegalWard \
+    --set mayChange="1" \
+    --set multivalue="1" \
+    --set doNotSearch="1" \
+    --set disableUDMWeb=0 || die
 
 #### groups/group ####
 
 univention-directory-manager settings/extended_options create "$@" --ignore_exists \
-	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
-	--set name="ucsschoolAdministratorGroup" \
-	--append module=groups/group \
-	--set objectClass=ucsschoolAdministratorGroup \
-	--set default=0 \
-	--set editable=1 \
-	--set shortDescription="UCS@school Administrator Group" \
-	--set longDescription="Specifies that this group contains UCS@school school admins for the related school" \
-	--append translationShortDescription='"de_DE" "UCS@school-Administrator-Gruppe"' \
-	--append translationShortDescription='"fr_FR" "Groupe d’administration de UCS@school"' \
-	--append translationLongDescription='"de_DE" "Spezifiziert, dass diese Gruppe ein UCS@school-Schul-Administratoren für die betreffende Schule enthält"' \
-	--append translationLongDescription='"fr_FR" "Spécifie que ce groupe contient des administrateurs et administratrices de UCS@school pour l’école en question"' || die
+    --position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+    --set name="ucsschoolAdministratorGroup" \
+    --append module=groups/group \
+    --set objectClass=ucsschoolAdministratorGroup \
+    --set default=0 \
+    --set editable=1 \
+    --set shortDescription="UCS@school Administrator Group" \
+    --set longDescription="Specifies that this group contains UCS@school school admins for the related school" \
+    --append translationShortDescription='"de_DE" "UCS@school-Administrator-Gruppe"' \
+    --append translationShortDescription='"fr_FR" "Groupe d’administration de UCS@school"' \
+    --append translationLongDescription='"de_DE" "Spezifiziert, dass diese Gruppe ein UCS@school-Schul-Administratoren für die betreffende Schule enthält"' \
+    --append translationLongDescription='"fr_FR" "Spécifie que ce groupe contient des administrateurs et administratrices de UCS@school pour l’école en question"' || die
 
 univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
-	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
-	--set name="ucsschoolSchool-AdministratorGroup" \
-	--append module=groups/group \
-	--append options="ucsschoolAdministratorGroup" \
-	--set hook="schoolAdminGroup" \
-	--set tabName="UCS@school" \
-	--set tabPosition=1 \
-	--set groupName="General" \
-	--set groupPosition="1" \
-	--append translationGroupName='"de_DE" "Allgemein"' \
-	--append translationGroupName='"fr_FR" "Général"' \
-	--set shortDescription="Schools" \
-	--set longDescription="List of school OU names that this group belongs to" \
-	--append translationShortDescription='"de_DE" "Schulen"' \
-	--append translationShortDescription='"fr_FR" "Écoles"' \
-	--append translationLongDescription='"de_DE" "Liste der zugehörigen Schul-OU-Namen dieser Gruppe"' \
-	--append translationLongDescription='"fr_FR" "Liste nominative des unités organisationnelles des écoles auxquelles ce groupe appartient"' \
-	--set CLIName="school" \
-	--set objectClass=ucsschoolAdministratorGroup \
-	--set ldapMapping=ucsschoolSchool \
-	--set syntax=ucsschoolSchools \
-	--set mayChange=1 \
-	--set deleteObjectClass=1 \
-	--set multivalue=1 || die
+    --position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+    --set name="ucsschoolSchool-AdministratorGroup" \
+    --append module=groups/group \
+    --append options="ucsschoolAdministratorGroup" \
+    --set hook="schoolAdminGroup" \
+    --set tabName="UCS@school" \
+    --set tabPosition=1 \
+    --set groupName="General" \
+    --set groupPosition="1" \
+    --append translationGroupName='"de_DE" "Allgemein"' \
+    --append translationGroupName='"fr_FR" "Général"' \
+    --set shortDescription="Schools" \
+    --set longDescription="List of school OU names that this group belongs to" \
+    --append translationShortDescription='"de_DE" "Schulen"' \
+    --append translationShortDescription='"fr_FR" "Écoles"' \
+    --append translationLongDescription='"de_DE" "Liste der zugehörigen Schul-OU-Namen dieser Gruppe"' \
+    --append translationLongDescription='"fr_FR" "Liste nominative des unités organisationnelles des écoles auxquelles ce groupe appartient"' \
+    --set CLIName="school" \
+    --set objectClass=ucsschoolAdministratorGroup \
+    --set ldapMapping=ucsschoolSchool \
+    --set syntax=ucsschoolSchools \
+    --set mayChange=1 \
+    --set deleteObjectClass=1 \
+    --set multivalue=1 || die
 
 univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
-	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
-	--set name="ucsschoolRoleGroups" \
-	--append module="groups/group" \
-	--set tabName="UCS@school" \
-	--set shortDescription="Role of UCS@school object." \
-	--set longDescription="Role of UCS@school object." \
-	--append translationShortDescription='"de_DE" "Rolle des UCS@school objects."' \
-	--append translationShortDescription='"fr_FR" "Rôle de l’objet UCS@school."' \
-	--append translationLongDescription='"de_DE" "Rolle des UCS@school objects."' \
-	--append translationLongDescription='"fr_FR" "Rôle de l’objet UCS@school."' \
-	--set CLIName="ucsschoolRole" \
-	--set objectClass="ucsschoolGroup" \
-	--set ldapMapping="ucsschoolRole" \
-	--set syntax="string" \
-	--set mayChange="1" \
-	--set multivalue="1" \
-	--set disableUDMWeb=1 || die
+    --position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+    --set name="ucsschoolRoleGroups" \
+    --append module="groups/group" \
+    --set tabName="UCS@school" \
+    --set shortDescription="Role of UCS@school object." \
+    --set longDescription="Role of UCS@school object." \
+    --append translationShortDescription='"de_DE" "Rolle des UCS@school objects."' \
+    --append translationShortDescription='"fr_FR" "Rôle de l’objet UCS@school."' \
+    --append translationLongDescription='"de_DE" "Rolle des UCS@school objects."' \
+    --append translationLongDescription='"fr_FR" "Rôle de l’objet UCS@school."' \
+    --set CLIName="ucsschoolRole" \
+    --set objectClass="ucsschoolGroup" \
+    --set ldapMapping="ucsschoolRole" \
+    --set syntax="string" \
+    --set mayChange="1" \
+    --set multivalue="1" \
+    --set disableUDMWeb=1 || die
 
 #### computers/* #####
 
 univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
-	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
-	--set name="ucsschoolRoleComputers" \
-	--append module="computers/domaincontroller_backup" \
-	--append module="computers/domaincontroller_master" \
-	--append module="computers/domaincontroller_slave" \
-	--append module="computers/memberserver" \
-	--set tabName="UCS@school" \
-	--set shortDescription="Role of UCS@school object." \
-	--set longDescription="Role of UCS@school object." \
-	--append translationShortDescription='"de_DE" "Rolle des UCS@school objects."' \
-	--append translationShortDescription='"fr_FR" "Rôle de l’objet UCS@school."' \
-	--append translationLongDescription='"de_DE" "Rolle des UCS@school objects."' \
-	--append translationLongDescription='"fr_FR" "Rôle de l’objet UCS@school."' \
-	--set CLIName="ucsschoolRole" \
-	--set objectClass="ucsschoolServer" \
-	--set ldapMapping="ucsschoolRole" \
-	--set hook=UcsschoolRoleComputers \
-	--set syntax="string" \
-	--set mayChange="1" \
-	--set multivalue="1" \
-	--set disableUDMWeb=1 || die
+    --position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+    --set name="ucsschoolRoleComputers" \
+    --append module="computers/domaincontroller_backup" \
+    --append module="computers/domaincontroller_master" \
+    --append module="computers/domaincontroller_slave" \
+    --append module="computers/memberserver" \
+    --set tabName="UCS@school" \
+    --set shortDescription="Role of UCS@school object." \
+    --set longDescription="Role of UCS@school object." \
+    --append translationShortDescription='"de_DE" "Rolle des UCS@school objects."' \
+    --append translationShortDescription='"fr_FR" "Rôle de l’objet UCS@school."' \
+    --append translationLongDescription='"de_DE" "Rolle des UCS@school objects."' \
+    --append translationLongDescription='"fr_FR" "Rôle de l’objet UCS@school."' \
+    --set CLIName="ucsschoolRole" \
+    --set objectClass="ucsschoolServer" \
+    --set ldapMapping="ucsschoolRole" \
+    --set hook=UcsschoolRoleComputers \
+    --set syntax="string" \
+    --set mayChange="1" \
+    --set multivalue="1" \
+    --set disableUDMWeb=1 || die
 
 univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
-	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
-	--set name="ucsschoolRoleClientComputers" \
-	--append module="computers/linux" \
-	--append module="computers/macos" \
-	--append module="computers/windows" \
-	--append module="computers/ipmanagedclient" \
-	--append module="computers/ubuntu" \
-	--set tabName="UCS@school" \
-	--set shortDescription="Role of UCS@school object." \
-	--set longDescription="Role of UCS@school object." \
-	--append translationShortDescription='"de_DE" "Rolle des UCS@school objects."' \
-	--append translationShortDescription='"fr_FR" "Rôle de l’objet UCS@school."' \
-	--append translationLongDescription='"de_DE" "Rolle des UCS@school objects."' \
-	--append translationLongDescription='"fr_FR" "Rôle de l’objet UCS@school."' \
-	--set CLIName="ucsschoolRole" \
-	--set objectClass="ucsschoolComputer" \
-	--set ldapMapping="ucsschoolRole" \
-	--set hook=UcsschoolRoleComputers \
-	--set syntax="string" \
-	--set mayChange="1" \
-	--set multivalue="1" \
-	--set disableUDMWeb=1 || die
+    --position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+    --set name="ucsschoolRoleClientComputers" \
+    --append module="computers/linux" \
+    --append module="computers/macos" \
+    --append module="computers/windows" \
+    --append module="computers/ipmanagedclient" \
+    --append module="computers/ubuntu" \
+    --set tabName="UCS@school" \
+    --set shortDescription="Role of UCS@school object." \
+    --set longDescription="Role of UCS@school object." \
+    --append translationShortDescription='"de_DE" "Rolle des UCS@school objects."' \
+    --append translationShortDescription='"fr_FR" "Rôle de l’objet UCS@school."' \
+    --append translationLongDescription='"de_DE" "Rolle des UCS@school objects."' \
+    --append translationLongDescription='"fr_FR" "Rôle de l’objet UCS@school."' \
+    --set CLIName="ucsschoolRole" \
+    --set objectClass="ucsschoolComputer" \
+    --set ldapMapping="ucsschoolRole" \
+    --set hook=UcsschoolRoleComputers \
+    --set syntax="string" \
+    --set mayChange="1" \
+    --set multivalue="1" \
+    --set disableUDMWeb=1 || die
 
 #### shares/share ####
 
 univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
-	--position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
-	--set name="ucsschoolRoleShares" \
-	--append module="shares/share" \
-	--set tabName="UCS@school" \
-	--set shortDescription="Role of UCS@school object." \
-	--set longDescription="Role of UCS@school object." \
-	--append translationShortDescription='"de_DE" "Rolle des UCS@school objects."' \
-	--append translationShortDescription='"fr_FR" "Rôle de l’objet UCS@school."' \
-	--append translationLongDescription='"de_DE" "Rolle des UCS@school objects."' \
-	--append translationLongDescription='"fr_FR" "Rôle de l’objet UCS@school."' \
-	--set CLIName="ucsschoolRole" \
-	--set objectClass="ucsschoolShare" \
-	--set ldapMapping="ucsschoolRole" \
-	--set syntax="string" \
-	--set mayChange="1" \
-	--set multivalue="1" \
-	--set disableUDMWeb=1 || die
+    --position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+    --set name="ucsschoolRoleShares" \
+    --append module="shares/share" \
+    --set tabName="UCS@school" \
+    --set shortDescription="Role of UCS@school object." \
+    --set longDescription="Role of UCS@school object." \
+    --append translationShortDescription='"de_DE" "Rolle des UCS@school objects."' \
+    --append translationShortDescription='"fr_FR" "Rôle de l’objet UCS@school."' \
+    --append translationLongDescription='"de_DE" "Rolle des UCS@school objects."' \
+    --append translationLongDescription='"fr_FR" "Rôle de l’objet UCS@school."' \
+    --set CLIName="ucsschoolRole" \
+    --set objectClass="ucsschoolShare" \
+    --set ldapMapping="ucsschoolRole" \
+    --set syntax="string" \
+    --set mayChange="1" \
+    --set multivalue="1" \
+    --set disableUDMWeb=1 || die
 
 if [ $JS_LAST_EXECUTED_VERSION -le 19 ] && [ $server_role = domaincontroller_master ]; then
-	/usr/share/ucs-school-import/scripts/fix_ucsschool_roles
+    /usr/share/ucs-school-import/scripts/fix_ucsschool_roles
 fi
 if [ $JS_LAST_EXECUTED_VERSION -lt 19 ] && [ $server_role = domaincontroller_master ]; then
-	univention-directory-manager settings/extended_attribute modify "$@" \
-		--dn "cn=ucsschoolRoleComputers,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
-		--set hook=UcsschoolRoleComputers || die
+    univention-directory-manager settings/extended_attribute modify "$@" \
+        --dn "cn=ucsschoolRoleComputers,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+        --set hook=UcsschoolRoleComputers || die
 
-	univention-directory-manager settings/extended_attribute modify "$@" \
-		--dn "cn=ucsschoolRoleClientComputers,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
-		--append module="computers/ubuntu" \
-		--set hook=UcsschoolRoleComputers || die
+    univention-directory-manager settings/extended_attribute modify "$@" \
+        --dn "cn=ucsschoolRoleClientComputers,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+        --append module="computers/ubuntu" \
+        --set hook=UcsschoolRoleComputers || die
 
-	if ! is_ucr_true ucsschool/feature/roles/skip_migration; then
-		python3 /usr/share/ucs-school-import/scripts/migrate_ucsschool_roles --modify --all-objects || die
-	fi
+    if ! is_ucr_true ucsschool/feature/roles/skip_migration; then
+        python3 /usr/share/ucs-school-import/scripts/migrate_ucsschool_roles --modify --all-objects || die
+    fi
 fi
 
 if [ $JS_LAST_EXECUTED_VERSION -lt 6 ]; then
-	# append UCSschool-School-OU option to Home/ClassShareServer
-	for dn in "cn=UCSschool-School-HomeShareFileServer,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
-		"cn=UCSschool-School-ClassShareFileServer,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base"; do
-		univention-directory-manager settings/extended_attribute modify "$@" \
-			--dn "$dn" \
-			--set hook="schoolOU" \
-			--append options="UCSschool-School-OU" || die
-	done
+    # append UCSschool-School-OU option to Home/ClassShareServer
+    for dn in "cn=UCSschool-School-HomeShareFileServer,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+        "cn=UCSschool-School-ClassShareFileServer,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base"; do
+        univention-directory-manager settings/extended_attribute modify "$@" \
+            --dn "$dn" \
+            --set hook="schoolOU" \
+            --append options="UCSschool-School-OU" || die
+    done
 fi
 
 if [ $JS_LAST_EXECUTED_VERSION -lt 7 ] ; then
-	# switch order of groups during update
-	for dn in "cn=UCSschool-School-HomeShareFileServer,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
-		"cn=UCSschool-School-ClassShareFileServer,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base"; do
-		univention-directory-manager settings/extended_attribute modify "$@" \
-			--dn "$dn" \
-			--set groupPosition="2" || die
-	done
+    # switch order of groups during update
+    for dn in "cn=UCSschool-School-HomeShareFileServer,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+        "cn=UCSschool-School-ClassShareFileServer,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base"; do
+        univention-directory-manager settings/extended_attribute modify "$@" \
+            --dn "$dn" \
+            --set groupPosition="2" || die
+    done
 fi
 
 if [ $JS_LAST_EXECUTED_VERSION -lt 10 ] ; then
-	# convert existing UCS@school user objects to new LDAP structure
-	univention-directory-manager settings/extended_attribute modify "$@" \
-		  --dn "cn=UCSschool-School-displayName,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
-		  --set valueRequired=1 || die
+    # convert existing UCS@school user objects to new LDAP structure
+    univention-directory-manager settings/extended_attribute modify "$@" \
+          --dn "cn=UCSschool-School-displayName,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+          --set valueRequired=1 || die
 
-	LOGFILE="/var/log/univention/ucs-school-migrate-users-to-4.1R2.log"
-	if is_ucr_false ucsschool/update/ldap/41R2; then
-		echo "$(date)" | tee -a "$LOGFILE"
-		echo "Automatic update of user objects to new LDAP structure of UCS@school 4.1 R2" | tee -a "$LOGFILE"
-		echo "has been disabled via UCR variable 'ucsschool/update/ldap/41R2'. Make sure" | tee -a "$LOGFILE"
-		echo "that this required step is performed manually afterwards." | tee -a "$LOGFILE"
-	else
-		echo "START: $(date)" | tee -a "$LOGFILE"
-		/usr/share/ucs-school-import/scripts/ucs-school-migrate-objects-to-4.1R2 --migrate-ous --migrate-users --migrate-admin-groups 2>&1 | tee -a "$LOGFILE"
-		echo "FINISHED: $(date)" | tee -a "$LOGFILE"
-	fi
+    LOGFILE="/var/log/univention/ucs-school-migrate-users-to-4.1R2.log"
+    if is_ucr_false ucsschool/update/ldap/41R2; then
+        echo "$(date)" | tee -a "$LOGFILE"
+        echo "Automatic update of user objects to new LDAP structure of UCS@school 4.1 R2" | tee -a "$LOGFILE"
+        echo "has been disabled via UCR variable 'ucsschool/update/ldap/41R2'. Make sure" | tee -a "$LOGFILE"
+        echo "that this required step is performed manually afterwards." | tee -a "$LOGFILE"
+    else
+        echo "START: $(date)" | tee -a "$LOGFILE"
+        /usr/share/ucs-school-import/scripts/ucs-school-migrate-objects-to-4.1R2 --migrate-ous --migrate-users --migrate-admin-groups 2>&1 | tee -a "$LOGFILE"
+        echo "FINISHED: $(date)" | tee -a "$LOGFILE"
+    fi
 fi
 
 if [ $JS_LAST_EXECUTED_VERSION -lt 12 ] ; then
-	# Bug #41351: UDM hook to prevent invalid combinations of UCS@school options
-	univention-directory-manager settings/extended_attribute modify "$@" \
-	--dn="cn=ucsschoolSchool,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
-	--set hook=UcsschoolUserOptions || die
+    # Bug #41351: UDM hook to prevent invalid combinations of UCS@school options
+    univention-directory-manager settings/extended_attribute modify "$@" \
+    --dn="cn=ucsschoolSchool,cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
+    --set hook=UcsschoolUserOptions || die
 fi
 
 # Bug #50116: correct wrong domaincontroller_slaves object during initial installation
 # and during  updates from 4.4v3 and before. This code block should be the last one
 # within the join script.
 if [ $JS_LAST_EXECUTED_VERSION -lt 23 ] && [ $server_role = domaincontroller_master ]; then
-	if ! is_ucr_true ucsschool/update/skip-slave-object-correction ; then
-		/usr/share/ucs-school-import/scripts/fix_ucsschool_slaves
-	fi
+    if ! is_ucr_true ucsschool/update/skip-slave-object-correction ; then
+        /usr/share/ucs-school-import/scripts/fix_ucsschool_slaves
+    fi
 fi
 
 # Bug #51301: set ucsschoolRole on all Marktplatz shares
