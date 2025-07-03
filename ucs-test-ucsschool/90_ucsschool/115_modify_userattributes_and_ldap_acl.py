@@ -28,7 +28,7 @@ def test_modify_userattributes_and_ldap_acl(schoolenv, udm_session, ucr):
     _, user = schoolenv.create_teacher(school)
     utils.verify_ldap_object(user)
 
-    lo = univention.admin.uldap.access(binddn=user, bindpw="univention")
+    lo = univention.admin.uldap.access(binddn=user, bindpw="univention", base=ucr["ldap/base"])
     lo.modify(user, [("l", b"", b"Bremen")])
     utils.verify_ldap_object(user, {"l": ["Bremen"]})
 

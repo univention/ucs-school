@@ -17,6 +17,7 @@ from ldap.filter import filter_format
 import univention.admin.uldap
 import univention.testing.strings as uts
 from univention.admin.uexceptions import authFail
+from univention.config_registry import ucr
 from univention.testing import utils
 from univention.testing.ucs_samba import wait_for_drs_replication
 from univention.testing.ucsschool.importusers import Person
@@ -67,7 +68,11 @@ class Test(CLI_Import_v2_Tester):
             self.log.info("OK: sambaNTPassword hash seems to be ok")
 
             try:
-                univention.admin.uldap.access(binddn=person.dn, bindpw=person.password)
+                univention.admin.uldap.access(
+                    binddn=person.dn,
+                    bindpw=person.password,
+                    base=ucr["ldap/base"],
+                )
                 self.log.info("OK: LDAP login seems to be ok")
             except authFail:
                 self.fail("User cannot bind to LDAP server.")

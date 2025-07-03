@@ -1,3 +1,9 @@
+ucs-test-ucsschool (8.0.24) unstable; urgency=medium
+
+  * Bug #58432: fix wrong use of uldap.access
+
+ -- Florian Best <best@univention.de>  Thu, 03 Jul 2025 10:09:04 +0200
+
 ucs-test-ucsschool (8.0.23) unstable; urgency=medium
 
   * Issue univention/ucsschool#293: Add test for UCS@school import job cleanup

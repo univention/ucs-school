@@ -21,8 +21,8 @@ from ucsschool.lib.models.group import SchoolClass
 from ucsschool.lib.models.share import ClassShare
 from ucsschool.lib.models.utils import exec_cmd
 from ucsschool.lib.roles import create_ucsschool_role_string, role_school_class, role_school_class_share
+from univention.admin.uldap import getMachineConnection
 from univention.testing import utils
-from univention.uldap import getMachineConnection
 
 if TYPE_CHECKING:
     import univention.testing.ucsschool.ucs_test_school as utu  # noqa: F401
@@ -36,7 +36,7 @@ BACKUP_PATH = "/home/backup/groups"
 def ldap_info(cn):  # type: (str) -> Dict[str, List[bytes]]
     with ucr_test.UCSTestConfigRegistry() as ucr:
         basedn = ucr.get("ldap/base")
-        lo = getMachineConnection()
+        lo, _po = getMachineConnection()
         gidNumber = lo.search(filter="cn=%s" % cn, base=basedn)[0][1].get("gidNumber")
         memberUid = lo.search(filter="cn=%s" % cn, base=basedn)[0][1].get("memberUid")
         univentionShareGid = lo.search(filter="cn=%s" % cn, base=basedn)[1][1].get("univentionShareGid")
@@ -180,7 +180,7 @@ def _test_rename_class(schoolenv, school, old_name, new_name, should_fail=False)
     if returncode == 0:
         utils.wait_for_replication_and_postrun()
 
-    lo = getMachineConnection()
+    lo, _po = getMachineConnection()
     print("*** SchoolClass.get_all(lo, {!r}):".format(school))
     pprint([sc.to_dict() for sc in SchoolClass.get_all(lo, school)])
     print("*** ClassShare.get_all(lo, {!r}):".format(school))

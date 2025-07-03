@@ -17,6 +17,7 @@ import univention.admin.uldap
 import univention.testing.strings as uts
 from ucsschool.lib.models.user import User
 from univention.admin.uexceptions import authFail
+from univention.config_registry import ucr
 from univention.testing.ucs_samba import wait_for_drs_replication
 from univention.testing.ucsschool.importusers import Person
 from univention.testing.ucsschool.importusers_cli_v2 import CLI_Import_v2_Tester
@@ -66,7 +67,9 @@ class Test(CLI_Import_v2_Tester):
             self.log.info("userexpiry: %r", udm_user.get("userexpiry"))
 
             try:
-                univention.admin.uldap.access(binddn=person.dn, bindpw=person.password)
+                univention.admin.uldap.access(
+                    binddn=person.dn, bindpw=person.password, base=ucr["ldap/base"]
+                )
                 self.fail("Deactivated user can bind to LDAP server.")
             except authFail:
                 self.log.info("OK: deactivated user cannot bind to LDAP server.")
@@ -87,7 +90,9 @@ class Test(CLI_Import_v2_Tester):
             self.log.info("locked: %r", udm_user.get("locked"))
             self.log.info("userexpiry: %r", udm_user.get("userexpiry"))
             try:
-                univention.admin.uldap.access(binddn=person.dn, bindpw=person.password)
+                univention.admin.uldap.access(
+                    binddn=person.dn, bindpw=person.password, base=ucr["ldap/base"]
+                )
                 self.log.info("OK: reactivated user can bind to LDAP server.")
             except authFail:
                 self.fail("Reactivated user cannot bind to LDAP server.")

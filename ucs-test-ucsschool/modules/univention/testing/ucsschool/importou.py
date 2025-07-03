@@ -215,7 +215,7 @@ def create_and_verify_ou(
 
     ucr.load()
 
-    lo = univention.uldap.getMachineConnection()
+    lo, _po = univention.admin.uldap.getMachineConnection()
 
     # set UCR
     univention.config_registry.handler_set(
@@ -272,7 +272,7 @@ def verify_ou(ou, dc, ucr, sharefileserver, dc_administrative, must_exist):
     print("*** Verifying OU (%s) ... " % ou)
     ucr.load()
 
-    lo = univention.uldap.getMachineConnection()
+    lo, _po = univention.admin.uldap.getMachineConnection()
     base_dn = ucr.get("ldap/base")
 
     cn_pupils = ucr.get("ucsschool/ldap/default/container/pupils", "schueler")

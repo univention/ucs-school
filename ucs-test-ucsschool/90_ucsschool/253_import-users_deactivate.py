@@ -19,6 +19,7 @@ import univention.admin.uldap
 import univention.testing.strings as uts
 from ucsschool.lib.models.user import User
 from univention.admin.uexceptions import authFail
+from univention.config_registry import ucr
 from univention.testing import utils
 from univention.testing.ucs_samba import wait_for_drs_replication
 from univention.testing.ucsschool.importusers import Person
@@ -79,7 +80,11 @@ class Test(CLI_Import_v2_Tester):
 
             # Bug #42913: check if LDAP bind is possible
             try:
-                univention.admin.uldap.access(binddn=person.dn, bindpw=person.password)
+                univention.admin.uldap.access(
+                    binddn=person.dn,
+                    bindpw=person.password,
+                    base=ucr["ldap/base"],
+                )
                 self.log.info("OK: user can bind to LDAP server.")
             except authFail:
                 self.fail(
@@ -131,7 +136,11 @@ class Test(CLI_Import_v2_Tester):
 
             # Bug #42913: check if LDAP bind is still possible
             try:
-                univention.admin.uldap.access(binddn=person.dn, bindpw=person.password)
+                univention.admin.uldap.access(
+                    binddn=person.dn,
+                    bindpw=person.password,
+                    base=ucr["ldap/base"],
+                )
                 udm_user = User.from_dn(person.dn, None, self.lo).get_udm_object(self.lo)
                 self.log.error("disabled: %r", udm_user.get("disabled"))
                 self.log.error("locked: %r", udm_user.get("locked"))

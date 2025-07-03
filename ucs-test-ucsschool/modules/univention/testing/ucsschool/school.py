@@ -6,9 +6,9 @@
 """
 from __future__ import print_function
 
+import univention.admin.uldap
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
-import univention.uldap
 from ucsschool.lib.roles import create_ucsschool_role_string, role_school_admin_group
 from univention.testing import utils
 from univention.testing.ucsschool.computer import random_ip
@@ -235,7 +235,7 @@ class School(object):
 
         dc_name = ucr.get("hostname")
         old_dhcpd_ldap_base = ucr.get("dhcpd/ldap/base")
-        lo = univention.uldap.getMachineConnection()
+        lo, _po = univention.admin.uldap.getMachineConnection()
         base_dn = ucr.get("ldap/base")
 
         cn_pupils = ucr.get("ucsschool/ldap/default/container/pupils", "schueler")
