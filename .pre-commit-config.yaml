@@ -155,7 +155,7 @@ repos:
         stages: [ commit-msg ]
         name: issue-reference
         language: pygrep
-        entry: '.*\n\n(Issue ([a-zA-Z_/-]+)#\d+|Bug #\d+)\n?(\n#.*)*\Z'
+        entry: '.*\n(\n(Issue ([a-zA-Z_/-]+)#\d+|Bug #\d+))+\n?(\n#.*)*\Z'
         args: ["--multiline", "--negate"]
 default_language_version:
   python: python3.11
