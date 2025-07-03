@@ -863,6 +863,7 @@ class UCSTestSchool(object):
         ucsschool_roles=None,  # type: Optional[List]
         wait_for_replication=True,  # type: Optional[bool]
         check_password_policies=False,  # type: Optional[bool]
+        legal_guardians=None,
     ):  # type: (...) -> Tuple[str, str]
         """
         Create a user in specified OU with given attributes. If attributes are not specified, random
@@ -916,6 +917,10 @@ class UCSTestSchool(object):
             cls = LegalGuardian
         elif not is_teacher and is_staff:
             cls = Staff
+
+        if legal_guardians:
+            kwargs["legal_guardians"] = legal_guardians
+
         logger.info("*** Creating new %s %r with %r.", cls.__name__, username, kwargs)
         User.invalidate_all_caches()
         # TODO FIXME has to be fixed in ucs-school-lib - should be done automatically:

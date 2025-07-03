@@ -24,6 +24,7 @@ from ucsschool.lib.models.utils import ucr as lib_ucr  # 'ucr' already exists as
 from ucsschool.lib.models.validator import (
     VALIDATION_LOGGER,
     ExamStudentValidator,
+    LegalGuardianValidator,
     SchoolAdminValidator,
     StaffValidator,
     StudentValidator,
@@ -32,7 +33,14 @@ from ucsschool.lib.models.validator import (
     get_class,
     validate,
 )
-from ucsschool.lib.roles import role_exam_user, role_school_admin, role_staff, role_student, role_teacher
+from ucsschool.lib.roles import (
+    role_exam_user,
+    role_legal_guardian,
+    role_school_admin,
+    role_staff,
+    role_student,
+    role_teacher,
+)
 from ucsschool.lib.schoolldap import SchoolSearchBase
 from univention.config_registry import handler_set
 
@@ -258,6 +266,29 @@ def teacher_and_staff_user():  # type: () -> Dict[str, Any]
     return user
 
 
+def legal_guardian_user():
+    firstname = uts.random_name()
+    lastname = uts.random_name()
+    user = base_user(firstname, lastname)
+    user["dn"] = "uid={},cn={},cn=users,ou=DEMOSCHOOL,{}".format(
+        user["props"]["username"], SchoolSearchBase._containerLegalGuardians, ldap_base
+    )
+    group_prefix_legal_guardians = get_current_group_prefix("legal_guardians", "gesetzliche vertreter-")
+    user["props"]["groups"] = [
+        "cn={}demoschool,cn=groups,ou=DEMOSCHOOL,{}".format(group_prefix_legal_guardians, ldap_base),
+        "cn=Domain Users DEMOSCHOOL,cn=groups,ou=DEMOSCHOOL,{}".format(ldap_base),
+    ]
+    user["props"]["unixhome"] = "/home/DEMOSCHOOL/{}".format(user["props"]["username"])
+    user["props"]["ucsschoolRole"] = [
+        "legal_guardian:school:DEMOSCHOOL",
+    ]
+    user["position"] = "cn={},cn=users,ou=DEMOSCHOOL,{}".format(
+        SchoolSearchBase._containerLegalGuardians, ldap_base
+    )
+    user["options"] = {"ucsschoolLegalGuardian": True}
+    return user
+
+
 def admin_user():  # type: () -> Dict[str, Any]
     firstname = uts.random_name()
     lastname = uts.random_name()
@@ -291,6 +322,7 @@ all_user_role_objects = [
     teacher_user(),
     staff_user(),
     exam_user(),
+    legal_guardian_user(),
     teacher_and_staff_user(),
     admin_user(),
 ]
@@ -299,6 +331,7 @@ all_user_role_generators = [
     teacher_user,
     staff_user,
     exam_user,
+    legal_guardian_user,
     teacher_and_staff_user,
     admin_user,
 ]
@@ -306,6 +339,7 @@ all_user_role_generators = [
 all_user_roles_names = [
     role_student,
     role_teacher,
+    role_legal_guardian,
     role_staff,
     role_exam_user,
     "teacher_and_staff",
@@ -365,6 +399,7 @@ def check_did_not_log_any_error(
             TeacherValidator,
             StaffValidator,
             ExamStudentValidator,
+            LegalGuardianValidator,
             TeachersAndStaffValidator,
             SchoolAdminValidator,
         ],
@@ -387,12 +422,14 @@ def test_correct_object(caplog, dict_obj, random_logger):
     [
         (student_user, "pupils", "schueler-"),
         (teacher_user, "teachers", "lehrer-"),
+        (legal_guardian_user, "legal_guardians", "gesetzliche vertreter-"),
         (staff_user, "staff", "mitarbeiter-"),
         (admin_user, "admins", "admins-"),
     ],
     ids=[
         "altered_student_group_prefix",
         "altered_teachers_group_prefix",
+        "altered_legal_guardians_group_prefix",
         "altered_staff_group_prefix",
         "altered_admins_group_prefix",
     ],
@@ -446,12 +483,12 @@ def test_correct_uuid(caplog, random_logger):
 
 
 @pytest.mark.parametrize("dict_obj", [student_user(), exam_user()], ids=[role_student, role_exam_user])
-@pytest.mark.parametrize("disallowed_role", [role_staff, role_teacher])
+@pytest.mark.parametrize("disallowed_role", [role_staff, role_teacher, role_legal_guardian])
 def test_students_exclusive_role(caplog, dict_obj, random_logger, disallowed_role):
     dict_obj["props"]["ucsschoolRole"].append("{}:school:DEMOSCHOOL".format(disallowed_role))
     validate(dict_obj, logger=random_logger)
     expected_msg = "must not have these roles: {!r}.".format(
-        [role_teacher, role_staff, role_school_admin]
+        [role_teacher, role_legal_guardian, role_staff, role_school_admin]
     )
     check_logs(dict_obj, caplog.record_tuples, random_logger.name, expected_msg)
 
@@ -461,6 +498,7 @@ def test_students_exclusive_role(caplog, dict_obj, random_logger, disallowed_rol
     [
         (student_user, teacher_user),
         (teacher_user, staff_user),
+        (legal_guardian_user, teacher_user),
         (staff_user, teacher_user),
         (exam_user, teacher_user),
         (teacher_and_staff_user, student_user),
@@ -480,6 +518,7 @@ def test_false_ldap_position(caplog, get_user_a, get_user_b, random_logger):
 all_user_role_objects_with_names = [
     (student_user(), "student"),
     (teacher_user(), "teacher"),
+    (legal_guardian_user(), "legal_guardian"),
     (staff_user(), "staff"),
     (exam_user(), "student"),
     (teacher_and_staff_user(), "teacher"),
@@ -577,8 +616,15 @@ def test_missing_domain_users_group(caplog, dict_obj, random_logger):
 )
 @pytest.mark.parametrize(
     "get_dict_obj",
-    [student_user, teacher_user, staff_user, exam_user, teacher_and_staff_user],
-    ids=[role_student, role_teacher, role_staff, role_exam_user, "teacher_and_staff"],
+    [student_user, teacher_user, legal_guardian_user, staff_user, exam_user, teacher_and_staff_user],
+    ids=[
+        role_student,
+        role_teacher,
+        role_legal_guardian,
+        role_staff,
+        role_exam_user,
+        "teacher_and_staff",
+    ],
 )
 def test_missing_required_attribute(caplog, get_dict_obj, random_logger, required_attribute):
     dict_obj = get_dict_obj()
@@ -613,15 +659,19 @@ def test_student_missing_class(caplog, dict_obj, random_logger):
     "get_user_a,get_user_b",
     [
         (student_user, teacher_user),
+        (student_user, legal_guardian_user),
         (teacher_user, staff_user),
         (exam_user, teacher_user),
+        (exam_user, legal_guardian_user),
         (teacher_and_staff_user, student_user),
         (student_user, admin_user),
         (exam_user, admin_user),
     ],
     ids=[
         "student_has_teacher_groups",
+        "student_has_legal_guardian_groups",
         "exam_student_has_teacher_groups",
+        "exam_student_has_legal_guardian_groups",
         "teacher_has_staff_groups",
         "teacher_has_student_groups",
         "student_has_admin_groups",
