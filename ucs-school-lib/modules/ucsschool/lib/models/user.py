@@ -1009,9 +1009,9 @@ class ExamStudent(Student):
 
     @classmethod
     def from_student_dn(cls, lo, school, dn):  # type: (LoType, str, str) -> "ExamStudent"
-        examUserPrefix = ucr.get("ucsschool/ldap/default/userprefix/exam", "exam-")
+        exam_user_prefix = ucr.get("ucsschool/ldap/default/userprefix/exam", "exam-")
         dn = "uid=%s%s,%s" % (
-            escape_dn_chars(examUserPrefix),
+            escape_dn_chars(exam_user_prefix),
             escape_dn_chars(explode_rdn(dn, True)[0]),
             cls.get_container(school),
         )
