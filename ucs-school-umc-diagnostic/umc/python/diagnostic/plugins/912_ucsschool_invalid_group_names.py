@@ -38,9 +38,9 @@ import re
 from ucsschool.lib.models.school import School
 from ucsschool.lib.models.share import ClassShare, WorkGroupShare
 from ucsschool.lib.schoolldap import SchoolSearchBase
+from univention.admin.uldap import getAdminConnection
 from univention.lib.i18n import Translation
 from univention.management.console.modules.diagnostic import Warning
-from univention.uldap import getAdminConnection
 
 re_name_with_multiple_whitespaces = re.compile(r"\s{2,}")
 
@@ -57,7 +57,7 @@ description = "\n".join(
 
 def run(_umc_instance):
     problematic_objects = []
-    lo = getAdminConnection()
+    lo, _po = getAdminConnection()
     for school in School.get_all(lo):
         search_base = SchoolSearchBase([school.name])
         for cs in ClassShare.get_all(lo, school.name):
