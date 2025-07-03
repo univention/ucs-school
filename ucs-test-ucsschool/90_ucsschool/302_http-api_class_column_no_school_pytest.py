@@ -44,7 +44,7 @@ def get_school_classes_for_user(ou_name, filter_s, ldap_connection):
     if len(users) != 1:
         TESTER.fail("Could not find user from filter {!r}. Got: {!r}".format(filter_s, users))
     school_classes = SchoolClass.get_all(
-        ldap_connection.lo,
+        ldap_connection,
         ou_name,
         filter_format("memberUid=%s", (users[0][1]["uid"][0].decode("UTF-8"),)),
     )
