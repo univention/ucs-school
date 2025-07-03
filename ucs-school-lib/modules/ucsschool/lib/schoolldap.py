@@ -44,6 +44,12 @@ class SchoolSearchBase(object):
     ucr = None  # type: ConfigRegistry
     _regex_cache = {}  # type: Dict[str, Pattern]
 
+    # templates
+    user_container_regex_template = r"cn={},cn=users,ou=[^,]+,{}"
+    group_container_regex_template = r"cn={}-(?P<ou>[^,]+?),cn=groups,ou=(?P=ou),{}"
+    groups_dn_template = "cn={}{},cn=groups,{}"
+    users_container_dn_template = "cn={},cn=users,{}"
+
     # prefixes
     _containerAdmins = ""
     _containerStudents = ""
@@ -174,7 +180,7 @@ class SchoolSearchBase(object):
 
     @property
     def students_group(self):  # type: () -> str
-        return "cn=%s%s,cn=groups,%s" % (
+        return self.groups_dn_template.format(
             escape_dn_chars(self.group_prefix_students),
             escape_dn_chars(self.school.lower()),
             self.schoolDN,
@@ -182,7 +188,7 @@ class SchoolSearchBase(object):
 
     @property
     def teachers_group(self):  # type: () -> str
-        return "cn=%s%s,cn=groups,%s" % (
+        return self.groups_dn_template.format(
             escape_dn_chars(self.group_prefix_teachers),
             escape_dn_chars(self.school.lower()),
             self.schoolDN,
@@ -190,7 +196,7 @@ class SchoolSearchBase(object):
 
     @property
     def legal_guardians_group(self):  # type: () -> str
-        return "cn=%s%s,cn=groups,%s" % (
+        return self.groups_dn_template.format(
             escape_dn_chars(self.group_prefix_legal_guardians),
             escape_dn_chars(self.school.lower()),
             self.schoolDN,
@@ -198,7 +204,7 @@ class SchoolSearchBase(object):
 
     @property
     def staff_group(self):  # type: () -> str
-        return "cn=%s%s,cn=groups,%s" % (
+        return self.groups_dn_template.format(
             escape_dn_chars(self.group_prefix_staff),
             escape_dn_chars(self.school.lower()),
             self.schoolDN,
@@ -230,27 +236,39 @@ class SchoolSearchBase(object):
 
     @property
     def students(self):  # type: () -> str
-        return "cn=%s,cn=users,%s" % (escape_dn_chars(self._containerStudents), self.schoolDN)
+        return self.users_container_dn_template.format(
+            escape_dn_chars(self._containerStudents), self.schoolDN
+        )
 
     @property
     def teachers(self):  # type: () -> str
-        return "cn=%s,cn=users,%s" % (escape_dn_chars(self._containerTeachers), self.schoolDN)
+        return self.users_container_dn_template.format(
+            escape_dn_chars(self._containerTeachers), self.schoolDN
+        )
 
     @property
     def legal_guardians(self):  # type: () -> str
-        return "cn=%s,cn=users,%s" % (escape_dn_chars(self._containerLegalGuardians), self.schoolDN)
+        return self.users_container_dn_template.format(
+            escape_dn_chars(self._containerLegalGuardians), self.schoolDN
+        )
 
     @property
     def teachersAndStaff(self):  # type: () -> str
-        return "cn=%s,cn=users,%s" % (escape_dn_chars(self._containerTeachersAndStaff), self.schoolDN)
+        return self.users_container_dn_template.format(
+            escape_dn_chars(self._containerTeachersAndStaff), self.schoolDN
+        )
 
     @property
     def staff(self):  # type: () -> str
-        return "cn=%s,cn=users,%s" % (escape_dn_chars(self._containerStaff), self.schoolDN)
+        return self.users_container_dn_template.format(
+            escape_dn_chars(self._containerStaff), self.schoolDN
+        )
 
     @property
     def admins(self):  # type: () -> str
-        return "cn=%s,cn=users,%s" % (escape_dn_chars(self._containerAdmins), self.schoolDN)
+        return self.users_container_dn_template.format(
+            escape_dn_chars(self._containerAdmins), self.schoolDN
+        )
 
     @property
     def classShares(self):  # type: () -> str
@@ -335,9 +353,7 @@ class SchoolSearchBase(object):
             if not cls._containerTeachers:
                 cls._load_containers_and_prefixes()
             cls._regex_cache["is_teachers_group"] = re.compile(
-                r"cn={}-(?P<ou>[^,]+?),cn=groups,ou=(?P=ou),{}".format(
-                    cls._containerTeachers, cls.ucr["ldap/base"]
-                ),
+                cls.group_container_regex_template.format(cls._containerTeachers, cls.ucr["ldap/base"]),
                 flags=re.IGNORECASE,
             )
         return cls._regex_cache["is_teachers_group"]
@@ -348,7 +364,7 @@ class SchoolSearchBase(object):
             if not cls._containerLegalGuardians:
                 cls._load_containers_and_prefixes()
             cls._regex_cache["is_legal_guardians_group"] = re.compile(
-                r"cn={}-(?P<ou>[^,]+?),cn=groups,ou=(?P=ou),{}".format(
+                cls.group_container_regex_template.format(
                     cls._containerLegalGuardians, cls.ucr["ldap/base"]
                 ),
                 flags=re.IGNORECASE,
@@ -374,9 +390,7 @@ class SchoolSearchBase(object):
             if not cls._containerStaff:
                 cls._load_containers_and_prefixes()
             cls._regex_cache["is_staff_group"] = re.compile(
-                r"cn={}-(?P<ou>[^,]+?),cn=groups,ou=(?P=ou),{}".format(
-                    cls._containerStaff, cls.ucr["ldap/base"]
-                ),
+                cls.group_container_regex_template.format(cls._containerStaff, cls.ucr["ldap/base"]),
                 flags=re.IGNORECASE,
             )
         return cls._regex_cache["is_staff_group"]
@@ -387,9 +401,7 @@ class SchoolSearchBase(object):
             if not cls._containerStudents:
                 cls._load_containers_and_prefixes()
             cls._regex_cache["is_student_group"] = re.compile(
-                r"cn={}-(?P<ou>[^,]+?),cn=groups,ou=(?P=ou),{}".format(
-                    cls._containerStudents, cls.ucr["ldap/base"]
-                ),
+                cls.group_container_regex_template.format(cls._containerStudents, cls.ucr["ldap/base"]),
                 flags=re.IGNORECASE,
             )
         return cls._regex_cache["is_student_group"]
@@ -429,7 +441,7 @@ class SchoolSearchBase(object):
             if not cls._containerStudents:
                 cls._load_containers_and_prefixes()
             cls._regex_cache["students_pos"] = re.compile(
-                r"cn={},cn=users,ou=[^,]+,{}".format(cls._containerStudents, cls.ucr["ldap/base"]),
+                cls.user_container_regex_template.format(cls._containerStudents, cls.ucr["ldap/base"]),
                 flags=re.IGNORECASE,
             )
         return cls._regex_cache["students_pos"]
@@ -440,7 +452,7 @@ class SchoolSearchBase(object):
             if not cls._containerTeachers:
                 cls._load_containers_and_prefixes()
             cls._regex_cache["teachers_pos"] = re.compile(
-                r"cn={},cn=users,ou=[^,]+,{}".format(cls._containerTeachers, cls.ucr["ldap/base"]),
+                cls.user_container_regex_template.format(cls._containerTeachers, cls.ucr["ldap/base"]),
                 flags=re.IGNORECASE,
             )
         return cls._regex_cache["teachers_pos"]
@@ -451,7 +463,9 @@ class SchoolSearchBase(object):
             if not cls._containerLegalGuardians:
                 cls._load_containers_and_prefixes()
             cls._regex_cache["legal_guardians_pos"] = re.compile(
-                r"cn={},cn=users,ou=[^,]+,{}".format(cls._containerLegalGuardians, cls.ucr["ldap/base"]),
+                cls.user_container_regex_template.format(
+                    cls._containerLegalGuardians, cls.ucr["ldap/base"]
+                ),
                 flags=re.IGNORECASE,
             )
         return cls._regex_cache["legal_guardians_pos"]
@@ -462,7 +476,7 @@ class SchoolSearchBase(object):
             if not cls._containerStaff:
                 cls._load_containers_and_prefixes()
             cls._regex_cache["staff_pos"] = re.compile(
-                r"cn={},cn=users,ou=[^,]+,{}".format(cls._containerStaff, cls.ucr["ldap/base"]),
+                cls.user_container_regex_template.format(cls._containerStaff, cls.ucr["ldap/base"]),
                 flags=re.IGNORECASE,
             )
         return cls._regex_cache["staff_pos"]
@@ -473,7 +487,7 @@ class SchoolSearchBase(object):
             if not cls._containerTeachersAndStaff:
                 cls._load_containers_and_prefixes()
             cls._regex_cache["teachers_and_staff_pos"] = re.compile(
-                r"cn={},cn=users,ou=[^,]+,{}".format(
+                cls.user_container_regex_template.format(
                     cls._containerTeachersAndStaff, cls.ucr["ldap/base"]
                 ),
                 flags=re.IGNORECASE,
@@ -486,7 +500,7 @@ class SchoolSearchBase(object):
             if not cls._containerAdmins:
                 cls._load_containers_and_prefixes()
             cls._regex_cache["admins_pos"] = re.compile(
-                r"cn={},cn=users,ou=[^,]+,{}".format(cls._containerAdmins, cls.ucr["ldap/base"]),
+                cls.user_container_regex_template.format(cls._containerAdmins, cls.ucr["ldap/base"]),
                 flags=re.IGNORECASE,
             )
         return cls._regex_cache["admins_pos"]
