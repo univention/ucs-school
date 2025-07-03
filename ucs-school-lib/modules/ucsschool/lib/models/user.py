@@ -481,6 +481,61 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             groups.append(self.get_workgroup_dn(workgroup.name, workgroup.school, lo))
         return groups
 
+    def _validate_workgroups(self):
+
+        if not isinstance(self.workgroups, Mapping):
+            self.add_error(
+                "workgroups",
+                _("Type of 'workgroups' is {type!r}, but must be dictionary.").format(
+                    type=type(self.workgroups)
+                ),
+            )
+
+        # verify user is (or will be) in all schools of its work groups
+        for school, _workgroups in iteritems(self.workgroups):
+            if school.lower() not in (s.lower() for s in self.schools + [self.school]):
+                self.add_error(
+                    "workgroups",
+                    _(
+                        "School {school!r} in 'workgroups' is missing in the users 'school(s)' "
+                        "attributes."
+                    ).format(school=school),
+                )
+        # check syntax of all work group names
+        for school, workgroups in iteritems(self.workgroups):
+            for work_group_name in workgroups:
+                try:
+                    syntax.gid.parse(work_group_name)
+                except valueError as exc:
+                    self.add_error("workgroups", str(exc))
+
+    def _validate_school_classes(self):
+        if not isinstance(self.school_classes, Mapping):
+            self.add_error(
+                "school_classes",
+                _("Type of 'school_classes' is {type!r}, but must be dictionary.").format(
+                    type=type(self.school_classes)
+                ),
+            )
+
+        # verify user is (or will be) in all schools of its school_classes
+        for school, _school_classes in iteritems(self.school_classes):
+            if school.lower() not in (s.lower() for s in self.schools + [self.school]):
+                self.add_error(
+                    "school_classes",
+                    _(
+                        "School {school!r} in 'school_classes' is missing in the users 'school(s)' "
+                        "attribute."
+                    ).format(school=school),
+                )
+        # check syntax of all class names
+        for school, classes in iteritems(self.school_classes):
+            for class_name in classes:
+                try:
+                    syntax.gid.parse(class_name)
+                except valueError as exc:
+                    self.add_error("school_classes", str(exc))
+
     def validate(
         self, lo, validate_unlikely_changes=False, check_name=True
     ):  # type: (LoType, Optional[bool]) -> None
@@ -531,58 +586,8 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                     "address."
                 ),
             )
-
-        if not isinstance(self.school_classes, Mapping):
-            self.add_error(
-                "school_classes",
-                _("Type of 'school_classes' is {type!r}, but must be dictionary.").format(
-                    type=type(self.school_classes)
-                ),
-            )
-
-        # verify user is (or will be) in all schools of its school_classes
-        for school, _classes in iteritems(self.school_classes):
-            if school.lower() not in (s.lower() for s in self.schools + [self.school]):
-                self.add_error(
-                    "school_classes",
-                    _(
-                        "School {school!r} in 'school_classes' is missing in the users 'school(s)' "
-                        "attribute."
-                    ).format(school=school),
-                )
-        # check syntax of all class names
-        for school, classes in iteritems(self.school_classes):
-            for class_name in classes:
-                try:
-                    syntax.gid.parse(class_name)
-                except valueError as exc:
-                    self.add_error("school_classes", str(exc))
-
-        if not isinstance(self.workgroups, Mapping):
-            self.add_error(
-                "workgroups",
-                _("Type of 'workgroups' is {type!r}, but must be dictionary.").format(
-                    type=type(self.workgroups)
-                ),
-            )
-
-        # verify user is (or will be) in all schools of its work groups
-        for school, _workgroups in iteritems(self.workgroups):
-            if school.lower() not in (s.lower() for s in self.schools + [self.school]):
-                self.add_error(
-                    "workgroups",
-                    _(
-                        "School {school!r} in 'workgroups' is missing in the users 'school(s)' "
-                        "attributes."
-                    ).format(school=school),
-                )
-        # check syntax of all work group names
-        for school, workgroups in iteritems(self.workgroups):
-            for work_group_name in workgroups:
-                try:
-                    syntax.gid.parse(work_group_name)
-                except valueError as exc:
-                    self.add_error("workgroups", str(exc))
+        self._validate_school_classes()
+        self._validate_workgroups()
 
     def remove_from_school(self, school, lo):  # type: (str, LoType) -> bool
         if not self.exists(lo):

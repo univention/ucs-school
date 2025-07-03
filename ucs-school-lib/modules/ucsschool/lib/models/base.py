@@ -379,6 +379,24 @@ class UCSSchoolHelperAbstractClass(object):
         self.position = ldap.dn.dn2str(ldap.dn.str2dn(dn)[1:])
         self.old_dn = dn
 
+    def validate_unlikely_changes(self, lo):
+        udm_obj = self.get_udm_object(lo)
+        try:
+            original_self = self.from_udm_obj(udm_obj, self.school, lo)
+        except (UnknownModel, WrongModel):
+            pass
+        else:
+            for name, attr in iteritems(self._attributes):
+                if attr.unlikely_to_change:
+                    new_value = getattr(self, name)
+                    old_value = getattr(original_self, name)
+                    if new_value and old_value and new_value != old_value:
+                        self.add_warning(
+                            name,
+                            _("The value changed from %(old)s. This seems unlikely.")
+                            % {"old": old_value},
+                        )
+
     def validate(
         self, lo, validate_unlikely_changes=False, check_name=True
     ):  # type: (LoType, Optional[bool], Optional[bool]) -> None
@@ -409,24 +427,9 @@ class UCSSchoolHelperAbstractClass(object):
                     % self.school,
                 )
         self.validate_roles(lo)
+
         if validate_unlikely_changes and self.exists(lo):
-            udm_obj = self.get_udm_object(lo)
-            try:
-                original_self = self.from_udm_obj(udm_obj, self.school, lo)
-            except (UnknownModel, WrongModel):
-                pass
-            else:
-                for name, attr in iteritems(self._attributes):
-                    if attr.unlikely_to_change:
-                        new_value = getattr(self, name)
-                        old_value = getattr(original_self, name)
-                        if new_value and old_value:
-                            if new_value != old_value:
-                                self.add_warning(
-                                    name,
-                                    _("The value changed from %(old)s. This seems unlikely.")
-                                    % {"old": old_value},
-                                )
+            self.validate_unlikely_changes(lo)
 
     def validate_roles(self, lo):  # type: (LoType) -> None
         pass
