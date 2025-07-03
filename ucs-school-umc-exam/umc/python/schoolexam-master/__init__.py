@@ -685,8 +685,6 @@ class Instance(SchoolBaseModule):
             user = ExamStudent.from_dn(userdn, None, ldap_user_read)
         except univention.admin.uexceptions.noObject:
             raise UMC_Error(_("Exam student %r not found.") % (userdn,))
-        except univention.admin.uexceptions.ldapError:
-            raise
 
         try:
             exam_role = create_ucsschool_role_string(
@@ -754,8 +752,6 @@ class Instance(SchoolBaseModule):
             room = ComputerRoom.from_dn(roomdn, None, ldap_user_read)
         except univention.admin.uexceptions.noObject:
             raise UMC_Error("Room %r not found." % (roomdn,))
-        except univention.admin.uexceptions.ldapError:
-            raise
 
         teacher_pc_role = create_ucsschool_role_string(role_teacher_computer, room.school)
         exam_hosts = []
@@ -784,8 +780,6 @@ class Instance(SchoolBaseModule):
             room = ComputerRoom.from_dn(roomdn, None, ldap_user_read)
         except univention.admin.uexceptions.noObject:
             raise UMC_Error("Room %r not found." % (roomdn,))
-        except univention.admin.uexceptions.ldapError:
-            raise
 
         # Remove all host members of room from exam_group
         host_uid_list = [str2dn(uniqueMember)[0][0][1] + "$" for uniqueMember in room.hosts]
