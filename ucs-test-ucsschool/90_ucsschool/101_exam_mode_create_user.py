@@ -10,6 +10,7 @@
 from __future__ import print_function
 
 import univention.testing.strings as uts
+from ucsschool.lib.models.user import Student
 from univention.testing.ucsschool.computerroom import Room
 from univention.testing.umc import Client
 from univention.udm import UDM
@@ -23,6 +24,7 @@ def test_exam_mode_create_exam_user(udm_session, schoolenv, ucr):
     """
     udm = udm_session
     client = Client.get_test_connection()
+    open_ldap_co = schoolenv.open_ldap_connection()
 
     print("# create test users and classes")
     if ucr.is_true("ucsschool/singlemaster"):
@@ -36,7 +38,12 @@ def test_exam_mode_create_exam_user(udm_session, schoolenv, ucr):
         school, name=room.name, description=room.description, host_members=room.host_members
     )
 
-    student1_name, student1_dn = schoolenv.create_user(school)
+    class_name, class_dn = schoolenv.create_school_class(school)
+    student1_name, student1_dn = schoolenv.create_student(school, classes=class_name)
+    legal_guardian1_name, legal_guardian1_dn = schoolenv.create_legal_guardian(school)
+    student = Student.from_dn(student1_dn, school, open_ldap_co)
+    student.legal_guardians = [legal_guardian1_dn]
+    student.modify(open_ldap_co)
 
     # Bug #54848 / Issue univention/ucs#1135
     print("# Create a user and increment its sambaRID, provoking Bug #54848")
@@ -60,7 +67,6 @@ def test_exam_mode_create_exam_user(udm_session, schoolenv, ucr):
     _, exam_user_attrs = udm.list_objects("users/user", position=exam_user_dn)[0]
 
     print("# check if univentionObjectIdentifier is set correctly")
-    open_ldap_co = schoolenv.open_ldap_connection()
     user_attrs = open_ldap_co.get(user_dn, attr=["uid", "univentionObjectIdentifier"])
     exam_attrs = open_ldap_co.get(exam_user_dn, attr=["uid", "univentionObjectIdentifier"])
     print(
@@ -77,6 +83,13 @@ def test_exam_mode_create_exam_user(udm_session, schoolenv, ucr):
     assert user_attrs.get("univentionObjectIdentifier", []) != exam_attrs.get(
         "univentionObjectIdentifier"
     )
+
+    print("# check that the legal guardian is not copied")
+    exam_student = Student.from_dn(exam_user_dn, school, open_ldap_co)
+    assert not exam_student.legal_guardians
+    print("# ensure the orignal user had a legal guardian")
+    student = Student.from_dn(student1_dn, school, open_ldap_co)
+    assert student.legal_guardians
 
     print("# Extra cleanup: Remove created exam user")
     user_mod = UDM.admin().version(2).get("users/user")

@@ -404,13 +404,20 @@ class Instance(SchoolBaseModule):
                     "structuralObjectClass",
                 ):
                     continue
-                if key == "sambaUserWorkstations":  # special handling for this attribute
+
+                # ignore special attributes
+                if key in ["sambaUserWorkstations", "ucsschoolLegalGuardian"]:
+                    # ucsschoolLegalGuardian: Is not relevant for the exam mode. As there is a maximum
+                    # number of legal wards a legal guardian can have, copying this attribute could
+                    # prevent legal guardian assignment in other places.
                     continue
+
                 # ignore blacklisted attribute values
                 keyBlacklist = getBlacklistSet("ucsschool/exam/user/ldap/blacklist/%s" % key)
                 value = [x for x in value if x not in keyBlacklist]
                 if not value:
                     continue
+
                 # handle special cases
                 if key == "uid":
                     value = [exam_user_uid.encode("UTF-8")]
