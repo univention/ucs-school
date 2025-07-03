@@ -37,6 +37,7 @@ das neue Benutzerkonto ab. Zur Auswahl stehen die folgenden Benutzerrollen:
 
 * *Schüler*
 * *Lehrer*
+* *Gesetzliche Vertreter*
 * *Lehrer und Mitarbeiter*
 * *Mitarbeiter*
 

@@ -41,6 +41,14 @@ Lehrer
    aber nur Zugriff auf einen Teil der von der |UCSUMC| bereitgestellten
    Funktionen.
 
+Gesetzliche Vertreter
+   *Gesetzlichen Vertretern* wird in der Standardeinstellung kein
+   Zugriff auf die Administrationsoberflächen gewährt. Sie können sich
+   mit ihren Benutzerkonten nur an Windows-Clients anmelden und die für
+   sie freigegebenen Dateifreigaben und Drucker verwenden.
+   Schüler können gesetzlichen Vertretern zugewiesen werden und gelten
+   dann als dessen Schutzbefohlene.
+
 Schuladministrator
    *Schuladministratoren* erhalten, auf den Servern ihrer jeweiligen Schule,
    administrativen Zugriff auf die |UCSUAS|-UMC-Module. Sie können z.B. Computer
