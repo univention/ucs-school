@@ -41,11 +41,12 @@ define([
 	"umc/widgets/MultiInput",
 	"umc/widgets/CheckBox",
 	"umc/widgets/DateBox",
+	"umc/widgets/MultiObjectSelect",
 	"umc/widgets/PasswordInputBox",
 	"umc/modules/schoolwizards/Wizard",
 	"umc/modules/schoolwizards/utils",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, array, topic, tools, dialog, TextBox, ComboBox, MultiInput, CheckBox, DateBox, PasswordInputBox, Wizard, utils, _) {
+], function(declare, lang, array, topic, tools, dialog, TextBox, ComboBox, MultiInput, CheckBox, DateBox, MultiObjectSelect, PasswordInputBox, Wizard, utils, _) {
 
 	return declare("umc.modules.schoolwizards.UserWizard", [Wizard], {
 		description: _('Create a new user'),
@@ -171,6 +172,21 @@ define([
 					name: 'email',
 					label: _('E-Mail')
 				}, {
+					type: MultiObjectSelect,
+					name: 'legal_wards',
+					disabled: true,
+					label: _('Legal wards'),
+					description: _('Users for which this person is the legal guardian, e.g. their children.'),
+					formatter: function(entries) {
+						let tmp = array.map(entries, function(ientry) {
+							return {
+								id: ientry,
+								label: tools.explodeDn(ientry, true).shift() || ''
+							};
+						});
+						return tmp;
+					},
+				}, {
 					type: PasswordInputBox,
 					name: 'password',
 					label: _('Password'),
@@ -195,6 +211,7 @@ define([
 					['school_classes', 'newClass'],
 					['email', 'expiration_date'],
 					['password'],
+					['legal_wards'],
 					['schools', 'ucsschool_roles'],
 				]
 			};
@@ -236,6 +253,12 @@ define([
 					newClassButton.show();
 					this.reloadClasses();
 				}
+				let legalWardsWidget = this.getWidget('item', 'legal_wards');
+				if (!this.hasLegalWardWidget()) {
+					legalWardsWidget.hide();
+				} else {
+					legalWardsWidget.show();
+				}
 			}
 		},
 
@@ -246,6 +269,11 @@ define([
 		hasClassWidget: function() {
 			var selectedType = this.getWidget('general', 'type').get('value');
 			return selectedType == 'student';
+		},
+
+		hasLegalWardWidget: function() {
+			let selectedType = this.getWidget('general', 'type').get('value');
+			return selectedType == 'legalGuardian';
 		},
 
 		getValues: function() {

@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (13.0.3) unstable; urgency=medium
+
+  * Issue univention/dev/education/ucsschool#1456: Add legal guardian role
+
+ -- Jürn Brodersen <brodersen@univention.de>  Thu, 03 Jul 2025 11:16:18 +0200
+
 ucs-school-umc-wizards (13.0.2) unstable; urgency=medium
 
   * Bug 58209: escape values to fix possible xss

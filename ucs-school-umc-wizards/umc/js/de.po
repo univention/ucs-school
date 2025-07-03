@@ -477,6 +477,15 @@ msgstr "Subnetzmaske"
 msgid "Teacher"
 msgstr "Lehrer"
 
+msgid "Legal guardian"
+msgstr "Gesetzliche Vertreter"
+
+msgid "Legal wards"
+msgstr "Schutzbefohlene"
+
+msgid "Users for which this person is the legal guardian, e.g. their children."
+msgstr "Benutzer, für die diese Person der gesetzliche Vertreter ist, z. B. ihre Kinder."
+
 #: umc/js/schoolwizards/utils.js:60
 msgid "Teachers and staff"
 msgstr "Lehrer und Mitarbeiter"

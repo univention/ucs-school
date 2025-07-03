@@ -43,7 +43,15 @@ from ucsschool.lib.models.base import WrongModel
 from ucsschool.lib.models.computer import IPComputer, MacComputer, SchoolComputer, WindowsComputer
 from ucsschool.lib.models.group import SchoolClass
 from ucsschool.lib.models.school import School
-from ucsschool.lib.models.user import SchoolAdmin, Staff, Student, Teacher, TeachersAndStaff, User
+from ucsschool.lib.models.user import (
+    LegalGuardian,
+    SchoolAdmin,
+    Staff,
+    Student,
+    Teacher,
+    TeachersAndStaff,
+    User,
+)
 from ucsschool.lib.models.utils import add_module_logger_to_schoollib
 from ucsschool.lib.school_umc_base import SchoolBaseModule, SchoolSanitizer
 from ucsschool.lib.school_umc_ldap_connection import ADMIN_WRITE, USER_READ, USER_WRITE, LDAP_Connection
@@ -85,6 +93,7 @@ def get_exception_msg(e):
 USER_TYPES = {
     "student": Student,
     "teacher": Teacher,
+    "legalGuardian": LegalGuardian,
     "staff": Staff,
     "teachersAndStaff": TeachersAndStaff,
     "schoolAdmin": SchoolAdmin,

@@ -56,6 +56,7 @@ define([
 					['all', _('All')],
 					['student', _('Student')],
 					['teacher', _('Teacher')],
+					['legalGuardian', _('Legal guardian')],
 					['staff', _('Staff')],
 					['teachersAndStaff', _('Teachers and staff')],
 					['schoolAdmin', _('School Administrator')]
