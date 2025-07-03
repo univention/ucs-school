@@ -409,25 +409,24 @@ class UCSSchoolHelperAbstractClass(object):
                     % self.school,
                 )
         self.validate_roles(lo)
-        if validate_unlikely_changes:
-            if self.exists(lo):
-                udm_obj = self.get_udm_object(lo)
-                try:
-                    original_self = self.from_udm_obj(udm_obj, self.school, lo)
-                except (UnknownModel, WrongModel):
-                    pass
-                else:
-                    for name, attr in iteritems(self._attributes):
-                        if attr.unlikely_to_change:
-                            new_value = getattr(self, name)
-                            old_value = getattr(original_self, name)
-                            if new_value and old_value:
-                                if new_value != old_value:
-                                    self.add_warning(
-                                        name,
-                                        _("The value changed from %(old)s. This seems unlikely.")
-                                        % {"old": old_value},
-                                    )
+        if validate_unlikely_changes and self.exists(lo):
+            udm_obj = self.get_udm_object(lo)
+            try:
+                original_self = self.from_udm_obj(udm_obj, self.school, lo)
+            except (UnknownModel, WrongModel):
+                pass
+            else:
+                for name, attr in iteritems(self._attributes):
+                    if attr.unlikely_to_change:
+                        new_value = getattr(self, name)
+                        old_value = getattr(original_self, name)
+                        if new_value and old_value:
+                            if new_value != old_value:
+                                self.add_warning(
+                                    name,
+                                    _("The value changed from %(old)s. This seems unlikely.")
+                                    % {"old": old_value},
+                                )
 
     def validate_roles(self, lo):  # type: (LoType) -> None
         pass
@@ -648,15 +647,16 @@ class UCSSchoolHelperAbstractClass(object):
             self.set_dn(self.dn)
             udm_obj = self.get_udm_object(lo)
             same = old_attrs == udm_obj.info
-            if move_if_necessary:
-                if udm_obj.dn != self.dn:
-                    if self.move_without_hooks(lo, udm_obj, force=True):
-                        same = False
+            if (
+                move_if_necessary
+                and udm_obj.dn != self.dn
+                and self.move_without_hooks(lo, udm_obj, force=True)
+            ):
+                same = False
             if same:
                 self.logger.info("%r not modified. Nothing changed", self)
             else:
                 self.logger.info("%r successfully modified", self)
-            # return not same
             return True
         finally:
             self.invalidate_cache()

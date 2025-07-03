@@ -520,24 +520,17 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                         "new_role": self.type_name,
                     },
                 )
-        if self.email:
-            if self.get_first_udm_obj(
-                lo,
-                filter_format("&(!(uid=%s))(mailPrimaryAddress=%s)", (self.name, self.email)),
-            ):
-                self.add_error(
-                    "email",
-                    _(
-                        "The email address is already taken by another user. Please change the email "
-                        "address."
-                    ),
-                )
-            # mail_domain = self.get_mail_domain(lo)
-            # if not mail_domain.exists(lo) and not self.shall_create_mail_domain():
-            # 	self.add_error(
-            # 	'email',
-            # 	_('The mail domain is unknown. Please change the email address or create the mail \
-            # 	   domain "%s" using the Univention Directory Manager.') % mail_domain.name)
+        if self.email and self.get_first_udm_obj(
+            lo,
+            filter_format("&(!(uid=%s))(mailPrimaryAddress=%s)", (self.name, self.email)),
+        ):
+            self.add_error(
+                "email",
+                _(
+                    "The email address is already taken by another user. Please change the email "
+                    "address."
+                ),
+            )
 
         if not isinstance(self.school_classes, Mapping):
             self.add_error(
