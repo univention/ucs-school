@@ -187,6 +187,21 @@ define([
 						return tmp;
 					},
 				}, {
+					type: MultiObjectSelect,
+					name: 'legal_guardians',
+					disabled: true,
+					label: _('Legal Guardians'),
+					description: _('Users which are the legal guardian for this person, e.g. their parents.'),
+					formatter: function(entries) {
+						let tmp = array.map(entries, function(ientry) {
+							return {
+								id: ientry,
+								label: tools.explodeDn(ientry, true).shift() || ''
+							};
+						});
+						return tmp;
+					},
+				}, {
 					type: PasswordInputBox,
 					name: 'password',
 					label: _('Password'),
@@ -211,7 +226,7 @@ define([
 					['school_classes', 'newClass'],
 					['email', 'expiration_date'],
 					['password'],
-					['legal_wards'],
+					['legal_wards', 'legal_guardians'],
 					['schools', 'ucsschool_roles'],
 				]
 			};
@@ -259,6 +274,12 @@ define([
 				} else {
 					legalWardsWidget.show();
 				}
+				let legalGuardiansWidget = this.getWidget('item', 'legal_guardians');
+				if (!this.hasLegalGuardiansWidget()) {
+					legalGuardiansWidget.hide();
+				} else {
+					legalGuardiansWidget.show();
+				}
 			}
 		},
 
@@ -274,6 +295,11 @@ define([
 		hasLegalWardWidget: function() {
 			let selectedType = this.getWidget('general', 'type').get('value');
 			return selectedType == 'legalGuardian';
+		},
+
+		hasLegalGuardiansWidget: function() {
+			let selectedType = this.getWidget('general', 'type').get('value');
+			return selectedType == 'student';
 		},
 
 		getValues: function() {

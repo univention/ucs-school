@@ -480,11 +480,17 @@ msgstr "Lehrer"
 msgid "Legal guardian"
 msgstr "Gesetzliche Vertreter"
 
+msgid "Legal Guardians"
+msgstr "Gesetzliche Vertreter"
+
 msgid "Legal wards"
 msgstr "Schutzbefohlene"
 
 msgid "Users for which this person is the legal guardian, e.g. their children."
 msgstr "Benutzer, für die diese Person der gesetzliche Vertreter ist, z. B. ihre Kinder."
+
+msgid "Users which are the legal guardian for this person, e.g. their parents."
+msgstr "Benutzer, die der gesetzliche Vertreter dieser Person sind, z. B. ihre Eltern."
 
 #: umc/js/schoolwizards/utils.js:60
 msgid "Teachers and staff"
