@@ -29,6 +29,7 @@ License: AGPL-3.0-only
  <http://www.gnu.org/licenses/>.
 
 Files: modules/ucsschool/importer/contrib/csv.py
+Copyright: 2001-2006 Python Software Foundation; All Rights Reserved
 License: Python-2.0
  PYTHON SOFTWARE FOUNDATION LICENSE VERSION 2
  --------------------------------------------
