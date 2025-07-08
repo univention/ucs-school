@@ -1,3 +1,4 @@
-fa7002fe # 08.06.2020 - major code reformat with black and isort
-1328d983 # 21.09.2020 - Bug #52119: upgrade to isort version 5
-b40ff404 # 21.01.2021 - Bug #52458: enable most flake8 tests and add more linters
+948760ab4d2039c48f1f1aac02df941f6a0ddcad # 06.11.2016 - Bug #31771: ~/autopep8.py --select E2 -i -- $(is_python)
+fa7002fe7efab869e93c09b23f1447aa0bafe777 # 08.06.2020 - major code reformat with black and isort
+1328d9831098a102c47290bd19b5f8ffb09da536 # 21.09.2020 - Bug #52119: upgrade to isort version 5
+b40ff404a9d7a75469aa3a76bb4d3b270b34a249 # 21.01.2021 - Bug #52458: enable most flake8 tests and add more linters
