@@ -131,15 +131,18 @@ default_prefixlen = 24
 if not (
     cn_pupils and cn_teachers and cn_teachers_staff and cn_admins and cn_staff and cn_legal_guardians
 ):
+    cn_ucr = {
+        "ucsschool/ldap/default/container/pupils": cn_pupils,
+        "ucsschool/ldap/default/container/teachers": cn_teachers,
+        "ucsschool/ldap/default/container/teachers-and-staff": cn_teachers_staff,
+        "ucsschool/ldap/default/container/staff": cn_staff,
+        "ucsschool/ldap/default/container/admins": cn_admins,
+        "ucsschool/ldap/default/container/legal_guardians": cn_legal_guardians,
+    }
     print(
-        """ERROR: Unable to proceed: one of the following UCR variables is not set correctly:
-    ucsschool/ldap/default/container/pupils
-    ucsschool/ldap/default/container/teachers
-    ucsschool/ldap/default/container/teachers-and-staff
-    ucsschool/ldap/default/container/staff
-    ucsschool/ldap/default/container/admins
-    ucsschool/ldap/default/container/legal_guardians
-"""
+        "ERROR: Unable to proceed: the following UCR variables are not set correctly:\n{}".format(
+            "\n".join(key for (key, value) in cn_ucr.items() if not value)
+        )
     )
     sys.exit(1)
 
