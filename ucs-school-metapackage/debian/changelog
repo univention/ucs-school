@@ -1,3 +1,10 @@
+ucs-school-metapackage (15.1.1) unstable; urgency=medium
+
+  * Add demo legal guardian
+    Issue univention/dev/education/ucsschool#1456
+
+ -- Jürn Brodersen <brodersen@univention.de>  Tue, 08 Jul 2025 10:20:15 +0200
+
 ucs-school-metapackage (15.1.0) unstable; urgency=medium
 
   * univention/dev/education/ucsschool#1453: Add index for ucsschoolLegalGuardian attribute

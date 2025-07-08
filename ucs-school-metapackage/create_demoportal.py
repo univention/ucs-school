@@ -37,7 +37,7 @@ import sys
 from ucsschool.lib.models.group import SchoolClass
 from ucsschool.lib.models.misc import MailDomain
 from ucsschool.lib.models.school import School
-from ucsschool.lib.models.user import Staff, Student, Teacher
+from ucsschool.lib.models.user import LegalGuardian, Staff, Student, Teacher
 from ucsschool.lib.models.utils import ucr
 from univention.admin import modules
 from univention.management.console.ldap import get_admin_connection
@@ -114,6 +114,15 @@ def create_school():
         email="demo_teacher@demoschool.example.com",
     )
     teacher.create(lo)
+    legal_guardian = LegalGuardian(
+        firstname="Demo",
+        lastname="Legal Guardian",
+        name="demo_parent",
+        password=demo_password,
+        school=SCHOOL[0],
+        email="demo_parent@demoschool.example.com",
+    )
+    legal_guardian.create(lo)
     staff = Staff(
         firstname="Demo",
         lastname="Staff",
@@ -134,7 +143,7 @@ def create_school():
     )
     admin.create(lo)
     # add additional attributes to demo users
-    for user in [student, teacher, staff, admin]:
+    for user in [student, teacher, legal_guardian, staff, admin]:
         user_udm = user.get_udm_object(lo)
         user_udm["ucsschoolRecordUID"] = user.name
         user_udm["ucsschoolSourceUID"] = "DEMOID"
@@ -146,6 +155,8 @@ def create_school():
     admin_udm["description"] = "School Admin for {} created from teacher account.".format(SCHOOL[0])
     admin_udm["ucsschoolRole"].append("school_admin:school:{}".format(SCHOOL[0]))
     admin_udm.modify()
+    student.legal_guardians = [legal_guardian.dn]
+    student.modify(lo)
 
 
 def run():

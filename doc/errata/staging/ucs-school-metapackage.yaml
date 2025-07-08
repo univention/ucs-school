@@ -4,8 +4,12 @@ released:
 version: [0]
 scope: ucs_5.2-0-ucs-school-5.2
 src: ucs-school-metapackage
-fix: 15.1.0
+fix: 15.1.1
 bugs:
   notes:
-    en: Add LDAP equality index for new attribute ``ucsschoolLegalGuardian``.
-    de: Es gibt einen LDAP Index für das neue Attribut ``ucsschoolLegalGuardian``.
+    en: |
+      Add LDAP equality index for new attribute ``ucsschoolLegalGuardian``.
+      A legal guardian user will be created for new installations in the ``DEMOSCHOOL``.
+    de: |
+      Es gibt einen LDAP Index für das neue Attribut ``ucsschoolLegalGuardian``.
+      Ein Gesetzlicher Vertreter wird, bei neu Installationen erstellt, in der ``DEMOSCHOOL`` erstellt.
