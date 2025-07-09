@@ -6,6 +6,6 @@ scope: ucs_5.2-0-ucs-school-5.2
 src: ucs-school-lib
 fix: 15.1.0
 bugs:
-  notes:
+  58460:
     en: Add new UCS@school role "Legal Guardian".
     de: Es gibt eine neue UCS@school Rolle "Gesetzlicher Vertreter".
