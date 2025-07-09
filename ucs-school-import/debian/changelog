@@ -1,4 +1,4 @@
-ucs-school-import (19.2.0) unstable; urgency=medium
+ucs-school-import (19.2.1) unstable; urgency=medium
 
   * Issue univention/dev/education/ucsschool#1453: Add legal guardian.
 

@@ -122,8 +122,8 @@ ucs_registerLDAPExtension "$@" --ucsversionstart "4.4-0" --ucsversionend "5.99-0
 ucs_registerLDAPExtension "$@" --ucsversionstart "4.4-0" --ucsversionend "5.99-0" --udm_hook /usr/share/ucs-school-import/schema/ucsschool_user_options.py --udm_hook_messagecatalog /usr/share/ucs-school-import/schema/de.mo || die
 ucs_registerLDAPExtension "$@" --ucsversionstart "4.4-0" --ucsversionend "5.99-0" --udm_hook /usr/share/ucs-school-import/schema/ucsschool_purge_timestamp.py || die
 ucs_registerLDAPExtension "$@" --ucsversionstart "4.4-0" --ucsversionend "5.99-0" --udm_hook /usr/share/ucs-school-import/schema/ucsschool_role_computers.py || die
-ucs_registerLDAPExtension "$@" --ucsversionstart "5.0-0" --ucsversionend "5.99-0" --udm_hook /usr/share/ucs-school-import/schema/ucsschool_legal_guardian.py || die
-ucs_registerLDAPExtension "$@" --ucsversionstart "5.0-0" --ucsversionend "5.99-0" --udm_hook /usr/share/ucs-school-import/schema/ucsschool_legal_ward.py || die
+ucs_registerLDAPExtension "$@" --ucsversionstart "5.0-0" --ucsversionend "5.99-0" --udm_hook /usr/share/ucs-school-import/schema/ucsschool_legal_guardian.py --udm_hook_messagecatalog /usr/share/ucs-school-import/schema/de.mo || die
+ucs_registerLDAPExtension "$@" --ucsversionstart "5.0-0" --ucsversionend "5.99-0" --udm_hook /usr/share/ucs-school-import/schema/ucsschool_legal_ward.py --udm_hook_messagecatalog /usr/share/ucs-school-import/schema/de.mo || die
 
 # create extended attributes for UCS@school container if missing
 univention-directory-manager container/cn create "$@" --ignore_exists \
@@ -499,15 +499,15 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
     --set groupPosition="1" \
     --append translationGroupName='"de_DE" "Allgemein"' \
     --set shortDescription="Legal wards" \
-    --set longDescription="Legal wards" \
+    --set longDescription="Users which are the legal guardian for this person, e.g. their parents." \
     --append translationShortDescription='"de_DE" "Schutzbefohlene"' \
-    --append translationLongDescription='"de_DE" "Schutzbefohlene"' \
+    --append translationLongDescription='"de_DE" "Benutzer, für die diese Person der gesetzliche Vertreter ist, z. B. ihre Kinder."' \
     --set CLIName="ucsschoolLegalWard" \
     --set objectClass="ucsschoolLegalGuardian" \
-    --set ldapMapping="__VirtualAttribute__" \
+    --set ldapMapping="ucsschoolLegalWard" \
     --set syntax="UCSSchoolStudentDN" \
     --set hook=UcsschoolLegalGuardian \
-    --set mayChange="0" \
+    --set mayChange="1" \
     --set multivalue="1" \
     --set doNotSearch="1" \
     --set disableUDMWeb=0 || die
@@ -523,9 +523,9 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
     --set groupPosition="1" \
     --append translationGroupName='"de_DE" "Allgemein"' \
     --set shortDescription="Legal guardians" \
-    --set longDescription="Legal guardians" \
+    --set longDescription="Users which are the legal guardian for this person, e.g. their parents." \
     --append translationShortDescription='"de_DE" "Gesetzliche Vertreter"' \
-    --append translationLongDescription='"de_DE" "Gesetzliche Vertreter"' \
+    --append translationLongDescription='"de_DE" "Benutzer, die der gesetzliche Vertreter dieser Person sind, z. B. ihre Eltern."' \
     --set CLIName="ucsschoolLegalGuardian" \
     --set objectClass="ucsschoolStudent" \
     --set ldapMapping="ucsschoolLegalGuardian" \

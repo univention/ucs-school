@@ -35,7 +35,7 @@ import univention.admin.uexceptions
 from univention.admin import localization
 from univention.admin.hook import simpleHook
 
-translation = localization.translation("ucsschool-import-udm-hooks")
+translation = localization.translation("univention-admin-hooks-ucsschool_legal_ward")
 _ = translation.translate
 
 MAX_LEGAL_GUARDIANS = 4
@@ -60,10 +60,16 @@ class UcsschoolLegalWard(simpleHook):
         if num_legal_wards >= MAX_LEGAL_WARDS:
             raise MaxLegalWards(
                 _(
-                    "Legal guardian %s already has %d legal wards. "
-                    "Adding %s would increase it above the maximum allowed legal wards."
+                    "Legal guardian %(legal_guardian_dn)s already has %(num_legal_wards)d "
+                    "legal wards. Adding %(self_dn)s would increase it above the maximum "
+                    "allowed legal wards (%(max_legal_wards)d)."
                 )
-                % (legal_guardian_dn, num_legal_wards, obj.dn)
+                % {
+                    "legal_guardian_dn": legal_guardian_dn,
+                    "num_legal_wards": num_legal_wards,
+                    "self_dn": obj.dn,
+                    "max_legal_wards": MAX_LEGAL_WARDS,
+                }
             )
 
     def _check_restrictions(self, obj):
@@ -73,24 +79,25 @@ class UcsschoolLegalWard(simpleHook):
 
         if "ucsschoolLegalGuardian" in obj.info:
 
-            current_guardians = obj.info.get("ucsschoolLegalGuardian", [])
+            new_guardians = obj.info.get("ucsschoolLegalGuardian", [])
             old_guardians = obj.oldinfo.get("ucsschoolLegalGuardian", [])
-            new_legal_guardian_dns = set(current_guardians).difference(old_guardians)
 
-            if len(new_legal_guardian_dns) == 0:
-                return
-
-            if len(new_legal_guardian_dns) > 0 and len(current_guardians) > MAX_LEGAL_GUARDIANS:
+            if len(new_guardians) > MAX_LEGAL_GUARDIANS:
                 # New guardians were added and we are above the maximum
                 raise MaxLegalGuards(
                     _(
-                        "Legal ward %s has %d legal guardians, which is above"
-                        " the maximum allowed number of legal guardians (%d)."
+                        "Legal ward %(self_dn)s would have %(num_legal_guardians)d "
+                        "legal guardians, which is above the maximum allowed number of "
+                        "legal guardians (%(max_legal_guardians)d)."
                     )
-                    % (obj.dn, len(obj["ucsschoolLegalGuardian"]), MAX_LEGAL_GUARDIANS)
+                    % {
+                        "self_dn": obj.dn,
+                        "num_legal_guardians": len(obj["ucsschoolLegalGuardian"]),
+                        "max_legal_guardians": MAX_LEGAL_GUARDIANS,
+                    }
                 )
 
-            for legal_guardian_dn in new_legal_guardian_dns:
+            for legal_guardian_dn in set(new_guardians).difference(old_guardians):
                 self._check_legal_ward_count(obj, legal_guardian_dn)
 
     def hook_ldap_pre_create(self, obj):

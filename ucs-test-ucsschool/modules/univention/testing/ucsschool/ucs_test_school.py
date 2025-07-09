@@ -863,7 +863,8 @@ class UCSTestSchool(object):
         ucsschool_roles=None,  # type: Optional[List]
         wait_for_replication=True,  # type: Optional[bool]
         check_password_policies=False,  # type: Optional[bool]
-        legal_guardians=None,
+        legal_guardians=None,  # type: Optional[List]
+        legal_wards=None,  # type: Optional[List]
     ):  # type: (...) -> Tuple[str, str]
         """
         Create a user in specified OU with given attributes. If attributes are not specified, random
@@ -920,6 +921,8 @@ class UCSTestSchool(object):
 
         if legal_guardians:
             kwargs["legal_guardians"] = legal_guardians
+        if legal_wards:
+            kwargs["legal_wards"] = legal_wards
 
         logger.info("*** Creating new %s %r with %r.", cls.__name__, username, kwargs)
         User.invalidate_all_caches()

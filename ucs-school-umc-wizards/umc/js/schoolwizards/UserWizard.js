@@ -171,37 +171,10 @@ define([
 					type: TextBox,
 					name: 'email',
 					label: _('E-Mail')
-				}, {
-					type: MultiObjectSelect,
-					name: 'legal_wards',
-					disabled: true,
-					label: _('Legal wards'),
-					description: _('Users for which this person is the legal guardian, e.g. their children.'),
-					formatter: function(entries) {
-						let tmp = array.map(entries, function(ientry) {
-							return {
-								id: ientry,
-								label: tools.explodeDn(ientry, true).shift() || ''
-							};
-						});
-						return tmp;
-					},
-				}, {
-					type: MultiObjectSelect,
-					name: 'legal_guardians',
-					disabled: true,
-					label: _('Legal Guardians'),
-					description: _('Users which are the legal guardian for this person, e.g. their parents.'),
-					formatter: function(entries) {
-						let tmp = array.map(entries, function(ientry) {
-							return {
-								id: ientry,
-								label: tools.explodeDn(ientry, true).shift() || ''
-							};
-						});
-						return tmp;
-					},
-				}, {
+				},
+				this.getLegalCareWidget('legal_wards'),
+				this.getLegalCareWidget('legal_guardians'),
+				{
 					type: PasswordInputBox,
 					name: 'password',
 					label: _('Password'),
@@ -247,6 +220,68 @@ define([
 			var name = this.getWidget('item', 'name').get('value');
 			var message = _('User "%s" has been successfully created. Continue to create another user or press "Cancel" to close this wizard.', name);
 			dialog.contextNotify(message);
+		},
+
+		getLegalCareWidget: function(widgetType) {
+			let mapping = {
+				legal_guardians: {
+					name: 'legal_guardians',
+					label: _('Legal Guardians'),
+					description: _('Users which are the legal guardian for this person, e.g. their parents.'),
+					options_type: 'legalGuardian',
+				},
+				legal_wards: {
+					name: 'legal_wards',
+					label: _('Legal wards'),
+					description: _('Users for which this person is the legal guardian, e.g. their children.'),
+					options_type: 'student',
+				}
+			};
+			let parseQueryResult = function(data) {
+				return array.map(data.result, function(user) {
+					return {
+						id: user['$dn$'],
+						label: tools.explodeDn(user['$dn$'], true).shift() || ''
+					}
+				});
+			};
+			let widget = {
+				type: MultiObjectSelect,
+				name: mapping[widgetType].name,
+				label: mapping[widgetType].label,
+				description: mapping[widgetType].description,
+				queryWidgets: [{
+					type: TextBox,
+					name: 'pattern',
+					label: _('Name')
+				}],
+				queryCommand: lang.hitch(this, function(options) {
+					options['type'] = mapping[widgetType].options_type;
+					options['accountStatus'] = 'activated';
+					options['school'] = this.selectedSchool;
+					options['filter'] = options['pattern'];
+					delete options['pattern'];
+					return this.umcpCommand(
+						'schoolwizards/users/query',
+						options,
+						'schoolwizards/users'
+					).then(parseQueryResult);
+				}),
+				autoSearch: false,
+				formatter: function(entries) {
+					let tmp = array.map(entries, function(ientry) {
+						if (typeof ientry === 'string') {
+							return {
+								id: ientry,
+								label: tools.explodeDn(ientry, true).shift() || ''
+							}; // from attribute at user
+						}
+						return ientry; // from selection widget
+					});
+					return tmp;
+				},
+			};
+			return widget;
 		},
 
 		updateWidgets: function(/*String*/ currentPage) {

@@ -21,3 +21,44 @@ msgid ""
 "%(option)s cannot be activated together with %(illegals)s."
 msgstr ""
 "%(option)s kann nicht zusammen mit %(illegals)s aktiviert werden."
+
+#: udm_hook/ucsschool_legal_ward.py
+#, python-format
+msgid ""
+"Legal guardian %(legal_guardian_dn)s already has %(num_legal_wards)d "
+"legal wards. Adding %(self_dn)s would increase it above the maximum "
+"allowed legal wards (%(max_legal_wards)d)."
+msgstr ""
+"Gesetzlicher Vertreter %(legal_guardian_dn)s hat bereits %(num_legal_wards)d "
+"Schutzbefohlene. Das Hinzufügen von %(self_dn)s würde ihn über die maximal "
+"erlaubte Anzahl an Schutzbefohlenen (%(max_legal_wards)d) hinaus erhöhen."
+
+#: udm_hook/ucsschool_legal_ward.py
+#, python-format
+msgid ""
+"Legal ward %(self_dn)s would have %(num_legal_guardians)d "
+"legal guardians, which is above the maximum allowed number of "
+"legal guardians (%(max_legal_guardians)d)."
+msgstr ""
+"Schutzbefohlene %(self_dn)s hätte %(num_legal_guardians)d "
+"gesetzliche Vertreter, was über der maximal zulässigen Anzahl von "
+"gesetzlichen Vertretern (%(max_legal_guardians)d) liegt."
+
+#: udm_hook/ucsschool_legal_guardian.py
+#, python-format
+msgid ""
+"Legal guardian %(self_dn)s would have %(num_of_wards)d legal wards, "
+"which is above the maximum allowed number of legal wards (%(max_legal_wards)d)."
+msgstr ""
+"Gesetzlicher Vertreter %(self_dn)s würde %(num_of_wards)d Schutzbefohlene haben, "
+"was über der maximal erlaubten Anzahl von Schutzbefohlenen (%(max_legal_wards)d) liegt."
+
+#: udm_hook/ucsschool_legal_guardian.py
+#, python-format
+msgid ""
+"Legal ward %(student_dn)s already has %(num_legal_guardians)d legal guardians. "
+"Adding %(self_dn)s would increase it above the maximum allowed "
+"legal guardians (%(max_legal_guardians)d)."
+msgstr ""
+"Schutzbefohlene %(student_dn)s hat bereits %(num_legal_guardians)d Erziehungsberechtigte. "
+"Das Hinzufügen von %(self_dn)s würde die zulässige Anzahl gesetzlicher Vertreter überschreiten (%(max_legal_guardians)d)."

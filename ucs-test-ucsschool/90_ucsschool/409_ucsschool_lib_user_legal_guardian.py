@@ -9,6 +9,7 @@
 
 import pytest
 
+import univention.admin.uexceptions
 import univention.testing.strings as uts
 from ucsschool.lib.models.attributes import ValidationError
 from ucsschool.lib.models.user import LegalGuardian, Student
@@ -64,6 +65,34 @@ def test_create_student_with_legal_guardian(schoolenv):
     assert set(legal_guardian_2.legal_wards) == {student_dn}
 
 
+def test_create_legal_guardian_with_legal_ward(schoolenv):
+
+    ou_name, _ = schoolenv.create_ou(name_edudc=schoolenv.ucr["hostname"])
+    class_name, class_dn = schoolenv.create_school_class(ou_name)
+    _, student_dn = schoolenv.create_student(
+        ou_name=ou_name,
+        classes=class_name,
+    )
+
+    _, legal_guardian_dn = schoolenv.create_legal_guardian(ou_name=ou_name, legal_wards=[student_dn])
+
+    student = Student.from_dn(student_dn, ou_name, schoolenv.lo)
+    legal_guardian = LegalGuardian.from_dn(legal_guardian_dn, ou_name, schoolenv.lo)
+
+    assert set(student.legal_guardians) == {legal_guardian_dn}
+    assert set(legal_guardian.legal_wards) == {student_dn}
+
+
+def test_create_legal_guardian_with_missing_legal_ward(schoolenv):
+    ou_name, _ = schoolenv.create_ou(name_edudc=schoolenv.ucr["hostname"])
+
+    with pytest.raises(univention.admin.uexceptions.base, match=".*Could not find student.*"):
+        _, legal_guardian_dn = schoolenv.create_legal_guardian(
+            ou_name=ou_name,
+            legal_wards=["uid=idonotexist,cn=users,dc=ucs,dc=test"],
+        )
+
+
 def test_create_student_with_missing_legal_guardian(schoolenv):
     ou_name, _ = schoolenv.create_ou(name_edudc=schoolenv.ucr["hostname"])
 
@@ -106,9 +135,44 @@ def test_create_student_with_too_many_legal_guardians(schoolenv):
 
     class_name, class_dn = schoolenv.create_school_class(ou_name)
 
-    with pytest.raises(Exception, match=".*is above the maximum allowed number of legal guardians.*"):
+    with pytest.raises(
+        univention.admin.uexceptions.base,
+        match=".*is above the maximum allowed number of legal guardians.*",
+    ):
         _, student_dn = schoolenv.create_student(
             ou_name=ou_name,
             legal_guardians=legal_guardian_dns,
             classes=class_name,
         )
+
+
+def test_update_legal_guardian(schoolenv):
+    ou_name, _ = schoolenv.create_ou(name_edudc=schoolenv.ucr["hostname"])
+    class_name, class_dn = schoolenv.create_school_class(ou_name)
+    _, student_dn = schoolenv.create_student(ou_name=ou_name, legal_guardians=[], classes=class_name)
+    _, legal_guardian_dn = schoolenv.create_legal_guardian(ou_name=ou_name)
+    student = Student.from_dn(student_dn, ou_name, schoolenv.lo)
+    assert student.dn == student_dn
+    assert student.legal_guardians == []
+    student.legal_guardians = [legal_guardian_dn]
+    student.modify(schoolenv.lo)
+    student = Student.from_dn(student_dn, ou_name, schoolenv.lo)
+    assert student.legal_guardians == [legal_guardian_dn]
+    legal_guardian = LegalGuardian.from_dn(legal_guardian_dn, ou_name, schoolenv.lo)
+    assert legal_guardian.legal_wards == [student_dn]
+
+
+def test_update_legal_ward(schoolenv):
+    ou_name, _ = schoolenv.create_ou(name_edudc=schoolenv.ucr["hostname"])
+    class_name, class_dn = schoolenv.create_school_class(ou_name)
+    _, student_dn = schoolenv.create_student(ou_name=ou_name, legal_guardians=[], classes=class_name)
+    _, legal_guardian_dn = schoolenv.create_legal_guardian(ou_name=ou_name)
+    legal_guardian = LegalGuardian.from_dn(legal_guardian_dn, ou_name, schoolenv.lo)
+    assert legal_guardian.dn == legal_guardian_dn
+    assert legal_guardian.legal_wards == []
+    legal_guardian.legal_wards = [student_dn]
+    legal_guardian.modify(schoolenv.lo)
+    student = Student.from_dn(student_dn, ou_name, schoolenv.lo)
+    assert student.legal_guardians == [legal_guardian_dn]
+    legal_guardian = LegalGuardian.from_dn(legal_guardian_dn, ou_name, schoolenv.lo)
+    assert legal_guardian.legal_wards == [student_dn]
