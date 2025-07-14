@@ -136,6 +136,7 @@ def _filter_users(
             and not user.is_administrator(ldap_machine_write)
             and not user.is_staff(ldap_machine_write)
             and not user.is_teacher(ldap_machine_write)
+            and not user.is_legal_guardian(ldap_machine_write)
         ):
             raise UMC_Error(
                 _("User %s does not belong to school %r.")
@@ -296,6 +297,7 @@ class Instance(SchoolBaseModule):
                 and not user.is_administrator(ldap_user_read)
                 and not user.is_staff(ldap_user_read)
                 and not user.is_teacher(ldap_user_read)
+                and not user.is_legal_guardian(ldap_user_read)
             ):
                 continue  # only display school users
             members.append({"id": user.dn, "label": Display.user(user.get_udm_object(ldap_user_read))})

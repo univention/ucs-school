@@ -1,0 +1,11 @@
+product: ucsschool
+release: "5.2"
+released:
+version: [0]
+scope: ucs_5.2-0-ucs-school-5.2
+src: ucs-school-umc-groups
+fix: 11.1.0
+bugs:
+  58460:
+    en: Add new UCS@school role "Legal Guardian".
+    de: Es gibt eine neue UCS@school Rolle "Gesetzlicher Vertreter".
