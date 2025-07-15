@@ -102,6 +102,12 @@ def parse_cmdline():
         help="Number of teachers to create [default: %(default)s].",
     )
     parser.add_argument(
+        "--legal_guardians",
+        dest="legal_guardians",
+        type=int,
+        help="Number of legal guardians to create [default: %(default)s].",
+    )
+    parser.add_argument(
         "--staffteachers",
         dest="staffteachers",
         type=int,
@@ -155,6 +161,7 @@ def parse_cmdline():
             args.staff,
             args.students,
             args.teachers,
+            args.legal_guardians,
             args.staffteachers,
             args.classes,
             args.inclasses,
@@ -222,6 +229,7 @@ def main():
         staff=args.staff,
         students=args.students,
         teachers=args.teachers,
+        legal_guardians=args.legal_guardians,
         staffteachers=args.staffteachers,
         classes=args.classes,
         inclasses=args.inclasses,

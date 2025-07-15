@@ -1,3 +1,10 @@
+ucs-test-ucsschool (8.0.28) unstable; urgency=medium
+
+  * feat: add ImportLegalGuardian class
+    Issue univention/dev/education/ucsschool#1457
+
+ -- Jürn Brodersen <brodersen@univention.de>  Tue, 15 Jul 2025 13:49:02 +0200
+
 ucs-test-ucsschool (8.0.27) unstable; urgency=medium
 
   * Issue univention/dev/education/ucsschool#1454: Add test for legal guardian

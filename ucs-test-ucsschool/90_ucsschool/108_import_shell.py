@@ -1,7 +1,7 @@
 #!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Test python interactive shell helper import
-## tags: [apptest,ucsschool,ucsschool_base1]
+## tags: [apptest,ucsschool,ucsschool_base1,ucs-school-import]
 ## roles: [domaincontroller_master]
 ## exposure: dangerous
 ## packages:
@@ -10,6 +10,7 @@
 
 import univention.testing.strings as uts
 from ucsschool.importer.utils.shell import (
+    ImportLegalGuardian,
     ImportStaff,
     ImportStudent,
     ImportTeacher,
@@ -26,7 +27,7 @@ def test_import_shell(ucr, schoolenv):
     ), "Import configuration has not been not setup."
     ou_name, ou_dn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
     lo = schoolenv.open_ldap_connection(admin=True)
-    for kls in [ImportStaff, ImportStudent, ImportTeacher, ImportTeachersAndStaff]:
+    for kls in [ImportStaff, ImportStudent, ImportTeacher, ImportLegalGuardian, ImportTeachersAndStaff]:
         user = kls(
             name=uts.random_username(),
             school=ou_name,

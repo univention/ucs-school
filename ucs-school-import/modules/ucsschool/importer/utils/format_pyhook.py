@@ -47,6 +47,7 @@ class FormatPyHook(ImportPyHook):
         "patch_fields_staff": None,
         "patch_fields_student": None,
         "patch_fields_teacher": None,
+        "patch_fields_legal_guardian": None,
         "patch_fields_teacher_and_staff": None,
     }
     # The hook will be run only for property names in this list.
@@ -77,6 +78,18 @@ class FormatPyHook(ImportPyHook):
         return fields
 
     def patch_fields_teacher(self, property_name, fields):
+        """
+        Run code before formatting an property using a schema in
+        format_from_scheme().
+
+        :param str property_name: Name of property_name that will be formatted
+        :param dict fields: dictionary with the users attributes and udm_properties
+        :return: fields dictionary that be used by format_from_scheme()
+        :rtype: dict
+        """
+        return fields
+
+    def patch_fields_legal_guardian(self, property_name, fields):
         """
         Run code before formatting an property using a schema in
         format_from_scheme().

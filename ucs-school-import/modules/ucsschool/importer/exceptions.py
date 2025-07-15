@@ -120,6 +120,14 @@ class InvalidSchools(UcsSchoolImportError):
     pass
 
 
+class InvalidLegalWard(UcsSchoolImportError):
+    pass
+
+
+class InvalidLegalGuardian(UcsSchoolImportError):
+    pass
+
+
 class LDAPWriteAccessDenied(UcsSchoolImportFatalError):
     def __init__(self, msg=None, *args, **kwargs):
         msg = msg or "Tried to write using a read only connection (during a dry-run?)."

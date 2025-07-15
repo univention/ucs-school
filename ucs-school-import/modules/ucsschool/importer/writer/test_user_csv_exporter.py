@@ -45,6 +45,8 @@ class TestUserCsvExporter(ResultExporter):
         "Beschreibung",
         "Telefon",
         "EMail",
+        "Eltern",
+        "Kinder",
     )
 
     def get_iter(self, user_import):
@@ -71,7 +73,17 @@ class TestUserCsvExporter(ResultExporter):
 
 
 class HttpApiTestUserCsvExporter(TestUserCsvExporter):
-    field_names = ("Schule", "Vorname", "Nachname", "Klassen", "Beschreibung", "Telefon", "EMail")
+    field_names = (
+        "Schule",
+        "Vorname",
+        "Nachname",
+        "Klassen",
+        "Beschreibung",
+        "Telefon",
+        "EMail",
+        "Eltern",
+        "Kinder",
+    )
 
     def serialize(self, user):
         if user["Klassen"]:

@@ -1,7 +1,7 @@
 #!/usr/share/ucs-test/runner python3
 ## -*- coding: utf-8 -*-
 ## desc: test if UDM syntax checks are applied to ImportUser.udm_properties
-## tags: [apptest,ucsschool,ucsschool_base1]
+## tags: [apptest,ucsschool,ucsschool_base1,ucs-school-import]
 ## roles: [domaincontroller_master]
 ## exposure: dangerous
 ## packages:
@@ -13,6 +13,7 @@ import univention.testing.ucr
 import univention.testing.ucsschool.ucs_test_school as utu
 from ucsschool.importer.exceptions import NotSupportedError, UDMValueError
 from ucsschool.importer.utils.shell import (
+    ImportLegalGuardian,
     ImportStaff,
     ImportStudent,
     ImportTeacher,
@@ -38,7 +39,13 @@ def main():
         with utu.UCSTestSchool() as schoolenv:
             ou_name, ou_dn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
             lo = schoolenv.open_ldap_connection(admin=True)
-            for kls in [ImportStaff, ImportStudent, ImportTeacher, ImportTeachersAndStaff]:
+            for kls in [
+                ImportStaff,
+                ImportStudent,
+                ImportTeacher,
+                ImportLegalGuardian,
+                ImportTeachersAndStaff,
+            ]:
                 #
                 # check if UDM syntax checks are applied
                 #

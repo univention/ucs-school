@@ -59,6 +59,7 @@ def test_list_models():
         "ImportStaff",
         "ImportStudent",
         "ImportTeacher",
+        "ImportLegalGuardian",
         "ImportTeachersAndStaff",
         "MacComputer",
         "MailDomain",
@@ -384,6 +385,8 @@ def test_modify(cmd_line_role, ucr_hostname, ucr_ldap_base):
         for role in ("student", "teacher", "legal_guardian", "staff", "teacher_and_staff"):
             create_func = getattr(schoolenv, "create_{}".format(role))
             user_name, user_dn = create_func(ou_name)
+            wait_for_drs_replication(filter_format("cn=%s", (user_name,)))
+            wait_for_s4connector()
             person = Person(ou_name, role)
             person.set_random_birthday()
 
@@ -412,6 +415,7 @@ def test_modify(cmd_line_role, ucr_hostname, ucr_ldap_base):
             ]
             rv, stdout, stderr = exec_cmd(cmd, log=True, raise_exc=True)
             assert user_dn in stdout
+            wait_for_s4connector()
             utils.verify_ldap_object(
                 user_dn,
                 expected_attr={
@@ -455,7 +459,6 @@ def test_modify(cmd_line_role, ucr_hostname, ucr_ldap_base):
             ]
             rv, stdout, stderr = exec_cmd(cmd, log=True, raise_exc=True)
             assert user_dn in stdout
-            wait_for_drs_replication(filter_format("cn=%s", (user_name,)))
             wait_for_s4connector()
             utils.verify_ldap_object(
                 user_dn,
@@ -494,6 +497,7 @@ def test_modify(cmd_line_role, ucr_hostname, ucr_ldap_base):
             school_class_name, ou_name, ucr_ldap_base
         )
         assert dn in stdout
+        wait_for_s4connector()
         utils.verify_ldap_object(
             dn,
             expected_attr={
@@ -531,6 +535,7 @@ def test_modify(cmd_line_role, ucr_hostname, ucr_ldap_base):
         ]
         rv, stdout, stderr = exec_cmd(cmd, log=True, raise_exc=True)
         assert dn in stdout
+        wait_for_s4connector()
         utils.verify_ldap_object(
             dn,
             expected_attr={

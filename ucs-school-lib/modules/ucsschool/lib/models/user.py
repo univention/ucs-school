@@ -111,7 +111,11 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
     type_name = None  # type: str
     type_filter = (
-        "(|(objectClass=ucsschoolTeacher)(objectClass=ucsschoolStaff)(objectClass=ucsschoolStudent))"
+        "(|"
+        "(objectClass=ucsschoolTeacher)"
+        "(objectClass=ucsschoolLegalGuardian)"
+        "(objectClass=ucsschoolStaff)(objectClass=ucsschoolStudent)"
+        ")"
     )
 
     _profile_path_cache = {}  # type: Dict[str, str]

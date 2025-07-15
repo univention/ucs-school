@@ -1,7 +1,7 @@
 #!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Test validation of "mandatory_attributes" property
-## tags: [apptest,ucsschool,ucsschool_base1]
+## tags: [apptest,ucsschool,ucsschool_base1,ucs-school-import]
 ## roles: [domaincontroller_master]
 ## exposure: dangerous
 ## packages:
@@ -15,6 +15,7 @@ import pytest
 import univention.testing.strings as uts
 from ucsschool.importer.exceptions import EmptyMandatoryAttribute, MissingMandatoryAttribute
 from ucsschool.importer.utils.shell import (
+    ImportLegalGuardian,
     ImportStaff,
     ImportStudent,
     ImportTeacher,
@@ -34,7 +35,7 @@ def test_import_user_validate_mandatory_attributes(ucr, schoolenv):
     config["mandatory_attributes"].append(additional_attr)
     ou_name, ou_dn = schoolenv.create_ou(name_edudc=ucr["hostname"])
     lo = schoolenv.open_ldap_connection(admin=True)
-    for kls in [ImportStaff, ImportStudent, ImportTeacher, ImportTeachersAndStaff]:
+    for kls in [ImportStaff, ImportStudent, ImportTeacher, ImportLegalGuardian, ImportTeachersAndStaff]:
         logger.info("*** Positive test (additional_attr %r is set) -> no fail expected", additional_attr)
         user = kls(
             name=uts.random_username(),

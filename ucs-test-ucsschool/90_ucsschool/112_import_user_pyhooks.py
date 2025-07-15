@@ -1,7 +1,7 @@
 #!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## -*- coding: utf-8 -*-
 ## desc: Test modifications on user objects by python import hooks
-## tags: [apptest,ucsschool,ucsschool_base1]
+## tags: [apptest,ucsschool,ucsschool_base1,ucs-school-import]
 ## roles: [domaincontroller_master]
 ## exposure: dangerous
 ## packages:
@@ -16,6 +16,7 @@ import pytest
 
 import univention.testing.strings as uts
 from ucsschool.importer.utils.shell import (
+    ImportLegalGuardian,
     ImportStaff,
     ImportStudent,
     ImportTeacher,
@@ -48,7 +49,7 @@ def test_import_user_pyhooks(cleanup_ext, ucr, schoolenv):
         2, name_edudc=ucr.get("hostname")
     )
     lo = schoolenv.open_ldap_connection(admin=True)
-    for kls in [ImportStaff, ImportStudent, ImportTeacher, ImportTeachersAndStaff]:
+    for kls in [ImportStaff, ImportStudent, ImportTeacher, ImportLegalGuardian, ImportTeachersAndStaff]:
         username = uts.random_username()
         kwargs = {
             "school": ou_name,

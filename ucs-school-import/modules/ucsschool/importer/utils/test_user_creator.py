@@ -52,6 +52,7 @@ class TestUserCreator(object):
         staff=0,
         students=0,
         teachers=0,
+        legal_guardians=0,
         staffteachers=0,
         classes=0,
         inclasses=2,
@@ -62,6 +63,7 @@ class TestUserCreator(object):
         self.num_staff = staff
         self.num_students = students
         self.num_teachers = teachers
+        self.num_legal_guardians = legal_guardians
         self.num_staffteachers = staffteachers
         self.num_classes = classes
         self.num_inclasses = inclasses
@@ -70,6 +72,7 @@ class TestUserCreator(object):
         self.staff = []
         self.students = []
         self.teachers = []
+        self.legal_guardians = []
         self.staffteachers = []
         self.class_names = []
         self.class_name_generators = {}
@@ -150,6 +153,7 @@ class TestUserCreator(object):
             (self.num_staff, "staff"),
             (self.num_students, "student"),
             (self.num_teachers, "teacher"),
+            (self.num_legal_guardians, "legal_guardian"),
             (self.num_staffteachers, "staffteacher"),
         )
         total_users_num = sum(job[0] for job in jobs)
@@ -173,6 +177,8 @@ class TestUserCreator(object):
                     "Telefon": "+{:>02}-{:>03}-{}".format(  # nosec
                         random.randint(1, 99), random.randint(1, 999), random.randint(1000, 999999)
                     ),
+                    "Eltern": "",
+                    "Kinder": "",
                 }
                 if self.email:
                     user["EMail"] = ImportUser.normalize(
@@ -184,7 +190,7 @@ class TestUserCreator(object):
                 else:
                     user["Schulen"] = [random.choice(self.ous)]  # nosec
 
-                if kind == "staff":
+                if kind in ["staff", "legal_guardians"]:
                     user["Klassen"] = {}
                 elif kind == "student":
                     # students are in 1 class

@@ -117,6 +117,9 @@ if ucr.get("server/role") in ("domaincontroller_master", "domaincontroller_backu
             "importstaff": ModuleAndClass("ucsschool.importer.models.import_user", "ImportStaff"),
             "importstudent": ModuleAndClass("ucsschool.importer.models.import_user", "ImportStudent"),
             "importteacher": ModuleAndClass("ucsschool.importer.models.import_user", "ImportTeacher"),
+            "importlegalguardian": ModuleAndClass(
+                "ucsschool.importer.models.import_user", "ImportLegalGuardian"
+            ),
             "importteachersandstaff": ModuleAndClass(
                 "ucsschool.importer.models.import_user", "ImportTeachersAndStaff"
             ),

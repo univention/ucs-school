@@ -197,9 +197,10 @@ class DefaultUserImportFactory(object):
             was empty
         :rtype: ImportUser
         """
-        from ucsschool.lib.roles import role_pupil, role_staff, role_teacher
+        from ucsschool.lib.roles import role_legal_guardian, role_pupil, role_staff, role_teacher
 
         from .models.import_user import (
+            ImportLegalGuardian,
             ImportStaff,
             ImportStudent,
             ImportTeacher,
@@ -216,6 +217,8 @@ class DefaultUserImportFactory(object):
                 return ImportTeachersAndStaff(*arg, **kwargs)
             else:
                 return ImportTeacher(*arg, **kwargs)
+        if role_legal_guardian in cur_user_roles:
+            return ImportLegalGuardian(*arg, **kwargs)
         else:
             return ImportStaff(*arg, **kwargs)
 

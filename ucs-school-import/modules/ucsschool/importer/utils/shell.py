@@ -65,6 +65,7 @@ from ..exceptions import UcsSchoolImportFatalError as _UcsSchoolImportFatalError
 from ..factory import setup_factory as _setup_factory
 from ..frontend.user_import_cmdline import UserImportCommandLine as _UserImportCommandLine
 from ..models.import_user import (
+    ImportLegalGuardian,
     ImportStaff,
     ImportStudent,
     ImportTeacher,
@@ -80,6 +81,7 @@ from .ldap_connection import (
 assert ImportStaff
 assert ImportStudent
 assert ImportTeacher
+assert ImportLegalGuardian
 assert ImportTeachersAndStaff
 assert ImportUser
 

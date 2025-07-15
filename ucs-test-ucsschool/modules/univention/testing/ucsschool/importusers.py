@@ -24,7 +24,13 @@ from ucsschool.lib.models.user import (
     Teacher as TeacherLib,
     TeachersAndStaff as TeachersAndStaffLib,
 )
-from ucsschool.lib.roles import create_ucsschool_role_string, role_staff, role_student, role_teacher
+from ucsschool.lib.roles import (
+    create_ucsschool_role_string,
+    role_legal_guardian,
+    role_staff,
+    role_student,
+    role_teacher,
+)
 from univention.testing import utils
 from univention.testing.ucs_samba import wait_for_s4connector
 from univention.testing.ucsschool.importou import create_ou_cli, get_school_base, remove_ou
@@ -80,12 +86,14 @@ class Person(object):
         if self.is_student():
             self.cn = cn_pupils
             self.grp_prefix = grp_prefix_pupils
+            self.legal_guardians = kwargs.get("legal_guardians", [])
         elif self.is_teacher():
             self.cn = cn_teachers
             self.grp_prefix = grp_prefix_teachers
         elif self.is_legal_guardian():
             self.cn = cn_legal_guardians
             self.grp_prefix = grp_prefix_legal_guardians
+            self.legal_wards = kwargs.get("legal_wards", [])
         elif self.is_teacher_staff():
             self.cn = cn_teachers_staff
             self.grp_prefix = grp_prefix_teachers
@@ -109,6 +117,8 @@ class Person(object):
                 subdir = os.path.join(self.school, "lehrer")
             elif self.is_staff():
                 subdir = os.path.join(self.school, "mitarbeiter")
+            elif self.is_legal_guardian():
+                subdir = os.path.join(self.school, "gesetzliche vertreter")
         return os.path.join("/home", subdir, self.username)
 
     def make_school_base(self):
@@ -216,6 +226,10 @@ class Person(object):
             value_map.get("birthday", "__EMPTY__"): self.birthday,
             value_map.get("expiration_date", "__EMPTY__"): self.expiration_date,
         }
+        if hasattr(self, "legal_guardians"):
+            result[value_map.get("legal_guardians", "__EMPTY__")] = ",".join(self.legal_guardians)
+        if hasattr(self, "legal_wards"):
+            result[value_map.get("legal_wards", "__EMPTY__")] = ",".join(self.legal_wards)
         result.pop("__EMPTY__", None)
         return result
 
@@ -371,6 +385,7 @@ class Person(object):
         roles = {
             "student": [role_student],
             "teacher": [role_teacher],
+            "legal_guardian": [role_legal_guardian],
             "staff": [role_staff],
             "teacher_staff": [role_teacher, role_staff],
             "teacher_and_staff": [role_teacher, role_staff],

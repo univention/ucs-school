@@ -112,7 +112,8 @@ class ParseUserImportCmdline(object):
             "-u",
             "--user_role",
             help="Set this, if the source data contains users with only one role "
-            "<student|staff|teacher|teacher_and_staff> (shortcut for --set user_role=...) "
+            "<student|staff|teacher|legal_guardian|teacher_and_staff> "
+            "(shortcut for --set user_role=...) "
             "[default: %(default)s].",
         )
         self.parser.add_argument(
@@ -135,10 +136,12 @@ class ParseUserImportCmdline(object):
         if (
             hasattr(self.args, "user_role")
             and self.args.user_role
-            and self.args.user_role not in ["none", "student", "staff", "teacher", "teacher_and_staff"]
+            and self.args.user_role
+            not in ["none", "student", "staff", "teacher", "legal_guardian", "teacher_and_staff"]
         ):
             self.parser.error(
-                "Invalid user role. Must be one of none, student, staff, teacher, teacher_and_staff."
+                "Invalid user role. Must be one of "
+                "none, student, staff, teacher, legal_guardian, teacher_and_staff."
             )
         if hasattr(self.args, "user_role") and self.args.user_role == "none":
             self.args.user_role = None
