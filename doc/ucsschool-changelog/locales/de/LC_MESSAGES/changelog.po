@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UCS@school - 5.0 v7 Changelog \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-02 15:14+0000\n"
+"POT-Creation-Date: 2025-08-04 09:24+0000\n"
 "PO-Revision-Date: 2025-04-28 13:39+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,17 +22,29 @@ msgid "Changelog"
 msgstr "Changelog"
 
 #: ../../changelog.rst:14
+msgid "Released on 2025-08-06"
+msgstr "Veröffentlicht am 06.08.2025"
+
+#: ../../changelog.rst:16
+msgid "Source package *ucs-school-import-lusd* in version ``1.0.6``:"
+msgstr "Quellpaket *ucs-school-import-lusd* in Version ``1.0.6``:"
+
+#: ../../changelog.rst:18
+msgid "School names are now correctly prepended to class names (:uv:bug:`58499`)."
+msgstr "Schulnamen werden jetzt korrekt an Klassen vorangestellt (:uv:bug:`58499`)."
+
+#: ../../changelog.rst:23
 msgid "Released on 2025-06-04"
 msgstr "Veröffentlicht am 04.06.2025"
 
-#: ../../changelog.rst:16
+#: ../../changelog.rst:25
 msgid "Source package *ucs-school-umc-distribution* in version ``18.0.11``:"
 msgstr "Quellpaket *ucs-school-umc-distribution* in Version ``18.0.11``:"
 
-#: ../../changelog.rst:18 ../../changelog.rst:22 ../../changelog.rst:26
-#: ../../changelog.rst:30 ../../changelog.rst:34 ../../changelog.rst:38
-#: ../../changelog.rst:42 ../../changelog.rst:46 ../../changelog.rst:50
-#: ../../changelog.rst:54
+#: ../../changelog.rst:27 ../../changelog.rst:31 ../../changelog.rst:35
+#: ../../changelog.rst:39 ../../changelog.rst:43 ../../changelog.rst:47
+#: ../../changelog.rst:51 ../../changelog.rst:55 ../../changelog.rst:59
+#: ../../changelog.rst:63
 msgid ""
 "Security fix: The package has been checked and additional measures have "
 "been added to prevent possible cross-site scripting in the UMC module(s) "
@@ -42,51 +54,51 @@ msgstr ""
 " um ein mögliches Cross-Site-Scripting in den UMC-Modulen zu vermeiden "
 "(:uv:bug:`58366`)."
 
-#: ../../changelog.rst:20
+#: ../../changelog.rst:29
 msgid "Source package *ucs-school-umc-printermoderation* in version ``17.1.5``:"
 msgstr "Quellpaket *ucs-school-umc-printermoderation* in Version ``17.1.5``:"
 
-#: ../../changelog.rst:24
+#: ../../changelog.rst:33
 msgid "Source package *ucs-school-umc-wizards* in version ``12.0.15``:"
 msgstr "Quellpaket *ucs-school-umc-wizards* in Version ``12.0.15``:"
 
-#: ../../changelog.rst:28
+#: ../../changelog.rst:37
 msgid "Source package *ucs-school-umc-exam* in version ``10.0.18``:"
 msgstr "Quellpaket *ucs-school-umc-exam* in Version ``10.0.18``:"
 
-#: ../../changelog.rst:32
+#: ../../changelog.rst:41
 msgid "Source package *ucs-school-umc-computerroom* in version ``12.0.26``:"
 msgstr "Quellpaket *ucs-school-umc-computerroom* in Version ``12.0.26``:"
 
-#: ../../changelog.rst:36
+#: ../../changelog.rst:45
 msgid "Source package *ucs-school-umc-groups* in version ``10.0.11``:"
 msgstr "Quellpaket *ucs-school-umc-groups* in Version ``10.0.11``:"
 
-#: ../../changelog.rst:40
+#: ../../changelog.rst:49
 msgid "Source package *ucs-school-umc-internetrules* in version ``16.0.6``:"
 msgstr "Quellpaket *ucs-school-umc-internetrules* in Version ``16.0.6``:"
 
-#: ../../changelog.rst:44
+#: ../../changelog.rst:53
 msgid "Source package *ucs-school-umc-rooms* in version ``17.0.11``:"
 msgstr "Quellpaket *ucs-school-umc-rooms* in Version ``17.0.11``:"
 
-#: ../../changelog.rst:48
+#: ../../changelog.rst:57
 msgid "Source package *ucs-school-umc-users* in version ``16.0.11``:"
 msgstr "Quellpaket *ucs-school-umc-users* in Version ``16.0.11``:"
 
-#: ../../changelog.rst:52
+#: ../../changelog.rst:61
 msgid "Source package *ucs-school-umc-installer* in version ``8.0.11``:"
 msgstr "Quellpaket *ucs-school-umc-installer* in Version ``8.0.11``:"
 
-#: ../../changelog.rst:59
+#: ../../changelog.rst:68
 msgid "Released on 2025-04-28"
 msgstr "Veröffentlicht am 28.04.2025"
 
-#: ../../changelog.rst:61
+#: ../../changelog.rst:70
 msgid "Source package *ucs-school-umc-exam* in version ``10.0.17``:"
 msgstr "Quellpaket *ucs-school-umc-exam* in Version ``10.0.17``:"
 
-#: ../../changelog.rst:63
+#: ../../changelog.rst:72
 msgid ""
 "Fix: The permissions of the PDF printer queue directory of exam users are"
 " now automatically corrected when the exam is started. Previously, it "
@@ -99,15 +111,15 @@ msgstr ""
 "Prüfungsbenutzer abgesetzt wurden, diese aber nicht in der Druck-"
 "Moderation aufgetaucht sind (:uv:bug:`58236`)."
 
-#: ../../changelog.rst:69
+#: ../../changelog.rst:78
 msgid "Released on 2025-04-03"
 msgstr "Veröffentlicht am 03.04.2025"
 
-#: ../../changelog.rst:71
+#: ../../changelog.rst:80
 msgid "Source package *ucs-school-umc-exam* in version ``10.0.16``:"
 msgstr "Quellpaket *ucs-school-metapackage* in Version ``10.0.16``:"
 
-#: ../../changelog.rst:73
+#: ../../changelog.rst:82
 msgid ""
 "Fixed a bug for students in multiple exams, if the "
 ":envvar:`ucsschool/exam/user/disable` was set to ``yes``. Their exam "
@@ -119,15 +131,15 @@ msgstr ""
 "wurde.Klassenarbeitsbenutzer wurden nicht korrekt konfiguriert "
 "(:uv:bug:`58116`)."
 
-#: ../../changelog.rst:80
+#: ../../changelog.rst:89
 msgid "Released on 2025-03-10"
 msgstr "Veröffentlicht am 10.03.2025"
 
-#: ../../changelog.rst:82
+#: ../../changelog.rst:91
 msgid "Source package *ucs-school-metapackage* in version ``13.0.19``:"
 msgstr "Quellpaket *ucs-school-metapackage* in Version ``13.0.19``:"
 
-#: ../../changelog.rst:84
+#: ../../changelog.rst:93
 msgid ""
 "Updated: In preparation for the UCS@school 5.2 update, two join hooks are"
 " now installed in the system. The first uses Python 2.7 and is registered"
@@ -139,11 +151,11 @@ msgstr ""
 " nur für UCS 4.4-Systeme registriert. Der zweite verwendet Python 3 und "
 "ist im LDAP für UCS 5.0 und neuer registriert (:uv:bug:`57897`)."
 
-#: ../../changelog.rst:86
+#: ../../changelog.rst:95
 msgid "Source package *ucs-school-import-lusd* in version ``1.0.5``:"
 msgstr "Quellpaket *ucs-school-import-lusd* in Version ``1.0.5``:"
 
-#: ../../changelog.rst:88
+#: ../../changelog.rst:97
 msgid ""
 "Fixed: The default value for the LUSD ``issuer``, used for "
 "authentication, has been changed for production use (:uv:bug:`57974`)."

@@ -8,6 +8,15 @@
 Changelog
 *********
 
+.. _changelog-ucsschool-2025-08-06:
+
+Released on 2025-08-06
+======================
+
+Source package *ucs-school-import-lusd* in version ``1.0.6``:
+
+* School names are now correctly prepended to class names (:uv:bug:`58499`).
+
 .. _changelog-ucsschool-2025-06-04:
 
 Released on 2025-06-04

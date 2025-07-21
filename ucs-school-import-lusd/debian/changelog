@@ -1,3 +1,9 @@
+ucs-school-import-lusd (1.0.6) unstable; urgency=medium
+
+  * Bug #58464: Prepend the school name to the classnames.
+
+ -- Johannes Königer <koeniger@univention.de>  Tue, 22 Jul 2025 8:50:25 +0100
+
 ucs-school-import-lusd (1.0.5) unstable; urgency=medium
 
   * Bug #57974: Switch to productive LUSD issuer

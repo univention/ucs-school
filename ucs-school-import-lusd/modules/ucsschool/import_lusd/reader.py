@@ -54,21 +54,33 @@ class LUSDReader(CsvReader):  # type: ignore[misc]
             yield user_obj
 
     def lusd_preprocessing(self, user_obj: Dict[str, Any]) -> None:
-        """Convert LUSD API attributes which are arrays to string to be conform with the CsvReader"""
-        for attr in ["klassenlehrerKlassen", "klassenlehrerVertreterKlassen"]:
-            if attr in user_obj:
-                user_obj[attr] = self._delimiter.join(
-                    [
-                        class_obj["klassenname"].replace(
-                            self._delimiter,
-                            self.config.get("school_classes_invalid_character_replacement", ""),
-                        )
-                        for class_obj in user_obj[attr]
-                        if "klassenname" in class_obj
-                    ]
-                )
-        if "klassenname" not in user_obj and "schuelerUID" in user_obj:
-            user_obj["klassenname"] = "lusd_noclass"
+        """
+        Conversions which do not depend on the import_user and can be done as early as possible
+
+        - Convert LUSD API attributes which are arrays to string to be conform with the CsvReader
+        - Prepend the school name to the class name.
+        """
+        school = self.config.get("school")
+
+        if "personalUID" in user_obj:
+            for attr in ["klassenlehrerKlassen", "klassenlehrerVertreterKlassen"]:
+                if attr in user_obj:
+                    user_obj[attr] = self._delimiter.join(
+                        [
+                            f"""{school}-{
+                            class_obj["klassenname"].replace(
+                                self._delimiter,
+                                self.config.get("school_classes_invalid_character_replacement", ""),
+                            )}"""
+                            for class_obj in user_obj[attr]
+                            if "klassenname" in class_obj
+                        ]
+                    )
+        elif "schuelerUID" in user_obj:
+            if "klassenname" in user_obj:
+                user_obj["klassenname"] = f"{school}-{user_obj['klassenname']}"
+            else:
+                user_obj["klassenname"] = "lusd_noclass"
 
     def handle_input(
         self, mapping_key: str, mapping_value: str, value: str, import_user: ImportUser
@@ -93,6 +105,7 @@ class LUSDReader(CsvReader):  # type: ignore[misc]
         elif mapping_value == "__append_school_classes":
             # Intended to merge attributes "klassenlehrerKlassen" and "klassenlehrerVertreterKlassen"
             # to attribute school_classes if that is required by the customer
+
             if not import_user.school_classes:
                 import_user.school_classes = value
                 return True
@@ -103,4 +116,5 @@ class LUSDReader(CsvReader):  # type: ignore[misc]
                 self.logger.error(
                     f"Cannot append to import_user.school_classes {import_user.school_classes}"
                 )
+
         return False
