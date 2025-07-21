@@ -379,7 +379,7 @@ def get_args() -> Namespace:
         dest="skip_students",
         default=False,
         action="store_true",
-        help=("Skip fetching and importing stundents."),
+        help=("Skip fetching and importing students."),
     )
     parser.add_argument(
         "--skip-teacher",
