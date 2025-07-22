@@ -29,6 +29,9 @@ stat-po-nodocker:
 latexpdf:
 	$(DOCKER_CMD) $(SPHINX_DOCKER_FULL) /bin/bash -c 'for d in $(DIRS);do make -C "$$d" -e SPHINXOPTS="$(SPHINXOPTS)" "$@"; done'
 
+livehtml-%:
+	$(DOCKER_USER_CMD) -ti --name "$@" ""$(SPHINX_DOCKER_BASE) make -C "$*" -e SPHINXOPTS="$(SPHINXOPTS)" livehtml;
+
 %:
 	$(DOCKER_USER_CMD) $(SPHINX_DOCKER_BASE) /bin/bash -c 'for d in $(DIRS);do make -C "$$d" -e SPHINXOPTS="$(SPHINXOPTS)" "$@";done'
 

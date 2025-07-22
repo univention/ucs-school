@@ -33,3 +33,11 @@ Examples. Run the commands from the UCS repository `/doc` directory.
 * Build all PDF files: `make latexpdf`. Build PDF files requires the
   full Sphinx Docker image, which is about twice the size of the Sphinx base
   image.
+
+### livehtml
+
+You can run a livehtml doc website from the documentation root directory `doc/` like this:
+
+`make livehtml-$TARGET_DIR`
+
+For example `make livehtml-ucsschool-manual`
