@@ -21,6 +21,8 @@ Werte für die Benutzerrollen-Schlüssel sind:
 
 * ``teacher``
 
+* ``legal_guardian``
+
 * ``teacher_and_staff``
 
 Es müssen nicht zwangsläufig Schlüssel für alle Benutzerrollen angegeben werden.

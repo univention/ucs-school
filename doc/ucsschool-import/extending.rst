@@ -339,7 +339,7 @@ Der Name der Datei mit der eigenen Klasse muss, wie bei den regulären
 :file:`/usr/share/ucs-school-import/pyhooks` abgespeichert werden.
 
 Format-Hooks haben die Methoden :py:meth:`patch_fields_staff`,
-:py:meth:`patch_fields_student`, :py:meth:`patch_fields_teacher` und
+:py:meth:`patch_fields_student`, :py:meth:`patch_fields_teacher`, :py:meth:`patch_fields_legal_guardian` und
 :py:meth:`patch_fields_teacher_and_staff` von der immer nur diejenige aufgerufen
 wird, die zu der Rolle des zu erzeugenden / bearbeitenden Benutzers passt.
 

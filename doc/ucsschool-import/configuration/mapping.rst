@@ -186,6 +186,8 @@ Es existieren *Sonderwerte*, die in der Konfiguration der Zuordnung
 
    * ``teacher``
 
+   * ``legal_guardian``
+
    * ``teacher_and_staff``
 
    Wenn die Rolle der zu importierenden Benutzer in einer Spalte angegeben wird,

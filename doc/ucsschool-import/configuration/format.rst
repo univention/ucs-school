@@ -136,7 +136,7 @@ Konfiguration des Benutzerimports
 
    Standardmäßig ist im Objekt nur der Schlüssel ``default`` gesetzt.
 
-   Weitere Schlüssel ``student``, ``staff``, ``teacher``, ``teacher_and_staff``
+   Weitere Schlüssel ``student``, ``staff``, ``teacher``, ``legal_guardian``, ``teacher_and_staff``
    sind möglich (siehe :ref:`configuration-default-key`).
 
    Standard (``object``)
@@ -318,7 +318,7 @@ Konfiguration des Benutzerimports
    Enthält Informationen über die Erzeugung von Benutzernamen. Standardmäßig
    enthält das Objekt nur den Schlüssel ``default``.
 
-   Weitere Schlüssel ``student``, ``staff``, ``teacher``, ``teacher_and_staff``
+   Weitere Schlüssel ``student``, ``staff``, ``teacher``, ``legal_guardian``, ``teacher_and_staff``
    sind möglich (siehe :ref:`configuration-default-key`).
 
    Zusätzlich zu den in :ref:`configuration-scheme-formatting` beschriebenen
@@ -518,7 +518,7 @@ Konfiguration des Benutzerimports
       den Eingabedaten enthalten ist und die Eingabedatensätze homogen alle die
       gleiche Benutzerrolle verwenden sollen.
 
-   Erlaubte Werte sind ``student``, ``staff``, ``teacher`` und
+   Erlaubte Werte sind ``student``, ``staff``, ``teacher``, ``legal_guardian`` und
    ``teacher_and_staff``.
 
    Standard (``string``)

@@ -48,7 +48,7 @@ Kommandozeilenparameter
                school (shortcut for --set school=...) [default: None].
      -u USER_ROLE, --user_role USER_ROLE
                Set this, if the source data contains users with only one
-               role <none|student|staff|teacher|teacher_and_staff>
+               role <none|student|staff|teacher|legal_guardian|teacher_and_staff>
                (shortcut for --set user_role=...) [default: None].
      -v, --verbose
                Enable debugging output on the console [default: False].
