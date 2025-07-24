@@ -31,6 +31,16 @@
           "schuelerVorname": "Torsten",
           "stufeSemester": "12/2",
           "usfbk": "BSBT/SONS/----"
+        },
+        {
+          "dienststellennummer": "627000",
+          "klassenname": "Int-12LM1",
+          "schuelerIdEsz": "S1699325",
+          "schuelerNachname": "Charles",
+          "schuelerUID": "cc4c1ba8-f3f3-4f51-8cdd-48ad592aa9e3",
+          "schuelerVorname": "Dirk",
+          "stufeSemester": "13/2",
+          "usfbk": "BSBT/SONS/----"
         }
       ]
     }

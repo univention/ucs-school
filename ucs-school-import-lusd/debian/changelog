@@ -1,3 +1,9 @@
+ucs-school-import-lusd (2.0.3) unstable; urgency=medium
+
+  * Bug #58464: Adjust test data to include classnames with dashes
+
+ -- Johannes Königer <koeniger@univention.de>  Tue, 24 Jul 2025 12:50:25 +0100
+
 ucs-school-import-lusd (2.0.2) unstable; urgency=medium
 
   * Bug #58464: Prepend the school name to the classnames.

@@ -4,7 +4,7 @@ released:
 version: [0]
 scope: ucs_5.2-0-ucs-school-5.2
 src: ucs-school-import-lusd
-fix: 2.0.2
+fix: 2.0.3
 bugs:
   58464:
     en: School names are now correctly prepended to class names.

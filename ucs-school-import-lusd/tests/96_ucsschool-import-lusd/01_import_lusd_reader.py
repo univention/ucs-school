@@ -69,7 +69,7 @@ def setup_config(*config_paths: pathlib.Path, user_role: str) -> None:
     ui = UserImportCommandLine()
     default_config_files = ui.configuration_files
     setup_configuration(
-        default_config_files + list(config_paths), school="ucs-test", user_role=user_role
+        default_config_files + list(config_paths), school="ucstestschool", user_role=user_role
     )
 
 
@@ -86,7 +86,7 @@ def test_lusd_reader_read_student() -> None:
     setup_config(STUDENT_CONFIG_PATH, user_role="student")
     lusd_reader = LUSDReader(filename=TEST_DATA_STUDENT_PATH)
     lusd_data = list(lusd_reader.read())
-    assert len(lusd_data) == 3
+    assert len(lusd_data) == 4
     assert lusd_data == [
         {
             "schuelerUID": "0f2c7d6a-bc35-46f5-ab93-8c33feafe096",
@@ -95,7 +95,7 @@ def test_lusd_reader_read_student() -> None:
             "dienststellennummer": "627000",
             "usfbk": "BFSB/----/MASC",
             "stufeSemester": "12/2",
-            "klassenname": "12BFTT",
+            "klassenname": "ucstestschool-12BFTT",
             "schuelerIdEsz": "S1700217",
         },
         {
@@ -105,7 +105,7 @@ def test_lusd_reader_read_student() -> None:
             "dienststellennummer": "627000",
             "usfbk": "BFSB/----/MASC",
             "stufeSemester": "11/2",
-            "klassenname": "11BFTT",
+            "klassenname": "ucstestschool-11BFTT",
             "schuelerIdEsz": "S0053720",
         },
         {
@@ -115,8 +115,18 @@ def test_lusd_reader_read_student() -> None:
             "dienststellennummer": "627000",
             "usfbk": "BSBT/SONS/----",
             "stufeSemester": "12/2",
-            "klassenname": "12LM1",
+            "klassenname": "ucstestschool-12LM1",
             "schuelerIdEsz": "S1699322",
+        },
+        {
+            "dienststellennummer": "627000",
+            "klassenname": "ucstestschool-Int-12LM1",
+            "schuelerIdEsz": "S1699325",
+            "schuelerNachname": "Charles",
+            "schuelerUID": "cc4c1ba8-f3f3-4f51-8cdd-48ad592aa9e3",
+            "schuelerVorname": "Dirk",
+            "stufeSemester": "13/2",
+            "usfbk": "BSBT/SONS/----",
         },
     ]
 
@@ -133,8 +143,8 @@ def test_lusd_reader_read_teacher() -> None:
             "vorname": "Kerime",
             "personalKuerzel": "Y276",
             "dienststellennummer": "627000",
-            "klassenlehrerKlassen": "11KB1,11KB2",
-            "klassenlehrerVertreterKlassen": "12KB1",
+            "klassenlehrerKlassen": "ucstestschool-11KB1,ucstestschool-11KB2",
+            "klassenlehrerVertreterKlassen": "ucstestschool-12KB1",
             "lehrerIdEsz": "lusd.test08@preschule.hessen.de",
             "dienststellennummerStammschule": "515400",
         },
@@ -144,8 +154,8 @@ def test_lusd_reader_read_teacher() -> None:
             "vorname": "Erika",
             "personalKuerzel": "Y246",
             "dienststellennummer": "627000",
-            "klassenlehrerKlassen": "10KB1,10KB2",
-            "klassenlehrerVertreterKlassen": "13KB1",
+            "klassenlehrerKlassen": "ucstestschool-10KB1,ucstestschool-10KB2,ucstestschool-DEF-10KB3",
+            "klassenlehrerVertreterKlassen": "ucstestschool-13KB1",
             "lehrerIdEsz": "lusd.test10@preschule.hessen.de",
             "dienststellennummerStammschule": "515400",
         },
@@ -155,8 +165,8 @@ def test_lusd_reader_read_teacher() -> None:
             "vorname": "Heloise",
             "personalKuerzel": "Y236",
             "dienststellennummer": "627000",
-            "klassenlehrerKlassen": "9KB1,9KB2",
-            "klassenlehrerVertreterKlassen": "9KB3",
+            "klassenlehrerKlassen": "ucstestschool-9KB1,ucstestschool-9KB2",
+            "klassenlehrerVertreterKlassen": "ucstestschool-9KB3,ucstestschool-ABC-9KB4",
             "lehrerIdEsz": "lusd.test09@preschule.hessen.de",
             "dienststellennummerStammschule": "515400",
         },
@@ -216,19 +226,26 @@ def test_lusd_reader_preprocessing() -> None:
 
     user_object2 = {
         "attr1": "value1",
+        "personalUID": "uid2",
         "klassenlehrerKlassen": [{"klassenname": "1a"}, {"klassenname": "2a"}, {"klassenname": "2c"}],
         "klassenlehrerVertreterKlassen": [{"klassenname": "5a"}],
     }
     lusd_reader.lusd_preprocessing(user_object2)
     assert user_object2 == {
-        "klassenlehrerKlassen": "1a,2a,2c",
-        "klassenlehrerVertreterKlassen": "5a",
+        "personalUID": "uid2",
+        "klassenlehrerKlassen": "ucstestschool-1a,ucstestschool-2a,ucstestschool-2c",
+        "klassenlehrerVertreterKlassen": "ucstestschool-5a",
         "attr1": "value1",
     }
 
     user_object3: Dict[str, Union[List[str], str]] = {
+        "personalUID": "uid3",
         "klassenlehrerKlassen": [],
         "klassenlehrerVertreterKlassen": [],
     }
     lusd_reader.lusd_preprocessing(user_object3)
-    assert user_object3 == {"klassenlehrerKlassen": "", "klassenlehrerVertreterKlassen": ""}
+    assert user_object3 == {
+        "klassenlehrerKlassen": "",
+        "klassenlehrerVertreterKlassen": "",
+        "personalUID": "uid3",
+    }
