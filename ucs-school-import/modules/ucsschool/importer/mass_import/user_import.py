@@ -203,7 +203,14 @@ class UserImport(object):
                             success = True
                             user.call_hooks("post", "create", self.connection)
                         else:
-                            success = user.create(lo=self.connection)
+                            try:
+                                success = user.create(lo=self.connection)
+                            except Exception as exc:
+                                raise err(
+                                    exc,
+                                    entry_count=user.entry_count,
+                                    import_user=user,
+                                )
                     elif user.action == "M":
                         err = ModificationError
                         store = self.modified_users[cls_name]
@@ -221,7 +228,14 @@ class UserImport(object):
                             success = True
                             user.call_hooks("post", "modify", self.connection)
                         else:
-                            success = user.modify(lo=self.connection)
+                            try:
+                                success = user.modify(lo=self.connection)
+                            except Exception as exc:
+                                raise err(
+                                    exc,
+                                    entry_count=user.entry_count,
+                                    import_user=user,
+                                )
                     else:
                         # delete
                         continue
@@ -495,7 +509,14 @@ class UserImport(object):
                 )
                 continue
             try:
-                success = self.do_delete(user)
+                try:
+                    success = self.do_delete(user)
+                except Exception as exc:
+                    raise DeletionError(
+                        exc,
+                        entry_count=user.entry_count,
+                        import_user=user,
+                    )
                 if success:
                     self.logger.info(
                         "Success deleting %d/%d %r (source_uid:%s record_uid: %s).",
