@@ -33,6 +33,9 @@
             },
             {
               "klassenname": "10KB2"
+            },
+            {
+              "klassenname": "DEF-10KB3"
             }
           ],
           "klassenlehrerVertreterKlassen": [
@@ -60,6 +63,9 @@
           "klassenlehrerVertreterKlassen": [
             {
               "klassenname": "9KB3"
+            },
+            {
+              "klassenname": "ABC-9KB4"
             }
           ],
           "lehrerIdEsz": "lusd.test09@preschule.hessen.de",

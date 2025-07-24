@@ -354,14 +354,25 @@ def clear_limbo() -> Generator[None, None, None]:
         lo.delete(dn)
 
 
+UCS_TEST_SOURCE_FILTER = filter_format("(ucsschoolSourceUID=%s)", (TEST_SOURCE_UID,))
+
+
+def search_imported_users() -> Any:
+    lo, _ = getMachineConnection()
+    return lo.searchDn(UCS_TEST_SOURCE_FILTER)
+
+
+def count_imported_users() -> int:
+    return len(search_imported_users())
+
+
 def test_download(server: threading.Thread, config: None) -> None:
     test_env = {**os.environ, "LUSD_URL": "http://localhost:32327"}
     subprocess.check_call(  # nosec
         ["/usr/share/ucs-school-import-lusd/scripts/lusd_import"], env=test_env
     )
     assert server.is_alive()
-    lo, _ = getMachineConnection()
-    assert len(lo.searchDn(filter_format("(ucsschoolSourceUID=%s)", (TEST_SOURCE_UID,)))) == 24
+    assert count_imported_users() == 28
     # TBD: how much verification do we need?
 
 
@@ -370,8 +381,7 @@ def test_skip_fetch(config: None, existing_data: None) -> None:
     subprocess.check_call(  # nosec
         ["/usr/share/ucs-school-import-lusd/scripts/lusd_import", "--skip-fetch"], env=test_env
     )
-    lo, _ = getMachineConnection()
-    assert lo.searchDn(filter_format("(ucsschoolSourceUID=%s)", (TEST_SOURCE_UID,)))
+    assert search_imported_users()
 
 
 def test_dry_run(config: None, server: threading.Thread) -> None:
@@ -380,8 +390,7 @@ def test_dry_run(config: None, server: threading.Thread) -> None:
         ["/usr/share/ucs-school-import-lusd/scripts/lusd_import", "--dry-run"], env=test_env
     )
     assert server.is_alive()
-    lo, _ = getMachineConnection()
-    assert not lo.searchDn(filter_format("(ucsschoolSourceUID=%s)", (TEST_SOURCE_UID,)))
+    assert not search_imported_users()
 
 
 def test_skip_fetch_and_dry_run(config: None, existing_data: None) -> None:
@@ -391,7 +400,7 @@ def test_skip_fetch_and_dry_run(config: None, existing_data: None) -> None:
         env=test_env,
     )
     lo, _ = getMachineConnection()
-    assert not lo.searchDn(filter_format("(ucsschoolSourceUID=%s)", (TEST_SOURCE_UID,)))
+    assert not lo.searchDn(UCS_TEST_SOURCE_FILTER)
 
 
 def test_help() -> None:
@@ -418,8 +427,7 @@ def test_config_path(server: threading.Thread, config: None) -> None:
             env=test_env,
         )
         assert server.is_alive()
-        lo, _ = getMachineConnection()
-        assert lo.searchDn(filter_format("(ucsschoolSourceUID=%s)", (TEST_SOURCE_UID,)))
+        assert search_imported_users()
     finally:
         alternative_test_config.replace(CONFIG_PATH)
 
@@ -452,7 +460,7 @@ def test_school_move(
     subprocess.check_call(  # nosec
         ["/usr/share/ucs-school-import-lusd/scripts/lusd_import", "--skip-fetch"], env=test_env
     )
-    assert lo.searchDn(filter_format("(ucsschoolSourceUID=%s)", (TEST_SOURCE_UID,)))
+    assert search_imported_users()
     assert f"ou={schools[0]}" in lo.searchDn(
         filter_format(
             "(&(ucsschoolSourceUID=%s)(ucsschoolRecordUID=%s))",
@@ -472,7 +480,7 @@ def test_school_move(
     subprocess.check_call(  # nosec
         ["/usr/share/ucs-school-import-lusd/scripts/lusd_import", "--skip-fetch"], env=test_env
     )
-    assert lo.searchDn(filter_format("(ucsschoolSourceUID=%s)", (TEST_SOURCE_UID,)))
+    assert lo.searchDn(UCS_TEST_SOURCE_FILTER)
     assert f"ou={schools[1]}" in lo.searchDn(
         filter_format(
             "(&(ucsschoolSourceUID=%s)(ucsschoolRecordUID=%s))",
@@ -486,8 +494,8 @@ def test_VertreterKlassen(config: None, existing_data: None, schools: List[str])
     subprocess.check_call(  # nosec
         ["/usr/share/ucs-school-import-lusd/scripts/lusd_import", "--skip-fetch"], env=test_env
     )
+    assert search_imported_users()
     lo, _ = getMachineConnection()
-    assert lo.searchDn(filter_format("(ucsschoolSourceUID=%s)", (TEST_SOURCE_UID,)))
     groups = lo.search(
         filter_format(
             "(&(ucsschoolSourceUID=%s)(ucsschoolRecordUID=%s))",
@@ -532,7 +540,7 @@ def test_empty_data(config: None, schools: List[str], existing_data: None) -> No
         ["/usr/share/ucs-school-import-lusd/scripts/lusd_import", "--skip-fetch"], env=test_env
     )
     lo, _ = getMachineConnection()
-    assert lo.searchDn(filter_format("(ucsschoolSourceUID=%s)", (TEST_SOURCE_UID,)))
+    assert search_imported_users()
     for school in schools:
         ((Configuration.lusd_data_save_path / school) / "student.json").write_text(
             '[{"antwort": {"lernende": []}}]'
@@ -543,9 +551,7 @@ def test_empty_data(config: None, schools: List[str], existing_data: None) -> No
     subprocess.check_call(  # nosec
         ["/usr/share/ucs-school-import-lusd/scripts/lusd_import", "--skip-fetch"], env=test_env
     )
-    result = lo.search(
-        filter_format("(ucsschoolSourceUID=%s)", (TEST_SOURCE_UID,)), attr=["ucsschoolSchool"]
-    )
+    result = lo.search(UCS_TEST_SOURCE_FILTER, attr=["ucsschoolSchool"])
     for person in result:
         assert person[1]["ucsschoolSchool"] == [b"lusd-limbo"]
 
@@ -599,5 +605,5 @@ def test_skip_role(role: str, config: None, server: threading.Thread, schools: L
         ["/usr/share/ucs-school-import-lusd/scripts/lusd_import"], env=test_env
     )
     assert server.is_alive()
-    lo, _ = getMachineConnection()
-    assert len(lo.searchDn(filter_format("(ucsschoolSourceUID=%s)", (TEST_SOURCE_UID,)))) == 12
+    expected_count = 16 if role == "teachers" else 12
+    assert count_imported_users() == expected_count
