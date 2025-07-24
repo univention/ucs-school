@@ -48,10 +48,7 @@ beschrieben.
 
    procedure
    configuration/index
-   school-change
-   year-change
-   spanning-accounts
    extending
-   lusd
+   scenarios/index
    bibliography
    indices
