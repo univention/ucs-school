@@ -67,7 +67,7 @@ class LUSDClassLevel(UserPyHook):  # type: ignore[misc]
     Its value is used for the class level attribute.
     """
     REGEX_PATTERNS = {
-        "$class_level": re.compile(r"^0(?P<class_level>[0-9])/[1,2]$"),
+        "$class_level": re.compile(r"^0(?P<class_level>\d)/[1,2]$"),
         "10": re.compile(r"^10/[1,2]$"),
         "11": re.compile(r"^E[1,2]$"),
         "12": re.compile(r"^Q[1,2]$"),

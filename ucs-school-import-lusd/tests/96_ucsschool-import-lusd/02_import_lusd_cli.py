@@ -355,6 +355,9 @@ def clear_limbo() -> Generator[None, None, None]:
 
 
 UCS_TEST_SOURCE_FILTER = filter_format("(ucsschoolSourceUID=%s)", (TEST_SOURCE_UID,))
+DUMMY_LUSD_URL = "https://univention.de"
+DEFAULT_LUSD_URL = "http://localhost:32327"
+LUSD_SCRIPT_PATH = "/usr/share/ucs-school-import-lusd/scripts/lusd_import"
 
 
 def search_imported_users() -> Any:
@@ -367,36 +370,30 @@ def count_imported_users() -> int:
 
 
 def test_download(server: threading.Thread, config: None) -> None:
-    test_env = {**os.environ, "LUSD_URL": "http://localhost:32327"}
-    subprocess.check_call(  # nosec
-        ["/usr/share/ucs-school-import-lusd/scripts/lusd_import"], env=test_env
-    )
+    test_env = {**os.environ, "LUSD_URL": DEFAULT_LUSD_URL}
+    subprocess.check_call([LUSD_SCRIPT_PATH], env=test_env)  # nosec
     assert server.is_alive()
     assert count_imported_users() == 28
     # TBD: how much verification do we need?
 
 
 def test_skip_fetch(config: None, existing_data: None) -> None:
-    test_env = {**os.environ, "LUSD_URL": "http://univention.de"}
-    subprocess.check_call(  # nosec
-        ["/usr/share/ucs-school-import-lusd/scripts/lusd_import", "--skip-fetch"], env=test_env
-    )
+    test_env = {**os.environ, "LUSD_URL": DUMMY_LUSD_URL}
+    subprocess.check_call([LUSD_SCRIPT_PATH, "--skip-fetch"], env=test_env)  # nosec
     assert search_imported_users()
 
 
 def test_dry_run(config: None, server: threading.Thread) -> None:
-    test_env = {**os.environ, "LUSD_URL": "http://localhost:32327"}
-    subprocess.check_call(  # nosec
-        ["/usr/share/ucs-school-import-lusd/scripts/lusd_import", "--dry-run"], env=test_env
-    )
+    test_env = {**os.environ, "LUSD_URL": DEFAULT_LUSD_URL}
+    subprocess.check_call([LUSD_SCRIPT_PATH, "--dry-run"], env=test_env)  # nosec
     assert server.is_alive()
     assert not search_imported_users()
 
 
 def test_skip_fetch_and_dry_run(config: None, existing_data: None) -> None:
-    test_env = {**os.environ, "LUSD_URL": "http://univention.de"}
+    test_env = {**os.environ, "LUSD_URL": DUMMY_LUSD_URL}
     subprocess.check_call(  # nosec
-        ["/usr/share/ucs-school-import-lusd/scripts/lusd_import", "--skip-fetch", "--dry-run"],
+        [LUSD_SCRIPT_PATH, "--skip-fetch", "--dry-run"],
         env=test_env,
     )
     lo, _ = getMachineConnection()
@@ -405,7 +402,7 @@ def test_skip_fetch_and_dry_run(config: None, existing_data: None) -> None:
 
 def test_help() -> None:
     output = subprocess.check_output(  # nosec
-        ["/usr/share/ucs-school-import-lusd/scripts/lusd_import", "--help"],
+        [LUSD_SCRIPT_PATH, "--help"],
         stderr=subprocess.STDOUT,
         text=True,
     )
@@ -417,10 +414,10 @@ def test_config_path(server: threading.Thread, config: None) -> None:
     shutil.copy(CONFIG_PATH, alternative_test_config)
     try:
         CONFIG_PATH.unlink()
-        test_env = {**os.environ, "LUSD_URL": "http://localhost:32327"}
+        test_env = {**os.environ, "LUSD_URL": DEFAULT_LUSD_URL}
         subprocess.check_call(  # nosec
             [
-                "/usr/share/ucs-school-import-lusd/scripts/lusd_import",
+                LUSD_SCRIPT_PATH,
                 "--configuration-filepath",
                 alternative_test_config,
             ],
@@ -441,7 +438,7 @@ def test_school_move(
 ) -> None:
     lusd_filenames = {"lernende": "student.json", "personal": "teacher.json"}
     lusd_uid = {"lernende": "schuelerUID", "personal": "personalUID"}
-    test_env = {**os.environ, "LUSD_URL": "http://univention.de"}
+    test_env = {**os.environ, "LUSD_URL": DUMMY_LUSD_URL}
     lo, _ = getMachineConnection()
     with open(test_data_path) as fp:
         test_data = json.load(fp)
@@ -457,9 +454,7 @@ def test_school_move(
         json.dump(test_data_school1, fp)
     with open((Configuration.lusd_data_save_path / schools[1]) / lusd_filenames[lusd_role], "w") as fp:
         json.dump(test_data_school2, fp)
-    subprocess.check_call(  # nosec
-        ["/usr/share/ucs-school-import-lusd/scripts/lusd_import", "--skip-fetch"], env=test_env
-    )
+    subprocess.check_call([LUSD_SCRIPT_PATH, "--skip-fetch"], env=test_env)  # nosec
     assert search_imported_users()
     assert f"ou={schools[0]}" in lo.searchDn(
         filter_format(
@@ -477,9 +472,7 @@ def test_school_move(
         json.dump(test_data_school1, fp)
     with open((Configuration.lusd_data_save_path / schools[1]) / lusd_filenames[lusd_role], "w") as fp:
         json.dump(test_data_school2, fp)
-    subprocess.check_call(  # nosec
-        ["/usr/share/ucs-school-import-lusd/scripts/lusd_import", "--skip-fetch"], env=test_env
-    )
+    subprocess.check_call([LUSD_SCRIPT_PATH, "--skip-fetch"], env=test_env)  # nosec
     assert lo.searchDn(UCS_TEST_SOURCE_FILTER)
     assert f"ou={schools[1]}" in lo.searchDn(
         filter_format(
@@ -490,10 +483,8 @@ def test_school_move(
 
 
 def test_VertreterKlassen(config: None, existing_data: None, schools: List[str]) -> None:
-    test_env = {**os.environ, "LUSD_URL": "http://univention.de"}
-    subprocess.check_call(  # nosec
-        ["/usr/share/ucs-school-import-lusd/scripts/lusd_import", "--skip-fetch"], env=test_env
-    )
+    test_env = {**os.environ, "LUSD_URL": DUMMY_LUSD_URL}
+    subprocess.check_call([LUSD_SCRIPT_PATH, "--skip-fetch"], env=test_env)  # nosec
     assert search_imported_users()
     lo, _ = getMachineConnection()
     groups = lo.search(
@@ -519,10 +510,8 @@ def test_n_m_mapping(config: None, server: threading.Thread, schools: List[str])
     new_config = old_config.replace(f"{schools[0]} = 1111111", f"{schools[0]} = 1111111,2222222")
     new_config = new_config.replace(f"{schools[1]} = 2222222", f"{schools[1]} = 2222222,1111111")
     CONFIG_PATH.write_text(new_config)
-    test_env = {**os.environ, "LUSD_URL": "http://localhost:32327"}
-    subprocess.check_call(  # nosec
-        ["/usr/share/ucs-school-import-lusd/scripts/lusd_import"], env=test_env
-    )
+    test_env = {**os.environ, "LUSD_URL": DEFAULT_LUSD_URL}
+    subprocess.check_call([LUSD_SCRIPT_PATH], env=test_env)  # nosec
     assert server.is_alive()
     lo, _ = getMachineConnection()
     result = lo.search(
@@ -535,10 +524,8 @@ def test_n_m_mapping(config: None, server: threading.Thread, schools: List[str])
 
 
 def test_empty_data(config: None, schools: List[str], existing_data: None) -> None:
-    test_env = {**os.environ, "LUSD_URL": "http://univention.de"}
-    subprocess.check_call(  # nosec
-        ["/usr/share/ucs-school-import-lusd/scripts/lusd_import", "--skip-fetch"], env=test_env
-    )
+    test_env = {**os.environ, "LUSD_URL": DUMMY_LUSD_URL}
+    subprocess.check_call([LUSD_SCRIPT_PATH, "--skip-fetch"], env=test_env)  # nosec
     lo, _ = getMachineConnection()
     assert search_imported_users()
     for school in schools:
@@ -548,9 +535,7 @@ def test_empty_data(config: None, schools: List[str], existing_data: None) -> No
         ((Configuration.lusd_data_save_path / school) / "teacher.json").write_text(
             '[{"antwort": {"personal": []}}]'
         )
-    subprocess.check_call(  # nosec
-        ["/usr/share/ucs-school-import-lusd/scripts/lusd_import", "--skip-fetch"], env=test_env
-    )
+    subprocess.check_call([LUSD_SCRIPT_PATH, "--skip-fetch"], env=test_env)  # nosec
     result = lo.search(UCS_TEST_SOURCE_FILTER, attr=["ucsschoolSchool"])
     for person in result:
         assert person[1]["ucsschoolSchool"] == [b"lusd-limbo"]
@@ -560,10 +545,10 @@ def test_unknown_dienststellennummer(config: None, server: threading.Thread, sch
     old_config = CONFIG_PATH.read_text()
     new_config = old_config.replace(f"{schools[0]} = 1111111", f"{schools[0]} = 404")
     CONFIG_PATH.write_text(new_config)
-    test_env = {**os.environ, "LUSD_URL": "http://localhost:32327"}
+    test_env = {**os.environ, "LUSD_URL": DEFAULT_LUSD_URL}
     with pytest.raises(subprocess.CalledProcessError) as excinfo:
         subprocess.check_output(  # nosec
-            ["/usr/share/ucs-school-import-lusd/scripts/lusd_import"],
+            [LUSD_SCRIPT_PATH],
             env=test_env,
             stderr=subprocess.STDOUT,
         )
@@ -580,10 +565,10 @@ def test_wrong_school_authority(config: None, server: threading.Thread, schools:
         f"{schools[0]} = 1111111", f"{schools[0]} = not in my school authority"
     )
     CONFIG_PATH.write_text(new_config)
-    test_env = {**os.environ, "LUSD_URL": "http://localhost:32327"}
+    test_env = {**os.environ, "LUSD_URL": DEFAULT_LUSD_URL}
     with pytest.raises(subprocess.CalledProcessError) as excinfo:
         subprocess.check_output(  # nosec
-            ["/usr/share/ucs-school-import-lusd/scripts/lusd_import"],
+            [LUSD_SCRIPT_PATH],
             env=test_env,
             stderr=subprocess.STDOUT,
         )
@@ -600,10 +585,8 @@ def test_skip_role(role: str, config: None, server: threading.Thread, schools: L
     old_config = CONFIG_PATH.read_text()
     new_config = old_config.replace(f"skip_{role} = no", f"skip_{role} = yes")
     CONFIG_PATH.write_text(new_config)
-    test_env = {**os.environ, "LUSD_URL": "http://localhost:32327"}
-    subprocess.check_call(  # nosec
-        ["/usr/share/ucs-school-import-lusd/scripts/lusd_import"], env=test_env
-    )
+    test_env = {**os.environ, "LUSD_URL": DEFAULT_LUSD_URL}
+    subprocess.check_call([LUSD_SCRIPT_PATH], env=test_env)  # nosec
     assert server.is_alive()
     expected_count = 16 if role == "teachers" else 12
     assert count_imported_users() == expected_count
