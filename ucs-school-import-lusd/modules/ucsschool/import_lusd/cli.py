@@ -90,7 +90,7 @@ class Configuration:
 
     def validate(self) -> None:
         """Validate the values stored in the configuration."""
-        if not len(self.school_id_map) > 0:
+        if len(self.school_id_map) <= 0:
             raise ConfigurationError("No schools configured.")
 
         if not self.student_import_config_path.exists():
@@ -197,8 +197,7 @@ class ImportLUSD:
                     logger.info(f"Skip download of LUSD data for role: {role}, in school: {school_name}")
                     continue
                 logger.info(f"Starting download of LUSD data for role: {role}, in school: {school_name}")
-                file_path = self.get_lusd_data_save_path(school_name, role)
-                data = self.fetch_school_lusd_data(school_ids, role, file_path)
+                data = self.fetch_school_lusd_data(school_ids, role)
                 data_dir_path = self.configuration.lusd_data_save_path.joinpath(school_name)
                 data_dir_path.mkdir(parents=True, exist_ok=True)
                 data_path = data_dir_path.joinpath(f"{role}.json")
@@ -232,14 +231,19 @@ class ImportLUSD:
             sys.exit(1)
         return jwt_token
 
-    def fetch_school_lusd_data(self, school_ids: List[str], role: str, file_path: Path) -> Any:
+    def fetch_school_lusd_data(self, school_ids: List[str], role: str) -> Any:
         """Store LUSD data for school `school_ids` in `file_path`"""
         if role == ROLE_STUDENT:
             action_id = "Administrationsdaten Lernende lesen"
         elif role == ROLE_TEACHER:
             action_id = "Administrationsdaten Personal lesen"
+        else:
+            logger.error(f"Invalid role: {role}")
+            sys.exit(1)
+
         response = self._lusd_request(action_id, {"schulDienststellennummern": school_ids})
         response_data = response.json()
+
         return response_data
 
     def get_lusd_data_save_path(self, school_name: str, role: str) -> Path:
@@ -400,7 +404,7 @@ def get_args() -> Namespace:
 
 def run() -> None:
     args = get_args()
-    importLUSD = ImportLUSD(args)
+    import_lusd = ImportLUSD(args)
     try:
         LOCK_FILE.parent.mkdir(exist_ok=True)
         LOCK_FILE.touch(exist_ok=False)
@@ -408,7 +412,7 @@ def run() -> None:
         logger.error(f"The LUSD importer is already running: Lock file {LOCK_FILE} exists.")
         sys.exit(1)
     try:
-        importLUSD.run_import()
+        import_lusd.run_import()
     finally:
         if LOCK_FILE.exists() and LOCK_FILE.is_file():
             LOCK_FILE.unlink()
