@@ -148,6 +148,45 @@ class TestUserCreator(object):
         except (AttributeError, IndexError):
             return ucr["domainname"]
 
+    def _get_user(self, given_name_gen, family_name_gen, kind):
+        given_name = next(given_name_gen)
+        family_name = next(family_name_gen)
+        user = {
+            "Schulen": None,
+            "Benutzertyp": kind,
+            "Vorname": given_name,
+            "Nachname": family_name,
+            "Klassen": None,
+            "Beschreibung": "A {}.".format(kind),
+            "Telefon": "+{:>02}-{:>03}-{}".format(  # nosec
+                random.randint(1, 99), random.randint(1, 999), random.randint(1000, 999999)
+            ),
+            "Eltern": "",
+            "Kinder": "",
+        }
+        if self.email:
+            user["EMail"] = ImportUser.normalize(
+                "{}m.{}m@{}".format(given_name, family_name, self.mail_domain)
+            ).lower()
+        if kind != "student" and random.choice((True, False)):  # nosec
+            # 50% chance for non-students to be in multiple schools
+            user["Schulen"] = sorted(random.sample(self.ous, self.num_schools))
+        else:
+            user["Schulen"] = [random.choice(self.ous)]  # nosec
+
+        if kind in ["staff", "legal_guardians"]:
+            user["Klassen"] = {}
+        elif kind == "student":
+            # students are in 1 class
+            user["Klassen"] = {school: [self._get_class_name(school)] for school in user["Schulen"]}
+        else:
+            # [staff]teachers can be in multiple classes
+            user["Klassen"] = {
+                school: [self._get_class_name(school) for _x in range(self.num_inclasses)]
+                for school in user["Schulen"]
+            }
+        return user
+
     def make_users(self):
         jobs = (
             (self.num_staff, "staff"),
@@ -165,44 +204,7 @@ class TestUserCreator(object):
             if num == 0:
                 continue
             for _user_num in range(num):
-                given_name = next(given_name_gen)
-                family_name = next(family_name_gen)
-                user = {
-                    "Schulen": None,
-                    "Benutzertyp": kind,
-                    "Vorname": given_name,
-                    "Nachname": family_name,
-                    "Klassen": None,
-                    "Beschreibung": "A {}.".format(kind),
-                    "Telefon": "+{:>02}-{:>03}-{}".format(  # nosec
-                        random.randint(1, 99), random.randint(1, 999), random.randint(1000, 999999)
-                    ),
-                    "Eltern": "",
-                    "Kinder": "",
-                }
-                if self.email:
-                    user["EMail"] = ImportUser.normalize(
-                        "{}m.{}m@{}".format(given_name, family_name, self.mail_domain)
-                    ).lower()
-                if kind != "student" and random.choice((True, False)):  # nosec
-                    # 50% chance for non-students to be in multiple schools
-                    user["Schulen"] = sorted(random.sample(self.ous, self.num_schools))
-                else:
-                    user["Schulen"] = [random.choice(self.ous)]  # nosec
-
-                if kind in ["staff", "legal_guardians"]:
-                    user["Klassen"] = {}
-                elif kind == "student":
-                    # students are in 1 class
-                    user["Klassen"] = {
-                        school: [self._get_class_name(school)] for school in user["Schulen"]
-                    }
-                else:
-                    # [staff]teachers can be in multiple classes
-                    user["Klassen"] = {
-                        school: [self._get_class_name(school) for _x in range(self.num_inclasses)]
-                        for school in user["Schulen"]
-                    }
+                user = self._get_user(given_name_gen, family_name_gen, kind)
                 total_users_count += 1
                 self.logger.debug("(%d/%d) Created: %r", total_users_count, total_users_num, user)
                 yield user

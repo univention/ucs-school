@@ -56,13 +56,7 @@ class LegalGuardianAsRecordUid(PostReadPyHook):
 
     def entry_read(self, _, input_data, input_dict):
         mapping = self.config["csv"]["mapping"]
-        source_uid = self.config.get("source_uid")
-        if not source_uid:
-            for csv_attr_name, school_attr_name in mapping.items():
-                if school_attr_name == "source_uid":
-                    source_uid = input_dict[csv_attr_name]
-        if not source_uid:
-            raise UcsSchoolImportError("No source_uid found")
+        source_uid = self._get_source_uid(mapping, input_dict)
         for csv_attr_name, school_attr_name in mapping.items():
             if school_attr_name in ["legal_guardians", "legal_wards"] and input_dict[csv_attr_name]:
                 try:
@@ -74,6 +68,16 @@ class LegalGuardianAsRecordUid(PostReadPyHook):
                         raise InvalidLegalGuardian(exc)
                     else:
                         raise InvalidLegalWard(exc)
+
+    def _get_source_uid(self, mapping, input_dict):
+        source_uid = self.config.get("source_uid")
+        if not source_uid:
+            for csv_attr_name, school_attr_name in mapping.items():
+                if school_attr_name == "source_uid":
+                    source_uid = input_dict[csv_attr_name]
+        if not source_uid:
+            raise UcsSchoolImportError("No source_uid found")
+        return source_uid
 
     def _record_uids_to_uids(self, source_uid: str, record_uids: List[str]) -> List[str]:
         uids = []
