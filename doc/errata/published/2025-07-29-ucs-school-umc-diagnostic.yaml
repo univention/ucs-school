@@ -8,4 +8,4 @@ fix: 3.0.1
 bugs:
   58432:
     en: Fixed a ``TypeError`` when the check for groups with consecutive white spaces is run in the system diagnostic module.
-    de: Ein ``TypeError`` wurde behoben, der bei der Suche nach Gruppen mit aufeinanderfolgenden Leerzeichen im System-Diagnosemodul aufgetreten ist.
+    de: Ein ``TypeError`` wurde behoben, der bei der Suche nach Gruppen mit aufeinander folgenden Leerzeichen im System-Diagnosemodul aufgetreten ist.
