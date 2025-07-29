@@ -9,7 +9,7 @@
 ***************
 
 This document contains the changelogs with the detailed change information for
-the update of |UCSUAS| from version 5.2v1 to 5.2v2.
+the update of |UCSUAS| from version 5.2v2 to 5.2v3.
 
 The change information for previous version jumps can be found at :external+uv-navigation:ref:`the changelog overview page <ucsschool-changelog>`.
 

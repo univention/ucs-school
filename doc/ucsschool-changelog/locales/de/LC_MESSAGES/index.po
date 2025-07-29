@@ -21,11 +21,11 @@ msgstr "|UCSUAS|-Update"
 #: ../../index.rst:11
 msgid ""
 "This document contains the changelogs with the detailed change "
-"information for the update of |UCSUAS| from version 5.2v1 to 5.2v2."
+"information for the update of |UCSUAS| from version 5.2v2 to 5.2v3."
 msgstr ""
 "Dieses Dokument enthält die Changelogs mit den detaillierten "
-"Änderungsinformationen zum Update von |UCSUAS| von Version 5.2v1 "
-"nach 5.2v2."
+"Änderungsinformationen zum Update von |UCSUAS| von Version 5.2v2 "
+"nach 5.2v3."
 
 #: ../../index.rst:14
 msgid ""
