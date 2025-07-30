@@ -292,7 +292,7 @@ class UserImportJobViewSet(
     * `dryrun` is of type boolean
     * `input_file` has to be the key for a multipart-encoded file upload
     * `school` must be an absolute URI from `/{version}/schools/`
-    * `user_role` must be one of `staff`, `student`, `teacher`, `teacher_and_staff`
+    * `user_role` must be one of `staff`, `student`, `teacher`, `teacher_and_staff`, `legal_guardian`
     """
 
     queryset = UserImportJob.objects.all()

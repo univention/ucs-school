@@ -182,7 +182,7 @@ class ImportTestbase(object):
     ou_B = utu.Bunch(name=None, dn=None)  # set ou_B to None if a second OU is not needed
     ou_C = utu.Bunch(name=None, dn=None)  # set ou_C to None if a third OU is not needed
     use_ou_cache = True  # if True: use cached OUs, if false create fresh OUs
-    all_roles = ("staff", "student", "teacher", "teacher_and_staff")
+    all_roles = ("staff", "student", "teacher", "teacher_and_staff", "legal_guardian")
 
     def __init__(self):
         self.ucr = univention.testing.ucr.UCSTestConfigRegistry()

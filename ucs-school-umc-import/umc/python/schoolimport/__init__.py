@@ -296,6 +296,7 @@ class Instance(SchoolBaseModule, ProgressMixin):
 
     def _parse_user_role(self, role):
         return {
+            "legal_guardian": _("Legal Guardian"),
             "staff": _("Staff"),
             "student": _("Student"),
             "teacher": _("Teacher"),

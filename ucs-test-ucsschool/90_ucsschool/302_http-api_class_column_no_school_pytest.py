@@ -124,7 +124,7 @@ def make_import_file():
 
 
 def successful_import(client, filename, ou_name, ldap_connection):
-    role = random.choice(["student", "teacher", "teacher_and_staff"])
+    role = random.choice(["student", "teacher", "teacher_and_staff", "legal_guardian"])
 
     import_job = TESTER.run_http_import_through_python_client(
         client=client,

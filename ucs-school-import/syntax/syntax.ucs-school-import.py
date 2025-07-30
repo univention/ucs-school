@@ -67,6 +67,7 @@ class ucsschoolTypes(select):
         ("teacher", _local("Teacher")),
         ("staff", _local("Staff")),
         ("teacher_and_staff", _local("Teacher and Staff")),
+        ("legal_guardian", _local("Legal Guardian")),
     ]
 
 

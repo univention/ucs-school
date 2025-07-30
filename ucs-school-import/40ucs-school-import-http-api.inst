@@ -33,7 +33,7 @@
 
 ## joinscript api: bindpwdfile
 
-VERSION=14
+VERSION=15
 
 . /usr/share/univention-join/joinscripthelper.lib
 . /usr/share/univention-lib/all.sh
@@ -262,6 +262,7 @@ python3 -c 'from ucsschool.lib.models.school import School; import univention.ad
 		--dn "cn=$school-import-all,cn=groups,ou=$school${district},$ldap_base" \
 		--append-option "ucsschoolImportGroup" \
 		--set ucsschoolImportSchool="$school" \
+		--append ucsschoolImportRole=legal_guardian \
 		--append ucsschoolImportRole=student \
 		--append ucsschoolImportRole=staff \
 		--append ucsschoolImportRole=teacher_and_staff \

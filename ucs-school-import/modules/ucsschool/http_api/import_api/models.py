@@ -52,7 +52,8 @@ USER_STAFF = "staff"
 USER_STUDENT = "student"
 USER_TEACHER = "teacher"
 USER_TEACHER_AND_STAFF = "teacher_and_staff"
-USER_ROLES = (USER_STAFF, USER_STUDENT, USER_TEACHER, USER_TEACHER_AND_STAFF)
+USER_LEGAL_GUARDIAN = "legal_guardian"
+USER_ROLES = (USER_STAFF, USER_STUDENT, USER_TEACHER, USER_TEACHER_AND_STAFF, USER_LEGAL_GUARDIAN)
 USER_ROLES_CHOICES = list(zip([u.lower().replace(" ", "_") for u in USER_ROLES], USER_ROLES))
 
 translation = univention.admin.localization.translation("ucs-school-import-http-api")
@@ -63,6 +64,7 @@ USER_ROLE_TRANS = {
     USER_STUDENT: _("student"),
     USER_TEACHER: _("teacher"),
     USER_TEACHER_AND_STAFF: _("teacher_and_staff"),
+    USER_LEGAL_GUARDIAN: _("legal_guardian"),
 }
 
 

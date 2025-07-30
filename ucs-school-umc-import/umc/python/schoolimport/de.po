@@ -4,7 +4,7 @@ msgstr ""
 "Project-Id-Version: ucs-school-umc-import\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
 "POT-Creation-Date: 2018-05-31 08:22+0200\n"
-"PO-Revision-Date: \n"
+"PO-Revision-Date: 2025-07-30 16:43+0200\n"
 "Last-Translator: Univention GmbH <packages@univention.de>\n"
 "Language-Team: Univention GmbH <packages@univention.de>\n"
 "Language: de\n"
@@ -31,6 +31,10 @@ msgstr "Keine Berechtigung zum Starten eines Imports für eine Benutzerrolle."
 #: umc/python/schoolimport/__init__.py:110
 msgid "Please wait until the examination of the data is complete."
 msgstr "Bitte warten Sie bis die Prüfung der Daten abschlossen ist."
+
+#: umc/python/schoolimport/__init__.py
+msgid "Legal Guardian"
+msgstr "Gesetzlicher Vertreter"
 
 #: umc/python/schoolimport/__init__.py:233
 msgid "Staff"
