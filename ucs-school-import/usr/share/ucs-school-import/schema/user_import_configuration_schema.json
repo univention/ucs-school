@@ -24,7 +24,8 @@
 				"student": {"type": "boolean"},
 				"teacher": {"type": "boolean"},
 				"staff": {"type": "boolean"},
-				"teacher_and_staff": {"type": "boolean"}
+				"teacher_and_staff": {"type": "boolean"},
+				"legal_guardian": {"type": "boolean"}
 			}
 		},
 		"csv": {
@@ -67,7 +68,8 @@
 						"student": {"type": "string"},
 						"teacher": {"type": "string"},
 						"staff": {"type": "string"},
-						"teacher_and_staff": {"type": "string"}
+						"teacher_and_staff": {"type": "string"},
+						"legal_guardian": {"type": "string"}
 					}
 				},
 				"<udm attribute name>": {"type": ["string", "null"]}
@@ -101,7 +103,8 @@
 						"student": {"type": "integer"},
 						"teacher": {"type": "integer"},
 						"staff": {"type": "integer"},
-						"teacher_and_staff": {"type": "integer"}
+						"teacher_and_staff": {"type": "integer"},
+						"legal_guardian": {"type": "integer"}
 					}
 				},
 				"allowed_special_chars": {"type": "string"}

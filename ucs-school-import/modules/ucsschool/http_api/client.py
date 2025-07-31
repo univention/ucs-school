@@ -607,7 +607,7 @@ class Client(object):
             :param str source_uid: optional unique ID of school management software database
             :param str school: optional name of a School
             :param str user_role: optional role of user, one of staff, student, teacher,
-                teacher_and_staff
+                teacher_and_staff or legal_guardian
             :param bool dryrun: False to start a real import
             :param file file_obj: optional file like object to read CSV data from, instead of opening
                 'filename'

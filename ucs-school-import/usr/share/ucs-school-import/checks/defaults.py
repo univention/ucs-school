@@ -88,7 +88,7 @@ class DefaultConfigurationChecks(ConfigurationChecks):
             )
 
     def test_username_max_length(self):
-        for role in ("default", "staff", "student", "teacher", "teacher_and_staff"):
+        for role in ("default", "staff", "student", "teacher", "teacher_and_staff", "legal_guardian"):
             try:
                 username_max_length = self.config["username"]["max_length"][role]
                 if username_max_length < 4:
@@ -151,7 +151,7 @@ class DefaultConfigurationChecks(ConfigurationChecks):
         * scheme:record_uid -> str
         * scheme:username -> dict: {
         *   default -> str
-        *   staff, student, teacher, teacher_and_staff -> str
+        *   staff, student, teacher, teacher_and_staff, legal_guardian -> str
         *   allow_rename -> bool # depricated!
         * }
         * scheme:<udm_attribute_name> -> str
@@ -198,7 +198,14 @@ class DefaultConfigurationChecks(ConfigurationChecks):
                         raise InitialisationError(
                             "Deprecated configuration key 'scheme:username:allow_rename'."
                         )
-                    elif k in ("default", "staff", "student", "teacher", "teacher_and_staff"):
+                    elif k in (
+                        "default",
+                        "staff",
+                        "student",
+                        "teacher",
+                        "teacher_and_staff",
+                        "legal_guardian",
+                    ):
                         if not isinstance(v, string_types):
                             raise InitialisationError(
                                 "Value of 'scheme:username:{}' must be a string.".format(k)
