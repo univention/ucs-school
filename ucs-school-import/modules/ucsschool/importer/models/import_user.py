@@ -1473,8 +1473,11 @@ class ImportUser(User):
                 return "teacher_and_staff"
             else:
                 return "teacher"
-        else:
+        elif role_staff in self.roles:
             return "staff"
+        elif role_legal_guardian in self.roles:
+            return "legal_guardian"
+        raise ValueError(f"Unknown role type: {self.roles!r}")
 
     @property
     def school_classes_as_str(self):  # type: () -> str
