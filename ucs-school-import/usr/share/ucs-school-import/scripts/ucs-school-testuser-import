@@ -153,7 +153,7 @@ def parse_cmdline():
     parser.set_defaults(**defaults)
 
     args = parser.parse_args()
-    if args.staff + args.students + args.teachers + args.staffteachers == 0:
+    if args.staff + args.students + args.teachers + args.staffteachers + args.legal_guardians == 0:
         parser.error("Please supply number and type of users to create.")
     if any(
         num < 0
