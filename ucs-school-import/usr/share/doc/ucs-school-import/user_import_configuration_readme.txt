@@ -41,6 +41,7 @@ After that follow
 	"staff":             bool [3]: if the new user should be activated
 	"teacher":           bool [3]: if the new user should be activated
 	"teacher_and_staff": bool [3]: if the new user should be activated
+	"legal_guardian":    bool [3]: if the new user should be activated
 },
 "csv": {
 	"allowed_missing_columns": list(str): names of columns for which no error will be raised if they are missing.
@@ -76,6 +77,7 @@ After that follow
 		"staff":             str [3]:                     plus [COUNTER2] which is replaced by numbers
 		"teacher":           str [3]:                     starting from 2 or [ALWAYSCOUNTER] which is
 		"teacher_and_staff": str [3]:                     always replaced by numbers starting from 1.
+		"legal_guardian":    str [3]:
 	},
 	<udm attribute name>:	str: scheme (manual-4.2:users:templates) to create a UDM attribute from
 },
@@ -94,7 +96,7 @@ After that follow
 "source_uid": str [1]: UID of source database
 "tolerate_errors": int [1]: number of non-fatal errors to tolerate before aborting, -1 means unlimited
 "user_deletion": DEPRECATED - use deletion_grace_period instead,
-"user_role": str: if set, all new users from input will have that role (student|staff|teacher|teacher_and_staff)
+"user_role": str: if set, all new users from input will have that role (student|staff|teacher|teacher_and_staff|legal_guardian)
 "username": {
 	"allowed_special_chars": str [1]:   characters that are allowed in usernames, additionally to a-z, A-Z and 0-9.
 	                                    Defaults to only the dot. To add the hyphen, use ".-" (a string, not a list).
@@ -118,5 +120,6 @@ After that follow
 		"staff":             int [3]: 	see "default".
 		"teacher":           int [3]: 	see "default".
 		"teacher_and_staff": int [3]: 	see "default".
+		"legal_guardian":    int [3]: 	see "default".
 	}
 }
