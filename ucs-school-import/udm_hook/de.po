@@ -28,10 +28,7 @@ msgid ""
 "Legal guardian %(legal_guardian_dn)s already has %(num_legal_wards)d "
 "legal wards. Adding %(self_dn)s would increase it above the maximum "
 "allowed legal wards (%(max_legal_wards)d)."
-msgstr ""
-"Gesetzlicher Vertreter %(legal_guardian_dn)s hat bereits %(num_legal_wards)d "
-"Schutzbefohlene. Das Hinzufügen von %(self_dn)s würde ihn über die maximal "
-"erlaubte Anzahl an Schutzbefohlenen (%(max_legal_wards)d) hinaus erhöhen."
+msgstr "Der gesetzliche Vertreter %(legal_guardian_dn)s hat bereits %(num_legal_wards)d Schutzbefohlene. Das Hinzufügen von %(self_dn)s überschreitet die maximal erlaubte Anzahl an Schutzbefohlenen (%(max_legal_wards)d)."
 
 #: udm_hook/ucsschool_legal_ward.py
 #, python-format
