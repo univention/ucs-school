@@ -25,13 +25,13 @@ For all OUs that are created later, such a group will be created automatically.
 Granularity
 -----------
 
-Those automatically created groups list all four roles (``student``, ``staff``, ``teacher_and_staff`` and ``teacher``).
+Those automatically created groups list all five roles (``student``, ``staff``, ``teacher_and_staff``, ``teacher`` and ``legal_guardian``).
 Being member of such a group allows to run/read imports of users of all those roles in the referenced school/OU.
 
 For finer-graned access control the administrator can create groups with less roles or remove roles from existing groups.
 
 It is also possible to add more OUs to a group, to allow the same user(s) to run imports for multiple OUs.
-It's not possible do do this in UMC, but on the command line.::
+To do this on the command line, use the following commands: ::
 
 	$ OU=SchuleEins
 	$ OU2=SchuleZwei
@@ -43,6 +43,11 @@ It's not possible do do this in UMC, but on the command line.::
 	    --dn cn="$OU-import-all,cn=groups,ou=$OU,$ldap_base" \
 	    --append ucsschoolImportSchool=$OU2 \
 	    --append ucsschoolImportSchool=$OU3
+
+To do this with the UMC,
+open the corresponding group object and switch to the tab ``Options``.
+There activate the option ``UCS@school Import Permissions`` if neccessary.
+Then switch to the tab ``UCS@school`` and change the allowed schools and roles for the UCS\@school import acording to your needs.
 
 .. _add-user-to-security-group:
 
@@ -79,8 +84,9 @@ An LDAP search should now look similar to this::
 	ucsschoolImportRole: staff
 	ucsschoolImportRole: teacher_and_staff
 	ucsschoolImportRole: teacher
+	ucsschoolImportRole: legal_guardian
 	ucsschoolImportSchool: $OU
 	uniqueMember: uid=myteacher,cn=lehrer,cn=users,ou=$OU,$ldap_base
 	memberUid: myteacher
 
-The user ``myteacher`` is now allowed to run imports (and read data of previous imports) on OU ``$OU`` for users of roles ``student``, ``staff``, ``teacher_and_staff`` and ``teacher``.
+The user ``myteacher`` is now allowed to run imports (and read data of previous imports) on OU ``$OU`` for users of roles ``student``, ``staff``, ``teacher_and_staff``, ``teacher`` and ``legal_guardian``.
