@@ -1,3 +1,10 @@
+ucs-test-ucsschool (8.0.29) unstable; urgency=low
+
+  * feat: update HTTP-API tests for new legal guardians
+    Issue univention/dev/education/ucsschool#1458
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 01 Aug 2025 15:36:36 +0200
+
 ucs-test-ucsschool (8.0.28) unstable; urgency=medium
 
   * feat: add ImportLegalGuardian class

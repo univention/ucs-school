@@ -1,3 +1,10 @@
+ucs-school-lib (15.1.2) unstable; urgency=low
+
+  * fix: fix missing role parsing and translation strings
+    Issue univention/dev/education/ucsschool#1458
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Fri, 01 Aug 2025 15:35:21 +0200
+
 ucs-school-lib (15.1.1) unstable; urgency=medium
 
   * feat: add ImportLegalGuardian class
