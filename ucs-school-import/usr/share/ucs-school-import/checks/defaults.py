@@ -48,6 +48,29 @@ from ucsschool.importer.utils.configuration_checks import ConfigurationChecks
 from ucsschool.lib.models.utils import ucr, ucr_username_max_length
 
 
+def check_scheme(scheme, scheme_allowed_occurences_regex):
+    """
+    Check if '<' and '>' symbols occure equal times and if counter names in
+    '[', ']' are correct.
+    """
+    if scheme.count("<") != scheme.count(">"):
+        raise InitialisationError("The numbers of '<' and '>' symbols are not identical.")
+    # Check if on each '<' symbol a '>' symbol follows
+    start = 0
+    while True:
+        opening = scheme.find("<", start)
+        if opening == -1:
+            break
+        closing = scheme.find(">", start)
+        if closing < opening:
+            raise InitialisationError("'<' and '>' are in wrong order.")
+        start = closing + 1
+    # remove allowed usages of '[..]' and check if any remain
+    rest = scheme_allowed_occurences_regex.sub("", scheme)
+    if any(symbol in rest for symbol in ["[", "]"]):
+        raise InitialisationError("Erroneous use of square brackets in schema {!r}".format(scheme))
+
+
 class DefaultConfigurationChecks(ConfigurationChecks):
     """
     Default configuration checks. Should always be executed.
@@ -165,30 +188,6 @@ class DefaultConfigurationChecks(ConfigurationChecks):
         scheme_allowed_occurences = [r"\[\d\]", r"\[\d*:\d*\]"] + counters_str
         scheme_allowed_occurences_regex = re.compile("|".join(scheme_allowed_occurences))
 
-        def check_scheme(scheme):
-            """
-            Check if '<' and '>' symbols occure equal times and if counter names in
-            '[', ']' are correct.
-            """
-            if scheme.count("<") != scheme.count(">"):
-                raise InitialisationError("The numbers of '<' and '>' symbols are not identical.")
-            # Check if on each '<' symbol a '>' symbol follows
-            start = 0
-            while True:
-                opening = scheme.find("<", start)
-                if opening == -1:
-                    break
-                closing = scheme.find(">", start)
-                if closing < opening:
-                    raise InitialisationError("'<' and '>' are in wrong order.")
-                start = closing + 1
-            # remove allowed usages of '[..]' and check if any remain
-            rest = scheme_allowed_occurences_regex.sub("", scheme)
-            if any(symbol in rest for symbol in ["[", "]"]):
-                raise InitialisationError(
-                    "Erroneous use of square brackets in schema {!r}".format(scheme)
-                )
-
         for name, value in iteritems(self.config["scheme"]):
             if name == "username":
                 if not isinstance(value, dict):
@@ -210,7 +209,7 @@ class DefaultConfigurationChecks(ConfigurationChecks):
                             raise InitialisationError(
                                 "Value of 'scheme:username:{}' must be a string.".format(k)
                             )
-                        check_scheme(v)
+                        check_scheme(v, scheme_allowed_occurences_regex)
                     else:
                         raise InitialisationError(
                             "Unknown configuration key 'scheme:username:{}'.".format(k)
@@ -218,4 +217,4 @@ class DefaultConfigurationChecks(ConfigurationChecks):
             else:
                 if not isinstance(value, string_types):
                     raise InitialisationError("Value of 'scheme:{}' must be a string.".format(name))
-                check_scheme(value)
+                check_scheme(value, scheme_allowed_occurences_regex)
