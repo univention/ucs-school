@@ -8,8 +8,8 @@ fix: 15.1.1
 bugs:
   58460:
     en: |
-      Add LDAP equality index for new attribute ``ucsschoolLegalGuardian``.
+      Add LDAP equality index for new attributes ``ucsschoolLegalGuardian`` and ``ucsschoolLegalWard``.
       A legal guardian user will be created for new installations in the ``DEMOSCHOOL``.
     de: |
-      Es gibt einen LDAP Index für das neue Attribut ``ucsschoolLegalGuardian``.
-      Ein Gesetzlicher Vertreter wird, bei neu Installationen erstellt, in der ``DEMOSCHOOL`` erstellt.
+      Es gibt einen LDAP Index für die neuen Attribute ``ucsschoolLegalGuardian`` und ``ucsschoolLegalWard``.
+      Ein Gesetzlicher Vertreter wird bei Neuinstallationen in der ``DEMOSCHOOL`` erstellt.
