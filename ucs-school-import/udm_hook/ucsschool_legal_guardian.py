@@ -83,14 +83,6 @@ def _save_student(student):
 
 
 class UcsschoolLegalGuardian(simpleHook):
-    def hook_open(self, obj):
-        if "ucsschoolLegalGuardian" not in obj.options:
-            return
-        if obj.dn:
-            obj.info["ucsschoolLegalWard"] = obj.lo.searchDn(
-                filter=filter_format("(ucsschoolLegalGuardian=%s)", (obj.dn,))
-            )
-
     def hook_ldap_addlist(self, obj, al):
         # hook_ldap_modlist will be called later anyways, but at that point
         # ucsschoolLegalWard needs to be already removed from the add list

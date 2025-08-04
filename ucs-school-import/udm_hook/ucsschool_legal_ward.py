@@ -54,7 +54,7 @@ class UcsschoolLegalWard(simpleHook):
     def _check_legal_ward_count(self, obj, legal_guardian_dn):
 
         num_legal_wards = len(
-            obj.lo.searchDn(filter=filter_format("(ucsschoolLegalGuardian=%s)", (legal_guardian_dn,)))
+            obj.lo.searchDn(filter=filter_format("(ucsschoolLegalGuardian=%s)", (legal_guardian_dn,))) # TODO
         )
 
         if num_legal_wards >= MAX_LEGAL_WARDS:
