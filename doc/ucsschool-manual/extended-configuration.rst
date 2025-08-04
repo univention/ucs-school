@@ -454,3 +454,6 @@ Die Apple School Manager Connector App für |UCSUAS| synchronisiert automatisch
 Benutzer zu Apple School Manager (ASM). Das |UCSUAS| Identity Management
 übernimmt die Rolle des Studierendeninformationssystems und verwendet die
 SFTP-Schnittstelle, wie sie von Apple bereit gestellt wird.
+
+Die Apple School Manager Connector App kann auf den Systemrollen |UCSPRIMARYDN|, |UCSBACKUPDN| oder auf einem Schulserver installiert werden.
+Die Installation auf einem zentralen |UCSREPLICADN| ist nicht unterstützt.
