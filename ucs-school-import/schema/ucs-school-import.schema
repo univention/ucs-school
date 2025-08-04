@@ -64,6 +64,12 @@ attributetype ( univentionSchool:56.1
         EQUALITY DistinguishedNameMatch
         SYNTAX 1.3.6.1.4.1.1466.115.121.1.12 )
 
+attributetype ( univentionSchool:56.2
+        NAME 'ucsschoolLegalWard'
+        DESC 'DN of a legal ward (student) of the user'
+        EQUALITY distinguishedNameMatch
+        SYNTAX 1.3.6.1.4.1.1466.115.121.1.12 )
+
 objectclass ( univentionSchool:53 NAME 'ucsschoolType'
        DESC 'Role of user or object in UCS@school context'
        ABSTRACT
@@ -88,7 +94,8 @@ objectclass ( univentionSchool:53.4 NAME 'ucsschoolStaff'
 
 objectclass ( univentionSchool:53.5 NAME 'ucsschoolLegalGuardian'
         DESC 'auxiliary class for legal guardian users'
-        SUP ucsschoolType AUXILIARY )
+        SUP ucsschoolType AUXILIARY
+        MAY ( ucsschoolLegalWard ) )
 
 objectclass ( univentionSchool:53.10 NAME 'ucsschoolExam'
         DESC 'auxiliary class for exam users'
