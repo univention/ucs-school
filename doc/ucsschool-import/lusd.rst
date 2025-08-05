@@ -312,6 +312,8 @@ mit denen Sie eventuell ein Problem selbst lösen können.
    Konsultieren Sie immer zuerst die Log Datei, um potentielle Probleme zu identifizieren.
    Die Datei mit den Log-Einträgen lautet :file:`/var/log/univention/ucs-school-import-lusd.log`.
 
+.. _lusd-migration-existing-users-for-lusd-import:
+
 Migration existierender Nutzerdaten zum LUSD Import
 ---------------------------------------------------
 
@@ -332,19 +334,37 @@ Diese beiden Werte müssen in den existierenden Daten so angepasst werden,
 dass sie für die jeweiligen Nutzer mit den Daten aus dem LUSD Import übereinstimmen.
 
 Die ``source_uid`` wird über die Konfigurationsdatei definiert
-und für den LUSD Import standardmässig auf ``LUSD_JSON_API`` gesetzt.
+und für den LUSD Import standardmäßig auf ``LUSD_JSON_API`` gesetzt.
 Sie können entweder die ``source_uid`` bei allen existierenden Nutzern der Schule auf den Wert ``LUSD_JSON_API`` setzen
 oder Sie passen die Konfiguration des LUSD Imports so an,
 dass Ihre existierende ``source_uid`` verwendet wird.
 
 Die ``record_uid`` wird beim LUSD Import direkt aus der Datenbank bezogen.
-Jeder Schüler und jede Lehrkraft besitzen eine ``dienststellennummer``,
-die als ``record_uid`` verwendet wird.
 Um die Nutzer der Schule korrekt zu migrieren,
-müssen Sie für jedes Benutzerkonto eines Schülers und jeder Lehrkraft im LDAP die dazugehörige Dienststellennummer einmalig in Erfahrung bringen
+müssen Sie für jeden Nutzer im LDAP die dazugehörige ``schuelerUID`` oder ``personalUID`` einmalig in Erfahrung bringen
 und als die neue ``record_uid`` im LDAP eintragen.
-Ein entsprechender Mechanismus zur Zuordnung der existierenden Daten zu Dienststellennummern kann nicht automatisch vom LUSD Import durchgeführt werden.
+:numref:`lusd-migration-existing-users-for-lusd-import-table`
+zeigt die Gegenüberstellung.
+Ein entsprechender Mechanismus zur Zuordnung der existierenden Daten aus dem LUSD XML Import zu der neuen LUSD API wird nicht offiziell unterstützt.
 Sie müssen eine geeignete Strategie entwickeln, die auf Ihre Datenstruktur Anwendung findet.
+
+.. _lusd-migration-existing-users-for-lusd-import-table:
+
+.. list-table:: Gegenüberstellung ``source_uid`` in LUSD und ``record_uid`` in UCS\@school
+   :header-rows: 1
+   :width: 65%
+
+   * - Rolle
+     - UCS\@school
+     - LUSD
+
+   * - Schüler
+     - ``record_uid``
+     - ``schuelerUID``
+
+   * - Lehrer
+     - ``record_uid``
+     - ``personalUID``
 
 Wenn Sie beide Werte bei den existierenden Nutzern angepasst haben,
 kann der LUSD Import gestartet werden und existierende Nutzer werden korrekt aktualisiert.
