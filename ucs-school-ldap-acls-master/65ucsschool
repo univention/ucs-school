@@ -21,7 +21,7 @@ def replace_ucr_variables(template):
 		'DISTRICT': 'ou=[^,]+,' if configRegistry.is_true('ucsschool/ldap/district/enable', False) else '',
 		'PUPILS': configRegistry.get('ucsschool/ldap/default/container/pupils', 'schueler'),
 		'TEACHERS': configRegistry.get('ucsschool/ldap/default/container/teachers', 'lehrer'),
-		'LEGAL-GUARDIAN': configRegistry.get('ucsschool/ldap/default/container/legal_guardian', 'gesetzliche vertreter'),
+		'LEGAL-GUARDIAN': configRegistry.get('ucsschool/ldap/default/container/legal_guardians'),
 		'STAFF': configRegistry.get('ucsschool/ldap/default/container/staff', 'mitarbeiter'),
 		'TEACHERS-STAFF': configRegistry.get('ucsschool/ldap/default/container/teachers-and-staff', 'lehrer und mitarbeiter'),
 		'ADMINS': configRegistry.get('ucsschool/ldap/default/container/admins', 'admins'),

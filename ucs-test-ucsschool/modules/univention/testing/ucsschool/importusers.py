@@ -41,9 +41,7 @@ configRegistry.load()
 
 cn_pupils = configRegistry.get("ucsschool/ldap/default/container/pupils", "schueler")
 cn_teachers = configRegistry.get("ucsschool/ldap/default/container/teachers", "lehrer")
-cn_legal_guardians = configRegistry.get(
-    "ucsschool/ldap/default/container/legal_guardians", "gesetzliche vertreter"
-)
+cn_legal_guardians = configRegistry.get("ucsschool/ldap/default/container/legal_guardians")
 cn_teachers_staff = configRegistry.get(
     "ucsschool/ldap/default/container/teachers-and-staff", "lehrer und mitarbeiter"
 )
@@ -51,9 +49,7 @@ cn_staff = configRegistry.get("ucsschool/ldap/default/container/staff", "mitarbe
 
 grp_prefix_pupils = configRegistry.get("ucsschool/ldap/default/groupprefix/pupils", "schueler-")
 grp_prefix_teachers = configRegistry.get("ucsschool/ldap/default/groupprefix/teachers", "lehrer-")
-grp_prefix_legal_guardians = configRegistry.get(
-    "ucsschool/ldap/default/groupprefix/legal_guardians", "gesetzliche vertreter-"
-)
+grp_prefix_legal_guardians = configRegistry.get("ucsschool/ldap/default/groupprefix/legal_guardians")
 grp_prefix_admins = configRegistry.get("ucsschool/ldap/default/groupprefix/admins", "admins-")
 grp_prefix_staff = configRegistry.get("ucsschool/ldap/default/groupprefix/staff", "mitarbeiter-")
 

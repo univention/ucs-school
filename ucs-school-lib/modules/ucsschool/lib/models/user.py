@@ -698,7 +698,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         ]
 
     def get_legal_guardians_groups(self, schools=None):  # type: (Optional[List[str]]) -> List[str]
-        prefix = ucr.get("ucsschool/ldap/default/groupprefix/legal_guardians", "gesetzliche vertreter-")
+        prefix = ucr.get("ucsschool/ldap/default/groupprefix/legal_guardians")
         return [
             self.get_group_dn("%s%s" % (prefix, school), school) for school in (schools or self.schools)
         ]

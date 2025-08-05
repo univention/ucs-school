@@ -33,6 +33,7 @@ Description[de]=Standard-Container für gesetzliche Vertreter
 Description[en]=Default container for legal guardians
 Type=str
 Categories=ucsschool-base
+Default=gesetzliche vertreter
 
 [ucsschool/ldap/default/groupprefix/pupils]
 Description[de]=Standard-Prefix für die Schüler-Gruppen
@@ -63,6 +64,7 @@ Description[de]=Standard-Prefix für die gesetzliche Vertreter-Gruppen
 Description[en]=Default prefix for legal guardian groups
 Type=str
 Categories=ucsschool-base
+Default=gesetzliche vertreter-
 
 [ucsschool/ldap/default/dcs]
 Description[de]=Spezifiziert welche Schul-DCs beim Erzeugen einer Schule angelegt werden sollen (Werte: edukativ und/oder verwaltung)
