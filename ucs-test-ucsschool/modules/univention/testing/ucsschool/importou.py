@@ -282,6 +282,7 @@ def verify_ou(ou, dc, ucr, sharefileserver, dc_administrative, must_exist):
     )
     cn_admins = ucr.get("ucsschool/ldap/default/container/admins", "admins")
     cn_staff = ucr.get("ucsschool/ldap/default/container/staff", "mitarbeiter")
+    cn_legal_guardian = ucr.get("ucsschool/ldap/default/container/legal_guardian")
 
     singlemaster = ucr.is_true("ucsschool/singlemaster")
     noneducational_create_objects = ucr.is_true("ucsschool/ldap/noneducational/create/objects")
@@ -342,8 +343,8 @@ def verify_ou(ou, dc, ucr, sharefileserver, dc_administrative, must_exist):
         should_exist=must_exist,
     )
     utils.verify_ldap_object(
-        "cn=%s,cn=users,%s" % (cn_admins, ou_base),
-        expected_attr={"cn": [cn_admins]},
+        "cn=%s,cn=users,%s" % (cn_legal_guardian, ou_base),
+        expected_attr={"cn": [cn_legal_guardian]},
         should_exist=must_exist,
     )
 
