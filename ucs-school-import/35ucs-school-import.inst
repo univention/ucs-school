@@ -103,7 +103,7 @@ fi
 univention-directory-manager container/cn create "$@" --ignore_exists --position "cn=policies,$ldap_base" --set name=UMC --set policyPath=1 || die
 
 # create empty UMC access policies if missing
-for policyname in ucsschool-umc-pupils-default ucsschool-umc-teachers-default ucsschool-legal_guardians-default ucsschool-umc-staff-default ucsschool-umc-admins-default ; do
+for policyname in ucsschool-umc-pupils-default ucsschool-umc-teachers-default ucsschool-umc-legal_guardians-default ucsschool-umc-staff-default ucsschool-umc-admins-default ; do
         univention-directory-manager policies/umc create "$@" --ignore_exists \
                 --position cn=UMC,cn=policies,"$ldap_base" \
                 --set name="${policyname}" || die
