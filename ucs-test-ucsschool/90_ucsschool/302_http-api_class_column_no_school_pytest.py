@@ -78,7 +78,7 @@ def create_security_group(schoolenv):
             options=["posix", "samba", "ucsschoolImportGroup"],
             append={
                 "users": user_dns,
-                "ucsschoolImportRole": ["student", "teacher", "teacher_and_staff"],
+                "ucsschoolImportRole": ["student", "teacher", "teacher_and_staff", "legal_guardian"],
                 "ucsschoolImportSchool": allowed_ou_names,
             },
         )
@@ -89,7 +89,7 @@ def create_security_group(schoolenv):
             group.dn,
             expected_attr={
                 "cn": [group.name],
-                "ucsschoolImportRole": ["student", "teacher", "teacher_and_staff"],
+                "ucsschoolImportRole": ["student", "teacher", "teacher_and_staff", "legal_guardian"],
                 "ucsschoolImportSchool": allowed_ou_names,
                 "uniqueMember": user_dns,
             },
