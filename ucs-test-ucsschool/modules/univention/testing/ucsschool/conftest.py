@@ -7,6 +7,7 @@ import shutil
 import subprocess
 import tempfile
 import time
+from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Type  # noqa: F401
 
@@ -662,3 +663,35 @@ def send_pdfprinter_job(ucr, list_pdfprinter_jobs):
             assert job, "Ordered print job was not stored in user spool directory"
 
     return _func
+
+
+@dataclass(frozen=True)
+class DNNameTuple:
+    name: str
+    dn: str
+
+
+@pytest.fixture
+def create_http_import_security_group(schoolenv):
+    def _create_http_import_security_group(ou_dn, roles, allowed_ou_names, user_dns):
+        """
+        _create_http_import_security_group(
+            "ou=school1,dc=ucs,dc=test",
+            ["student", "staff", "teacher", "teacher_and_staff", "legal_guardian"],
+            ["school1"],
+            ["uid=user1,cn=lehrer,cn=users,ou=school1,dc=ucs,dc=test"],
+        )
+        """
+        g1 = schoolenv.udm.create_group(
+            position="cn=groups,{}".format(ou_dn),
+            options=["posix", "samba", "ucsschoolImportGroup"],
+            append={
+                "users": user_dns,
+                "ucsschoolImportRole": roles,
+                "ucsschoolImportSchool": allowed_ou_names,
+            },
+        )
+
+        return DNNameTuple(name=g1[1], dn=g1[0])
+
+    return _create_http_import_security_group
