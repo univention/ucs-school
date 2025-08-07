@@ -11,3 +11,7 @@ Logging
 Logs
 Semesterstufe
 Semesterstufen
+Import-Mapping
+Import-Mappings
+Attributwerte
+CSV-Importen
