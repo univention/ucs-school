@@ -29,7 +29,7 @@ Es müssen nicht zwangsläufig Schlüssel für alle Benutzerrollen angegeben wer
 
 Gilt für eine Einstellung z.B. das gleiche für Mitarbeiter und Lehrer und weicht
 nur der Wert für die Schüler-Benutzerrolle ab, so reicht es aus, ``default`` und
-``student`` zu konfigurieren. In den Fällen ``staff``, ``teacher`` und
+``student`` zu konfigurieren. In den Fällen ``staff``, ``teacher``, ``legal_guardian`` und
 ``teacher_and_staff`` wird in Abwesenheit einer spezifischen Konfiguration
 automatisch auf ``default`` zurückgefallen:
 

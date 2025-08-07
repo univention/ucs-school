@@ -179,8 +179,8 @@ Die Optionen für :file:`ucs-school-testuser-import` haben folgende Bedeutungen:
 
 .. option:: --students
 
-   Gibt die Anzahl der Benutzer an.
-   Alternativ können die Optionen ``--staff``, ``--teachers``, oder ``--staffteachers`` verwendet werden.
+   Gibt die Anzahl der Benutzer mit der Rolle *Schüler* an.
+   Alternativ können für andere Benutzerrollen die Optionen ``--staff``, ``--teachers``, ``--staffteachers`` oder ``--legal_guardians`` verwendet werden.
 
 .. option:: --classes
 

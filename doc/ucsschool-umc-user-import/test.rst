@@ -25,6 +25,6 @@ Kommandozeilenparameter exakt aus. Hier ein Beispiel:
    --infile 'test_users_2018-07-04_12:31:46.csv'
 
 
-:samp:`{ROLE}` muss mit ``student``, ``staff``, ``teacher`` oder
-``teacher_and_staff`` ersetzt werden, und ``SchuleEins`` mit der entsprechenden
-:samp:`OU` (in ``'schuleeins-ROLE'`` in Kleinbuchstaben).
+Der Platzhalter :samp:`{ROLE}` muss mit ``student``, ``staff``, ``teacher``,
+``teacher_and_staff`` oder ``legal_guardian`` ersetzt werden, und ``SchuleEins`` mit der entsprechenden
+:samp:`OU` (in ``'schuleeins-ROLE'`` muss die OU in Kleinbuchstaben angegeben werden).
