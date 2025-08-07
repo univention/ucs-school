@@ -5,7 +5,7 @@
 .. _lusd-import:
 
 ***********
-LUSD Import
+LUSD-Import
 ***********
 
 Dieses Kapitel richtet sich an Administratoren, die Benutzerdaten aus der zentralen Datenbank für Lehrer und Schüler

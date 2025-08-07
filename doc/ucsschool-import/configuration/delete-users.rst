@@ -52,7 +52,7 @@ Das Löschen von Benutzern kann in zwei Varianten konfiguriert werden:
 .. warning::
 
    Der Cron Job, welcher Benutzer anhand des ``ucsschoolPurgeTimestamp`` löscht,
-   ignoriert alle Benutzer, die keine ``ucsschoolRole`` haben, die von der |UCSUAS| Importsoftware erkannt wird.
+   ignoriert alle Benutzer, die keine ``ucsschoolRole`` haben, die von der |UCSUAS|-Importsoftware erkannt wird.
    Das betrifft vor allem auch Schuladministratoren, da diese nicht über die Importsoftware verwaltet werden können.
 
 Um eine der Löschvarianten zu ändern oder neue hinzuzufügen, muss von der Klasse
