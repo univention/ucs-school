@@ -50,7 +50,8 @@ angezeigt.
 
       Bei der Verwendung von gesetzlichen Vertretern kann es notwendig sein,
       eine bestimmte Reihenfolge beim Import von Schülern und gesetzlichen Vertretern einzuhalten.
-      Nähere Informationen werden im Abschnitt :ref:`configuration` beschrieben.
+      Nähere Informationen zu gesetzlichen Vertretern können Sie im Abschnitt :ref:`configuration` oder im
+      `UCS\@school-Import-Handbuch` im Abschnitt `Szenarien → Gesetzliche Vertreter` finden.
 
 #. Anschließend kann die CSV-Datei mit den Benutzerdaten ausgewählt
    werden.
