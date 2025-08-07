@@ -89,6 +89,21 @@ unter :file:`/var/lib/ucs-school-import/jobs/{$JAHR}/{$JOB-ID}/`:
 Konfigurationsdateien, Hooks, Logdateien, CSV-Dateien (Eingabedaten, Passwörter
 neuer Benutzer, Zusammenfassung).
 
+.. note::
+
+   Beim Import von gesetzlichen Vertretern und der Verwendung der entsprechenden Verknüpfungen mit Schülern ist es notwendig,
+   dass die zu verknüpfenden Benutzerobjekte bereits im Verzeichnisdienst existieren.
+   Wir empfehlen daher,
+   nur eines der Attribute (``legal_guardians`` bzw. ``legal_wards``) in das Import-Mapping aufzunehmen.
+   In der UMC müssen die unterschiedlichen Benutzerrollen in entsprechender Reihenfolge importiert werden.
+
+   Beispiel:
+
+   Bei der Konfiguration des Attributs ``legal_wards`` für die gesetzlichen Vertreter,
+   müssen Sie erst die Schüler und in einem späteren Schritt die gesetzlichen Vertreter über die UMC importieren.
+   Anderenfalls liefert der Import Fehlermeldungen,
+   dass zu verknüpfende Objekte nicht aufgefunden werden können.
+
 Um die maximale Anzahl der Import-Jobs zu begrenzen, kann die UCR-Variable
 :envvar:`ucsschool/import/http_api/import_jobs_to_keep` gesetzt werden.
 Wenn nach einem Import die Gesamtanzahl der Jobs diese übersteigt,

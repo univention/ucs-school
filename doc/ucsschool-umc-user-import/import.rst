@@ -46,6 +46,12 @@ angezeigt.
 
       Auswahl des Benutzertyps
 
+   .. note::
+
+      Bei der Verwendung von gesetzlichen Vertretern kann es notwendig sein,
+      eine bestimmte Reihenfolge beim Import von Schülern und gesetzlichen Vertretern einzuhalten.
+      Nähere Informationen werden im Abschnitt :ref:`configuration` beschrieben.
+
 #. Anschließend kann die CSV-Datei mit den Benutzerdaten ausgewählt
    werden.
 
