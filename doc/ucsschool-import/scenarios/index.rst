@@ -8,7 +8,7 @@
 Szenarien
 *********
 
-In diesem Abschnitt wird beschrieben wie Sie den |UCSUAS| Import in verschiedenen Szenarien einsetzen können.
+In diesem Abschnitt wird beschrieben, wie Sie den |UCSUAS|-Import in verschiedenen Szenarien einsetzen können.
 
 .. toctree::
 
