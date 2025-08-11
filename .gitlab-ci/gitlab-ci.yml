@@ -33,10 +33,10 @@ lint_commit_messages:
   stage: build
   extends: .lint_commit_messages
 
-
 integration_tests:
   extends: .run_openstack_cfg
   stage: test
+  timeout: 120 minutes
   needs:
     - parse-advisories
     - create_app_version
