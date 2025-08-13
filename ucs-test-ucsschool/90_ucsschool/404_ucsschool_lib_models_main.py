@@ -241,7 +241,7 @@ def test_create_user(cmd_line_role, ucr_hostname, ucr_ldap_base):
             container = {
                 "student": "schueler",
                 "teacher": "lehrer",
-                "legal_guardian": "gesetzliche vertreter",
+                "legal_guardian": "sorgeberechtigte",
                 "staff": "mitarbeiter",
                 "teacher_and_staff": "lehrer und mitarbeiter",
             }[role]
@@ -281,7 +281,7 @@ def test_create_user_windows_reserved_name(
             container = {
                 "student": "schueler",
                 "teacher": "lehrer",
-                "legal_guardian": "gesetzliche vertreter",
+                "legal_guardian": "sorgeberechtigte",
                 "staff": "mitarbeiter",
                 "teacher_and_staff": "lehrer und mitarbeiter",
             }[role]

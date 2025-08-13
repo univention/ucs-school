@@ -334,8 +334,8 @@ univention-directory-manager settings/extended_options create "$@" --ignore_exis
     --set editable=1 \
     --set shortDescription="UCS@school Legal Guardian" \
     --set longDescription="Specifies that this user is a UCS@school Legal Guardian" \
-    --append translationShortDescription='"de_DE" "Gesetzlicher Vertreter in UCS@school"' \
-    --append translationLongDescription='"de_DE" "Spezifiziert, dass dieser Benutzer ein gesetzlicher Vertreter im Kontext von UCS@school ist."' \
+    --append translationShortDescription='"de_DE" "UCS@school-Sorgeberechtigter"' \
+    --append translationLongDescription='"de_DE" "Spezifiziert, dass dieser Benutzer ein Sorgeberechtigter im Kontext von UCS@school ist."' \
 
 univention-directory-manager settings/extended_attribute create "$@" --ignore_exists \
     --position "cn=UCSschool,cn=custom attributes,cn=univention,$ldap_base" \
@@ -501,7 +501,7 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
     --set shortDescription="Legal wards" \
     --set longDescription="Users which are the legal guardian for this person, e.g. their parents." \
     --append translationShortDescription='"de_DE" "Schutzbefohlene"' \
-    --append translationLongDescription='"de_DE" "Benutzer, für die diese Person der gesetzliche Vertreter ist, z. B. ihre Kinder."' \
+    --append translationLongDescription='"de_DE" "Benutzer, für die diese Person der Sorgeberechtigte ist, z. B. ihre Kinder."' \
     --set CLIName="ucsschoolLegalWard" \
     --set objectClass="ucsschoolLegalGuardian" \
     --set ldapMapping="ucsschoolLegalWard" \
@@ -524,8 +524,8 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
     --append translationGroupName='"de_DE" "Allgemein"' \
     --set shortDescription="Legal guardians" \
     --set longDescription="Users which are the legal guardian for this person, e.g. their parents." \
-    --append translationShortDescription='"de_DE" "Gesetzliche Vertreter"' \
-    --append translationLongDescription='"de_DE" "Benutzer, die der gesetzliche Vertreter dieser Person sind, z. B. ihre Eltern."' \
+    --append translationShortDescription='"de_DE" "Sorgeberechtigte"' \
+    --append translationLongDescription='"de_DE" "Benutzer, die der Sorgeberechtigte dieser Person sind, z. B. ihre Eltern."' \
     --set CLIName="ucsschoolLegalGuardian" \
     --set objectClass="ucsschoolStudent" \
     --set ldapMapping="ucsschoolLegalGuardian" \

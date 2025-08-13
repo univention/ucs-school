@@ -339,13 +339,13 @@ msgid "Teacher"
 msgstr "Lehrer"
 
 msgid "Legal Guardian"
-msgstr "Gesetzlicher Vertreter"
+msgstr "Sorgeberechtigter"
 
 msgid "Legal Wards"
 msgstr "Schutzbefohlene"
 
 msgid "Legal guardian"
-msgstr "Gesetzlicher Vertreter"
+msgstr "Sorgeberechtigter"
 
 #: modules/ucsschool/lib/models/user.py:922
 msgid "Teacher and Staff"
@@ -477,7 +477,7 @@ msgid "Zone"
 msgstr "Zone"
 
 msgid "The following legal guardians do not exist:"
-msgstr "Die folgenden gesetzlichen Vertreter existieren nicht:"
+msgstr "Die folgenden Sorgeberechtigten existieren nicht:"
 
 msgid "The following students do not exist:"
 msgstr "Die folgenden Schüler existieren nicht:"

@@ -114,7 +114,7 @@ class Person(object):
             elif self.is_staff():
                 subdir = os.path.join(self.school, "mitarbeiter")
             elif self.is_legal_guardian():
-                subdir = os.path.join(self.school, "gesetzliche vertreter")
+                subdir = os.path.join(self.school, "sorgeberechtigte")
         return os.path.join("/home", subdir, self.username)
 
     def make_school_base(self):

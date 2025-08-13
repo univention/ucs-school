@@ -135,7 +135,7 @@ access to dn.regex="cn=.*,cn=server,cn=computers,ou=([^,]+),@$@DISTRICT@$@@%@lda
 	by self write
 	by * +0 break
 
-# OU-Admins duerfen Passwoerter von Schülern, Lehrern, gesetzlichen Vertretern und Mitarbeitern (mit Position ausserhalb der OU) aendern
+# OU-Admins duerfen Passwoerter von Schülern, Lehrern, Sorgeberechtigten und Mitarbeitern (mit Position ausserhalb der OU) aendern
 access to filter="(&(|(objectClass=ucsschoolTeacher)(objectClass=ucsschoolLegalGuardian)(objectClass=ucsschoolStudent)(objectClass=ucsschoolStaff))(!(objectClass=ucsschoolAdministrator)))" attrs=krb5KeyVersionNumber,krb5KDCFlags,krb5Key,krb5PasswordEnd,sambaAcctFlags,sambaPwdLastSet,sambaLMPassword,sambaNTPassword,shadowLastChange,shadowMax,userPassword,pwhistory,sambaPwdCanChange,sambaPwdMustChange,sambaPasswordHistory,sambaBadPasswordCount
 	by set="this/ucsschoolSchool & ([ldap:///@%@ldap/base@%@?entryDN?sub?%28%26%28objectClass%3DucsschoolAdministratorGroup%29%28uniqueMember%3D]+user/entryDN+[%29%29])/ucsschoolSchool" write
 	by * +0 break

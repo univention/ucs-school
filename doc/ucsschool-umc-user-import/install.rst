@@ -91,7 +91,7 @@ neuer Benutzer, Zusammenfassung).
 
 .. note::
 
-   Beim Import von gesetzlichen Vertretern und der Verwendung der entsprechenden Verknüpfungen mit Schülern ist es notwendig,
+   Beim Import von Sorgeberechtigten und der Verwendung der entsprechenden Verknüpfungen mit Schülern ist es notwendig,
    dass die zu verknüpfenden Benutzerobjekte bereits im Verzeichnisdienst existieren.
    Wir empfehlen daher,
    nur eines der Attribute (``legal_guardians`` bzw. ``legal_wards``) in das Import-Mapping aufzunehmen.
@@ -99,8 +99,8 @@ neuer Benutzer, Zusammenfassung).
 
    Beispiel:
 
-   Bei der Konfiguration des Attributs ``legal_wards`` für die gesetzlichen Vertreter,
-   müssen Sie erst die Schüler und in einem späteren Schritt die gesetzlichen Vertreter über die UMC importieren.
+   Bei der Konfiguration des Attributs ``legal_wards`` für die Sorgeberechtigten
+   müssen Sie erst die Schüler und in einem späteren Schritt die Sorgeberechtigten über die UMC importieren.
    Anderenfalls liefert der Import Fehlermeldungen,
    dass zu verknüpfende Objekte nicht aufgefunden werden können.
 

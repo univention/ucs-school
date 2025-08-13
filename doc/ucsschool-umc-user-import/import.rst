@@ -48,10 +48,10 @@ angezeigt.
 
    .. note::
 
-      Bei der Verwendung von gesetzlichen Vertretern kann es notwendig sein,
-      eine bestimmte Reihenfolge beim Import von Schülern und gesetzlichen Vertretern einzuhalten.
-      Nähere Informationen zu gesetzlichen Vertretern können Sie im Abschnitt :ref:`configuration` oder im
-      `UCS\@school-Import-Handbuch` im Abschnitt `Szenarien → Gesetzliche Vertreter` finden.
+      Bei der Verwendung von Sorgeberechtigten kann es notwendig sein,
+      eine bestimmte Reihenfolge beim Import von Schülern und Sorgeberechtigten einzuhalten.
+      Nähere Informationen zu Sorgeberechtigten können Sie im Abschnitt :ref:`configuration` oder im
+      `UCS\@school-Import-Handbuch` im Abschnitt `Szenarien → Sorgeberechtigte` finden.
 
 #. Anschließend kann die CSV-Datei mit den Benutzerdaten ausgewählt
    werden.

@@ -151,7 +151,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         cn_pupils = self.cn_name("pupils", "schueler")
         cn_teachers = self.cn_name("teachers", "lehrer")
         cn_admins = self.cn_name("admins", "admins")
-        cn_legal_guardians = self.cn_name("legal_guardians", "gesetzliche vertreter")
+        cn_legal_guardians = self.cn_name("legal_guardians", "sorgeberechtigte")
         cn_classes = self.cn_name("class", "klassen")
         cn_rooms = self.cn_name("rooms", "raeume")
         user_containers = [cn_pupils, cn_teachers, cn_admins, cn_legal_guardians]
@@ -264,8 +264,8 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         group.create(lo)
         group.add_umc_policy(self.get_umc_policy_dn("teachers"), lo)
 
-        # cn=gesetzliche vertreter
-        group = Group.cache(self.group_name("legal_guardians", "gesetzliche vertreter-"), self.name)
+        # cn=sorgeberechtigte
+        group = Group.cache(self.group_name("legal_guardians", "sorgeberechtigte-"), self.name)
         group.ucsschool_roles = [
             create_ucsschool_role_string(role_school_legal_guardian_group, self.name)
         ]

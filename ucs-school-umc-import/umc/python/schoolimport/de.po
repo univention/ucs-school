@@ -34,7 +34,7 @@ msgstr "Bitte warten Sie bis die Prüfung der Daten abschlossen ist."
 
 #: umc/python/schoolimport/__init__.py
 msgid "Legal Guardian"
-msgstr "Gesetzlicher Vertreter"
+msgstr "Sorgeberechtigter"
 
 #: umc/python/schoolimport/__init__.py:233
 msgid "Staff"

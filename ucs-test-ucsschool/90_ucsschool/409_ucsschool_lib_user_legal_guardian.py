@@ -26,18 +26,18 @@ def test_create_legal_guardian(schoolenv):
 
     assert legal_guardian.roles == ["legal_guardian"]
     assert legal_guardian.dn.endswith(
-        f"cn=gesetzliche vertreter,cn=users,ou={ou_name},{schoolenv.ucr['ldap/base']}"
+        f"cn=sorgeberechtigte,cn=users,ou={ou_name},{schoolenv.ucr['ldap/base']}"
     )
     assert (
-        f"cn=gesetzliche vertreter-{ou_name},cn=groups,ou={ou_name},{schoolenv.ucr['ldap/base']}"
+        f"cn=sorgeberechtigte-{ou_name},cn=groups,ou={ou_name},{schoolenv.ucr['ldap/base']}"
         in legal_guardian.get_specific_groups([ou_name])
     )
     assert (
-        f"cn=gesetzliche vertreter-{ou_name},cn=groups,ou={ou_name},{schoolenv.ucr['ldap/base']}"
+        f"cn=sorgeberechtigte-{ou_name},cn=groups,ou={ou_name},{schoolenv.ucr['ldap/base']}"
         in legal_guardian.get_legal_guardians_groups([ou_name])
     )
     assert (
-        f"cn=gesetzliche vertreter,cn=users,ou={ou_name},{schoolenv.ucr['ldap/base']}"
+        f"cn=sorgeberechtigte,cn=users,ou={ou_name},{schoolenv.ucr['ldap/base']}"
         == legal_guardian.get_container(ou_name)
     )
 

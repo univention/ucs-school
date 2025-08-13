@@ -37,7 +37,7 @@ ucs_school_l10n_languages_de = {
     role_pupil: "schueler",
     role_teacher: "lehrer",
     role_staff: "mitarbeiter",
-    role_legal_guardian: "gesetzliche vertreter",
+    role_legal_guardian: "sorgeberechtigte",
 }
 
 ucs_school_l10n_languages = {

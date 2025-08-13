@@ -273,7 +273,7 @@ def legal_guardian_user():
     user["dn"] = "uid={},cn={},cn=users,ou=DEMOSCHOOL,{}".format(
         user["props"]["username"], SchoolSearchBase._containerLegalGuardians, ldap_base
     )
-    group_prefix_legal_guardians = get_current_group_prefix("legal_guardians", "gesetzliche vertreter-")
+    group_prefix_legal_guardians = get_current_group_prefix("legal_guardians", "sorgeberechtigte-")
     user["props"]["groups"] = [
         "cn={}demoschool,cn=groups,ou=DEMOSCHOOL,{}".format(group_prefix_legal_guardians, ldap_base),
         "cn=Domain Users DEMOSCHOOL,cn=groups,ou=DEMOSCHOOL,{}".format(ldap_base),
@@ -422,7 +422,7 @@ def test_correct_object(caplog, dict_obj, random_logger):
     [
         (student_user, "pupils", "schueler-"),
         (teacher_user, "teachers", "lehrer-"),
-        (legal_guardian_user, "legal_guardians", "gesetzliche vertreter-"),
+        (legal_guardian_user, "legal_guardians", "sorgeberechtigte-"),
         (staff_user, "staff", "mitarbeiter-"),
         (admin_user, "admins", "admins-"),
     ],

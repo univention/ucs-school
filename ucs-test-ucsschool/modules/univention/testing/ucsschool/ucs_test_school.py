@@ -182,7 +182,7 @@ class UCSTestSchool(object):
     )
     CN_LEGAL_GUARDIANS = lazy_object_proxy.Proxy(
         lambda: UCSTestSchool.ucr.get(
-            "ucsschool/ldap/default/container/leagal_guardians", "gesetzliche vertreter"
+            "ucsschool/ldap/default/container/leagal_guardians", "sorgeberechtigte"
         )
     )
     CN_TEACHERS_STAFF = lazy_object_proxy.Proxy(

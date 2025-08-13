@@ -182,7 +182,7 @@ Beispiele:
 * Die Schulen eines Schulträgers verwenden voneinander unabhängige
   Verwaltungssoftware. Die Software exportiert für jede Schule separate
   CSV-Dateien für den Import. Es wird je eine Datei für Schüler, Lehrer,
-  Mitarbeiter und gesetzliche Vertreter erzeugt. Für den Import der CSV-Dateien wird pro Schule und
+  Mitarbeiter und Sorgeberechtigte erzeugt. Für den Import der CSV-Dateien wird pro Schule und
   Benutzerrolle eine separate Konfiguration mit individueller ``source_uid``
   benötigt. Sind die Konfigurationen hinreichend ähnlich, können die gleichen
   Konfigurationsdateien verwendet werden und die sie unterscheidenden Optionen

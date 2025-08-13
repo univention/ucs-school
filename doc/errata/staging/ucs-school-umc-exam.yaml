@@ -8,4 +8,4 @@ fix: 12.0.7
 bugs:
   58460:
     en: Adjusted such that UCS@school exam students will always have an empty legal guardian attribute
-    de: Das Modul wurde angepasst sodass das an Klassenarbeits-Benutzern keine gesetzlichen Vertreter gespeichert werden.
+    de: Das Modul wurde angepasst, sodass an Klassenarbeits-Benutzern keine Sorgeberechtigten gespeichert werden.
