@@ -37,22 +37,26 @@ lint_commit_messages:
 integration_tests:
   extends: .run_openstack_cfg
   stage: test
-  needs: []
+  needs:
+    - parse-advisories
+    - create_app_version
+    - update_appcenter
   rules:
     - if: $CI_MERGE_REQUEST_ID
       changes:
         paths:
           - "*/**/debian/changelog"
+          - "appcenter/*/**"
+        compare_to: "5.2"
       when: manual
       allow_failure: False
   variables:
     TARGET_VERSION: "5.2-1"
     OPENSTACK_CFG_FILE: ".gitlab-ci/branch_tests.cfg"
-    PACKAGES_TO_INSTALL: ""
   script:
     - mkdir results
-    - git fetch --depth 1 origin $CI_MERGE_REQUEST_TARGET_BRANCH_NAME:compare
-    - export PACKAGES_TO_INSTALL="$(git diff --name-only $CI_COMMIT_BRANCH compare | grep debian/changelog | sed 's/\(.*\)\/debian\/changelog/\1/g' | tr '\n' ' ') $PACKAGES_TO_INSTALL"
+    - export PACKAGES_TO_TEST="$DEBIAN_SOURCE_DIRECTORIES"
+    - export APPVERSION_TO_INSTALL="$APP_VERSION"
     - !reference [.run_openstack_cfg, script]
     - .gitlab-ci/parse_junit.py
   artifacts:
