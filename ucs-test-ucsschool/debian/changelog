@@ -1,3 +1,10 @@
+ucs-test-ucsschool (8.0.30) unstable; urgency=medium
+
+  *  test: add playwright for lega guardian
+     Issue univention/dev/education/ucsschool#1475
+
+ -- Jürn Brodersen <brodersen@univention.de>  Mon, 18 Aug 2025 13:31:21 +0200
+
 ucs-test-ucsschool (8.0.29) unstable; urgency=low
 
   * feat: update HTTP-API tests for new legal guardians
