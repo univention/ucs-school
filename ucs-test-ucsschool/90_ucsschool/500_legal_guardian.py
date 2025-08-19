@@ -1,5 +1,5 @@
-#!/usr/share/ucs-test/runner python3
-## desc: Test the Samba SID allocation.
+#!/usr/share/ucs-test/runner pytest-3 -l -s -v
+## desc: Test the leagl guardian feature
 ## bugs: []
 ## roles:
 ## - domaincontroller_master
