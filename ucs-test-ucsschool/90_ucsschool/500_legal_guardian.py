@@ -194,5 +194,47 @@ def test_removal_of_legal_guardians(udm_session):
 
     objs = udm_session.list_objects("users/user", filter=f"uid={legal_ward_uid}")
     assert len(objs) == 1
-    legal_guardian = objs[0][1]
-    assert "ucsschoolLegalGuardian" not in legal_guardian
+    legal_ward = objs[0][1]
+    assert "ucsschoolLegalGuardian" not in legal_ward
+
+
+def test_refint_overlay(udm_session):
+    """
+    The legal guardians attribute on a student should be updated
+    if a legal guadian is deleted or renamed.
+    """
+    legal_guardian_uid = uts.random_username()
+    legal_guardian_dn, _ = udm_session.create_user(
+        username=legal_guardian_uid, options=["ucsschoolLegalGuardian"]
+    )
+
+    legal_ward_uid = uts.random_username()
+    legal_ward_dn, _ = udm_session.create_user(username=legal_ward_uid, options=["ucsschoolStudent"])
+    udm_session.modify_object(
+        "users/user", dn=legal_ward_dn, append={"ucsschoolLegalGuardian": [legal_guardian_dn]}
+    )
+    objs = udm_session.list_objects("users/user", filter=f"uid={legal_ward_uid}")
+    assert len(objs) == 1
+    legal_ward = objs[0][1]
+    assert legal_ward["ucsschoolLegalGuardian"] == [legal_guardian_dn]
+
+    # rename legal guardian
+    legal_guardian_uid = uts.random_username()
+    udm_session.modify_object("users/user", dn=legal_guardian_dn, set={"username": legal_guardian_uid})
+    objs = udm_session.list_objects("users/user", filter=f"uid={legal_guardian_uid}")
+    assert len(objs) == 1
+    legal_guardian_dn = objs[0][0]
+    objs = udm_session.list_objects("users/user", filter=f"uid={legal_ward_uid}")
+    assert len(objs) == 1
+    legal_ward = objs[0][1]
+    assert legal_ward["ucsschoolLegalGuardian"] == [legal_guardian_dn]
+
+    # delete legal guardian
+    udm_session.remove_object(
+        "users/user",
+        dn=legal_guardian_dn,
+    )
+    objs = udm_session.list_objects("users/user", filter=f"uid={legal_ward_uid}")
+    assert len(objs) == 1
+    legal_ward = objs[0][1]
+    assert "ucsschoolLegalGuardian" not in legal_ward

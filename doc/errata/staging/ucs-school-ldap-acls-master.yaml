@@ -4,7 +4,7 @@ released:
 version: [0]
 scope: ucs_5.2-0-ucs-school-5.2
 src: ucs-school-ldap-acls-master
-fix: 19.1.0
+fix: 19.1.1
 bugs:
   58460:
     en: The ``ucsschoolLegalGuardian`` attribute has been added to the LDAP index.
