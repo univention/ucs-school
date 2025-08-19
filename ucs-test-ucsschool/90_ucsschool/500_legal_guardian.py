@@ -148,7 +148,8 @@ def test_restriction_max_legal_guardians(udm_session):
     expected_exception_regex = (
         r".*"
         + re.escape(
-            f"Legal ward {legal_ward_dn} has {MAX_LEGAL_GUARDIANS+1} legal guardians, which is above"
+            f"Legal ward {legal_ward_dn} would have {MAX_LEGAL_GUARDIANS+1} legal guardians, "
+            "which is above"
         )
         + r".*"
     )
@@ -161,7 +162,7 @@ def test_restriction_max_legal_guardians(udm_session):
 
 def test_removal_of_legal_guardians(udm_session):
     """
-    Legal guardians should always be able to be removed from a ward, even if they somehow were
+    Legal guardians should be able to be removed from a ward, even if they somehow were
     above the maximum.
 
     univention/product-management/requirements-management#398
@@ -186,16 +187,15 @@ def test_removal_of_legal_guardians(udm_session):
     legal_guardian = objs[0][1]
     assert set(legal_guardian["ucsschoolLegalGuardian"]) == set(legal_guardian_dns)
 
-    # Remove all legal guardians, one by one
-    for dn in legal_guardian_dns:
-        udm_session.modify_object(
-            "users/user", dn=legal_ward_dn, remove={"ucsschoolLegalGuardian": [dn]}
-        )
+    # Remove legal guardians, to be below the allowed maximum again
+    udm_session.modify_object(
+        "users/user", dn=legal_ward_dn, remove={"ucsschoolLegalGuardian": legal_guardian_dns[:2]}
+    )
 
     objs = udm_session.list_objects("users/user", filter=f"uid={legal_ward_uid}")
     assert len(objs) == 1
     legal_ward = objs[0][1]
-    assert "ucsschoolLegalGuardian" not in legal_ward
+    assert legal_ward["ucsschoolLegalGuardian"] == legal_guardian_dns[2:]
 
 
 def test_refint_overlay(udm_session):
