@@ -65,7 +65,8 @@ def test_udm_legal_guardian(udm_session):
     assert legal_guardian["ucsschoolLegalWard"] == [legal_ward_dn_1, legal_ward_dn_2]
 
 
-def test_hidden_legal_wards(udm_session):
+def test_deactivated_legal_wards(udm_session):
+    """In UCS a student should still show up as a legal ward even if deactivated."""
     legal_guardian_uid = uts.random_username()
     legal_guardian_dn, _ = udm_session.create_user(
         username=legal_guardian_uid, options=["ucsschoolLegalGuardian"]
@@ -91,9 +92,8 @@ def test_hidden_legal_wards(udm_session):
     objs = udm_session.list_objects("users/user", filter=f"uid={legal_guardian_uid}")
     assert len(objs) == 1
     legal_guardian = objs[0][1]
-    assert len(legal_guardian["ucsschoolLegalWard"]) == 3
-    assert set(legal_guardian["ucsschoolLegalWard"]) == set(legal_wards)
-    assert set(legal_guardian["ucsschoolLegalWard"]).intersection(legal_wards_deactivated) == set()
+    assert len(legal_guardian["ucsschoolLegalWard"]) == 6
+    assert legal_guardian["ucsschoolLegalWard"] == legal_wards + legal_wards_deactivated
 
 
 def test_restriction_max_legal_wards(udm_session):
