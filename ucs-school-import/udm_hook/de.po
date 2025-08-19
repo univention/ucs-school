@@ -25,19 +25,19 @@ msgstr ""
 #: udm_hook/ucsschool_legal_ward.py
 #, python-format
 msgid ""
-"Legal guardian %(legal_guardian_dn)s already has %(num_legal_wards)d "
-"legal wards. Adding %(self_dn)s would increase it above the maximum "
-"allowed legal wards (%(max_legal_wards)d)."
-msgstr "Der Sorgeberechtigte %(legal_guardian_dn)s hat bereits %(num_legal_wards)d Schüler. Das Hinzufügen von %(self_dn)s überschreitet die maximal erlaubte Anzahl an Schülern (%(max_legal_wards)d)."
+"This legal guardian already has %(num_legal_wards)d "
+"legal wards. Adding more would increase it above the maximum "
+"allowed legal wards of (%(max_legal_wards)d)."
+msgstr "Der Sorgeberechtigte hat bereits %(num_legal_wards)d Schüler. Das Hinzufügen weiterer überschreitet die maximal erlaubte Anzahl an Schülern (%(max_legal_wards)d)."
 
 #: udm_hook/ucsschool_legal_ward.py
 #, python-format
 msgid ""
-"Legal ward %(self_dn)s would have %(num_legal_guardians)d "
+"This legal ward %(self_dn)s would have %(num_legal_guardians)d "
 "legal guardians, which is above the maximum allowed number of "
 "legal guardians (%(max_legal_guardians)d)."
 msgstr ""
-"Schüler %(self_dn)s hätte %(num_legal_guardians)d "
+"Dieser Schüler hätte %(num_legal_guardians)d "
 "Sorgeberechtigte, was über der maximal zulässigen Anzahl von "
 "Schülern (%(max_legal_guardians)d) liegt."
 
