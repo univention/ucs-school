@@ -28,7 +28,7 @@ msgid ""
 "Legal guardian %(legal_guardian_dn)s already has %(num_legal_wards)d "
 "legal wards. Adding %(self_dn)s would increase it above the maximum "
 "allowed legal wards (%(max_legal_wards)d)."
-msgstr "Der Sorgeberechtigte %(legal_guardian_dn)s hat bereits %(num_legal_wards)d Schutzbefohlene. Das Hinzufügen von %(self_dn)s überschreitet die maximal erlaubte Anzahl an Schutzbefohlenen (%(max_legal_wards)d)."
+msgstr "Der Sorgeberechtigte %(legal_guardian_dn)s hat bereits %(num_legal_wards)d Schüler. Das Hinzufügen von %(self_dn)s überschreitet die maximal erlaubte Anzahl an Schülern (%(max_legal_wards)d)."
 
 #: udm_hook/ucsschool_legal_ward.py
 #, python-format
@@ -37,9 +37,9 @@ msgid ""
 "legal guardians, which is above the maximum allowed number of "
 "legal guardians (%(max_legal_guardians)d)."
 msgstr ""
-"Schutzbefohlene %(self_dn)s hätte %(num_legal_guardians)d "
+"Schüler %(self_dn)s hätte %(num_legal_guardians)d "
 "Sorgeberechtigte, was über der maximal zulässigen Anzahl von "
-"Sorgeberechtigten (%(max_legal_guardians)d) liegt."
+"Schülern (%(max_legal_guardians)d) liegt."
 
 #: udm_hook/ucsschool_legal_guardian.py
 #, python-format
@@ -47,8 +47,8 @@ msgid ""
 "Legal guardian %(self_dn)s would have %(num_of_wards)d legal wards, "
 "which is above the maximum allowed number of legal wards (%(max_legal_wards)d)."
 msgstr ""
-"Sorgeberechtigter %(self_dn)s würde %(num_of_wards)d Schutzbefohlene haben, "
-"was über der maximal erlaubten Anzahl von Schutzbefohlenen (%(max_legal_wards)d) liegt."
+"Sorgeberechtigter %(self_dn)s würde %(num_of_wards)d Schüler haben, "
+"was über der maximal erlaubten Anzahl von Schülern (%(max_legal_wards)d) liegt."
 
 #: udm_hook/ucsschool_legal_guardian.py
 #, python-format
@@ -57,5 +57,5 @@ msgid ""
 "Adding %(self_dn)s would increase it above the maximum allowed "
 "legal guardians (%(max_legal_guardians)d)."
 msgstr ""
-"Schutzbefohlene %(student_dn)s hat bereits %(num_legal_guardians)d Erziehungsberechtigte. "
+"Schüler %(student_dn)s hat bereits %(num_legal_guardians)d Erziehungsberechtigte. "
 "Das Hinzufügen von %(self_dn)s würde die zulässige Anzahl Sorgeberechtigter überschreiten (%(max_legal_guardians)d)."

@@ -342,7 +342,7 @@ msgid "Legal Guardian"
 msgstr "Sorgeberechtigter"
 
 msgid "Legal Wards"
-msgstr "Schutzbefohlene"
+msgstr "Schüler"
 
 msgid "Legal guardian"
 msgstr "Sorgeberechtigter"

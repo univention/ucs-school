@@ -500,7 +500,7 @@ univention-directory-manager settings/extended_attribute create "$@" --ignore_ex
     --append translationGroupName='"de_DE" "Allgemein"' \
     --set shortDescription="Legal wards" \
     --set longDescription="Users which are the legal guardian for this person, e.g. their parents." \
-    --append translationShortDescription='"de_DE" "Schutzbefohlene"' \
+    --append translationShortDescription='"de_DE" "Schüler"' \
     --append translationLongDescription='"de_DE" "Benutzer, für die diese Person der Sorgeberechtigte ist, z. B. ihre Kinder."' \
     --set CLIName="ucsschoolLegalWard" \
     --set objectClass="ucsschoolLegalGuardian" \

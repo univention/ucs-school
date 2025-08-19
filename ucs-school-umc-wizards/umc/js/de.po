@@ -484,7 +484,7 @@ msgid "Legal Guardians"
 msgstr "Sorgeberechtigte"
 
 msgid "Legal wards"
-msgstr "Schutzbefohlene"
+msgstr "Schüler"
 
 msgid "Users for which this person is the legal guardian, e.g. their children."
 msgstr "Benutzer, für die diese Person der Sorgeberechtigte ist, z. B. ihre Kinder."
