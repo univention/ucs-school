@@ -12,4 +12,4 @@ bugs:
       A legal guardian user will be created for new installations in the ``DEMOSCHOOL``.
     de: |
       Es gibt einen LDAP Index für die neuen Attribute ``ucsschoolLegalGuardian`` und ``ucsschoolLegalWard``.
-      Ein Sorgeberechtigter wird bei Neuinstallationen in der ``DEMOSCHOOL`` erstellt.
+      Bei der Neuinstallation von UCS@school wird in der ``DEMOSCHOOL`` ein Benutzer mit der Rolle "Sorgeberechtigter" erstellt.

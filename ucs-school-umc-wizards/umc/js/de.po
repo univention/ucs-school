@@ -535,7 +535,7 @@ msgstr "Diese Aktion kann nicht rückgängig gemacht werden."
 
 #: umc/js/schoolwizards/UserWizard.js:116
 msgid "UCS@school roles"
-msgstr "UCS@school Rollen"
+msgstr "UCS@school-Rollen"
 
 #: umc/js/schoolwizards/UserWizard.js:216
 #, javascript-format

@@ -8,4 +8,4 @@ fix: 13.1.0
 bugs:
   58460:
     en: Add new UCS@school role "Legal Guardian".
-    de: Es gibt eine neue UCS@school Rolle "Sorgeberechtigter".
+    de: Es gibt eine neue UCS@school-Rolle "Sorgeberechtigter".

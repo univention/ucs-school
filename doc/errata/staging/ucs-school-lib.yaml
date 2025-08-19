@@ -12,6 +12,6 @@ bugs:
       Added the new attribute `legal_guardians`` to student objects.
       The long deprecated role check, based on the position of objects in the LDAP tree, has been removed.
     de: |
-      Es gibt eine neue UCS@school Rolle "Sorgeberechtigter".
+      Es gibt eine neue UCS@school-Rolle "Sorgeberechtigter".
       Das neue Attribut ``legal_guardians`` wurde zu Schülerobjekten hinzugefügt.
       Die seit langem veraltete Rollenprüfung, die auf der Position von Objekten im LDAP-Baum basiert, wurde entfernt.
