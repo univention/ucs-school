@@ -28,12 +28,16 @@
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3. If not, see <http://www.gnu.org/licenses/>.
 
+from logging import getLogger
 
 import ldap
 
 import univention.admin.uexceptions
 from univention.admin import localization
 from univention.admin.hook import simpleHook
+
+log = getLogger("ADMIN")
+LOGPREFIX = "hook ucsschool_legal_ward:"
 
 translation = localization.translation("univention-admin-hooks-ucsschool_legal_ward")
 _ = translation.translate
@@ -61,6 +65,7 @@ class NoLegalGuardian(univention.admin.uexceptions.base):
 class UcsschoolLegalWard(simpleHook):
     def _check_legal_ward_count(self, obj: univention.admin.handlers.simpleLdap, legal_guardian_dn: str):
         """Check how many wards are assigned at legal guardian."""
+        log.debug(f"{LOGPREFIX} checking number legal_ward entries at {legal_guardian_dn}")
         try:
             guardian_attrs = obj.lo.get(
                 legal_guardian_dn, attr=["ucsschoolLegalWard", "objectClass"], required=True
@@ -79,6 +84,11 @@ class UcsschoolLegalWard(simpleHook):
         num_legal_wards = len(guardian_attrs.get("ucsschoolLegalWard", []))
 
         if num_legal_wards >= MAX_LEGAL_WARDS:
+            log.debug(
+                f"{LOGPREFIX} Number of ucsschoolLegalWard entries is above limit:\n"
+                f"legal guardian DN={legal_guardian_dn}\n"
+                f"entries={guardian_attrs.get('ucsschoolLegalWard', [])}"
+            )
             raise MaxLegalWards(
                 _(
                     "Legal guardian %(legal_guardian_dn)s already has %(num_legal_wards)d "
@@ -95,18 +105,28 @@ class UcsschoolLegalWard(simpleHook):
 
     def _check_restrictions(self, obj: univention.admin.handlers.simpleLdap) -> None:
         """Check if restrictions of legal guardian and legal ward are met."""
+        log.debug(f"{LOGPREFIX} checking restrictions for {obj.dn}")
+        log.debug(f"{LOGPREFIX} options={obj.options}")
 
         if "ucsschoolStudent" not in obj.options:
+            log.debug(f"{LOGPREFIX} obj is no legal ward")
             return
 
-
+        log.debug(f"{LOGPREFIX} exists={obj.exists()}")
+        log.debug(f"{LOGPREFIX} hasChanged={obj.hasChanged('ucsschoolLegalGuardian')}")
         # only check legal guardian limits if the property has been changed
         if obj.hasChanged("ucsschoolLegalGuardian"):
             new_guardians = set(obj.info.get("ucsschoolLegalGuardian", []))
             old_guardians = set(obj.oldinfo.get("ucsschoolLegalGuardian", []))
+            log.debug(f"{LOGPREFIX} len(new_guardians)={len(new_guardians)}")
+            log.debug(f"{LOGPREFIX} len(old_guardians)={len(old_guardians)}")
 
             if len(new_guardians) > MAX_LEGAL_GUARDIANS:
                 # New guardians were added and we are above the maximum
+                log.debug(
+                    f"{LOGPREFIX} Number of ucsschoolLegalGuardian entries is above limit:\n"
+                    f"legal ward DN={obj.dn}\nentries={new_guardians}"
+                )
                 raise MaxLegalGuards(
                     _(
                         "Legal ward %(self_dn)s would have %(num_legal_guardians)d "
