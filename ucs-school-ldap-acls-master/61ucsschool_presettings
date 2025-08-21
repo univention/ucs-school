@@ -138,16 +138,26 @@ access to dn.children="cn=unique-email,cn=ucsschool,cn=univention,@%@ldap/base@%
 
 '''
 
+if configRegistry.get('server/role') == 'domaincontroller_master':
+    print("# enforce constrains on LDAP level as well as on UDM level to prevent undesired results due to racing conditions")
+    # print("overlay              constraint")  # This overlay is already used by UCS, and the LDAP server will complain if it is included again
+    print("constraint_attribute ucsschoolLegalGuardian count 4")
+    print("constraint_attribute ucsschoolLegalWard count 10")
+    print()
+    print("overlay           refint")
+    print("refint_attributes ucsschoolLegalGuardian")  # We use slapo-refint instead of the memberof-refint option below (same as with uniqueMember/memberOf)
+    print("refint_attributes ucsschoolLegalWard")  # We use slapo-refint instead of the memberof-refint option below (same as with uniqueMember/memberOf)
+    # We skip the moduleload here, because ITS#6030 blocks loading modules multiple times. But we can use them multiple times with different configs.
+    print("overlay                  memberof")
+    print("memberof-group-oc        ucsschoolStudent")
+    print("memberof-member-ad       ucsschoolLegalGuardian")
+    print("memberof-memberof-ad     ucsschoolLegalWard")
+    print("memberof-dangling        ignore")
+    print("memberof-refint          false")
+    print()
+    print()
+
 if configRegistry.get('server/role') in ('domaincontroller_master', 'domaincontroller_backup'):
-	print("overlay			refint")
-	print("refint_attributes ucsschoolLegalGuardian")  # We use slapo-refint instead of the memberof-refint option below (same as with uniqueMember/memberOf)
-	# We skip the moduleload here, because ITS#6030 blocks loading modules multiple times. But we can use them multiple times with different configs.
-	print("overlay                  memberof")
-	print("memberof-group-oc        ucsschoolStudent")
-	print("memberof-member-ad       ucsschoolLegalGuardian")
-	print("memberof-memberof-ad     ucsschoolLegalWard")
-	print("memberof-dangling        ignore")
-	print("memberof-refint          false")
 	print(aclset)
 else:
 	print('# no ACL required on Replica Directory Node')

@@ -1,11 +1,18 @@
-ucs-school-ldap-acls-master (19.1.1) unstable; urgency=medium
+ucs-school-ldap-acls-master (19.1.1) unstable; urgency=low
+
+  * Issue: univention/dev/education/ucsschool#1476: add constraints and
+    refint for ucsschoolLegalGuardian and ucsschoolLegalWard
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 21 Aug 2025 16:02:56 +0200
+
+ucs-school-ldap-acls-master (19.1.0) unstable; urgency=medium
 
   * Issue univention/dev/education/ucsschool#1453: add refint for
     ucsschoolLegalGuardian
   * Issue univention/dev/education/ucsschool#1456: add acl for
     ucsschoolLegalGuardian
 
- -- Jürn Brodersen <brodersen@univention.de>  Thu, 19 Jun 2025 14:53:58 +0200
+ -- Jürn Brodersen <brodersen@univention.de>  Thu, 21 Aug 2025 16:02:55 +0200
 
 ucs-school-ldap-acls-master (19.0.0) unstable; urgency=medium
 
