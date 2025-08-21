@@ -11,230 +11,711 @@
 
 import re
 
+import ldap
 import pytest
 
 import univention.testing.strings as uts
 from univention.testing import utils
-from univention.testing.udm import UCSTestUDM_ModifyUDMObjectFailed
+from univention.testing.udm import UCSTestUDM_CreateUDMObjectFailed, UCSTestUDM_ModifyUDMObjectFailed
 
 MAX_LEGAL_GUARDIANS = 4
 MAX_LEGAL_WARDS = 10
+
+RETRY_ARGS = {
+    "delay": 2,
+    "retry_count": 3,
+}
 
 
 def test_udm_legal_guardian(udm_session):
     """
     On a UCS@school system, UDM must provide the
-    ucschoolLegalGuardian and ucsschoolLegalWard attributes.
-    When the DN of a legal guardian is added to a legal wards ucsschoolLegalWard attribute
+    ucsschoolLegalGuardian and ucsschoolLegalWard attributes.
+    When the DN of a legal guardian is added to a legal wards ucsschoolLegalGuard attribute
     The legal guardian object attribute ucsschoolLegalWard must
     contain the DNs of the legal wards he is assigned to.
 
     univention/product-management/requirements-management#398
     univention/dev/education/ucsschool#1453
     """
-    legal_guardian_uid = uts.random_username()
-    legal_guardian_dn, _ = udm_session.create_user(
-        username=legal_guardian_uid, options=["ucsschoolLegalGuardian"]
-    )
+    # create guardian
+    legal_guardian_dn, legal_guardian_uid = udm_session.create_user(options=["ucsschoolLegalGuardian"])
 
-    legal_ward_uid_1 = uts.random_username()
-    legal_ward_dn_1, _ = udm_session.create_user(username=legal_ward_uid_1, options=["ucsschoolStudent"])
+    # create ward and then attach guardian in second step
+    legal_ward_dn_1, legal_ward_uid_1 = udm_session.create_user(options=["ucsschoolStudent"])
     udm_session.modify_object(
         "users/user", dn=legal_ward_dn_1, append={"ucsschoolLegalGuardian": [legal_guardian_dn]}
     )
-
-    legal_ward_uid_2 = uts.random_username()
-    legal_ward_dn_2, _ = udm_session.create_user(username=legal_ward_uid_2, options=["ucsschoolStudent"])
-    udm_session.modify_object(
-        "users/user", dn=legal_ward_dn_2, append={"ucsschoolLegalGuardian": [legal_guardian_dn]}
+    # verify references between objects
+    udm_session.verify_udm_object(
+        "users/user",
+        legal_ward_dn_1,
+        expected_properties={"ucsschoolLegalGuardian": [legal_guardian_dn]},
+    )
+    udm_session.verify_udm_object(
+        "users/user", legal_guardian_dn, expected_properties={"ucsschoolLegalWard": [legal_ward_dn_1]}
     )
 
-    objs = udm_session.list_objects("users/user", filter=f"uid={legal_ward_uid_1}")
-    assert len(objs) == 1
-    legal_ward = objs[0][1]
-    assert legal_ward["ucsschoolLegalGuardian"] == [legal_guardian_dn]
+    # create ward and immediately attach guardian
+    legal_ward_dn_2, legal_ward_uid_2 = udm_session.create_user(
+        options=["ucsschoolStudent"], ucsschoolLegalGuardian=[legal_guardian_dn]
+    )
 
-    objs = udm_session.list_objects("users/user", filter=f"uid={legal_ward_uid_2}")
-    assert len(objs) == 1
-    legal_ward = objs[0][1]
-    assert legal_ward["ucsschoolLegalGuardian"] == [legal_guardian_dn]
-
-    objs = udm_session.list_objects("users/user", filter=f"uid={legal_guardian_uid}")
-    assert len(objs) == 1
-    legal_guardian = objs[0][1]
-    assert legal_guardian["ucsschoolLegalWard"] == [legal_ward_dn_1, legal_ward_dn_2]
+    # verify references between objects
+    udm_session.verify_udm_object(
+        "users/user",
+        legal_ward_dn_1,
+        expected_properties={"ucsschoolLegalGuardian": [legal_guardian_dn]},
+    )
+    udm_session.verify_udm_object(
+        "users/user",
+        legal_ward_dn_2,
+        expected_properties={"ucsschoolLegalGuardian": [legal_guardian_dn]},
+    )
+    udm_session.verify_udm_object(
+        "users/user",
+        legal_guardian_dn,
+        expected_properties={"ucsschoolLegalWard": [legal_ward_dn_1, legal_ward_dn_2]},
+    )
 
 
 def test_deactivated_legal_wards(udm_session):
-    """In UCS a student should still show up as a legal ward even if deactivated."""
-    legal_guardian_uid = uts.random_username()
-    legal_guardian_dn, _ = udm_session.create_user(
-        username=legal_guardian_uid, options=["ucsschoolLegalGuardian"]
+    legal_guardian_dn, legal_guardian_uid = udm_session.create_user(
+        options=["ucsschoolLegalGuardian"],
     )
 
-    legal_wards = [udm_session.create_user(options=["ucsschoolStudent"])[0] for _ in range(3)]
-    for legal_ward_dn in legal_wards:
-        udm_session.modify_object(
-            "users/user", dn=legal_ward_dn, append={"ucsschoolLegalGuardian": [legal_guardian_dn]}
-        )
+    legal_wards = [
+        udm_session.create_user(
+            options=["ucsschoolStudent"],
+            ucsschoolLegalGuardian=[legal_guardian_dn],
+        )[0]
+        for _ in range(3)
+    ]
+    udm_session.verify_udm_object(
+        "users/user", legal_guardian_dn, expected_properties={"ucsschoolLegalWard": legal_wards}
+    )
 
     legal_wards_deactivated = [
-        udm_session.create_user(options=["ucsschoolStudent"])[0] for _ in range(3)
-    ]
-    for legal_ward_dn in legal_wards_deactivated:
-        udm_session.modify_object(
-            "users/user",
-            dn=legal_ward_dn,
+        udm_session.create_user(
+            options=["ucsschoolStudent"],
             disabled="1",
-            append={"ucsschoolLegalGuardian": [legal_guardian_dn]},
-        )
+            ucsschoolLegalGuardian=[legal_guardian_dn],
+        )[0]
+        for _ in range(3)
+    ]
 
-    objs = udm_session.list_objects("users/user", filter=f"uid={legal_guardian_uid}")
-    assert len(objs) == 1
-    legal_guardian = objs[0][1]
-    assert len(legal_guardian["ucsschoolLegalWard"]) == 6
-    assert legal_guardian["ucsschoolLegalWard"] == legal_wards + legal_wards_deactivated
+    udm_session.verify_udm_object(
+        "users/user",
+        legal_guardian_dn,
+        expected_properties={"ucsschoolLegalWard": legal_wards + legal_wards_deactivated},
+    )
 
 
 def test_restriction_max_legal_wards(udm_session):
     """
     One legal guardian must not have more than 10 legal wards.
+    1) Add one legal ward too much
+    2) Create a legal guardian with too many legal wards
 
     univention/product-management/requirements-management#398
     univention/dev/education/ucsschool#1453
     """
-    legal_guardian_dn, _ = udm_session.create_user(
-        options=["ucsschoolLegalGuardian"],
-    )
-    for _ in range(MAX_LEGAL_WARDS):
-        legal_ward_dn, _ = udm_session.create_user(
+    legal_guardian_dn, _ = udm_session.create_user(options=["ucsschoolLegalGuardian"])
+    legal_wards = [
+        udm_session.create_user(
             options=["ucsschoolStudent"],
-        )
+            ucsschoolLegalGuardian=[legal_guardian_dn],
+        )[0]
+        for _ in range(MAX_LEGAL_WARDS)
+    ]
+
+    expected_exception_regex_modify = (
+        r".*Legal guardian .* already has \d+ legal wards. Adding .* would increase it above"
+        r" the maximum allowed legal wards.*"
+    )
+    expected_exception_regex_create = (
+        r".*Legal guardian .* would have \d+ legal wards, which is above the maximum allowed"
+        r" number of legal wards.*"
+    )
+
+    # 1) Add one legal ward too much
+    with pytest.raises(UCSTestUDM_ModifyUDMObjectFailed, match=expected_exception_regex_modify):
+        legal_ward_dn, _ = udm_session.create_user(options=["ucsschoolStudent"])
+        legal_wards.append(legal_ward_dn)
         udm_session.modify_object(
             "users/user",
-            wait_for_replication=False,
             dn=legal_ward_dn,
             append={"ucsschoolLegalGuardian": [legal_guardian_dn]},
         )
-
-    expected_exception_regex = (
-        r".*"
-        + re.escape(
-            f"Legal guardian {legal_guardian_dn} already has {MAX_LEGAL_WARDS} legal wards. Adding"
-        )
-        + r".*"
-    )
-    with pytest.raises(UCSTestUDM_ModifyUDMObjectFailed, match=expected_exception_regex):
-        legal_ward_dn, _ = udm_session.create_user(options=["ucsschoolStudent"])
-        udm_session.modify_object(
-            "users/user", dn=legal_ward_dn, append={"ucsschoolLegalGuardian": [legal_guardian_dn]}
+    # 2) Create a legal guardian with too many legal wards
+    with pytest.raises(UCSTestUDM_CreateUDMObjectFailed, match=expected_exception_regex_create):
+        assert len(legal_wards) > MAX_LEGAL_WARDS
+        legal_guardian_dn, _ = udm_session.create_user(
+            options=["ucsschoolLegalGuardian"],
+            ucsschoolLegalWard=legal_wards,
         )
 
 
 def test_restriction_max_legal_guardians(udm_session):
     """
     One legal ward must not have more than 4 legal guardians.
+    1) Add one legal guardian too much
+    2) Create a legal ward with too many legal guardians
 
     univention/product-management/requirements-management#398
     univention/dev/education/ucsschool#1453
     """
     legal_ward_dn, _ = udm_session.create_user(options=["ucsschoolStudent"])
-    for _ in range(MAX_LEGAL_GUARDIANS):
-        legal_guardian_dn, _ = udm_session.create_user(options=["ucsschoolLegalGuardian"])
-        udm_session.modify_object(
-            "users/user", dn=legal_ward_dn, append={"ucsschoolLegalGuardian": [legal_guardian_dn]}
-        )
+    legal_guardians = [
+        udm_session.create_user(
+            options=["ucsschoolLegalGuardian"],
+            ucsschoolLegalWard=[legal_ward_dn],
+        )[0]
+        for _ in range(MAX_LEGAL_GUARDIANS)
+    ]
 
     expected_exception_regex = (
-        r".*"
-        + re.escape(
-            f"Legal ward {legal_ward_dn} would have {MAX_LEGAL_GUARDIANS+1} legal guardians, "
-            "which is above"
-        )
-        + r".*"
+        r".*Legal ward .* would have "
+        + re.escape(f"{MAX_LEGAL_GUARDIANS+1}")
+        + r" legal guardians, which is above the maximum allowed number of legal guardians.*"
     )
+    # 1) Add one legal guardian too much
     with pytest.raises(UCSTestUDM_ModifyUDMObjectFailed, match=expected_exception_regex):
         legal_guardian_dn, _ = udm_session.create_user(options=["ucsschoolLegalGuardian"])
+        legal_guardians.append(legal_guardian_dn)
         udm_session.modify_object(
             "users/user", dn=legal_ward_dn, append={"ucsschoolLegalGuardian": [legal_guardian_dn]}
         )
 
+    # 2) Create a legal ward with too many legal guardians
+    with pytest.raises(UCSTestUDM_CreateUDMObjectFailed, match=expected_exception_regex):
+        assert len(legal_guardians) > MAX_LEGAL_GUARDIANS
+        legal_ward_dn, _ = udm_session.create_user(
+            options=["ucsschoolStudent"],
+            ucsschoolLegalGuardian=legal_guardians,
+        )
 
-def test_removal_of_legal_guardians(udm_session):
+
+def test_ldap_constraints(udm_session):
     """
-    Legal guardians should be able to be removed from a ward, even if they somehow were
-    above the maximum.
-
-    univention/product-management/requirements-management#398
-    univention/dev/education/ucsschool#1453
+    Test the constraint overlay of the LDAP server for ucsschoolLegalGuardian
+    and ucsschoolLegalWard.
     """
-    legal_ward_uid = uts.random_username()
-    legal_ward_dn, _ = udm_session.create_user(username=legal_ward_uid, options=["ucsschoolStudent"])
-
-    legal_guardian_dns = []
-
-    for _ in range(MAX_LEGAL_GUARDIANS + 2):
-        legal_guardian_dn, _ = udm_session.create_user(options=["ucsschoolLegalGuardian"])
-        legal_guardian_dns.append(legal_guardian_dn)
+    legal_ward_dn, _ = udm_session.create_user(options=["ucsschoolStudent"])
+    legal_guardian_dns = [
+        udm_session.create_user(
+            options=["ucsschoolLegalGuardian"],
+        )[0]
+        for _ in range(MAX_LEGAL_GUARDIANS + 1)
+    ]
 
     # add legal guardian directly
     lo = utils.get_ldap_connection()
     ml = [("ucsschoolLegalGuardian", b"", [dn.encode("utf-8")]) for dn in legal_guardian_dns]
-    lo.modify(legal_ward_dn, ml)
+    with pytest.raises(ldap.CONSTRAINT_VIOLATION):
+        lo.modify(legal_ward_dn, ml)
 
-    objs = udm_session.list_objects("users/user", filter=f"uid={legal_ward_uid}")
-    assert len(objs) == 1
-    legal_guardian = objs[0][1]
-    assert set(legal_guardian["ucsschoolLegalGuardian"]) == set(legal_guardian_dns)
+    legal_guardian_dn, _ = udm_session.create_user(options=["ucsschoolLegalGuardian"])
+    legal_ward_dns = [
+        udm_session.create_user(
+            options=["ucsschoolStudent"],
+        )[0]
+        for _ in range(MAX_LEGAL_WARDS + 1)
+    ]
 
-    # Remove legal guardians, to be below the allowed maximum again
-    udm_session.modify_object(
-        "users/user", dn=legal_ward_dn, remove={"ucsschoolLegalGuardian": legal_guardian_dns[:2]}
+    # add legal guardian directly
+    ml = [("ucsschoolLegalWard", b"", [dn.encode("utf-8")]) for dn in legal_ward_dns]
+    with pytest.raises(ldap.CONSTRAINT_VIOLATION):
+        lo.modify(legal_guardian_dn, ml)
+
+
+def test_create_and_remove_legal_guardian_ldap(udm_session):
+    """
+    Create a legal guardian without legal ward references and verify that it can be removed.
+    It is verified on the LDAP level that the user is created / removed.
+    """
+    legal_guardian_dn, _ = udm_session.create_user(options=["ucsschoolLegalGuardian"])
+    udm_session.verify_ldap_object(
+        legal_guardian_dn,
+        should_exist=True,
+        strict=False,
+        expected_attr={"objectClass": [b"ucsschoolLegalGuardian"]},
+        **RETRY_ARGS,
+    )
+    udm_session.remove_object("users/user", dn=legal_guardian_dn)
+    udm_session.verify_ldap_object(legal_guardian_dn, should_exist=False)
+
+
+def test_create_and_remove_legal_ward_ldap(udm_session):
+    """
+    Create a legal ward without legal guardian references and verify that it can be removed.
+    It is verified on the LDAP level that the user is created / removed.
+    """
+    legal_ward_dn, _ = udm_session.create_user(options=["ucsschoolStudent"])
+    udm_session.verify_ldap_object(
+        legal_ward_dn,
+        should_exist=True,
+        strict=False,
+        expected_attr={"objectClass": [b"ucsschoolStudent"]},
+        **RETRY_ARGS,
+    )
+    udm_session.remove_object("users/user", dn=legal_ward_dn)
+    udm_session.verify_ldap_object(legal_ward_dn, should_exist=False)
+
+
+def test_attach_guardian_to_a_ward_during_creation(udm_session):
+    """Create a legal ward with a reference to a legal guardian."""
+    legal_guardian_dn, _ = udm_session.create_user(options=["ucsschoolLegalGuardian"])
+    udm_session.verify_ldap_object(
+        legal_guardian_dn,
+        should_exist=True,
+        strict=True,
+        expected_attr={
+            "ucsschoolLegalWard": [],
+        },
+        **RETRY_ARGS,
     )
 
-    objs = udm_session.list_objects("users/user", filter=f"uid={legal_ward_uid}")
-    assert len(objs) == 1
-    legal_ward = objs[0][1]
-    assert legal_ward["ucsschoolLegalGuardian"] == legal_guardian_dns[2:]
-
-
-def test_refint_overlay(udm_session):
-    """
-    The legal guardians attribute on a student should be updated
-    if a legal guadian is deleted or renamed.
-    """
-    legal_guardian_uid = uts.random_username()
-    legal_guardian_dn, _ = udm_session.create_user(
-        username=legal_guardian_uid, options=["ucsschoolLegalGuardian"]
+    # create ward and immediately attach guardian
+    legal_ward_dn, legal_ward_uid = udm_session.create_user(
+        options=["ucsschoolStudent"], ucsschoolLegalGuardian=[legal_guardian_dn]
+    )
+    # legal guardian is attached to legal ward?
+    udm_session.verify_ldap_object(
+        legal_ward_dn,
+        should_exist=True,
+        strict=True,
+        expected_attr={
+            "ucsschoolLegalGuardian": [legal_guardian_dn],
+        },
+        **RETRY_ARGS,
+    )
+    # legal ward is attached to legal guardian?
+    udm_session.verify_ldap_object(
+        legal_guardian_dn,
+        should_exist=True,
+        strict=True,
+        expected_attr={
+            "ucsschoolLegalWard": [legal_ward_dn],
+        },
+        **RETRY_ARGS,
     )
 
-    legal_ward_uid = uts.random_username()
-    legal_ward_dn, _ = udm_session.create_user(username=legal_ward_uid, options=["ucsschoolStudent"])
+
+def test_attach_guardian_to_a_ward_during_modification(udm_session):
+    """
+    Create a legal ward without a reference to a legal guardian and
+    attach the legal guardian to the legal ward in a second step.
+    """
+    # create guardian without references
+    legal_guardian_dn, _ = udm_session.create_user(options=["ucsschoolLegalGuardian"])
+    udm_session.verify_ldap_object(
+        legal_guardian_dn,
+        should_exist=True,
+        strict=True,
+        expected_attr={
+            "ucsschoolLegalWard": [],
+        },
+        **RETRY_ARGS,
+    )
+
+    # create ward without references
+    legal_ward_dn, legal_ward_uid = udm_session.create_user(options=["ucsschoolStudent"])
+    udm_session.verify_ldap_object(
+        legal_guardian_dn,
+        should_exist=True,
+        strict=True,
+        expected_attr={
+            "ucsschoolLegalWard": [],
+        },
+        **RETRY_ARGS,
+    )
+
     udm_session.modify_object(
         "users/user", dn=legal_ward_dn, append={"ucsschoolLegalGuardian": [legal_guardian_dn]}
     )
-    objs = udm_session.list_objects("users/user", filter=f"uid={legal_ward_uid}")
-    assert len(objs) == 1
-    legal_ward = objs[0][1]
-    assert legal_ward["ucsschoolLegalGuardian"] == [legal_guardian_dn]
+    udm_session.verify_ldap_object(
+        legal_ward_dn,
+        should_exist=True,
+        strict=True,
+        expected_attr={
+            "ucsschoolLegalGuardian": [legal_guardian_dn],
+        },
+        **RETRY_ARGS,
+    )
+    udm_session.verify_ldap_object(
+        legal_guardian_dn,
+        should_exist=True,
+        strict=True,
+        expected_attr={
+            "ucsschoolLegalWard": [legal_ward_dn],
+        },
+        **RETRY_ARGS,
+    )
+
+
+def test_attach_ward_to_a_guardian_during_creation(udm_session):
+    """Create a legal guardian with a reference to a legal ward."""
+    legal_ward_dn, _ = udm_session.create_user(options=["ucsschoolStudent"])
+    udm_session.verify_ldap_object(
+        legal_ward_dn,
+        should_exist=True,
+        strict=True,
+        expected_attr={
+            "ucsschoolLegalGuardian": [],
+        },
+        **RETRY_ARGS,
+    )
+
+    # create legal guardian and immediately attach legal ward
+    legal_guardian_dn, _ = udm_session.create_user(
+        options=["ucsschoolLegalGuardian"], ucsschoolLegalWard=[legal_ward_dn]
+    )
+    # legal ward is attached to legal guardian?
+    udm_session.verify_ldap_object(
+        legal_guardian_dn,
+        should_exist=True,
+        strict=True,
+        expected_attr={
+            "ucsschoolLegalWard": [legal_ward_dn],
+        },
+        **RETRY_ARGS,
+    )
+    # legal guardian is attached to legal ward?
+    udm_session.verify_ldap_object(
+        legal_ward_dn,
+        should_exist=True,
+        strict=True,
+        expected_attr={
+            "ucsschoolLegalGuardian": [legal_guardian_dn],
+        },
+        **RETRY_ARGS,
+    )
+
+
+def test_attach_ward_to_a_guardian_during_modification(udm_session):
+    """
+    Create a legal guardian without a reference to a legal ward and
+    attach the legal ward to the legal guardian in a second step.
+    """
+    # create legal ward without references
+    legal_ward_dn, _ = udm_session.create_user(options=["ucsschoolStudent"])
+    udm_session.verify_ldap_object(
+        legal_ward_dn,
+        should_exist=True,
+        strict=True,
+        expected_attr={
+            "ucsschoolLegalGuardian": [],
+        },
+        **RETRY_ARGS,
+    )
+
+    # create guardian without references
+    legal_guardian_dn, _ = udm_session.create_user(options=["ucsschoolLegalGuardian"])
+    udm_session.verify_ldap_object(
+        legal_ward_dn,
+        should_exist=True,
+        strict=True,
+        expected_attr={
+            "ucsschoolLegalGuardian": [],
+        },
+        **RETRY_ARGS,
+    )
+
+    udm_session.modify_object(
+        "users/user", dn=legal_guardian_dn, append={"ucsschoolLegalWard": [legal_ward_dn]}
+    )
+    udm_session.verify_ldap_object(
+        legal_ward_dn,
+        should_exist=True,
+        strict=True,
+        expected_attr={
+            "ucsschoolLegalGuardian": [legal_guardian_dn],
+        },
+        **RETRY_ARGS,
+    )
+    udm_session.verify_ldap_object(
+        legal_guardian_dn,
+        should_exist=True,
+        strict=True,
+        expected_attr={
+            "ucsschoolLegalWard": [legal_ward_dn],
+        },
+        **RETRY_ARGS,
+    )
+
+
+def test_remove_ward_from_a_guardian(udm_session):
+    """Remove a legal ward reference from a legal guardian object."""
+    legal_ward_dn_1, _ = udm_session.create_user(options=["ucsschoolStudent"])
+    legal_ward_dn_2, _ = udm_session.create_user(options=["ucsschoolStudent"])
+    legal_ward_dn_3, _ = udm_session.create_user(options=["ucsschoolStudent"])
+
+    # create legal guardian and immediately attach the legal wards
+    legal_guardian_dn, _ = udm_session.create_user(
+        options=["ucsschoolLegalGuardian"],
+        ucsschoolLegalWard=[legal_ward_dn_1, legal_ward_dn_2, legal_ward_dn_3],
+    )
+    # legal wards are attached to legal guardian?
+    udm_session.verify_ldap_object(
+        legal_guardian_dn,
+        should_exist=True,
+        strict=True,
+        expected_attr={
+            "ucsschoolLegalWard": [legal_ward_dn_1, legal_ward_dn_2, legal_ward_dn_3],
+        },
+        **RETRY_ARGS,
+    )
+
+    # remove legal ward #1 reference from legal guardian object
+    udm_session.modify_object(
+        "users/user", dn=legal_guardian_dn, remove={"ucsschoolLegalWard": [legal_ward_dn_1]}
+    )
+    udm_session.verify_ldap_object(
+        legal_guardian_dn,
+        should_exist=True,
+        strict=True,
+        expected_attr={
+            "ucsschoolLegalWard": [legal_ward_dn_2, legal_ward_dn_3],
+        },
+        **RETRY_ARGS,
+    )
+
+
+def test_remove_guardian_from_a_ward(udm_session):
+    """Remove a legal guardian reference from a legal ward object."""
+    legal_guardian_dn_1, _ = udm_session.create_user(options=["ucsschoolLegalGuardian"])
+    legal_guardian_dn_2, _ = udm_session.create_user(options=["ucsschoolLegalGuardian"])
+    legal_guardian_dn_3, _ = udm_session.create_user(options=["ucsschoolLegalGuardian"])
+
+    # create legal ward and immediately attach the legal guardians
+    legal_ward_dn, _ = udm_session.create_user(
+        options=["ucsschoolStudent"],
+        ucsschoolLegalGuardian=[legal_guardian_dn_1, legal_guardian_dn_2, legal_guardian_dn_3],
+    )
+    # legal guardians are attached to legal ward?
+    udm_session.verify_ldap_object(
+        legal_ward_dn,
+        should_exist=True,
+        strict=True,
+        expected_attr={
+            "ucsschoolLegalGuardian": [legal_guardian_dn_1, legal_guardian_dn_2, legal_guardian_dn_3],
+        },
+        **RETRY_ARGS,
+    )
+
+    # remove legal guardian #1 reference from legal ward object
+    udm_session.modify_object(
+        "users/user", dn=legal_ward_dn, remove={"ucsschoolLegalGuardian": [legal_guardian_dn_1]}
+    )
+    udm_session.verify_ldap_object(
+        legal_ward_dn,
+        should_exist=True,
+        strict=True,
+        expected_attr={
+            "ucsschoolLegalGuardian": [legal_guardian_dn_2, legal_guardian_dn_3],
+        },
+        **RETRY_ARGS,
+    )
+
+
+@pytest.mark.parametrize(
+    "role", ["ucsschoolTeacher", "ucsschoolExam", "ucsschoolStaff", "ucsschoolAdministrator"]
+)
+def test_attach_wrong_role_to_legal_guardian(udm_session, role):
+    """
+    Create a legal guardian with a reference to a user that is not a legal ward (wrong role).
+    This should not be possible.
+    """
+    invalid_ward_dn, _ = udm_session.create_user(options=[role])
+
+    # create legal guardian and immediately attach the invalid legal ward
+    expected_exception_regex_create = r".*The specified user .* is no legal ward.*"
+    with pytest.raises(UCSTestUDM_CreateUDMObjectFailed, match=expected_exception_regex_create):
+        legal_guardian_dn, _ = udm_session.create_user(
+            options=["ucsschoolLegalGuardian"], ucsschoolLegalWard=[invalid_ward_dn]
+        )
+
+
+@pytest.mark.parametrize(
+    "role",
+    [
+        "ucsschoolStudent",
+        "ucsschoolTeacher",
+        "ucsschoolExam",
+        "ucsschoolStaff",
+        "ucsschoolAdministrator",
+    ],
+)
+def test_attach_wrong_role_to_legal_ward(udm_session, role):
+    """Create a legal ward with a reference to a user that is not a legal guardian (wrong role)."""
+    invalid_guardian_dn, _ = udm_session.create_user(options=[role])
+
+    # create legal ward and immediately attach the invalid legal guardian
+    expected_exception_regex_create = r".*The specified user .* is no legal guardian.*"
+    with pytest.raises(UCSTestUDM_CreateUDMObjectFailed, match=expected_exception_regex_create):
+        legal_ward_dn, _ = udm_session.create_user(
+            options=["ucsschoolStudent"], ucsschoolLegalGuardian=[invalid_guardian_dn]
+        )
+
+
+def test_refint_after_deleting_ward(udm_session):
+    """
+    Create a legal ward with a reference to a legal guardian.
+    Delete the legal ward and check the reference at the legal guardian.
+    """
+    legal_guardian_dn, _ = udm_session.create_user(options=["ucsschoolLegalGuardian"])
+    legal_ward_dn, _ = udm_session.create_user(
+        options=["ucsschoolStudent"], ucsschoolLegalGuardian=[legal_guardian_dn]
+    )
+    # Hint: references between the objects above already tested by other tests
+
+    # remove legal ward
+    udm_session.remove_object("users/user", dn=legal_ward_dn)
+
+    # check reference at remaining legal guardian object
+    udm_session.verify_ldap_object(
+        legal_guardian_dn,
+        should_exist=True,
+        strict=True,
+        expected_attr={
+            "ucsschoolLegalWard": [],
+        },
+        **RETRY_ARGS,
+    )
+
+
+def test_refint_after_deleting_guardian(udm_session):
+    """
+    Create a legal ward with a reference to a legal guardian.
+    Delete the legal guardian and check the reference at the legal ward.
+    """
+    legal_guardian_dn, _ = udm_session.create_user(options=["ucsschoolLegalGuardian"])
+    legal_ward_dn, _ = udm_session.create_user(
+        options=["ucsschoolStudent"], ucsschoolLegalGuardian=[legal_guardian_dn]
+    )
+    # Hint: references between the objects above already tested by other tests
+
+    # remove legal ward
+    udm_session.remove_object("users/user", dn=legal_guardian_dn)
+
+    # check reference at remaining legal ward object
+    udm_session.verify_ldap_object(
+        legal_ward_dn,
+        should_exist=True,
+        strict=True,
+        expected_attr={
+            "ucsschoolLegalGuardian": [],
+        },
+        **RETRY_ARGS,
+    )
+
+
+def test_refint_after_renaming_ward(udm_session):
+    """
+    Create a legal ward with a reference to a legal guardian.
+    Rename the legal ward and check the reference at the legal guardian.
+    """
+    legal_guardian_dn, _ = udm_session.create_user(options=["ucsschoolLegalGuardian"])
+    legal_ward_dn, _ = udm_session.create_user(
+        options=["ucsschoolStudent"], ucsschoolLegalGuardian=[legal_guardian_dn]
+    )
+    # Hint: references between the objects above already tested by other tests
+
+    # rename legal ward
+    new_legal_ward_dn = udm_session.modify_object(
+        "users/user", dn=legal_ward_dn, username=uts.random_username()
+    )
+
+    # check reference at remaining legal guardian object
+    udm_session.verify_ldap_object(
+        legal_guardian_dn,
+        should_exist=True,
+        strict=True,
+        expected_attr={
+            "ucsschoolLegalWard": [new_legal_ward_dn],
+        },
+        **RETRY_ARGS,
+    )
+
+
+def test_refint_after_renaming_guardian(udm_session):
+    """
+    Create a legal ward with a reference to a legal guardian.
+    Rename the legal guardian and check the reference at the legal ward.
+    """
+    legal_guardian_dn, _ = udm_session.create_user(options=["ucsschoolLegalGuardian"])
+    legal_ward_dn, _ = udm_session.create_user(
+        options=["ucsschoolStudent"], ucsschoolLegalGuardian=[legal_guardian_dn]
+    )
+    # Hint: references between the objects above already tested by other tests
 
     # rename legal guardian
-    legal_guardian_uid = uts.random_username()
-    udm_session.modify_object("users/user", dn=legal_guardian_dn, set={"username": legal_guardian_uid})
-    objs = udm_session.list_objects("users/user", filter=f"uid={legal_guardian_uid}")
-    assert len(objs) == 1
-    legal_guardian_dn = objs[0][0]
-    objs = udm_session.list_objects("users/user", filter=f"uid={legal_ward_uid}")
-    assert len(objs) == 1
-    legal_ward = objs[0][1]
-    assert legal_ward["ucsschoolLegalGuardian"] == [legal_guardian_dn]
+    new_legal_guardian_dn = udm_session.modify_object(
+        "users/user", dn=legal_guardian_dn, username=uts.random_username()
+    )
 
-    # delete legal guardian
-    udm_session.remove_object(
+    # check reference at remaining legal ward object
+    udm_session.verify_ldap_object(
+        legal_ward_dn,
+        should_exist=True,
+        strict=True,
+        expected_attr={
+            "ucsschoolLegalGuardian": [new_legal_guardian_dn],
+        },
+        **RETRY_ARGS,
+    )
+
+
+def test_replace_a_ward_at_guardian_while_at_limit(udm_session):
+    """
+    Create a legal guardian with the maximum allowed number of legal wards.
+    Replace one reference of a legal ward with another reference.
+    """
+    legal_wards = [
+        udm_session.create_user(
+            options=["ucsschoolStudent"],
+        )[0]
+        for _ in range(MAX_LEGAL_WARDS)
+    ]
+    legal_guardian_dn, _ = udm_session.create_user(
+        options=["ucsschoolLegalGuardian"], ucsschoolLegalWard=legal_wards
+    )
+    extra_legal_ward_dn, _ = udm_session.create_user(options=["ucsschoolStudent"])
+
+    # remove one existing reference to a legal ward and add a new one
+    udm_session.modify_object(
         "users/user",
         dn=legal_guardian_dn,
+        remove={"ucsschoolLegalWard": [legal_wards[0]]},
+        append={"ucsschoolLegalWard": [extra_legal_ward_dn]},
     )
-    objs = udm_session.list_objects("users/user", filter=f"uid={legal_ward_uid}")
-    assert len(objs) == 1
-    legal_ward = objs[0][1]
-    assert "ucsschoolLegalGuardian" not in legal_ward
+
+
+def test_replace_a_guardian_at_ward_while_at_limit(udm_session):
+    """
+    Create a legal ward with the maximum allowed number of legal guards.
+    Replace one reference of a legal guardian with another reference.
+    """
+    legal_guardians = [
+        udm_session.create_user(
+            options=["ucsschoolLegalGuardian"],
+        )[0]
+        for _ in range(MAX_LEGAL_GUARDIANS)
+    ]
+    legal_ward_dn, _ = udm_session.create_user(
+        options=["ucsschoolStudent"], ucsschoolLegalGuardian=legal_guardians
+    )
+    extra_legal_guardian_dn, _ = udm_session.create_user(options=["ucsschoolLegalGuardian"])
+
+    # remove one existing reference to a legal ward and add a new one
+    udm_session.modify_object(
+        "users/user",
+        dn=legal_ward_dn,
+        remove={"ucsschoolLegalGuardian": [legal_guardians[0]]},
+        append={"ucsschoolLegalGuardian": [extra_legal_guardian_dn]},
+    )
+
+
+# TODO: def test_refint_after_moving_ward(udm_session):
+# TODO: def test_refint_after_moving_guardian(udm_session):
