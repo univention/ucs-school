@@ -99,10 +99,11 @@ class UcsschoolLegalWard(simpleHook):
         if "ucsschoolStudent" not in obj.options:
             return
 
-        if "ucsschoolLegalGuardian" in obj.info:
 
-            new_guardians = obj.info.get("ucsschoolLegalGuardian", [])
-            old_guardians = obj.oldinfo.get("ucsschoolLegalGuardian", [])
+        # only check legal guardian limits if the property has been changed
+        if obj.hasChanged("ucsschoolLegalGuardian"):
+            new_guardians = set(obj.info.get("ucsschoolLegalGuardian", []))
+            old_guardians = set(obj.oldinfo.get("ucsschoolLegalGuardian", []))
 
             if len(new_guardians) > MAX_LEGAL_GUARDIANS:
                 # New guardians were added and we are above the maximum
@@ -119,7 +120,8 @@ class UcsschoolLegalWard(simpleHook):
                     }
                 )
 
-            for legal_guardian_dn in set(new_guardians).difference(old_guardians):
+            # Check if the ward count of the newly referenced guardians is above the maximum
+            for legal_guardian_dn in new_guardians - old_guardians:
                 self._check_legal_ward_count(obj, legal_guardian_dn)
 
     def hook_ldap_pre_create(self, obj: univention.admin.handlers.simpleLdap) -> None:
