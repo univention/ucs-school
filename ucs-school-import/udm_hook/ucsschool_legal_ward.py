@@ -51,7 +51,8 @@ class MaxLegalWards(univention.admin.uexceptions.base):
 
 
 class UcsschoolLegalWard(simpleHook):
-    def _check_legal_ward_count(self, obj, legal_guardian_dn):
+    def _check_legal_ward_count(self, obj: univention.admin.handlers.simpleLdap, legal_guardian_dn: str):
+        """Check how many wards are assigned at legal guardian."""
 
         num_legal_wards = len(
             obj.lo.searchDn(filter=filter_format("(ucsschoolLegalGuardian=%s)", (legal_guardian_dn,))) # TODO
@@ -72,7 +73,8 @@ class UcsschoolLegalWard(simpleHook):
                 }
             )
 
-    def _check_restrictions(self, obj):
+    def _check_restrictions(self, obj: univention.admin.handlers.simpleLdap) -> None:
+        """Check if restrictions of legal guardian and legal ward are met."""
 
         if "ucsschoolStudent" not in obj.options:
             return
@@ -100,8 +102,8 @@ class UcsschoolLegalWard(simpleHook):
             for legal_guardian_dn in set(new_guardians).difference(old_guardians):
                 self._check_legal_ward_count(obj, legal_guardian_dn)
 
-    def hook_ldap_pre_create(self, obj):
+    def hook_ldap_pre_create(self, obj: univention.admin.handlers.simpleLdap) -> None:
         self._check_restrictions(obj)
 
-    def hook_ldap_pre_modify(self, obj):
+    def hook_ldap_pre_modify(self, obj: univention.admin.handlers.simpleLdap) -> None:
         self._check_restrictions(obj)
