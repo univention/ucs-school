@@ -29,7 +29,7 @@
 # /usr/share/common-licenses/AGPL-3. If not, see <http://www.gnu.org/licenses/>.
 
 
-from ldap.filter import filter_format
+import ldap
 
 import univention.admin.uexceptions
 from univention.admin import localization
@@ -50,13 +50,33 @@ class MaxLegalWards(univention.admin.uexceptions.base):
     pass
 
 
+class LegalWardNotFoundError(univention.admin.uexceptions.base):
+    pass
+
+
+class NoLegalGuardian(univention.admin.uexceptions.base):
+    pass
+
+
 class UcsschoolLegalWard(simpleHook):
     def _check_legal_ward_count(self, obj: univention.admin.handlers.simpleLdap, legal_guardian_dn: str):
         """Check how many wards are assigned at legal guardian."""
+        try:
+            guardian_attrs = obj.lo.get(
+                legal_guardian_dn, attr=["ucsschoolLegalWard", "objectClass"], required=True
+            )
+        except ldap.NO_SUCH_OBJECT:
+            raise LegalWardNotFoundError(
+                f"Could not find legal guardian '{legal_guardian_dn}': the specified legal guardian "
+                f"at {obj.dn} is incorrect."
+            )
 
-        num_legal_wards = len(
-            obj.lo.searchDn(filter=filter_format("(ucsschoolLegalGuardian=%s)", (legal_guardian_dn,))) # TODO
-        )
+        if b"ucsschoolLegalGuardian" not in guardian_attrs.get("objectClass", []):
+            raise NoLegalGuardian(
+                _("The specified user %(dn)s is no legal guardian.") % {"dn": legal_guardian_dn}
+            )
+
+        num_legal_wards = len(guardian_attrs.get("ucsschoolLegalWard", []))
 
         if num_legal_wards >= MAX_LEGAL_WARDS:
             raise MaxLegalWards(
