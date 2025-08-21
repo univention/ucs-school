@@ -28,13 +28,16 @@
 # License with the Debian GNU/Linux or Univention distribution in file
 # /usr/share/common-licenses/AGPL-3. If not, see <http://www.gnu.org/licenses/>.
 
-from ldap.filter import filter_format
+from logging import getLogger
+
+import ldap
 
 import univention.admin.uexceptions
 from univention.admin import localization
 from univention.admin.hook import simpleHook
-from univention.udm import UDM
-from univention.udm.exceptions import ModifyError, NoObject, WrongObjectType
+
+log = getLogger("ADMIN")
+LOGPREFIX = "hook ucsschool_legal_guardian:"
 
 translation = localization.translation("univention-admin-hooks-ucsschool_legal_guardian")
 _ = translation.translate
@@ -59,85 +62,138 @@ class LegalGuardianModifyError(univention.admin.uexceptions.base):
     pass
 
 
-def _get_student(dn, user_mod):
-    try:
-        student = user_mod.get(dn)
-    except (NoObject, WrongObjectType):
-        raise LegalGuardianNotFoundError(
-            f"Could not find student '{dn}' to modify ucsschoolLegalGuardian"
-        )
-    if "ucsschoolStudent" not in student.options:
-        raise LegalGuardianNotFoundError(
-            f"Could not modify ucsschoolLegalGuardian on '{dn}' because they are not a student"
-        )
-    return student
-
-
-def _save_student(student):
-    try:
-        student.save()
-    except ModifyError as exc:
-        raise LegalGuardianModifyError(
-            f"Could not modify ucsschoolLegalGuardian on '{student.dn}': {exc}"
-        )
+class NoLegalWard(univention.admin.uexceptions.base):
+    pass
 
 
 class UcsschoolLegalGuardian(simpleHook):
-    def hook_ldap_addlist(self, obj, al):
-        # hook_ldap_modlist will be called later anyways, but at that point
-        # ucsschoolLegalWard needs to be already removed from the add list
-        # or udm throws an error
-        return self.hook_ldap_modlist(obj, al)
+    def hook_ldap_pre_create(self, obj: univention.admin.handlers.simpleLdap) -> None:
+        self._check_restrictions(obj)
 
-    def hook_ldap_modlist(self, obj, ml):
+    def hook_ldap_pre_modify(self, obj: univention.admin.handlers.simpleLdap) -> None:
+        self._check_restrictions(obj)
+
+    # hook_ldap_post_remove() is not required - it is handled by the LDAP overlay refint
+
+    def _check_restrictions(self, obj: univention.admin.handlers.simpleLdap) -> None:
+        log.debug(f"{LOGPREFIX} checking restrictions for {obj.dn}")
+        log.debug(f"{LOGPREFIX} options={obj.options}")
         if "ucsschoolLegalGuardian" not in obj.options:
-            return ml
-        for change in ml:
-            if change[0] == "ucsschoolLegalWard":
-                legal_wards_old = set(change[1])
-                legal_wards_new = set(change[2])
-                break
-        else:
-            # no change in ucsschoolLegalWard
-            return ml
-        if len(legal_wards_new) >= MAX_LEGAL_WARDS:
-            # New wards were added and we are above the maximum
-            raise MaxLegalWards(
-                _(
-                    "Legal guardian %(self_dn)s would have %(num_of_wards)d legal wards, "
-                    "which is above the maximum allowed number of legal wards (%(max_legal_wards)d)."
+            log.debug(f"{LOGPREFIX} obj is no legal guardian")
+            return
+
+        log.debug(f"{LOGPREFIX} exists={obj.exists()}")
+        log.debug(f"{LOGPREFIX} hasChanged={obj.hasChanged('ucsschoolLegalWard')}")
+        if obj.hasChanged("ucsschoolLegalWard"):
+            new_wards = set(obj.info.get("ucsschoolLegalWard", []))
+            old_wards = set(obj.oldinfo.get("ucsschoolLegalWard", []))
+            log.debug(f"{LOGPREFIX} len(new_wards)={len(new_wards)}")
+            log.debug(f"{LOGPREFIX} len(old_wards)={len(old_wards)}")
+
+            if len(new_wards) > MAX_LEGAL_WARDS:
+                log.debug(
+                    f"{LOGPREFIX} Number of ucsschoolLegalWard entries is above limit:\n"
+                    f"legal guardian DN={obj.dn}\nentries={new_wards}"
                 )
-                % {
-                    "self_dn": obj.dn,
-                    "num_of_wards": len(legal_wards_new),
-                    "max_legal_wards": MAX_LEGAL_WARDS,
-                }
-            )
-        user_mod = UDM(obj.lo).version(2).get("users/user")
-        students_to_change = []
-        for added_legal_ward in legal_wards_new.difference(legal_wards_old):
-            student = _get_student(added_legal_ward.decode(), user_mod)
-            if len(student.props.ucsschoolLegalGuardian) >= MAX_LEGAL_GUARDIANS:
-                raise MaxLegalGuards(
+                # New wards were added and we are above the maximum
+                raise MaxLegalWards(
                     _(
-                        "Legal ward %(student_dn)s already has %(num_legal_guardians)d legal guardians. "
-                        "Adding %(self_dn)s would increase it above the maximum allowed "
-                        "legal guardians (%(max_legal_guardians)d)."
+                        "Legal guardian %(self_dn)s would have %(num_of_wards)d legal wards, "
+                        "which is above the maximum allowed number of legal wards (%(max_legal_wards)d)."
                     )
                     % {
-                        "student_dn": student.dn,
-                        "num_legal_guardians": len(student.props.ucsschoolLegalGuardian),
                         "self_dn": obj.dn,
-                        "max_legal_guardians": MAX_LEGAL_GUARDIANS,
+                        "num_of_wards": len(new_wards),
+                        "max_legal_wards": MAX_LEGAL_WARDS,
                     }
                 )
-            student.props.ucsschoolLegalGuardian.append(obj.dn)
-            students_to_change.append(student)
-        for removed_legal_ward in legal_wards_old.difference(legal_wards_new):
-            student = _get_student(removed_legal_ward.decode(), user_mod)
-            student.props.ucsschoolLegalGuardian.remove(obj.dn)
-            students_to_change.append(student)
-        for student in students_to_change:
-            # Only start saving when it will probably work for all
-            _save_student(student)
-        return [change for change in ml if change[0] != "ucsschoolLegalWard"]
+
+            # Check if the guardian count for the newly referenced wards is at/above the maximum
+            # (== testing if adding an additional legal guardian to the legal ward is possible)
+            for legal_ward_dn in new_wards - old_wards:
+                self._check_legal_guardian_count(obj, legal_ward_dn)
+
+    def _check_legal_guardian_count(
+        self, obj: univention.admin.handlers.simpleLdap, legal_ward_dn: str
+    ) -> None:
+        """Check for specified legal ward, if adding an additional legal guardian is within limits."""
+        log.debug(f"{LOGPREFIX} checking number legal_guardian entries at {legal_ward_dn}")
+        try:
+            ward_attrs = obj.lo.get(
+                legal_ward_dn, attr=["ucsschoolLegalGuardian", "objectClass"], required=True
+            )
+        except ldap.NO_SUCH_OBJECT:
+            raise LegalGuardianNotFoundError(
+                f"Could not find legal ward '{legal_ward_dn}': the specified legal ward at "
+                f"{obj.dn} is incorrect."
+            )
+
+        if b"ucsschoolStudent" not in ward_attrs.get("objectClass", []):
+            raise NoLegalWard(_("The specified user %(dn)s is no legal ward.") % {"dn": legal_ward_dn})
+
+        num_legal_guardians = len(ward_attrs.get("ucsschoolLegalGuardian", []))
+        if num_legal_guardians >= MAX_LEGAL_GUARDIANS:
+            log.debug(
+                f"{LOGPREFIX} Number of ucsschoolLegalGuardian entries is above limit:\n"
+                f"legal ward DN={legal_ward_dn}\nentries={ward_attrs.get('ucsschoolLegalGuardian', [])}"
+            )
+            raise MaxLegalGuards(
+                _(
+                    "Legal ward %(student_dn)s already has %(num_legal_guardians)d legal guardians. "
+                    "Adding %(self_dn)s would increase it above the maximum allowed "
+                    "legal guardians (%(max_legal_guardians)d)."
+                )
+                % {
+                    "student_dn": legal_ward_dn,
+                    "num_legal_guardians": num_legal_guardians,
+                    "self_dn": obj.dn,
+                    "max_legal_guardians": MAX_LEGAL_GUARDIANS,
+                }
+            )
+
+    def hook_ldap_post_create(self, obj: univention.admin.handlers.simpleLdap) -> None:
+        self._update_ward_objects(obj)
+
+    def hook_ldap_post_modify(self, obj: univention.admin.handlers.simpleLdap) -> None:
+        self._update_ward_objects(obj)
+
+    def _update_ward_objects(self, obj: univention.admin.handlers.simpleLdap) -> None:
+        """Update attribute ucsschoolLegalGuardian at legal ward objects"""
+        if obj.exists():
+            new_wards = set(obj.info.get("ucsschoolLegalWard", []))
+            old_wards = set(obj.oldinfo.get("ucsschoolLegalWard", []))
+        else:
+            new_wards = set(obj.info.get("ucsschoolLegalWard", []))
+            old_wards = set()
+
+        # update ucsschoolLegalGuardian at legal ward objects whose reference has been added
+        for add_ward_dn in new_wards - old_wards:
+            log.debug(f"{LOGPREFIX} adding {obj.dn} to {add_ward_dn}")
+            try:
+                obj.lo.modify(
+                    add_ward_dn,
+                    [("ucsschoolLegalGuardian", b"", obj.dn.encode("utf8"))],
+                    ignore_license=True,
+                )
+            except (
+                univention.admin.uexceptions.ldapError,
+                univention.admin.uexceptions.noObject,
+            ) as exc:
+                log.exception(f"{LOGPREFIX} Cannot add legal guardian {obj.dn} to {add_ward_dn}: {exc}")
+
+        # update ucsschoolLegalGuardian at legal ward objects whose reference has been removed
+        for remove_ward_dn in old_wards - new_wards:
+            log.debug(f"{LOGPREFIX} removing {obj.dn} from {remove_ward_dn}")
+            try:
+                obj.lo.modify(
+                    remove_ward_dn,
+                    [("ucsschoolLegalGuardian", obj.dn.encode("utf8"), b"")],
+                    ignore_license=True,
+                )
+            except (
+                univention.admin.uexceptions.ldapError,
+                univention.admin.uexceptions.noObject,
+            ) as exc:
+                log.exception(
+                    f"{LOGPREFIX} Cannot remove legal guardian {obj.dn} from {remove_ward_dn}: {exc}"
+                )
