@@ -1,3 +1,11 @@
+ucs-school-import (19.2.4) unstable; urgency=low
+
+  * feat: update and improve extended attribute hooks after switching to
+    the memberOf overlay module
+    Issue univention/dev/education/ucsschool#1476
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Tue, 19 Aug 2025 18:21:08 +0200
+
 ucs-school-import (19.2.3) unstable; urgency=low
 
   * feat: add HTTP import for legal guardians
