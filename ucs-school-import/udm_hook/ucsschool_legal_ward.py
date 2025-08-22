@@ -93,7 +93,7 @@ class UcsschoolLegalWard(simpleHook):
                 _(
                     "This legal guardian already has %(num_legal_wards)d "
                     "legal wards. Adding more would increase it above the maximum "
-                    "allowed legal wards of (%(max_legal_wards)d)."
+                    "allowed number of legal wards (%(max_legal_wards)d)."
                 )
                 % {
                     "num_legal_wards": num_legal_wards,

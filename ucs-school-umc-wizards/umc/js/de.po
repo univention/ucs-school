@@ -487,10 +487,10 @@ msgid "Legal wards"
 msgstr "Schüler"
 
 msgid "Users for which this person is the legal guardian, e.g. their children."
-msgstr "Benutzer, für die diese Person der Sorgeberechtigte ist, z. B. ihre Kinder."
+msgstr "Benutzer, für die diese Person ein Sorgeberechtigter ist, z. B. ihre Kinder."
 
 msgid "Users which are the legal guardian for this person, e.g. their parents."
-msgstr "Benutzer, die der Sorgeberechtigte dieser Person sind, z. B. ihre Eltern."
+msgstr "Benutzer, die ein Sorgeberechtigter dieser Person sind, z. B. ihre Eltern."
 
 #: umc/js/schoolwizards/utils.js:60
 msgid "Teachers and staff"

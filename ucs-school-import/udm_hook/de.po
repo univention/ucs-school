@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: univention-admin-hooks-ucsschool_user_options\n"
 "Report-Msgid-Bugs-To: packages@univention.de\n"
-"POT-Creation-Date: 2016-08-29 09:43+0200\n"
+"POT-Creation-Date: 2025-08-22 11:28+0200\n"
 "PO-Revision-Date: 2016-09-20 09:49+0200\n"
 "Last-Translator: Univention GmbH <packages@univention.de>\n"
 "Language-Team: Univention GmbH <packages@univention.de>\n"
@@ -15,47 +15,59 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: udm_hook/ucsschool_user_options.py:58
+#: ucsschool_user_options.py:66
 #, python-format
-msgid ""
-"%(option)s cannot be activated together with %(illegals)s."
-msgstr ""
-"%(option)s kann nicht zusammen mit %(illegals)s aktiviert werden."
+msgid "%(option)s cannot be activated together with %(illegals)s."
+msgstr "%(option)s kann nicht zusammen mit %(illegals)s aktiviert werden."
 
-#: udm_hook/ucsschool_legal_ward.py
+#: ucsschool_legal_ward.py:81
 #, python-format
-msgid ""
-"This legal guardian already has %(num_legal_wards)d "
-"legal wards. Adding more would increase it above the maximum "
-"allowed legal wards of (%(max_legal_wards)d)."
-msgstr "Der Sorgeberechtigte hat bereits %(num_legal_wards)d Schüler. Das Hinzufügen weiterer überschreitet die maximal erlaubte Anzahl an Schülern (%(max_legal_wards)d)."
+msgid "The specified user %(dn)s is no legal guardian."
+msgstr "Der angegebene Benutzer %(dn)s ist kein Sorgeberechtigter."
 
-#: udm_hook/ucsschool_legal_ward.py
+#: ucsschool_legal_guardian.py:132
 #, python-format
-msgid ""
-"This legal ward %(self_dn)s would have %(num_legal_guardians)d "
-"legal guardians, which is above the maximum allowed number of "
-"legal guardians (%(max_legal_guardians)d)."
-msgstr ""
-"Dieser Schüler hätte %(num_legal_guardians)d "
-"Sorgeberechtigte, was über der maximal zulässigen Anzahl von "
-"Schülern (%(max_legal_guardians)d) liegt."
+msgid "The specified user %(dn)s is no legal ward."
+msgstr "Der angegebene Benutzer %(dn)s ist kein Schüler."
 
-#: udm_hook/ucsschool_legal_guardian.py
+#: ucsschool_legal_ward.py:94
 #, python-format
 msgid ""
-"Legal guardian %(self_dn)s would have %(num_of_wards)d legal wards, "
-"which is above the maximum allowed number of legal wards (%(max_legal_wards)d)."
+"This legal guardian already has %(num_legal_wards)d legal wards. Adding more "
+"would increase it above the maximum allowed number of legal wards "
+"(%(max_legal_wards)d)."
 msgstr ""
-"Sorgeberechtigter %(self_dn)s würde %(num_of_wards)d Schüler haben, "
-"was über der maximal erlaubten Anzahl von Schülern (%(max_legal_wards)d) liegt."
+"Der Sorgeberechtigte hat bereits %(num_legal_wards)d Schüler. Das Hinzufügen "
+"weiterer würde die maximal zulässige Anzahl an Schülern "
+"(%(max_legal_wards)d) überschreiten."
 
-#: udm_hook/ucsschool_legal_guardian.py
+#: ucsschool_legal_ward.py:130
 #, python-format
 msgid ""
-"Legal ward %(student_dn)s already has %(num_legal_guardians)d legal guardians. "
-"Adding %(self_dn)s would increase it above the maximum allowed "
-"legal guardians (%(max_legal_guardians)d)."
+"This legal ward would have %(num_legal_guardians)d legal guardians, which is "
+"above the maximum allowed number of legal guardians "
+"(%(max_legal_guardians)d)."
 msgstr ""
-"Schüler %(student_dn)s hat bereits %(num_legal_guardians)d Erziehungsberechtigte. "
-"Das Hinzufügen von %(self_dn)s würde die zulässige Anzahl Sorgeberechtigter überschreiten (%(max_legal_guardians)d)."
+"Dieser Schüler würde %(num_legal_guardians)d Sorgeberechtigte haben, was "
+"über der maximal zulässigen Anzahl an Sorgeberechtigten "
+"(%(max_legal_guardians)d) liegt."
+
+#: ucsschool_legal_guardian.py:101
+#, python-format
+msgid ""
+"Legal guardian would have %(num_of_wards)d legal wards, which is "
+"above the maximum allowed number of legal wards (%(max_legal_wards)d)."
+msgstr ""
+"Sorgeberechtigter würde %(num_of_wards)d Schüler haben, was über "
+"der maximal zulässigen Anzahl an Schülern (%(max_legal_wards)d) liegt."
+
+#: ucsschool_legal_guardian.py:142
+#, python-format
+msgid ""
+"Legal ward already has %(num_legal_guardians)d legal "
+"guardians. Adding more would increase it above the maximum allowed "
+"number of legal guardians (%(max_legal_guardians)d)."
+msgstr ""
+"Der Schüler hat bereits %(num_legal_guardians)d "
+"Erziehungsberechtigte. Das Hinzufügen weiterer würde die zulässige "
+"Anzahl an Sorgeberechtigten (%(max_legal_guardians)d) überschreiten."
