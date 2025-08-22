@@ -130,11 +130,11 @@ def test_restriction_max_legal_wards(udm_session):
     ]
 
     expected_exception_regex_modify = (
-        r".*Legal guardian .* already has \d+ legal wards. Adding .* would increase it above"
-        r" the maximum allowed legal wards.*"
+        r".*This legal guardian already has \d+ legal wards. Adding more would increase it above"
+        r" the maximum allowed number of legal wards.*"
     )
     expected_exception_regex_create = (
-        r".*Legal guardian .* would have \d+ legal wards, which is above the maximum allowed"
+        r".*Legal guardian would have \d+ legal wards, which is above the maximum allowed"
         r" number of legal wards.*"
     )
 
@@ -175,7 +175,7 @@ def test_restriction_max_legal_guardians(udm_session):
     ]
 
     expected_exception_regex = (
-        r".*Legal ward .* would have "
+        r".*This legal ward would have "
         + re.escape(f"{MAX_LEGAL_GUARDIANS+1}")
         + r" legal guardians, which is above the maximum allowed number of legal guardians.*"
     )
