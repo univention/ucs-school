@@ -147,6 +147,9 @@ if configRegistry.get('server/role') == 'domaincontroller_master':
     print("overlay           refint")
     print("refint_attributes ucsschoolLegalGuardian")  # We use slapo-refint instead of the memberof-refint option below (same as with uniqueMember/memberOf)
     print("refint_attributes ucsschoolLegalWard")  # We use slapo-refint instead of the memberof-refint option below (same as with uniqueMember/memberOf)
+    print()
+
+if configRegistry.get('server/role') in ('domaincontroller_master', 'domaincontroller_backup', 'domaincontroller_slave'):
     # We skip the moduleload here, because ITS#6030 blocks loading modules multiple times. But we can use them multiple times with different configs.
     print("overlay                  memberof")
     print("memberof-group-oc        ucsschoolStudent")
