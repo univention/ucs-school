@@ -615,6 +615,7 @@ def test_refint_after_renaming_ward(udm_session):
     """
     Create a legal ward with a reference to a legal guardian.
     Rename the legal ward and check the reference at the legal guardian.
+    Hint: this should also cover the case when users are moved within the LDAP.
     """
     legal_guardian_dn, _ = udm_session.create_user(options=["ucsschoolLegalGuardian"])
     legal_ward_dn, _ = udm_session.create_user(
@@ -643,6 +644,7 @@ def test_refint_after_renaming_guardian(udm_session):
     """
     Create a legal ward with a reference to a legal guardian.
     Rename the legal guardian and check the reference at the legal ward.
+    Hint: this should also cover the case when users are moved within the LDAP.
     """
     legal_guardian_dn, _ = udm_session.create_user(options=["ucsschoolLegalGuardian"])
     legal_ward_dn, _ = udm_session.create_user(
@@ -715,7 +717,3 @@ def test_replace_a_guardian_at_ward_while_at_limit(udm_session):
         remove={"ucsschoolLegalGuardian": [legal_guardians[0]]},
         append={"ucsschoolLegalGuardian": [extra_legal_guardian_dn]},
     )
-
-
-# TODO: def test_refint_after_moving_ward(udm_session):
-# TODO: def test_refint_after_moving_guardian(udm_session):
