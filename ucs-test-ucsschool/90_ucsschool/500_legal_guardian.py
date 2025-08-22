@@ -229,38 +229,22 @@ def test_ldap_constraints(udm_session):
         lo.modify(legal_guardian_dn, ml)
 
 
-def test_create_and_remove_legal_guardian_ldap(udm_session):
+@pytest.mark.parametrize("useroption", ("ucsschoolLegalGuardian", "ucsschoolStudent"))
+def test_create_and_remove_objects_ldap(udm_session, useroption):
     """
-    Create a legal guardian without legal ward references and verify that it can be removed.
+    Create a legal guardian and legal ward without references and verify that it can be removed.
     It is verified on the LDAP level that the user is created / removed.
     """
-    legal_guardian_dn, _ = udm_session.create_user(options=["ucsschoolLegalGuardian"])
+    user_dn, _ = udm_session.create_user(options=[useroption])
     udm_session.verify_ldap_object(
-        legal_guardian_dn,
+        user_dn,
         should_exist=True,
         strict=False,
-        expected_attr={"objectClass": [b"ucsschoolLegalGuardian"]},
+        expected_attr={"objectClass": [useroption.encode()]},
         **RETRY_ARGS,
     )
-    udm_session.remove_object("users/user", dn=legal_guardian_dn)
-    udm_session.verify_ldap_object(legal_guardian_dn, should_exist=False)
-
-
-def test_create_and_remove_legal_ward_ldap(udm_session):
-    """
-    Create a legal ward without legal guardian references and verify that it can be removed.
-    It is verified on the LDAP level that the user is created / removed.
-    """
-    legal_ward_dn, _ = udm_session.create_user(options=["ucsschoolStudent"])
-    udm_session.verify_ldap_object(
-        legal_ward_dn,
-        should_exist=True,
-        strict=False,
-        expected_attr={"objectClass": [b"ucsschoolStudent"]},
-        **RETRY_ARGS,
-    )
-    udm_session.remove_object("users/user", dn=legal_ward_dn)
-    udm_session.verify_ldap_object(legal_ward_dn, should_exist=False)
+    udm_session.remove_object("users/user", dn=user_dn)
+    udm_session.verify_ldap_object(user_dn, should_exist=False)
 
 
 def test_attach_guardian_to_a_ward_during_creation(udm_session):
