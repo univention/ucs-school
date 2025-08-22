@@ -176,7 +176,9 @@ class UcsschoolLegalGuardian(simpleHook):
                 univention.admin.uexceptions.ldapError,
                 univention.admin.uexceptions.noObject,
             ) as exc:
-                log.exception(f"{LOGPREFIX} Cannot add legal guardian {obj.dn} to {add_ward_dn}: {exc}")
+                msg = f"Cannot add legal guardian {obj.dn} to {add_ward_dn}: {exc}"
+                log.exception(f"{LOGPREFIX} {msg}")
+                raise LegalGuardianModifyError(msg)
 
         # update ucsschoolLegalGuardian at legal ward objects whose reference has been removed
         for remove_ward_dn in old_wards - new_wards:
@@ -187,10 +189,12 @@ class UcsschoolLegalGuardian(simpleHook):
                     [("ucsschoolLegalGuardian", obj.dn.encode("utf8"), b"")],
                     ignore_license=True,
                 )
-            except (
-                univention.admin.uexceptions.ldapError,
-                univention.admin.uexceptions.noObject,
-            ) as exc:
-                log.exception(
-                    f"{LOGPREFIX} Cannot remove legal guardian {obj.dn} from {remove_ward_dn}: {exc}"
+            except univention.admin.uexceptions.noObject:
+                log.info(
+                    f"{LOGPREFIX} Cannot remove legal guardian {obj.dn} from legal ward "
+                    f"{remove_ward_dn}: legal ward does not exist any longer"
                 )
+            except univention.admin.uexceptions.ldapError as exc:
+                msg = f"Cannot remove legal guardian {obj.dn} from {remove_ward_dn}: {exc}"
+                log.exception(f"{LOGPREFIX} {msg}")
+                raise LegalGuardianModifyError(msg)
