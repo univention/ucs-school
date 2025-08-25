@@ -130,12 +130,12 @@ def test_restriction_max_legal_wards(udm_session):
     ]
 
     expected_exception_regex_modify = (
-        r".*This legal guardian already has \d+ legal wards. Adding more would increase it above"
-        r" the maximum allowed number of legal wards.*"
+        r".*This legal guardian already has \d+ assigned students. Adding more would increase it above"
+        r" the maximum allowed number of assigned students.*"
     )
     expected_exception_regex_create = (
-        r".*Legal guardian would have \d+ legal wards, which is above the maximum allowed"
-        r" number of legal wards.*"
+        r".*This legal guardian would have \d+ assigned students, which is above the maximum allowed"
+        r" number of assigned students.*"
     )
 
     # 1) Add one legal ward too much
@@ -175,9 +175,10 @@ def test_restriction_max_legal_guardians(udm_session):
     ]
 
     expected_exception_regex = (
-        r".*This legal ward would have "
+        r".*This student would have "
         + re.escape(f"{MAX_LEGAL_GUARDIANS+1}")
-        + r" legal guardians, which is above the maximum allowed number of legal guardians.*"
+        + r" assigned legal guardians, which is above the maximum allowed"
+        + r" number of assigned legal guardians.*"
     )
     # 1) Add one legal guardian too much
     with pytest.raises(UCSTestUDM_ModifyUDMObjectFailed, match=expected_exception_regex):
@@ -514,7 +515,7 @@ def test_attach_wrong_role_to_legal_guardian(udm_session, role):
     invalid_ward_dn, _ = udm_session.create_user(options=[role])
 
     # create legal guardian and immediately attach the invalid legal ward
-    expected_exception_regex_create = r".*The specified user .* is no legal ward.*"
+    expected_exception_regex_create = r".*The specified user .* is no student.*"
     with pytest.raises(UCSTestUDM_CreateUDMObjectFailed, match=expected_exception_regex_create):
         legal_guardian_dn, _ = udm_session.create_user(
             options=["ucsschoolLegalGuardian"], ucsschoolLegalWard=[invalid_ward_dn]

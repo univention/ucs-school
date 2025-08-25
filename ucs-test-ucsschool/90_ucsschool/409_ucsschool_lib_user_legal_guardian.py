@@ -103,7 +103,7 @@ def test_create_student_with_missing_legal_guardian(schoolenv):
 
     legal_guardian_dn_2 = "uid=idonotexist,cn=users,dc=ucs,dc=test"
 
-    with pytest.raises(ValidationError, match=".*The following legal guardians do not exist.*"):
+    with pytest.raises(ValidationError, match=".*The following legal guardians do not exist:.*"):
         _, student_dn = schoolenv.create_student(
             ou_name=ou_name, legal_guardians=[legal_guardian_dn_1, legal_guardian_dn_2]
         )
@@ -137,7 +137,7 @@ def test_create_student_with_too_many_legal_guardians(schoolenv):
 
     with pytest.raises(
         univention.admin.uexceptions.base,
-        match=".*is above the maximum allowed number of legal guardians.*",
+        match=".*is above the maximum allowed number of assigned legal guardians.*",
     ):
         _, student_dn = schoolenv.create_student(
             ou_name=ou_name,

@@ -91,9 +91,9 @@ class UcsschoolLegalWard(simpleHook):
             )
             raise MaxLegalWards(
                 _(
-                    "This legal guardian already has %(num_legal_wards)d "
-                    "legal wards. Adding more would increase it above the maximum "
-                    "allowed number of legal wards (%(max_legal_wards)d)."
+                    "This legal guardian already has %(num_legal_wards)d assigned "
+                    "students. Adding more would increase it above the maximum "
+                    "allowed number of assigned students (%(max_legal_wards)d)."
                 )
                 % {
                     "num_legal_wards": num_legal_wards,
@@ -107,7 +107,7 @@ class UcsschoolLegalWard(simpleHook):
         log.debug(f"{LOGPREFIX} options={obj.options}")
 
         if "ucsschoolStudent" not in obj.options:
-            log.debug(f"{LOGPREFIX} obj is no legal ward")
+            log.debug(f"{LOGPREFIX} obj is no student")
             return
 
         log.debug(f"{LOGPREFIX} exists={obj.exists()}")
@@ -123,13 +123,13 @@ class UcsschoolLegalWard(simpleHook):
                 # New guardians were added and we are above the maximum
                 log.debug(
                     f"{LOGPREFIX} Number of ucsschoolLegalGuardian entries is above limit:\n"
-                    f"legal ward DN={obj.dn}\nentries={new_guardians}"
+                    f"student DN={obj.dn}\nentries={new_guardians}"
                 )
                 raise MaxLegalGuards(
                     _(
-                        "This legal ward would have %(num_legal_guardians)d "
+                        "This student would have %(num_legal_guardians)d assigned "
                         "legal guardians, which is above the maximum allowed number of "
-                        "legal guardians (%(max_legal_guardians)d)."
+                        "assigned legal guardians (%(max_legal_guardians)d)."
                     )
                     % {
                         "num_legal_guardians": len(obj["ucsschoolLegalGuardian"]),

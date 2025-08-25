@@ -27,47 +27,47 @@ msgstr "Der angegebene Benutzer %(dn)s ist kein Sorgeberechtigter."
 
 #: ucsschool_legal_guardian.py:132
 #, python-format
-msgid "The specified user %(dn)s is no legal ward."
+msgid "The specified user %(dn)s is no student."
 msgstr "Der angegebene Benutzer %(dn)s ist kein Schüler."
 
 #: ucsschool_legal_ward.py:94
 #, python-format
 msgid ""
-"This legal guardian already has %(num_legal_wards)d legal wards. Adding more "
-"would increase it above the maximum allowed number of legal wards "
+"This legal guardian already has %(num_legal_wards)d assigned students. Adding more "
+"would increase it above the maximum allowed number of assigned students "
 "(%(max_legal_wards)d)."
 msgstr ""
-"Der Sorgeberechtigte hat bereits %(num_legal_wards)d Schüler. Das Hinzufügen "
-"weiterer würde die maximal zulässige Anzahl an Schülern "
+"Der Sorgeberechtigte hat bereits %(num_legal_wards)d zugeordnete Schüler. Das Hinzufügen "
+"weiterer würde die maximal zulässige Anzahl an zugeordneten Schülern "
 "(%(max_legal_wards)d) überschreiten."
 
 #: ucsschool_legal_ward.py:130
 #, python-format
 msgid ""
-"This legal ward would have %(num_legal_guardians)d legal guardians, which is "
-"above the maximum allowed number of legal guardians "
+"This student would have %(num_legal_guardians)d assigned legal guardians, which is "
+"above the maximum allowed number of assigned legal guardians "
 "(%(max_legal_guardians)d)."
 msgstr ""
-"Dieser Schüler würde %(num_legal_guardians)d Sorgeberechtigte haben, was "
-"über der maximal zulässigen Anzahl an Sorgeberechtigten "
+"Dieser Schüler würde %(num_legal_guardians)d zugeordnete Sorgeberechtigte haben, was "
+"über der maximal zulässigen Anzahl an zugeordneten Sorgeberechtigten "
 "(%(max_legal_guardians)d) liegt."
 
 #: ucsschool_legal_guardian.py:101
 #, python-format
 msgid ""
-"Legal guardian would have %(num_of_wards)d legal wards, which is "
-"above the maximum allowed number of legal wards (%(max_legal_wards)d)."
+"This legal guardian would have %(num_of_wards)d assigned students, which is "
+"above the maximum allowed number of assigned students (%(max_legal_wards)d)."
 msgstr ""
-"Sorgeberechtigter würde %(num_of_wards)d Schüler haben, was über "
-"der maximal zulässigen Anzahl an Schülern (%(max_legal_wards)d) liegt."
+"Dieser Sorgeberechtigte würde %(num_of_wards)d zugeordnete Schüler haben, was über "
+"der maximal zulässigen Anzahl an zugeordneten Schülern (%(max_legal_wards)d) liegt."
 
 #: ucsschool_legal_guardian.py:142
 #, python-format
 msgid ""
-"Legal ward already has %(num_legal_guardians)d legal "
+"This student already has %(num_legal_guardians)d assigned legal "
 "guardians. Adding more would increase it above the maximum allowed "
-"number of legal guardians (%(max_legal_guardians)d)."
+"number of assigned legal guardians (%(max_legal_guardians)d)."
 msgstr ""
-"Der Schüler hat bereits %(num_legal_guardians)d "
-"Erziehungsberechtigte. Das Hinzufügen weiterer würde die zulässige "
-"Anzahl an Sorgeberechtigten (%(max_legal_guardians)d) überschreiten."
+"Der Schüler hat bereits %(num_legal_guardians)d zugeordnete "
+"Sorgeberechtigte. Das Hinzufügen weiterer würde die zulässige "
+"Anzahl an zugeordneten Sorgeberechtigten (%(max_legal_guardians)d) überschreiten."

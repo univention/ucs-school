@@ -98,8 +98,9 @@ class UcsschoolLegalGuardian(simpleHook):
                 # New wards were added and we are above the maximum
                 raise MaxLegalWards(
                     _(
-                        "Legal guardian would have %(num_of_wards)d legal wards, "
-                        "which is above the maximum allowed number of legal wards (%(max_legal_wards)d)."
+                        "This legal guardian would have %(num_of_wards)d assigned students, "
+                        "which is above the maximum allowed number of assigned students "
+                        "(%(max_legal_wards)d)."
                     )
                     % {
                         "num_of_wards": len(new_wards),
@@ -123,24 +124,24 @@ class UcsschoolLegalGuardian(simpleHook):
             )
         except ldap.NO_SUCH_OBJECT:
             raise LegalGuardianNotFoundError(
-                f"Could not find legal ward '{legal_ward_dn}': the specified legal ward at "
+                f"Could not find student '{legal_ward_dn}': the specified student at "
                 f"{obj.dn} is incorrect."
             )
 
         if b"ucsschoolStudent" not in ward_attrs.get("objectClass", []):
-            raise NoLegalWard(_("The specified user %(dn)s is no legal ward.") % {"dn": legal_ward_dn})
+            raise NoLegalWard(_("The specified user %(dn)s is no student.") % {"dn": legal_ward_dn})
 
         num_legal_guardians = len(ward_attrs.get("ucsschoolLegalGuardian", []))
         if num_legal_guardians >= MAX_LEGAL_GUARDIANS:
             log.debug(
                 f"{LOGPREFIX} Number of ucsschoolLegalGuardian entries is above limit:\n"
-                f"legal ward DN={legal_ward_dn}\nentries={ward_attrs.get('ucsschoolLegalGuardian', [])}"
+                f"student DN={legal_ward_dn}\nentries={ward_attrs.get('ucsschoolLegalGuardian', [])}"
             )
             raise MaxLegalGuards(
                 _(
-                    "Legal ward already has %(num_legal_guardians)d legal guardians. "
+                    "This student already has %(num_legal_guardians)d assigned legal guardians. "
                     "Adding more would increase it above the maximum allowed number of "
-                    "legal guardians (%(max_legal_guardians)d)."
+                    "assigned legal guardians (%(max_legal_guardians)d)."
                 )
                 % {
                     "num_legal_guardians": num_legal_guardians,
@@ -191,8 +192,8 @@ class UcsschoolLegalGuardian(simpleHook):
                 )
             except univention.admin.uexceptions.noObject:
                 log.info(
-                    f"{LOGPREFIX} Cannot remove legal guardian {obj.dn} from legal ward "
-                    f"{remove_ward_dn}: legal ward does not exist any longer"
+                    f"{LOGPREFIX} Cannot remove legal guardian {obj.dn} from student "
+                    f"{remove_ward_dn}: student does not exist any longer"
                 )
             except univention.admin.uexceptions.ldapError as exc:
                 msg = f"Cannot remove legal guardian {obj.dn} from {remove_ward_dn}: {exc}"
