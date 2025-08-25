@@ -86,7 +86,7 @@ def test_create_legal_guardian_with_legal_ward(schoolenv):
 def test_create_legal_guardian_with_missing_legal_ward(schoolenv):
     ou_name, _ = schoolenv.create_ou(name_edudc=schoolenv.ucr["hostname"])
 
-    with pytest.raises(univention.admin.uexceptions.base, match=".*Could not find student.*"):
+    with pytest.raises(ValidationError, match=".*The following students do not exist:.*"):
         _, legal_guardian_dn = schoolenv.create_legal_guardian(
             ou_name=ou_name,
             legal_wards=["uid=idonotexist,cn=users,dc=ucs,dc=test"],

@@ -32,7 +32,18 @@
 
 import os.path
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Set, Tuple, Type  # noqa: F401
+from typing import (  # noqa: F401
+    TYPE_CHECKING,
+    Any,
+    Callable,
+    Dict,
+    List,
+    Literal,
+    Optional,
+    Set,
+    Tuple,
+    Type,
+)
 
 from ldap.dn import escape_dn_chars, explode_rdn
 from ldap.filter import escape_filter_chars, filter_format
@@ -190,69 +201,31 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         return self._profile_path_cache[school.dn]
 
     def is_student(self, lo):  # type: (LoType) -> bool
-        return self.__check_object_class(lo, "ucsschoolStudent", self._legacy_is_student)
+        return self.__check_object_class(lo, "ucsschoolStudent")
 
     def is_exam_student(self, lo):  # type: (LoType) -> bool
-        return self.__check_object_class(lo, "ucsschoolExam", self._legacy_is_exam_student)
+        return self.__check_object_class(lo, "ucsschoolExam")
 
     def is_teacher(self, lo):  # type: (LoType) -> bool
-        return self.__check_object_class(lo, "ucsschoolTeacher", self._legacy_is_teacher)
+        return self.__check_object_class(lo, "ucsschoolTeacher")
 
     def is_legal_guardian(self, lo):  # type: (LoType) -> bool
-        return self.__check_object_class(lo, "ucsschoolLegalGuardian", self._legacy_is_legal_guardian)
+        return self.__check_object_class(lo, "ucsschoolLegalGuardian")
 
     def is_staff(self, lo):  # type: (LoType) -> bool
-        return self.__check_object_class(lo, "ucsschoolStaff", self._legacy_is_staff)
+        return self.__check_object_class(lo, "ucsschoolStaff")
 
     def is_administrator(self, lo):  # type: (LoType) -> bool
-        return self.__check_object_class(lo, "ucsschoolAdministrator", self._legacy_is_admininstrator)
+        return self.__check_object_class(lo, "ucsschoolAdministrator")
 
-    @classmethod
-    def _legacy_is_student(cls, school, dn):  # type: (str, str) -> bool
-        cls.logger.warning("Using deprecated method is_student()")
-        return dn.lower().endswith(cls.get_search_base(school).students.lower())
-
-    @classmethod
-    def _legacy_is_exam_student(cls, school, dn):  # type: (str, str) -> bool
-        cls.logger.warning("Using deprecated method is_exam_student()")
-        return dn.lower().endswith(cls.get_search_base(school).examUsers.lower())
-
-    @classmethod
-    def _legacy_is_teacher(cls, school, dn):  # type: (str, str) -> bool
-        cls.logger.warning("Using deprecated method is_teacher()")
-        search_base = cls.get_search_base(school)
-        return (
-            dn.lower().endswith(search_base.teachers.lower())
-            or dn.lower().endswith(search_base.teachersAndStaff.lower())
-            or dn.lower().endswith(search_base.admins.lower())
-        )
-
-    @classmethod
-    def _legacy_is_legal_guardian(cls, school, dn):  # type: (str, str) -> bool
-        cls.logger.warning("Using deprecated method is_legal_guardian()")
-        return dn.lower().endswith(cls.get_search_base(school).legal_guardians.lower())
-
-    @classmethod
-    def _legacy_is_staff(cls, school, dn):  # type: (str, str) -> bool
-        cls.logger.warning("Using deprecated method is_staff()")
-        search_base = cls.get_search_base(school)
-        return dn.lower().endswith(search_base.staff.lower()) or dn.lower().endswith(
-            search_base.teachersAndStaff.lower()
-        )
-
-    @classmethod
-    def _legacy_is_admininstrator(cls, school, dn):  # type: (str, str) -> bool
-        cls.logger.warning("Using deprecated method is_admininstrator()")
-        return dn.lower().endswith(cls.get_search_base(school).admins.lower())
-
-    def __check_object_class(self, lo, object_class, fallback):
+    def __check_object_class(self, lo, object_class):
         # type: (LoType, str, Callable[[str, str], bool]) -> bool
         obj = self.get_udm_object(lo)
         if not obj:
             raise noObject("Could not read %r" % (self.dn,))
         if "ucsschoolSchool" in obj.oldattr:
             return object_class.encode("UTF-8") in obj.oldattr.get("objectClass", [])
-        return fallback(self.school, self.dn)
+        return False
 
     @classmethod
     def get_class_for_udm_obj(cls, udm_obj, school):  # type: (UdmObject, str) -> Type["User"]
@@ -272,20 +245,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         if "ucsschoolAdministrator" in ocs:
             return SchoolAdmin
 
-        # legacy DN based checks
-        if cls._legacy_is_student(school, udm_obj.dn):
-            return Student
-        if cls._legacy_is_teacher(school, udm_obj.dn):
-            if cls._legacy_is_staff(school, udm_obj.dn):
-                return TeachersAndStaff
-            return Teacher
-        if cls._legacy_is_legal_guardian(school, udm_obj.dn):
-            return LegalGuardian
-        if cls._legacy_is_staff(school, udm_obj.dn):
-            return Staff
-        if cls._legacy_is_exam_student(school, udm_obj.dn):
-            return ExamStudent
-
+        cls.logger.error("Cannot determine class for user object %r" % (udm_obj,))
         return User
 
     @classmethod
@@ -855,7 +815,6 @@ class Student(User):
     roles = [role_pupil]
     default_options = ("ucsschoolStudent",)
     default_roles = [role_student]
-
     legal_guardians = LegalGuardians(_("Legal guardian"))
 
     def validate(self, lo, validate_unlikely_changes: Optional[bool] = False, check_name=True) -> None:
@@ -922,8 +881,23 @@ class LegalGuardian(User):
     roles = [role_legal_guardian]
     default_roles = [role_legal_guardian]
     default_options = ("ucsschoolLegalGuardian",)
+    legal_wards = LegalWards(_("Student"))
 
-    legal_wards = LegalWards(_("Legal Wards"))
+    def validate(self, lo, validate_unlikely_changes: Optional[bool] = False, check_name=True) -> None:
+        super().validate(lo, validate_unlikely_changes=validate_unlikely_changes, check_name=check_name)
+
+        if not self.legal_wards:
+            return
+
+        dn_filter = [f"(entryDN={escape_filter_chars(dn)})" for dn in self.legal_wards]
+        search_result = lo.search(f"(|{''.join(dn_filter)})")
+        dns = [result[0] for result in search_result]
+        if len(dns) < len(self.legal_wards):
+            missing_dns = [dn for dn in self.legal_wards if dn not in dns]
+            missing_dns_str = "\n".join(missing_dns)
+
+            error_msg = _("The following students do not exist:")
+            self.add_error("legal_wards", f"{error_msg}\n{missing_dns_str}")
 
     @classmethod
     def get_container(cls, school):  # type: (str) -> str

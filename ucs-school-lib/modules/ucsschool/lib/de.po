@@ -479,6 +479,9 @@ msgstr "Zone"
 msgid "The following legal guardians do not exist:"
 msgstr "Die folgenden gesetzlichen Vertreter existieren nicht:"
 
+msgid "The following students do not exist:"
+msgstr "Die folgenden Schüler existieren nicht:"
+
 #~ msgid "Role {role}:{context_type}:{context} is not supported for {dn}."
 #~ msgstr ""
 #~ "Rolle {role}:{context_type}:{context} wird für {dn} nicht unterstützt."
