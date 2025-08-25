@@ -14,6 +14,8 @@ import re
 import ldap
 import pytest
 
+import univention.admin.modules
+import univention.admin.uldap
 import univention.testing.strings as uts
 from univention.testing import utils
 from univention.testing.udm import UCSTestUDM_CreateUDMObjectFailed, UCSTestUDM_ModifyUDMObjectFailed
@@ -27,6 +29,15 @@ RETRY_ARGS = {
 }
 
 
+def workaround_58536():
+    # Remove me after ucs-test 12.2.43 has been released #58536
+    lo = utils.get_ldap_connection(admin_uldap=True)
+    position = univention.admin.uldap.position(lo.base)
+    udm_module = univention.admin.modules.get("users/user")
+    if not udm_module.initialized:
+        univention.admin.modules.init(lo, position, udm_module)
+
+
 def test_udm_legal_guardian(udm_session):
     """
     On a UCS@school system, UDM must provide the
@@ -38,6 +49,8 @@ def test_udm_legal_guardian(udm_session):
     univention/product-management/requirements-management#398
     univention/dev/education/ucsschool#1453
     """
+    workaround_58536()
+
     # create guardian
     legal_guardian_dn, legal_guardian_uid = udm_session.create_user(options=["ucsschoolLegalGuardian"])
 
@@ -80,6 +93,7 @@ def test_udm_legal_guardian(udm_session):
 
 
 def test_deactivated_legal_wards(udm_session):
+    workaround_58536()
     legal_guardian_dn, legal_guardian_uid = udm_session.create_user(
         options=["ucsschoolLegalGuardian"],
     )
