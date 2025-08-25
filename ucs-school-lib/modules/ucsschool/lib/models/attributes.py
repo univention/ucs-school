@@ -60,7 +60,7 @@ try:
     from univention.admin.syntax import UCSSchoolStudentDN
 except ImportError:
     # Fallback for unjoined Directory Nodes
-    from univention.admin.syntax import string as UCSSchoolStudentDN
+    from univention.admin.syntax import UserDN as UCSSchoolStudentDN
 try:
     from univention.admin.syntax import ucsschoolSchools
 except ImportError:
