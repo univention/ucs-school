@@ -51,6 +51,7 @@ from .roles import (
     role_dc_slave_admin,
     role_dc_slave_edu,
     role_exam_user,
+    role_legal_guardian,
     role_memberserver_admin,
     role_memberserver_edu,
     role_school_admin,
@@ -96,6 +97,7 @@ class UserCheck(object):
             "ucsschoolStudent": role_student,
             "ucsschoolAdministrator": role_school_admin,
             "ucsschoolExam": role_exam_user,
+            "ucsschoolLegalGuardian": role_legal_guardian,
         }
 
         self.domain_users_ou = {}
