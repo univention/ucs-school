@@ -518,6 +518,46 @@ def test_remove_guardian_from_a_ward(udm_session):
     )
 
 
+def test_attach_nonexisting_legal_ward_to_legal_guardian(udm_session):
+    """
+    1) Create a legal guardian with a reference to a non-existing legal ward.
+    2) Attach a non-existing legal_ward to a legal guardian.
+    Both cases should not be possible.
+    """
+    invalid_ward_dn = "uid=NONEXISTING,cn=users,dc=does,dc=not,dc=exist"
+    expected_exception_regex = r".*Could not find student.*"
+    with pytest.raises(UCSTestUDM_CreateUDMObjectFailed, match=expected_exception_regex):
+        legal_guardian_dn, _ = udm_session.create_user(
+            options=["ucsschoolLegalGuardian"], ucsschoolLegalWard=[invalid_ward_dn]
+        )
+
+    legal_guardian_dn, _ = udm_session.create_user(options=["ucsschoolLegalGuardian"])
+    with pytest.raises(UCSTestUDM_ModifyUDMObjectFailed, match=expected_exception_regex):
+        udm_session.modify_object(
+            "users/user", dn=legal_guardian_dn, append={"ucsschoolLegalWard": [invalid_ward_dn]}
+        )
+
+
+def test_attach_nonexisting_legal_guardian_to_legal_ward(udm_session):
+    """
+    1) Create a legal ward with a reference to a non-existing legal guardian.
+    2) Attach a non-existing legal guardian to a legal ward.
+    Both cases should not be possible.
+    """
+    invalid_guardian_dn = "uid=NONEXISTING,cn=users,dc=does,dc=not,dc=exist"
+    expected_exception_regex = r".*Could not find legal guardian.*"
+    with pytest.raises(UCSTestUDM_CreateUDMObjectFailed, match=expected_exception_regex):
+        legal_ward_dn, _ = udm_session.create_user(
+            options=["ucsschoolStudent"], ucsschoolLegalGuardian=[invalid_guardian_dn]
+        )
+
+    legal_ward_dn, _ = udm_session.create_user(options=["ucsschoolStudent"])
+    with pytest.raises(UCSTestUDM_ModifyUDMObjectFailed, match=expected_exception_regex):
+        udm_session.modify_object(
+            "users/user", dn=legal_ward_dn, append={"ucsschoolLegalGuardian": [invalid_guardian_dn]}
+        )
+
+
 @pytest.mark.parametrize(
     "role", ["ucsschoolTeacher", "ucsschoolExam", "ucsschoolStaff", "ucsschoolAdministrator"]
 )
