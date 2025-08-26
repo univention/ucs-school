@@ -60,6 +60,7 @@ EXPECTED_CLASSES = {
     "ImportStudent": "ucsschool.importer.models.import_user",
     "ImportTeacher": "ucsschool.importer.models.import_user",
     "ImportTeachersAndStaff": "ucsschool.importer.models.import_user",
+    "ImportLegalGuardian": "ucsschool.importer.models.import_user",
     "ImportUser": "ucsschool.importer.models.import_user",
     "LinuxComputer": "ucsschool.lib.models.computer",
     "MacComputer": "ucsschool.lib.models.computer",
@@ -80,6 +81,7 @@ EXPECTED_CLASSES = {
     "Student": "ucsschool.lib.models.user",
     "Teacher": "ucsschool.lib.models.user",
     "TeachersAndStaff": "ucsschool.lib.models.user",
+    "LegalGuardian": "ucsschool.lib.models.user",
     "UbuntuComputer": "ucsschool.lib.models.computer",
     "UMCPolicy": "ucsschool.lib.models.policy",
     "User": "ucsschool.lib.models.user",
@@ -187,6 +189,7 @@ class TestPythonHooks(TestCase):
         "ImportStudent": "ucsschool.importer.models.import_user",
         "ImportTeacher": "ucsschool.importer.models.import_user",
         "ImportTeachersAndStaff": "ucsschool.importer.models.import_user",
+        "ImportLegalGuardian": "ucsschool.importer.models.import_user",
     }
 
     @classmethod
@@ -290,13 +293,13 @@ class TestPythonHooks(TestCase):
         # hooks are expected to run for Teacher and TeachersAndStaff
         self._check_test_setup()
         patterns_and_words = []
-        for klass in ("Staff", "Student", "Teacher", "TeachersAndStaff"):
+        for klass in ("Staff", "Student", "Teacher", "TeachersAndStaff", "LegalGuardian"):
             self.model = getattr(ucsschool.lib.models.user, klass)
             obj = getattr(self, "_create_{}".format(klass))()
             words = klass, obj.name, obj.school
             logger.debug("** Creating %s object with name %r in school %r...", *words)  # noqa: PLE1206
             obj.create(self.lo)
-            if klass not in ("Staff", "Student"):
+            if klass not in ("Staff", "Student", "LegalGuardian"):
                 patterns_and_words.extend([(r"^pre_create", words), (r"^post_create", words)])
         with open(RESULTFILE) as fp:
             txt = fp.read()
@@ -526,6 +529,7 @@ class TestPythonHooks(TestCase):
     _create_Student = _create_ExamStudent
     _create_Teacher = _create_ExamStudent
     _create_TeachersAndStaff = _create_ExamStudent
+    _create_LegalGuardian = _create_ExamStudent
 
     def _create_School(self):
         return self.model(
@@ -661,6 +665,7 @@ class TestPythonHooks(TestCase):
     _create_ImportStudent = _create_ImportStaff
     _create_ImportTeacher = _create_ImportStaff
     _create_ImportTeachersAndStaff = _create_ImportStaff
+    _create_ImportLegalGuardian = _create_ImportStaff
 
 
 if __name__ == "__main__":
