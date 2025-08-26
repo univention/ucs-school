@@ -1,3 +1,11 @@
+ucs-school-lib (15.1.3) unstable; urgency=low
+
+  * perf: Retrieve DNs with function searchDn
+    when validating the number of legal wards / legal guardians
+    Issue univention/dev/education/ucsschool#1454
+
+ -- Johannes Königer <koeniger@univention.de>  Tue, 26 Aug 2025 16:30:00 +0200
+
 ucs-school-lib (15.1.2) unstable; urgency=low
 
   * fix: fix missing role parsing and translation strings

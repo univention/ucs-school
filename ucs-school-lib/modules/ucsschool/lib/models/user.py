@@ -824,8 +824,7 @@ class Student(User):
             return
 
         dn_filter = [f"(entryDN={escape_filter_chars(dn)})" for dn in self.legal_guardians]
-        search_result = lo.search(f"(|{''.join(dn_filter)})")
-        dns = [result[0] for result in search_result]
+        dns = lo.searchDn(f"(|{''.join(dn_filter)})")
         if len(dns) < len(self.legal_guardians):
             missing_dns = [dn for dn in self.legal_guardians if dn not in dns]
             missing_dns_str = "\n".join(missing_dns)
@@ -890,8 +889,7 @@ class LegalGuardian(User):
             return
 
         dn_filter = [f"(entryDN={escape_filter_chars(dn)})" for dn in self.legal_wards]
-        search_result = lo.search(f"(|{''.join(dn_filter)})")
-        dns = [result[0] for result in search_result]
+        dns = lo.searchDn(f"(|{''.join(dn_filter)})")
         if len(dns) < len(self.legal_wards):
             missing_dns = [dn for dn in self.legal_wards if dn not in dns]
             missing_dns_str = "\n".join(missing_dns)
