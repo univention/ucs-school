@@ -1,3 +1,10 @@
+ucs-test-ucsschool (8.0.33) unstable; urgency=low
+
+  * test: add new legal_wards and legal_guardians attributes to test
+    framework
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Wed, 27 Aug 2025 14:46:15 +0200
+
 ucs-test-ucsschool (8.0.32) unstable; urgency=medium
 
   * test: adjust import test to check that legal guardians are kept

@@ -150,6 +150,10 @@ class User(Person):
         }
         if self.is_student() or self.is_teacher() or self.is_teacher_staff():
             info["school_classes"] = self.school_classes
+        if self.is_legal_guardian():
+            info["legal_wards"] = []
+        if self.is_student():
+            info["legal_guardians"] = []
 
         if expected_attrs:
             info.update(expected_attrs)
