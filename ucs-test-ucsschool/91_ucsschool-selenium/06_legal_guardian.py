@@ -16,9 +16,16 @@ from univention.testing.browser.lib import UCSLanguage, UMCBrowserTest
 
 
 def test_legal_guardian(umc_browser_test: UMCBrowserTest) -> None:
+    def no_school_users_found_popup_handler():
+        page.get_by_label("Cancel").click()
+
     umc_browser_test.set_language(UCSLanguage.EN_US)
     umc_browser_test.login()
     page = umc_browser_test.page
+    page.add_locator_handler(
+        page.get_by_role("heading", name="No school users found"),
+        no_school_users_found_popup_handler,
+    )
     page.get_by_role("button", name="School administration").click()
     page.get_by_text("Users (schools)Management of").click()
     page.get_by_role("button", name="Next").click()
