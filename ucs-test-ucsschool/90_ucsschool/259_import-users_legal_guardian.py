@@ -159,9 +159,32 @@ def test_legal_guardian_with_wards(import_tester, record_uid_hook):
     assert set(legalGuardian_schoollib.legal_wards) == {student1.dn, student2.dn}
     assert student1_schoollib.legal_guardians == [legal_guardian.dn]
     assert student2_schoollib.legal_guardians == [legal_guardian.dn]
+
+    # Check that legal wards are not deleted if not in the mapping
     legal_guardian.update(
         legal_wards=[],
     )
+    del config["csv"]["mapping"]["legal_wards"]
+    fn_csv = import_tester.create_csv_file(
+        person_list=[legal_guardian, student1, student2],
+        mapping=config["csv"]["mapping"],
+    )
+    config.update_entry("input:filename", fn_csv)
+    fn_config = import_tester.create_config_json(values=config)
+    import_tester.save_ldap_status()
+    import_tester.run_import(["-c", fn_config], fail_on_preexisting_pyhook=False)
+    import_tester.check_new_and_removed_users(0, 0)
+    legalGuardian_schoollib = LegalGuardian.from_dn(
+        legal_guardian.dn, legal_guardian.school, import_tester.lo
+    )
+    student1_schoollib = Student.from_dn(student1.dn, student1.school, import_tester.lo)
+    student2_schoollib = Student.from_dn(student2.dn, student2.school, import_tester.lo)
+    assert set(legalGuardian_schoollib.legal_wards) == {student1.dn, student2.dn}
+    assert student1_schoollib.legal_guardians == [legal_guardian.dn]
+    assert student2_schoollib.legal_guardians == [legal_guardian.dn]
+
+    # Check the remove of legal_wards
+    config.update_entry("csv:mapping:legal_wards", "legal_wards")
     fn_csv = import_tester.create_csv_file(
         person_list=[legal_guardian, student1, student2],
         mapping=config["csv"]["mapping"],
@@ -255,9 +278,30 @@ def test_student_with_legal_guardians(import_tester, record_uid_hook):
     assert set(student_schoollib.legal_guardians) == {legal_guardian1.dn, legal_guardian2.dn}
     assert legalGuardian1_schoollib.legal_wards == [student.dn]
     assert legalGuardian2_schoollib.legal_wards == [student.dn]
+
+    # Check that legal wards are not deleted if not in the mapping
+    del config["csv"]["mapping"]["legal_guardians"]
     student.update(
         legal_guardians=[],
     )
+    fn_csv = import_tester.create_csv_file(
+        person_list=[legal_guardian1, legal_guardian2, student],
+        mapping=config["csv"]["mapping"],
+    )
+    config.update_entry("input:filename", fn_csv)
+    fn_config = import_tester.create_config_json(values=config)
+    import_tester.save_ldap_status()
+    import_tester.run_import(["-c", fn_config], fail_on_preexisting_pyhook=False)
+    import_tester.check_new_and_removed_users(0, 0)
+    legalGuardian1_schoollib = LegalGuardian.from_dn(legal_guardian1.dn, None, import_tester.lo)
+    legalGuardian2_schoollib = LegalGuardian.from_dn(legal_guardian2.dn, None, import_tester.lo)
+    student_schoollib = Student.from_dn(student.dn, None, import_tester.lo)
+    assert set(student_schoollib.legal_guardians) == {legal_guardian1.dn, legal_guardian2.dn}
+    assert legalGuardian1_schoollib.legal_wards == [student.dn]
+    assert legalGuardian2_schoollib.legal_wards == [student.dn]
+
+    # Check the remove of legal_wards
+    config.update_entry("csv:mapping:legal_guardians", "legal_guardians")
     fn_csv = import_tester.create_csv_file(
         person_list=[legal_guardian1, legal_guardian2, student],
         mapping=config["csv"]["mapping"],

@@ -471,7 +471,6 @@ class Roles(Attribute):
 class LegalWards(Attribute):
     udm_name = "ucsschoolLegalWard"
     value_type = list
-    value_default = list
     syntax = UCSSchoolStudentDN
     extended = True
 

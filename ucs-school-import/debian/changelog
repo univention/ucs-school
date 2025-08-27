@@ -1,3 +1,10 @@
+ucs-school-import (19.2.5) unstable; urgency=medium
+
+  * fix: keep legal_guardian / legal_ward if not in the mapping
+    Issue univention/dev/education/ucsschool#1457
+
+ -- Jürn Brodersen <brodersen@univention.de>  Wed, 27 Aug 2025 14:19:26 +0200
+
 ucs-school-import (19.2.4) unstable; urgency=low
 
   * feat: update and improve extended attribute hooks after switching to

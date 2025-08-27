@@ -1018,6 +1018,8 @@ class ImportUser(User):
 
     def make_legal_guardians(self) -> Optional[List[str]]:
         if self.legal_guardians is None:
+            if self.old_user:
+                self.legal_guardians = self.old_user.legal_guardians
             return self.legal_guardians
         if len(self.legal_guardians) > MAX_LEGAL_GUARDIANS:
             raise InvalidLegalGuardian(
@@ -1048,6 +1050,8 @@ class ImportUser(User):
 
     def make_legal_wards(self) -> Optional[List[str]]:
         if self.legal_wards is None:
+            if self.old_user:
+                self.legal_wards = self.old_user.legal_wards
             return self.legal_wards
         if len(self.legal_wards) > MAX_LEGAL_WARDS:
             raise InvalidLegalWard(
