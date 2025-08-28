@@ -36,6 +36,8 @@ def ruleInControl(user, ruleList, host, banPage):
     # in case one rule is contained in another
     result = [x.name for x in inCtrl if len(x.domains) == max(len(y.domains) for y in inCtrl)]
     print("Rule in control =", result)
+    if not result:
+        return None
     return result[0]
 
 
@@ -103,7 +105,7 @@ def test_http_proxy_basic_auth_check(schoolenv, ucr):
 
     # define different rule with higher priority
     rule2 = InternetRule(
-        ucr=ucr, connection=client, typ="whitelist", domains=["google.de", "gmx.net"], priority=4
+        ucr=ucr, connection=client, typ="whitelist", domains=["neverssl.com", "gmx.net"], priority=4
     )
     rule2.define()
 

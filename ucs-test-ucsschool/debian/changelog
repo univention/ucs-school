@@ -1,3 +1,12 @@
+ucs-test-ucsschool (8.0.38) unstable; urgency=low
+
+  * test: fix 14_http_proxy_basic_auth_check
+    - google.de redirects to google.com which broke this test
+    - in the non-happy-path result[0] throws an IndexError
+    Issue univention/dev/internal/product-tests/ucsschool#2
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 28 Aug 2025 17:54:48 +0200
+
 ucs-test-ucsschool (8.0.37) unstable; urgency=low
 
   * test: improved 105_activate_groupmembers.py - check for UDM status and
