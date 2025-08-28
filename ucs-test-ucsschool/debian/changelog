@@ -1,3 +1,10 @@
+ucs-test-ucsschool (8.0.36) unstable; urgency=medium
+
+  * test: fix 30_import-create_ou…
+    Issue univention/dev/internal/product-tests/ucsschool#2
+
+ -- Jürn Brodersen <brodersen@univention.de>  Thu, 28 Aug 2025 13:44:05 +0200
+
 ucs-test-ucsschool (8.0.35) unstable; urgency=low
 
   * test: fix 407_ucsschool_lib_validation_users.py
