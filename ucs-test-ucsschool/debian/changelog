@@ -1,3 +1,10 @@
+ucs-test-ucsschool (8.0.35) unstable; urgency=low
+
+  * test: fix 407_ucsschool_lib_validation_users.py
+    Issue univention/dev/education/ucsschool#1476
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 28 Aug 2025 11:11:32 +0200
+
 ucs-test-ucsschool (8.0.34) unstable; urgency=medium
 
   * test: fix 229_import-users_blank_email.py
