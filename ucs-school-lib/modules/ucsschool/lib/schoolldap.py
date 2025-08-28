@@ -92,7 +92,9 @@ class SchoolSearchBase(object):
             "ucsschool/ldap/default/container/teachers-and-staff", "lehrer und mitarbeiter"
         )
         cls._containerTeachers = cls.ucr.get("ucsschool/ldap/default/container/teachers", "lehrer")
-        cls._containerLegalGuardians = cls.ucr.get("ucsschool/ldap/default/container/legal_guardians")
+        cls._containerLegalGuardians = cls.ucr.get(
+            "ucsschool/ldap/default/container/legal_guardians", "sorgeberechtigte"
+        )
         cls._containerClass = cls.ucr.get("ucsschool/ldap/default/container/class", "klassen")
         cls._containerRooms = cls.ucr.get("ucsschool/ldap/default/container/rooms", "raeume")
         cls._examUserContainerName = cls.ucr.get("ucsschool/ldap/default/container/exam", "examusers")
