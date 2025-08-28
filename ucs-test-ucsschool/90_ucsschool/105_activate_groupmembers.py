@@ -19,6 +19,14 @@ from univention.testing.ucsschool.workgroup import Workgroup
 from univention.testing.umc import Client
 
 
+class UnexpectedAuthenticationSuccess(Exception):
+    pass
+
+
+class UnexpectedUserStatus(Exception):
+    pass
+
+
 def activate_groupmembers(group_name, newStatus, change_passwd):
     # [0|1] optional: deactivate     | activate
     # [0|1] optional: keep passwords | set random passwords
@@ -66,7 +74,7 @@ def check_auth(username, passwd, should_pass=True):
             raise
     else:
         if not should_pass:
-            utils.fail("Authentication succeeded while it should not")
+            raise UnexpectedAuthenticationSuccess("Authentication succeeded while it should not")
 
 
 def is_active(username):
@@ -81,7 +89,12 @@ def is_active(username):
 
 
 def checK_status(username, should_pass):
-    return should_pass == is_active(username)
+    is_user_active = is_active(username)
+    if should_pass != is_user_active:
+        raise UnexpectedUserStatus(
+            "UDM user status does not match expected value: "
+            f"user.disabled={not is_user_active}  expected={not should_pass}"
+        )
 
 
 def test_activate_groupmembers(schoolenv, ucr):
@@ -115,17 +128,26 @@ def test_activate_groupmembers(schoolenv, ucr):
     account = utils.UCSTestDomainAdminCredentials()
     passwd = account.bindpw
     group.create()
+    utils.wait_for_s4connector_replication()
+
     for change_passwd, newStatus in itertools.product(["0", "1"], ["0", "1"]):
         should_pass = newStatus == "1"
 
         print("Test case = active: %s, change_passwd: %s" % (newStatus, change_passwd))
         outfile = activate_groupmembers("%s-%s" % (school, group.name), newStatus, change_passwd)
-        utils.wait_for_replication_and_postrun()
+
+        def test_func(username, should_pass, passwd):
+            checK_status(username, should_pass)
+            check_auth(username, passwd, should_pass)
 
         for username, lastname in zip(users, lastnames):
-            checK_status(username, should_pass)
             if change_passwd == "1":
                 passwd = get_new_password(outfile, lastname)
-            check_auth(username, passwd, should_pass)
+            utils.retry_on_error(
+                lambda: test_func(username, should_pass, passwd),
+                exceptions=(UnexpectedUserStatus, UnexpectedAuthenticationSuccess, Unauthorized),
+                retry_count=30,
+                delay=2,
+            )
 
         check_usernames_in_csv(outfile, users)

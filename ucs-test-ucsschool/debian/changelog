@@ -1,3 +1,11 @@
+ucs-test-ucsschool (8.0.37) unstable; urgency=low
+
+  * test: improved 105_activate_groupmembers.py - check for UDM status and
+    deal with changing data due to e.g. S4 connector
+    Issue univention/dev/internal/product-tests/ucsschool#2
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 28 Aug 2025 17:16:56 +0200
+
 ucs-test-ucsschool (8.0.36) unstable; urgency=medium
 
   * test: fix 30_import-create_ou…

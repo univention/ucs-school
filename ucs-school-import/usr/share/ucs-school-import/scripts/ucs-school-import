@@ -1279,7 +1279,7 @@ def activate_groupmembers():
         print("outfile %s does already exist. Stopping here." % outfile)
         sys.exit(1)
 
-    with stopped_notifier(), open(outfile, "w") as outf:
+    with open(outfile, "w") as outf:
         # get group
         objects = univention.admin.modules.lookup(
             group_module,

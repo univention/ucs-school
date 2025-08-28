@@ -1,3 +1,11 @@
+ucs-school-import (19.2.6) unstable; urgency=low
+
+  * fix: do not disable notifier when activate_groupmembers is called - it
+    will trigger a racing condition with the S4 connector
+    Issue univention/dev/internal/product-tests/ucsschool#2
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 28 Aug 2025 17:11:45 +0200
+
 ucs-school-import (19.2.5) unstable; urgency=medium
 
   * fix: keep legal_guardian / legal_ward if not in the mapping
