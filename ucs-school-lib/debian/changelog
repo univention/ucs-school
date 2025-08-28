@@ -1,3 +1,10 @@
+ucs-school-lib (15.1.5) unstable; urgency=medium
+
+  * fix: object cleanup must be done before remove
+    Issue univention/dev/internal/product-tests/ucsschool#2
+
+ -- Jürn Brodersen <brodersen@univention.de>  Thu, 28 Aug 2025 21:49:05 +0200
+
 ucs-school-lib (15.1.4) unstable; urgency=medium
 
   * fix: default for LegalWards shoulb be None (the same as LegalGuardian)
