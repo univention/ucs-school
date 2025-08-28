@@ -116,7 +116,7 @@ class UserImport(object):
                 run_import_pyhooks(PostReadPyHook, "all_entries_read", self.imported_users, self.errors)
                 break
             except UcsSchoolImportError as exc:
-                self.logger.exception("Error reading %d. user: %s", num, exc)
+                self.logger.error("Error reading %d. user: %s", num, exc)
                 self._add_error(exc)
             num += 1
         self.logger.info("------ Read %d users from input data. ------", len(self.imported_users))
@@ -205,6 +205,10 @@ class UserImport(object):
                         else:
                             try:
                                 success = user.create(lo=self.connection)
+                            except UcsSchoolImportError as exc:
+                                exc.entry_count = user.entry_count
+                                exc.import_user = user
+                                raise exc
                             except Exception as exc:
                                 raise err(
                                     exc,
@@ -230,6 +234,10 @@ class UserImport(object):
                         else:
                             try:
                                 success = user.modify(lo=self.connection)
+                            except UcsSchoolImportError as exc:
+                                exc.entry_count = user.entry_count
+                                exc.import_user = user
+                                raise exc
                             except Exception as exc:
                                 raise err(
                                     exc,
@@ -284,12 +292,8 @@ class UserImport(object):
                         entry_count=user.entry_count,
                         import_user=user,
                     )
-
-            except (CreationError, ModificationError) as exc:
-                self.logger.error("Entry #%d: %s", exc.entry_count, exc)  # traceback useless
-                self._add_error(exc)
             except UcsSchoolImportError as exc:
-                self.logger.exception("Entry #%d: %s", exc.entry_count, exc)
+                self.logger.error("Entry #%d: %s", exc.entry_count, exc)
                 self._add_error(exc)
         num_added_users = sum(map(len, self.added_users.values()))
         num_modified_users = sum(map(len, self.modified_users.values()))
@@ -511,6 +515,10 @@ class UserImport(object):
             try:
                 try:
                     success = self.do_delete(user)
+                except UcsSchoolImportError as exc:
+                    exc.entry_count = user.entry_count
+                    exc.import_user = user
+                    raise exc
                 except Exception as exc:
                     raise DeletionError(
                         exc,
@@ -535,7 +543,7 @@ class UserImport(object):
                     )
                 self.deleted_users[user.__class__.__name__].append(user.to_dict())
             except UcsSchoolImportError as exc:
-                self.logger.exception("Error in entry #%d: %s", exc.entry_count, exc)
+                self.logger.error("Error in entry #%d: %s", exc.entry_count, exc)
                 self._add_error(exc)
         self.logger.info(
             "------ Deleted %d users. ------",

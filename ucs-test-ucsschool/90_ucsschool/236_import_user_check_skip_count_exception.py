@@ -74,6 +74,8 @@ class Test(CLI_Import_v2_Tester):
             self.run_import(["-c", fn_config], fail_on_preexisting_pyhook=False)
         except ImportException:
             self.log.info("OK: import failed.")
+        # A UcsSchoolImportSkipImportRecord is an error that doesn't count against tolerate_errors.
+        # So the third person should exist as well, since importer just logs the error and doesn't stop
         wait_for_drs_replication("cn={}".format(escape_filter_chars(person_list[2].username)))
         for person in (person_list[0], person_list[2]):
             utils.verify_ldap_object(person.dn, strict=False, should_exist=True)

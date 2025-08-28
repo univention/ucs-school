@@ -1,3 +1,10 @@
+ucs-test-ucsschool (8.0.39) unstable; urgency=medium
+
+  * test: new 261_import_user_check_count_exception.py
+  Issue univention/dev/education/ucsschool#1457
+
+ -- Jürn Brodersen <brodersen@univention.de>  Thu, 28 Aug 2025 21:39:54 +0200
+
 ucs-test-ucsschool (8.0.38) unstable; urgency=low
 
   * test: fix 14_http_proxy_basic_auth_check

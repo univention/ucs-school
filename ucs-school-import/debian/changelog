@@ -1,3 +1,10 @@
+ucs-school-import (19.2.7) unstable; urgency=medium
+
+  * fix: only count `is_countable` errors
+    Issue univention/dev/education/ucsschool#1457
+
+ -- Jürn Brodersen <brodersen@univention.de>  Thu, 28 Aug 2025 21:40:49 +0200
+
 ucs-school-import (19.2.6) unstable; urgency=low
 
   * fix: do not disable notifier when activate_groupmembers is called - it
