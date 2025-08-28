@@ -1,3 +1,10 @@
+ucs-test-ucsschool (8.0.34) unstable; urgency=medium
+
+  * test: fix 229_import-users_blank_email.py
+    Issue univention/dev/internal/product-tests/ucsschool#2
+
+ -- Jürn Brodersen <brodersen@univention.de>  Thu, 28 Aug 2025 10:55:26 +0200
+
 ucs-test-ucsschool (8.0.33) unstable; urgency=low
 
   * test: add new legal_wards and legal_guardians attributes to test

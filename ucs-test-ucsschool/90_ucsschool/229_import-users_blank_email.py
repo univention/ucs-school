@@ -13,7 +13,7 @@ import copy
 from ldap.filter import filter_format
 
 import univention.testing.strings as uts
-from univention.testing.ucs_samba import wait_for_drs_replication
+from univention.testing.ucs_samba import wait_for_drs_replication, wait_for_s4connector
 from univention.testing.ucsschool.importusers import Person
 from univention.testing.ucsschool.importusers_cli_v2 import CLI_Import_v2_Tester
 
@@ -40,6 +40,7 @@ class Test(CLI_Import_v2_Tester):
         config.update_entry("input:filename", fn_csv)
         fn_config = self.create_config_json(config=config)
         self.run_import(["-c", fn_config])
+        wait_for_s4connector()
         wait_for_drs_replication(filter_format("cn=%s", (person_list[-1].username,)))
         for person in person_list:
             person.verify()
