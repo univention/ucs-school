@@ -1,3 +1,10 @@
+ucs-school-ldap-acls-master (19.1.2) unstable; urgency=medium
+
+  * fix: add default value for ucsschool/ldap/default/container/legal_guardians
+    Issue univention/dev/education/ucsschool#1456
+
+ -- Jürn Brodersen <brodersen@univention.de>  Fri, 29 Aug 2025 17:06:19 +0200
+
 ucs-school-ldap-acls-master (19.1.1) unstable; urgency=low
 
   * Issue: univention/dev/education/ucsschool#1476: add constraints and
