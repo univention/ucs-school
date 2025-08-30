@@ -280,6 +280,9 @@ define([
 					});
 					return tmp;
 				},
+				reset: lang.hitch(this, function() {
+					this.getWidget('item', widget.name)._setValueAttr(null);
+				}),
 			};
 			return widget;
 		},
