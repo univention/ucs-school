@@ -7,5 +7,8 @@ src: ucs-school-umc-wizards
 fix: 13.1.1
 bugs:
   58460:
-    en: Add new UCS@school role "Legal Guardian".
-    de: Es gibt eine neue UCS@school-Rolle "Sorgeberechtigter".
+    en: |
+      Add new |UCSUAS| role "Legal Guardian": The UMC module ``Users (Schools)`` now also allows the administration of Legal Guardians.
+    de: |
+      Die neue |UCSUAS|-Rolle "Sorgeberechtigter" wurde hinzugefügt: Das UMC-Modul ``Benutzer (Schulen)`` erlaubt jetzt auch die Administration von Sorgeberechtigten.
+

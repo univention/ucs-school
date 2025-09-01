@@ -8,8 +8,10 @@ fix: 15.1.1
 bugs:
   58460:
     en: |
-      Add LDAP equality index for new attributes ``ucsschoolLegalGuardian`` and ``ucsschoolLegalWard``.
+      Add new |UCSUAS| role "Legal Guardian":
+      The new attributes ``ucsschoolLegalGuardian`` and ``ucsschoolLegalWard`` have been added to the LDAP indices.
       A legal guardian user will be created for new installations in the ``DEMOSCHOOL``.
     de: |
-      Es gibt einen LDAP Index für die neuen Attribute ``ucsschoolLegalGuardian`` und ``ucsschoolLegalWard``.
-      Bei der Neuinstallation von UCS@school wird in der ``DEMOSCHOOL`` ein Benutzer mit der Rolle "Sorgeberechtigter" erstellt.
+      Die neue |UCSUAS|-Rolle "Sorgeberechtigter" wurde hinzugefügt:
+      Die LDAP-Indizes wurden um die neuen Attribute ``ucsschoolLegalGuardian`` und ``ucsschoolLegalWard`` erweitert.
+      Bei der Neuinstallation von |UCSUAS| wird in der ``DEMOSCHOOL`` ein Benutzer mit der Rolle "Sorgeberechtigter" erstellt.

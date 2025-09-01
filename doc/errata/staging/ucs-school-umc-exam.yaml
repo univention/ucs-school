@@ -7,5 +7,7 @@ src: ucs-school-umc-exam
 fix: 12.0.7
 bugs:
   58460:
-    en: Adjusted such that UCS@school exam students will always have an empty legal guardian attribute
-    de: Das Modul wurde angepasst, sodass an Klassenarbeits-Benutzern keine Sorgeberechtigten gespeichert werden.
+    en: |
+      Add new |UCSUAS| role "Legal Guardian": Adjusted such that |UCSUAS| exam students will always have an empty legal guardian attribute.
+    de: |
+      Die neue |UCSUAS|-Rolle "Sorgeberechtigter" wurde hinzugefügt: Das Modul wurde angepasst, sodass an Klassenarbeitsbenutzern keine Sorgeberechtigten gespeichert werden.

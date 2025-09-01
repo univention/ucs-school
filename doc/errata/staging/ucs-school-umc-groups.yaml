@@ -7,5 +7,7 @@ src: ucs-school-umc-groups
 fix: 11.1.0
 bugs:
   58460:
-    en: Add new UCS@school role "Legal Guardian".
-    de: Es gibt eine neue UCS@school-Rolle "Sorgeberechtigter".
+    en: |
+      Add new |UCSUAS| role "Legal Guardian": Legal Guardians can now be members of work groups.
+    de: |
+      Die neue |UCSUAS|-Rolle "Sorgeberechtigter" wurde hinzugefügt: Sorgeberechtigte können jetzt Mitglied in Arbeitsgruppen sein.

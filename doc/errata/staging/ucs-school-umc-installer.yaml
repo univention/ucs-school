@@ -7,5 +7,7 @@ src: ucs-school-umc-installer
 fix: 9.0.2
 bugs:
   58460:
-    en: Add new UCS@school role "Legal Guardian".
-    de: Es gibt eine neue UCS@school-Rolle "Sorgeberechtigter".
+    en: |
+      Add new |UCSUAS| role "Legal Guardian": hints to the new Legal Guardian in the ``DEMOSCHOOL`` have been added.
+    de: |
+      Die neue |UCSUAS|-Rolle "Sorgeberechtigter" wurde hinzugefügt: Hinweise auf den neuen Sorgeberechtigten in der ``DEMOSCHOOL`` wurden hinzugefügt.

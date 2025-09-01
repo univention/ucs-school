@@ -6,6 +6,9 @@ scope: ucs_5.2-0-ucs-school-5.2
 src:
 fix:
 bugs:
+  123:
+    en: This is the description for bug 123.
+    de: Dies ist die Beschreibung von Bug 123.
   notes:
     en: This is a note without bug.
     de: Dies ist eine Notiz ohne Bugreferenz.

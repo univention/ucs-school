@@ -5,14 +5,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UCS@school - 5.0v3 Changelog \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-17 14:15+0000\n"
+"POT-Creation-Date: 2025-09-01 12:18+0000\n"
 "PO-Revision-Date: 2023-02-06 09:57+0100\n"
 "Last-Translator: Univention GmbH <packages@univention.de>\n"
 "Language-Team: Univention GmbH <packages@univention.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.16.0\n"
 
 #: ../../index.rst:9
 msgid "|UCSUAS|-Update"
@@ -21,11 +21,11 @@ msgstr "|UCSUAS|-Update"
 #: ../../index.rst:11
 msgid ""
 "This document contains the changelogs with the detailed change "
-"information for the update of |UCSUAS| from version 5.2v2 to 5.2v3."
+"information for the update of |UCSUAS| from version 5.2v3 to 5.2v4."
 msgstr ""
 "Dieses Dokument enthält die Changelogs mit den detaillierten "
-"Änderungsinformationen zum Update von |UCSUAS| von Version 5.2v2 "
-"nach 5.2v3."
+"Änderungsinformationen zum Update von |UCSUAS| von Version 5.2v3 nach "
+"5.2v4."
 
 #: ../../index.rst:14
 msgid ""
@@ -33,9 +33,9 @@ msgid ""
 ":external+uv-navigation:ref:`the changelog overview page <ucsschool-"
 "changelog>`."
 msgstr ""
-"Die Änderungsinformationen für vorherige "
-"Versionssprünge finden sich auf :external+uv-navigation:ref:`der "
-"Changelog-Übersichtsseite<ucsschool-changelog>`."
+"Die Änderungsinformationen für vorherige Versionssprünge finden sich auf "
+":external+uv-navigation:ref:`der Changelog-Übersichtsseite<ucsschool-"
+"changelog>`."
 
 #: ../../index.rst:19
 msgid "General notes on the update"
@@ -55,11 +55,23 @@ msgstr ""
 "zunächst in einer Testumgebung einzuspielen und zu testen. Die "
 "Testumgebung sollte dabei identisch zur Produktivumgebung sein."
 
-#: ../../index.rst:29
+#: ../../index.rst:26
+msgid ""
+"Please note that depending on the size of the |UCSUAS| environment, this "
+"update may take longer than usual to complete. This is because additional"
+" LDAP structures for new role Legal Guardians need to be created and LDAP"
+" indices must be updated."
+msgstr "Bitte beachten Sie, dass diese Aktualisierung je nach Größe der "
+"|UCSUAS|-Umgebung länger als gewöhnlich dauern kann. Der Grund dafür ist, "
+"dass zusätzliche LDAP-Strukturen für die neue Rolle \"Sorgeberechtigte\" "
+"erstellt und die LDAP-Indizes aktualisiert "
+"werden müssen."
+
+#: ../../index.rst:34
 msgid "Update process"
 msgstr "Update-Prozess"
 
-#: ../../index.rst:31
+#: ../../index.rst:36
 msgid ""
 "Major updates for |UCSUAS| are released in the Univention App Center as a"
 " standalone app update. Minor updates and bug fixes (errata for |UCSUAS|)"
@@ -79,3 +91,64 @@ msgstr ""
 "werden dann entsprechend um einen neuen Abschnitt erweitert, aus dem "
 "ersichtlich wird, zu welchem Zeitpunkt welche Pakete veröffentlicht und "
 "welche Fehler dabei behoben wurden."
+
+#: ../../index.rst:45
+msgid "New |UCSUAS| role"
+msgstr "Neue |UCSUAS|-Benutzerrolle"
+
+#: ../../index.rst:46
+msgid "|UCSUAS| 5.2v4 adds a new role to |UCSUAS|: the Legal Guardian."
+msgstr "|UCSUAS| 5.2v4 fügt eine neue Benutzerrolle hinzu: den Sorgeberechtigten."
+
+#: ../../index.rst:48
+msgid ""
+"The new role \"Legal Guardian\" gives administrators the ability to "
+"assign legal guardians to students. A legal guardian can be a parent or a"
+" person appointed by a court to care for a minor child. This enables "
+"school authorities to maintain a single source of truth across all "
+"integrated applications that require contact with legal guardians. The "
+"centralized approach significantly enhances data consistency and "
+"security, especially in communication and service platforms by avoiding "
+"data fragmentation across schools."
+msgstr "Die neue Rolle \"Sorgeberechtigter\" gibt Administratoren "
+"die Möglichkeit, Schülern Sorgeberechtigte zuzuweisen. "
+"Ein Sorgeberechtigter kann ein Elternteil oder eine vom Gericht bestellte Person sein, die für ein minderjähriges Kind sorgt. "
+"Dadurch können Schulbehörden eine einzige zuverlässige Datenquelle für alle integrierten Anwendungen pflegen, "
+"die den Kontakt zu Sorgeberechtigten erfordern. "
+"Der zentralisierte Ansatz verbessert die Datenkonsistenz und Datensicherheit erheblich, insbesondere in Kommunikations- und Serviceplattformen, "
+"da eine Datenfragmentierung zwischen den Schulen vermieden wird."
+
+#: ../../index.rst:55
+msgid "What's new?"
+msgstr "Was ist neu?"
+
+#: ../../index.rst:57
+msgid ""
+"Administrators can create legal guardians in the UMC module “Users "
+"(Schools)”."
+msgstr "Administratoren können im UMC-Modul \"Benutzer (Schulen)\" Sorgeberechtigte anlegen."
+
+#: ../../index.rst:58
+msgid ""
+"Administrators can link legal guardians to students on the student detail"
+" page and students to Legal Guardians on the legal guardian detail page."
+msgstr "Mit der UMC können Administratoren Sorgeberechtigte mit Schülern und Schüler mit Sorgeberechtigten verknüpfen."
+
+#: ../../index.rst:59
+msgid ""
+"Administrators can import legal guardians via CLI and web-based import "
+"and link them to existing students."
+msgstr "Administratoren können Sorgeberechtigte über die Kommandozeile und das webbasierte Importmodul importieren und sie mit bestehenden Schülern verknüpfen."
+
+#: ../../index.rst:60
+msgid ""
+"The Kelvin API supports backward compatibility for reading, creating, and"
+" deleting guardians, as well as assigning guardians to existing students."
+msgstr "Die Kelvin-API unterstützt die Abwärtskompatibilität für das Lesen, Erstellen und Löschen von Sorgeberechtigten "
+"sowie für die Zuweisung von Sorgeberechtigten zu bestehenden Schülern."
+
+#: ../../index.rst:61
+msgid ""
+"A student can have up to 4 legal guardians assigned and a legal guardian "
+"can be assigned to up to 10 students."
+msgstr "Einem Schüler können bis zu 4 Sorgeberechtigte zugewiesen werden, und ein Sorgeberechtigter kann bis zu 10 Schülern zugewiesen werden."

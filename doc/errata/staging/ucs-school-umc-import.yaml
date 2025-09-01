@@ -7,5 +7,7 @@ src: ucs-school-umc-import
 fix: 4.2.0
 bugs:
   58460:
-    en: Add new UCS@school role "Legal Guardian".
-    de: Es gibt eine neue UCS@school-Rolle "Sorgeberechtigter".
+    en: |
+      Add new |UCSUAS| role "Legal Guardian": The CSV import now also allows the import of Legal Guardians.
+    de: |
+      Die neue |UCSUAS|-Rolle "Sorgeberechtigter" wurde hinzugefügt: Der CSV-Import erlaubt jetzt auch den Import von Sorgeberechtigten.

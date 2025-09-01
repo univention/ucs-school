@@ -7,5 +7,14 @@ src: ucs-school-ldap-acls-master
 fix: 19.1.2
 bugs:
   58460:
-    en: The ``ucsschoolLegalGuardian`` attribute has been added to the LDAP index.
-    de: Das Attribut ``ucsschoolLegalGuardian`` wurde zum LDAP Index hinzugefügt
+    en: |
+      Add new |UCSUAS| role "Legal Guardian":
+      The attributes ``ucsschoolLegalGuardian`` and ``ucsschoolLegalWard`` have been added to the |UCSUAS| LDAP schema.
+      In addition, the LDAP overlay module ``memberOf`` is activated for maintaining the two attributes.
+      On the primary directory node, the integrity of both attributes is ensured via the overlay modules ``refint`` and ``constraint``.
+
+    de: |
+      Die neue |UCSUAS|-Rolle "Sorgeberechtigter" wurde hinzugefügt:
+      Die Attribute ``ucsschoolLegalGuardian`` und ``ucsschoolLegalWard`` wurden zum |UCSUAS|-LDAP-Schema hinzugefügt.
+      Zusätzlich wird das LDAP-Overlay-Modul ``memberOf`` für die Pflege der beiden Attribute aktiviert.
+      Auf dem Primary Directory Node wird über die Overlay-Module ``refint`` und ``constraint`` die Integrität der beiden Attribute sichergestellt.

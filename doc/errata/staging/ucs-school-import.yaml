@@ -7,5 +7,8 @@ src: ucs-school-import
 fix: 19.2.8
 bugs:
   58460:
-    en: Add new UCS@school role "Legal Guardian".
-    de: Es gibt eine neue UCS@school-Rolle "Sorgeberechtigter".
+    en: |
+      Add new |UCSUAS| role "Legal Guardian": The import logic, import hooks, UDM hooks, and HTTP import API have been extended to include the new role.
+    de: |
+      Die neue |UCSUAS|-Rolle "Sorgeberechtigter" wurde hinzugefügt: Die Import-Logik, Import-Hooks, UDM-Hooks sowie die HTTP-Import-API wurden um die neue Rolle erweitert.
+

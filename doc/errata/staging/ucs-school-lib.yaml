@@ -8,10 +8,14 @@ fix: 15.1.5
 bugs:
   58460:
     en: |
-      Add new UCS@school role "Legal Guardian".
-      Added the new attribute `legal_guardians`` to student objects.
-      The long deprecated role check, based on the position of objects in the LDAP tree, has been removed.
+      Add new |UCSUAS| role "Legal Guardian": The |UCSUAS| library has been comprehensively expanded to
+      include process logic for legal guardians.
+
+      The long deprecated fallback for role checks, based on the position of objects in the LDAP tree, has been removed.
     de: |
-      Es gibt eine neue UCS@school-Rolle "Sorgeberechtigter".
-      Das neue Attribut ``legal_guardians`` wurde zu Schülerobjekten hinzugefügt.
-      Die seit langem veraltete Rollenprüfung, die auf der Position von Objekten im LDAP-Baum basiert, wurde entfernt.
+      Die neue |UCSUAS|-Rolle "Sorgeberechtigter" wurde hinzugefügt: Die |UCSUAS|-Bibliothek wurde umfassend
+      um die Prozesslogik für Sorgeberechtigte erweitert.
+
+
+      Der seit langem veraltete Fallback für Rollenprüfungen wurde entfernt, welcher auf der Position von Objekten
+      im LDAP-Baum basierte.
