@@ -174,7 +174,7 @@ class TestUserCreator(object):
         else:
             user["Schulen"] = [random.choice(self.ous)]  # nosec
 
-        if kind in ["staff", "legal_guardians"]:
+        if kind in ["staff", "legal_guardian"]:
             user["Klassen"] = {}
         elif kind == "student":
             # students are in 1 class

@@ -1,3 +1,10 @@
+ucs-school-import (19.2.8) unstable; urgency=medium
+
+  * fix: typo in test_user_creator.py
+    Issue univention/dev/education/ucsschool#1457
+
+ -- Jürn Brodersen <brodersen@univention.de>  Mon, 01 Sep 2025 10:43:40 +0200
+
 ucs-school-import (19.2.7) unstable; urgency=medium
 
   * fix: only count `is_countable` errors
