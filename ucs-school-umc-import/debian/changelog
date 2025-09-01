@@ -1,3 +1,10 @@
+ucs-school-umc-import (4.2.0) unstable; urgency=medium
+
+  * feat: add legal guardian to UMC user import
+    Issue univention/dev/education/ucsschool#1458
+
+ -- Jürn Brodersen <brodersen@univention.de>  Mon, 01 Sep 2025 10:57:18 +0200
+
 ucs-school-umc-import (4.1.0) unstable; urgency=medium
 
   * Issue univention/ucsschool#293: Improve performance when listing user
