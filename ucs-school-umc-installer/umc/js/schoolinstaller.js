@@ -122,7 +122,7 @@ define([
 					type: CheckBox,
 					name: 'createDemo',
 					value: true,
-					label: _('Create a demo school with demo users (1 teacher, 1 student, 1 schooladmin) and a demo class.'),
+					label: _('Create a demo school with demo users (1 teacher, 1 student, 1 legal guardian, 1 schooladmin) and a demo class.'),
 					size: 'Two',
 				}]
 			}, {

@@ -134,11 +134,11 @@ msgstr "Konnte keinen DNS-Eintrag für den Primary Directory Node finden."
 
 #: umc/js/schoolinstaller.js:125
 msgid ""
-"Create a demo school with demo users (1 teacher, 1 student, 1 schooladmin) "
-"and a demo class."
+"Create a demo school with demo users (1 teacher, 1 student, 1 legal guardian, "
+"1 schooladmin) and a demo class."
 msgstr ""
-"Erstellen einer Demo-Schule mit Demo-Benutzern (1 Lehrer, 1 Schüler, 1 Schuladministrator) "
-"und einer Demo-Klasse."
+"Erstellen einer Demo-Schule mit Demo-Benutzern (1 Lehrer, 1 Schüler, 1 Sorgeberechtigter, "
+"1 Schuladministrator) und einer Demo-Klasse."
 
 #: umc/js/schoolinstaller.js:150
 msgid "Domain password"
