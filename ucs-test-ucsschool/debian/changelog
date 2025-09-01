@@ -1,3 +1,10 @@
+ucs-test-ucsschool (8.0.40) unstable; urgency=medium
+
+  * test: fix 31_create_demoportal.py
+    Issue univention/dev/internal/product-tests/ucsschool#2
+
+ -- Jürn Brodersen <brodersen@univention.de>  Mon, 01 Sep 2025 16:06:55 +0200
+
 ucs-test-ucsschool (8.0.39) unstable; urgency=medium
 
   * test: new 261_import_user_check_count_exception.py

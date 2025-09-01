@@ -65,6 +65,7 @@ def check_create_demoportal_call_lists(
     random_school,
     demo_password,
     teacher_mock,
+    legal_guardian_mock,
     student_mock,
     staff_mock,
     school_class_mock,
@@ -86,6 +87,16 @@ def check_create_demoportal_call_lists(
             password=demo_password,
             school=random_school.name,
             email="demo_admin@demoschool.example.com",
+        ),
+    ]
+    assert legal_guardian_mock.call_args_list == [
+        call(
+            firstname="Demo",
+            lastname="Legal Guardian",
+            name="demo_parent",
+            password=demo_password,
+            school=random_school.name,
+            email="demo_parent@demoschool.example.com",
         ),
     ]
     assert student_mock.call_args_list == [
@@ -131,6 +142,8 @@ def test_create_school_doesnt_create_existing_school(
     ) as student_mock, patch.object(
         create_demoportal_module, "Teacher"
     ) as teacher_mock, patch.object(
+        create_demoportal_module, "LegalGuardian"
+    ) as legal_guardian_mock, patch.object(
         create_demoportal_module.module_groups, "lookup", return_value=[SchoolMock()]
     ), patch.object(
         create_demoportal_module, "demo_password", uts.random_string()
@@ -143,6 +156,7 @@ def test_create_school_doesnt_create_existing_school(
         random_school,
         demo_password,
         teacher_mock,
+        legal_guardian_mock,
         student_mock,
         staff_mock,
         school_class_mock,
@@ -169,6 +183,8 @@ def test_create_school_creates_missing_school(
     ) as student_mock, patch.object(
         create_demoportal_module, "Teacher"
     ) as teacher_mock, patch.object(
+        create_demoportal_module, "LegalGuardian"
+    ) as legal_guardian_mock, patch.object(
         create_demoportal_module.module_groups, "lookup", return_value=[SchoolMock()]
     ), patch.object(
         create_demoportal_module, "demo_password", uts.random_string()
@@ -181,6 +197,7 @@ def test_create_school_creates_missing_school(
         random_school,
         demo_password,
         teacher_mock,
+        legal_guardian_mock,
         student_mock,
         staff_mock,
         school_class_mock,
