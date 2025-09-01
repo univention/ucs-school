@@ -28,6 +28,8 @@ def test_legal_guardian(umc_browser_test: UMCBrowserTest) -> None:
     )
     page.get_by_role("button", name="School administration").click()
     page.get_by_text("Users (schools)Management of").click()
+    page.get_by_role("textbox", name="School").click()
+    page.get_by_role("textbox", name="School").fill("Demo School")
     page.get_by_role("button", name="Next").click()
     page.get_by_role("button", name="Add").click()
     page.get_by_role("textbox", name="Role").click()
