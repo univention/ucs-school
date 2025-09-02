@@ -3,7 +3,7 @@
 set -e
 git config user.name "${GIT_AUTHOR_NAME:?}"
 git config user.email "${GIT_AUTHOR_EMAIL:?}"
-git remote set-url --push origin "$CI_SERVER_PROTOCOL://pipeline_token:$GITLAB_PROJECT_TOKEN@$CI_SERVER_FQDN/$CI_PROJECT_PATH_SLUG"
+git remote set-url --push origin "$CI_SERVER_PROTOCOL://pipeline_token:$GITLAB_PROJECT_TOKEN@$CI_SERVER_FQDN/$CI_PROJECT_PATH"
 git switch -c releasebot/release
 release_files=$(find doc/errata/staging/ -name "*.yaml" -not -name "0template.yaml")
 # move advisories from staging to published
