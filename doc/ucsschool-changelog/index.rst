@@ -13,6 +13,37 @@ the update of |UCSUAS| from version 5.2v3 to 5.2v4.
 
 The change information for previous version jumps can be found at :external+uv-navigation:ref:`the changelog overview page <ucsschool-changelog>`.
 
+.. _changelog-new-role:
+
+New |UCSUAS| role
+====================
+|UCSUAS| 5.2v4 adds a new role to |UCSUAS|: the Legal Guardian.
+
+The new role "Legal Guardian" gives administrators the ability to assign legal guardians to students.
+A legal guardian can be a parent or a person appointed by a court to care for a minor child.
+This enables school authorities to maintain a single source of truth across all integrated applications
+that require contact with legal guardians.
+The centralized approach significantly enhances data consistency and security, especially in communication and service platforms
+by avoiding data fragmentation across schools.
+
+What's new?
+
+* Administrators can create legal guardians in the UMC module “Users (Schools)”.
+* Administrators can link legal guardians to students on the student detail page and students to Legal Guardians on the legal guardian detail page.
+* Administrators can import legal guardians via CLI and web-based import and link them to existing students.
+* The Kelvin API now supports creating, reading, modifying and deleting legal guardians, as well as assigning guardians to existing students.
+* A student can have up to 4 legal guardians assigned and a legal guardian can be assigned to up to 10 students.
+
+.. warning::
+
+  You must install version 3.0.0 of the Kelvin API in order to set legal guardians in |UCSUAS| with the Kelvin API.
+  If a component uses the ``PUT`` method of the new Kelvin API,
+  specifying assigned students and assigned legal guardians is optional,
+  but an empty list is used as the default value by the Kelvin API.
+  Therefore, if Kelvin API clients do not send values for assigned legal guardians or assigned students when using the ``PUT`` method,
+  the existing links between students and legal guardians will be removed from the corresponding objects.
+  Update your Kelvin API client and send all values to prevent this behavior.
+
 .. _changelog-prepare:
 
 General notes on the update
@@ -40,22 +71,3 @@ the already released app version of |UCSUAS|. The changelog documents that
 Univention issues with each |UCSUAS| app version are then expanded accordingly
 with a new section that shows which packages were released at what time and
 which errors were fixed in the process.
-
-New |UCSUAS| role
-====================
-|UCSUAS| 5.2v4 adds a new role to |UCSUAS|: the Legal Guardian.
-
-The new role "Legal Guardian" gives administrators the ability to assign legal guardians to students.
-A legal guardian can be a parent or a person appointed by a court to care for a minor child.
-This enables school authorities to maintain a single source of truth across all integrated applications
-that require contact with legal guardians.
-The centralized approach significantly enhances data consistency and security, especially in communication and service platforms
-by avoiding data fragmentation across schools.
-
-What's new?
-
-* Administrators can create legal guardians in the UMC module “Users (Schools)”.
-* Administrators can link legal guardians to students on the student detail page and students to Legal Guardians on the legal guardian detail page.
-* Administrators can import legal guardians via CLI and web-based import and link them to existing students.
-* The Kelvin API supports backward compatibility for reading, creating, and deleting guardians, as well as assigning guardians to existing students.
-* A student can have up to 4 legal guardians assigned and a legal guardian can be assigned to up to 10 students.
