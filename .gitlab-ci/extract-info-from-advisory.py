@@ -45,7 +45,12 @@ def main():
     scope = content.get("scope", None)
     if scope:
         if not is_build("ucs-test-ucsschool", changelog.full_version, scope):
+            print(f"Adding {source} to DEBIAN_SOURCE_DIRECTORIES")
             source_packages.add("ucs-test-ucsschool")
+            content["src"] = "ucs-test-ucsschool"
+            content["fix"] = changelog.full_version
+            print("Create yaml for ucs-test-ucsshool to upload package")
+            (STAGING_PATH / pathlib.Path("ucs-test-ucsschool.yaml")).write_text(yaml.safe_dump(content))
 
     DOTFILE.write_text(
         f"RELEASE_BUGS={' '.join(str(bug) for bug in bugs)}"
