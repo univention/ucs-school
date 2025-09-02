@@ -1,4 +1,4 @@
-# Non-automatic Release
+# Non-automatic Release Steps
 
 <!--
 SPDX-FileCopyrightText: 2022-2025 Univention GmbH
@@ -6,52 +6,111 @@ SPDX-FileCopyrightText: 2022-2025 Univention GmbH
 SPDX-License-Identifier: AGPL-3.0-only
 -->
 
-**NOTE:** If this is your first time doing a manual release, please jump to the
-section on **First Time Preparations** first. Then come back to **Push changes
-to Test Appcenter**.
+For a UCS@school app release, the intended way is to use the automated release pipeline.
+The steps are described in [README_Releases](./README_Releases.md).
+If a step described there is not working and manual intervention is necessary, refer to this document.
 
-## Push changes to Test Appcenter
+**NOTE:** If you are a new developer doing the release for the first time, you should also follow the [First Time Preparation](README_manual_release.md#first-time-preparations)
+section in the manual release documentation.
 
-**NOTE:** If you are doing the release for `4.4`, execute the following steps on `dimma`.
-Otherwise, execute the steps on `ladda`.
+## Publish Application
 
-Make sure you have the current version of `ucsschool` and release scripts:
+### Create new version in Test AppCenter and publish new packages
+
+The following commands can be run on `omar` to create a new release version:
 
 ```shell
-for DIR in ~/git/*; do (cd $DIR; git pull); done
+univention-appcenter-control new-version "5.2/ucsschool=5.2 v1" "5.2/ucsschool=5.2 v2"
 ```
 
-Now push the changes to the Test Appcenter.
-For example, to upload `ucs-school-import ucs-school-umc-internetrules` and `ucs-school-import` to UCS@school 5.2 v1:
+Then publish the packages to Test Appcenter:
 
 ```shell
+# copy_app_binaries -r <ucs-major-minor> -v <app-version> -u <yaml-datei> ...
+# For example:
 cd ~/git/ucsschool/doc/errata/staging
-copy_app_binaries --yes-i-really-want-to-upload-to-published-components -r 5.2 -v "5.2 v1" -u \
-    ucs-school-import.yaml \
-    ucs-school-umc-internetrules.yaml
+copy_app_binaries -r 5.2 -v "5.2 v5" -u ucs-school-lib.yaml ucs-school-umc-diagnostic.yaml
 ```
 
 - Check if the displayed packages and versions are OK
-  - Copy the list of displayed packages, so you can use it for confirming the versions later in production.
+- Copy the list of displayed packages, so you can use it for confirming the versions later in production.
 - You will have to confirm in a funny way, by entering the numbers **backward**.
-- If the package version can't be found, rebuilding can help, e.g. `b50-scope ucs-school-5.2 ucs-school-lib`
+- If the package version can't be found, rebuilding can help, e.g. `b52-scope ucs-school-5.2 ucs-school-lib`,
+  though this might mean that this might mean that the package has not been correctly tested
 
-### ucs-test-ucsschool updates
+### Verify information in the Selfservice Center
 
-The `ucs-test-ucsshool` package is unique in that it doesn't include a `.yaml` file and isn't supported by us for the customer.
-Additionally, `ucs-test-ucsschool` is not guaranteed to work for the set of packages that are part of the release.
-It may contain tests for packages that have been excluded.
+**NOTE:** You will want to do this step before publishing to production.
+If you need to make any changes after publishing, you will need to re-run the publishing steps again.
 
-**NOTE:** You do not always need to release `ucs-test-ucsschool`.
-You should only release if:
+Go to the [Selfservice Center](https://selfservice.software-univention.de/univention/management/#module=appcenter-selfservice) and search for the UCS@school app.
 
-* `ucs-test-ucsschool` has changed, and
-* There are no tests for unreleased packages (releasing tests for unreleased packages will cause Jenkins to break).
+Click on the UCS@school app and look for the current "unpublished" version.
+The "unpublished" version should match your expected release target.
+(If it does not exist, go back to the search screen, right click on the UCS@school
+icon, and select "New app version" to create one).
 
-To release `ucs-test-ucsschool`:
+Choose "Additional texts" from the menu on the left side. Read all of the texts
+and verify that the links/texts are correct and they point to the correct
+version of the release (and not the previous version).
+
+### Publish packages to production AppCenter
+
+This code should be run `dimma` or `omar`.
+First, determine the `COMPONENT` id for the next step:
 
 ```shell
-univention-appcenter-control upload --upload-packages-although-published '5.2/ucsschool=5.2 v4' $(find /var/univention/buildsystem2/apt/ucs_5.2-0-ucs-school-5.2/ -name 'ucs-test-ucsschool*.deb')
+univention-appcenter-control status ucsschool
+```
+
+Then publish to the production Appcenter:
+
+```shell
+cd /mnt/omar/vmwares/mirror/appcenter
+# copy the given version to public app center on local mirror. Use the COMPONENT id.
+./copy_from_appcenter.test.sh 5.2 ucsschool_20230804115933
+# syncs the local mirror to the public download server
+sudo update_mirror.sh -v appcenter
+```
+
+## Publish documentation
+
+To publish UCS@school documentation, follow these steps:
+
+1. [Create a new pipeline](https://git.knut.univention.de/univention/dev/education/ucsschool/-/pipelines/new)
+2. Set FORCE_DOCS to `yes`.
+3. Set `CHANGELOG_TARGET_VERSION` to the target App release version you need, for example `5.2v5`
+4. Run the pipeline.
+5. Trigger the `docs-merge-to-one-artifact` job manually
+
+Check the [Doc Pipeline](https://git.knut.univention.de/univention/docs.univention.de/-/pipelines) from the automatic
+commit from Jenkins and check the [staged documentation](http://univention-repository.knut.univention.de/download/docs/).
+
+## Announcement Mail
+
+Send an internal announcement mail with the following text (**Adapt version and name**):
+
+```
+To: app-announcement@univention.de
+Subject: App Center: UCS@school 5.2 v1 released
+
+Hello all,
+
+the following app update has just been released:
+- UCS@school 5.2 v1
+
+The changelog is available here:
+
+- https://docs.software-univention.de/ucsschool-changelog/5.2v1/en/changelog.html
+- https://docs.software-univention.de/ucsschool-changelog/5.2v1/de/changelog.html
+
+Excerpts from the changelog:
+- ...
+- ...
+
+Greetings,
+
+ $NAME
 ```
 
 ## First Time Preparations
@@ -61,7 +120,7 @@ They do not need to be run each time the errata release is done.
 
 ### Selfservice Center
 
-You should also make sure that you have access to the [Self Service Center](https://selfservice.software-univention.de/univention/management/#module=appcenter-selfservice).
+You should make sure that you have access to the [Self Service Center](https://selfservice.software-univention.de/univention/management/#module=appcenter-selfservice).
 If you are unable to access it, please contact [helpdesk](mailto:helpdesk@univention.de) for access.
 
 ### Release Server Environment

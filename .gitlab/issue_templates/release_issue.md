@@ -15,31 +15,21 @@ UCS@school {{ version }} has to be released...
 
 ## Acceptance criteria
 
-- [ ] Prepare a VM for testing
-- [ ] Check packages for readiness
-  - [ ] Create release issue (if not created)
-  - [ ] Create Bugzilla bug
+- [ ] Pre-Release Preparation
+  - [ ] Check the minimum required UCS errata version
+  - [ ] Prepare a VM for testing
   - [ ] Verify Jenkins tests
-  - [ ] Verify YAML advisories
-  - [ ] Tag an appropriate commit with the `release-<version>` tag
-- [ ] Create new changelog
-- [ ] Create new version in Test Appcenter
-  - [ ] Adjust the version in the README files in the test appcenter
-- [ ] Publish to Test Appcenter
-- [ ] Verify release in Selfservice Center
-- [ ] Publish to production Appcenter
-- [ ] Publish manual
-- [ ] Update public documentation
-  - [ ] Update bugzilla bugs
+- [ ] Tag the commit which should be released with the `release-<version>` tag
+- [ ] Publish Application with the `do_release` job in the tag pipeline
+- [ ] Publish documentation with the `docs-merge-to-one-artifact` job
+- [ ] Update other public information
+  - [ ] Update/Close bugzilla bugs
+  - [ ] Create new target milestone in bugzilla
+  - [ ] Update the maintenance information in the `ucsschool.yaml` in repo [univention/dist/release-dates](https://git.knut.univention.de/univention/dist/release-dates) (For https://docs.software-univention.de/n/en/maintenance/ucsschool.html#maintenance-ucsschool)
+  - [ ] Update the [overview pages](https://git.knut.univention.de/univention/documentation/ucs-doc-overview-pages)
+  - [ ] Add the new changelog document to `docsearch.config.json` in the [docsearch repository](https://git.knut.univention.de/univention/documentation/docsearch/)
+  - [ ] Update the `latest` link in [docs.univention.de](https://git.knut.univention.de/univention/docs.univention.de/-/blob/master/ucsschool-changelog/latest)
 - [ ] QA the release
-- [ ] Create new target milestone in bugzilla
-- [ ] Create next errata release issue
-- [ ] Update README release documentation (both full and errata) so that bash commands and html links point to the correct versions of UCS@school.
-- [ ] Check if the maintenance information has to be updated (https://docs.software-univention.de/n/en/maintenance/ucsschool.html#maintenance-ucsschool)
-  - [ ] Create a new link on the UCS changelog pages
-  - See READMEs on https://git.knut.univention.de/univention/dist/release-dates and https://git.knut.univention.de/univention/documentation/ucs-doc-overview-pages
-  - [ ] If a new document has been added, add it to `docsearch.config.json` in repository https://git.knut.univention.de/univention/documentation/docsearch/
-- [ ] Send announcement email
 
 ## Guidelines
 

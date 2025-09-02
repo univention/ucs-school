@@ -1,4 +1,4 @@
-# Release instructions for a UCS@school Errata Release
+# Release instructions for a UCS@school Package Update
 
 <!--
 SPDX-FileCopyrightText: 2020-2025 Univention GmbH
@@ -7,47 +7,61 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 This document describes how to prepare and execute an Errata Release for the UCS@school App.
-
-**Overview Checklist:** (Can be copied into gitlab release issue)
-
-- [ ] Prepare a VM for testing
-- [ ] Check packages for readiness
-  - [ ] Create release issue (if not created)
-  - [ ] Verify you can do an errata release, not a full release
-  - [ ] Verify Jenkins tests
-  - [ ] Verify YAML advisories
-- [ ] Update Test Appcenter
-- [ ] Publish to production App Center
-- [ ] Publish changelog and manual
-- [ ] Update public documentation
-  - [ ] Send announcement email
-  - [ ] Update bugzilla bugs
-- [ ] QA the release
-- [ ] Create next errata release issue
+A checklist is provided in the [package update issue template](https://git.knut.univention.de/univention/dev/education/ucsschool/-/blob/5.2/.gitlab/issue_templates/package_update_issue.md)
+each item in that checklist corresponds to a subsection in this document.
+For an application release, refer to [README_Releases.md](./README_Releases.md).
 
 **NOTE:** If you are a new developer doing the release for the first time,
 you should also follow the [First Time Preparation](README_manual_release.md#first-time-preparations)
 section in the manual release documentation.
 
-## Prepare a VM for testing
+## Pre-Release Preparation
 
-If you don't have one already, create a [UCS@school multi-server env](https://jenkins2022.knut.univention.de/view/UCS@school/job/UCSschool-5.2/view/Environments/job/SchoolMultiserverEnvironment/) to use for testing when [doing QA](README_qa_for_release.md).
+### Prepare a VM for testing
 
-## Prerequisites
+If you don't have one already, create a VM with the [UCS@school images repository](https://git.knut.univention.de/univention/dev/internal/ucsschool-images).
 
-### Check packages for readiness
+### Verify you can do an errata release, not a full release
 
-Before starting the release, [check packages for readiness](README_check_release_packages.md).
+Not every package should be released as a package update, but instead needs to be released within a full [UCS@school App release](README_Releases.md).
+Consider the [ucs rules](https://univention.gitpages.knut.univention.de/internal/dev-handbook/guidelines/stability.html#errata-updates) as a guideline to help you decide if a package can be released as an errata.
+Basically you should ensure an administrator doesn't need to take manual steps during the update.
 
-## Update Test AppCenter
+For example:
+* No join script updates
+* No backwards-incompatible API changes
 
-### General updates
+If you had planned to do an errata release, but now realize you need to do full release, please update the release issue and notify the team of the change of plans.
 
-Follow the instructions for [manual release to Test AppCenter](README_manual_release.md#push-changes-to-test-appcenter).
-Keep in mind:
+### Verify Jenkins tests
 
-* You will need the list of YAML files you edited in the [previous verification steps](README_check_release_packages.md#verify-yaml-advisories).
-* You should make a note of the packages that get uploaded from the `copy_app_binaries` command.
+Check the following Jenkins jobs for any unusual failures that might be connected to the release:
+
+- [Install Multiserver Test](https://jenkins2022.knut.univention.de/view/UCS@school/job/UCSschool-5.2/view/Daily%20Tests/job/Install%20Multiserver/)
+- [Install Singleserver Test](https://jenkins2022.knut.univention.de/view/UCS@school/job/UCSschool-5.2/view/Daily%20Tests/job/Install%20Singleserver/)
+- [Upgrade Multiserver Test](https://jenkins2022.knut.univention.de/view/UCS@school/job/UCSschool-5.2/job/Upgrade%20Multiserver/)
+- [Upgrade Singleserver Test](https://jenkins2022.knut.univention.de/view/UCS@school/job/UCSschool-5.2/job/Upgrade%20Singleserver/)
+
+## Push changes to Test Appcenter
+
+**NOTE:** If you are doing the release for `4.4`, execute the following steps on `dimma`.
+Otherwise, execute the steps on `ladda`.
+
+Make sure you have the current version of `ucsschool` and release scripts:
+
+```shell
+for DIR in ~/git/*; do (cd $DIR; git pull); done
+```
+
+Now push the changes to the Test Appcenter.
+For example, to upload `ucs-school-import ucs-school-umc-internetrules` and `ucs-school-import` to UCS@school 5.2 v1:
+
+```shell
+cd ~/git/ucsschool/doc/errata/staging
+copy_app_binaries --yes-i-really-want-to-upload-to-published-components -r 5.2 -v "5.2v4" -u \
+    ucs-school-import.yaml \
+    ucs-school-umc-internetrules.yaml
+```
 
 ## Publish to production App Center
 
@@ -78,18 +92,19 @@ Commit the changes to git, and `cd` to the root of the `ucsschool` repository.
 
 ## Publish UCS@school documentation
 
-Note: If you want to publish only a subset of the debian packages, you will need to edit the changelog manually and store the entries
-for the packages which are not published somewhere.
+To publish UCS@school documentation, follow these steps:
 
 The documentation is built by a [gitlab pipeline](https://git.knut.univention.de/univention/docs.univention.de/-/pipelines)
-that has to be triggered manually: Please set the following variables when starting the pipeline:
+that has to be triggered manually: Please do the following:
 
-- `RUN_DOCS`: `yes`
-- `FORCE_DOCS`: `yes`
-- `CHANGELOG_TARGET_VERSION`: `5.2v4`  (use your specific UCS@school version!)
+1. [Create a new pipeline](https://git.knut.univention.de/univention/dev/education/ucsschool/-/pipelines/new)
+2. Set FORCE_DOCS and `RUN_DOCS` to `yes`.
+3. Set `CHANGELOG_TARGET_VERSION` to the target App release version you need, for example `5.2v5`
+4. Run the pipeline.
+5. Trigger the `docs-merge-to-one-artifact` job manually
 
-Follow the pipeline to be sure it completes correctly, and then check the
-[published documentation](http://univention-repository.knut.univention.de/download/docs/).
+Check the [Doc Pipeline](https://git.knut.univention.de/univention/docs.univention.de/-/pipelines) from the automatic
+commit from Jenkins and check the [staged documentation](http://univention-repository.knut.univention.de/download/docs/).
 
 ## Update public information
 
@@ -121,7 +136,7 @@ UCS@school Team
 
 ### Close Bugzilla bugs
 
-Set all Bugs published with this Erratum to *CLOSED*.
+Set all Bugs published with this package update to *CLOSED*.
 You can get the bug numbers with this snippet (they should match the bugs you released):
 ```shell
 cd doc/errata/published/
