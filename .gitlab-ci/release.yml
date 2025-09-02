@@ -15,6 +15,9 @@ include:
     inputs:
       ucs_base_version: "5.2"
       scope: "ucs-school-5.2"
+      additional_upload_needs:
+        - parse-advisories
+        - create_app_version
 
 parse-advisories:
   stage: build
@@ -24,6 +27,8 @@ parse-advisories:
   artifacts:
     reports:
       dotenv: .dotenv
+    paths:
+      - doc/errata/staging/ucs-test-ucsschool.yaml
 
 check-tests:
   stage: build
