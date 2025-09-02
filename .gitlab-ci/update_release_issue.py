@@ -139,6 +139,7 @@ class RelaeseIssue:
                 "https://git.knut.univention.de/api/v4/projects/1574/templates/issues/release_issue",
                 headers=self.headers,
             )
+            resp.raise_for_status()
             resp = requests.post(
                 "https://git.knut.univention.de/api/v4/projects/1574/issues",
                 headers=self.headers,
