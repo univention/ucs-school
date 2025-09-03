@@ -3,7 +3,7 @@ default_install_hook_types:
 exclude: "^django-pam/"
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.3.0
+    rev: v6.0.0
     hooks:
       - id: check-added-large-files
       - id: check-json
@@ -19,14 +19,14 @@ repos:
         args: [--autofix]
         files: ^ucs-school-import-lusd/.*
   - repo: https://git.knut.univention.de/univention/infrastructure/pre-commit-ucr
-    rev: "0.1.2"
+    rev: "0.1.4"
     hooks:
       - id: ucr-ruff-fix
         additional_dependencies: ["ruff==0.11.2"]
       - id: ucr-ruff-format
         additional_dependencies: ["ruff==0.11.2"]
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: "v0.11.2"
+    rev: "v0.12.11"
     hooks:
       - id: ruff
         args: ["--fix"]
@@ -41,14 +41,14 @@ repos:
         stages: [ manual ]
         args: ["--statistics", "--unsafe-fixes"]
   - repo: https://github.com/pre-commit/pygrep-hooks
-    rev: v1.9.0
+    rev: v1.10.0
     hooks:
       # pygrep does not install an environment, so cannot use a language version.
       - id: python-check-blanket-noqa
       - id: python-no-eval
       - id: rst-backticks
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.11.2
+    rev: v1.17.1
     hooks:
       - id: mypy
         files: ^ucs-school-import-lusd/.*
@@ -58,7 +58,7 @@ repos:
           - pyjwt
         args: ["--strict", "--ignore-missing-imports"]
   - repo: https://github.com/shellcheck-py/shellcheck-py
-    rev: v0.10.0.1
+    rev: v0.11.0.1
     hooks:
       - id: shellcheck
         files: ^ucs-school-import-lusd/.*
@@ -94,7 +94,7 @@ repos:
           - python-debian==0.1.49
 
   - repo: https://github.com/jackdewinter/pymarkdown
-    rev: v0.9.7
+    rev: v0.9.32
     hooks:
       - id: pymarkdown
         # TODO: clean those up:
@@ -113,7 +113,7 @@ repos:
           # MD024: Allow duplicate headings
           # MD034: Allow bare URLs
   - repo: https://github.com/compilerla/conventional-pre-commit
-    rev: v4.0.0
+    rev: v4.2.0
     hooks:
       - id: conventional-pre-commit
         stages: [ commit-msg ]
