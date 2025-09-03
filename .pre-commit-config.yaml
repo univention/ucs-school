@@ -21,22 +21,10 @@ repos:
   - repo: https://git.knut.univention.de/univention/infrastructure/pre-commit-ucr
     rev: "0.1.2"
     hooks:
-      - id: ucr-flake8
-        additional_dependencies: ["flake8==5.0.4"]
-      - id: ucr-ruff
-        additional_dependencies: ["ruff==0.11.2"]
-      - id: ucr-autopep8
-        additional_dependencies: ["autopep8<=2.0.2"]
-        stages: [manual]
       - id: ucr-ruff-fix
         additional_dependencies: ["ruff==0.11.2"]
-        stages: [manual]
-      - id: ucr-ruff-format-check
-        additional_dependencies: ["ruff==0.11.2"]
-        stages: [manual]
       - id: ucr-ruff-format
         additional_dependencies: ["ruff==0.11.2"]
-        stages: [manual]
   - repo: https://github.com/charliermarsh/ruff-pre-commit
     rev: "v0.11.2"
     hooks:
@@ -48,24 +36,10 @@ repos:
         args: ["--fix", "--unsafe-fixes"]
       - id: ruff-format
         alias: "ruff-format"
-        stages: [manual]
       - id: ruff
         alias: "ruff-statistics"
         stages: [ manual ]
         args: ["--statistics", "--unsafe-fixes"]
-  - repo: https://github.com/psf/black
-    # Until all Python 3 incompatible code has been removed (-> u"") we have to stay at 21.9b0.
-    # Version 21.11b0 adds super annoying Python 2 deprecation notice.
-    # Version 22.1.0 removes Python 2 support.
-    rev: 21.9b0
-    hooks:
-      - id: black
-        additional_dependencies: ["click>8.0,<8.1"]
-        entry: black --config .black
-  - repo: https://github.com/pycqa/flake8
-    rev: 5.0.4
-    hooks:
-      - id: flake8
   - repo: https://github.com/pre-commit/pygrep-hooks
     rev: v1.9.0
     hooks:
@@ -73,11 +47,6 @@ repos:
       - id: python-check-blanket-noqa
       - id: python-no-eval
       - id: rst-backticks
-  - repo: https://github.com/PyCQA/bandit
-    rev: 1.7.4
-    hooks:
-      - id: bandit
-        entry: bandit -c .bandit --exclude ucs-test-ucsschool
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.11.2
     hooks:
