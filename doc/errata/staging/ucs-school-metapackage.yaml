@@ -1,0 +1,24 @@
+product: ucsschool
+release: "5.2"
+released:
+version: [0]
+scope: ucs_5.2-0-ucs-school-5.2
+src: ucs-school-metapackage
+fix: 16.0.0
+bugs:
+  58585:
+    en: |
+      |UCSUAS| 5.2v4 requires the LDAP overlay module ``refint`` which is activated by default since UCS 5.0.
+      To prevent problems in environments that have been installed with an older version of UCS/UCS@school,
+      the UCR variable ``ldap/refint`` will be set to ``true`` by UCS@school during the installation.
+
+      The module ensures referential integrity for the LDAP attributes ``uniqueMember``,
+      ``ucsschoolLegalGuardian`` and `ucsschoolLegalWard``.
+    de: |
+      |UCSUAS| 5.2v4 benötigt das LDAP-Overlay-Modul ``refint``, welches seit UCS 5.0 per Default aktiviert ist.
+      Um Probleme in |UCSUAS|-Umgebungen zu vermeiden, die mit einer früheren Version von UCS bzw. |UCSUAS|
+      installiert wurden, wird die UCR-Variable ``ldap/refint`` während des Updates bzw. Installation von
+      |UCSUAS| auf ``true`` gesetzt.
+
+      Das Modul sorgt für referentielle Integrität bei den LDAP-Attributen ``uniqueMember``,
+      ``ucsschoolLegalGuardian`` und `ucsschoolLegalWard``.

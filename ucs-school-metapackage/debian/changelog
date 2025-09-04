@@ -1,3 +1,10 @@
+ucs-school-metapackage (16.0.0) unstable; urgency=low
+
+  * Activate ldap/refint=true in primary directory nodes
+    Issue univention/dev/education/ucsschool#1483
+
+ -- Sönke Schwardt-Krummrich <schwardt@univention.de>  Thu, 04 Sep 2025 17:37:03 +0200
+
 ucs-school-metapackage (15.1.1) unstable; urgency=medium
 
   * Add demo legal guardian
