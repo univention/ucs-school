@@ -91,12 +91,6 @@ Follow the pipeline to be sure it completes correctly, and then check the
 
 ## Update public information
 
-### Update the release announcement wiki
-
-Update [Release Ankündigungen für UCS@school 5.2](https://help.univention.com/t/release-ankundigungen-fur-ucs-school-5.2-stand-17-11-2022/20184)
-by adding a new section below the existing ones and updating the change date in
-the headline.
-
 ### Send the release announcement email
 
 Send an internal announcement mail with the following text (**Adapt version and name**):
@@ -107,12 +101,12 @@ Subject: App Center: UCS@school updated
 
 Hello everyone,
 
-Errata have just been released for UCS@school 5.2 v1.
+Errata have just been released for UCS@school 5.2v4.
 
 The changelog is available here:
 
-- https://docs.software-univention.de/ucsschool-changelog/5.2v1/en/changelog.html
-- https://docs.software-univention.de/ucsschool-changelog/5.2v1/de/changelog.html
+- https://docs.software-univention.de/ucsschool-changelog/5.2v4/en/changelog.html
+- https://docs.software-univention.de/ucsschool-changelog/5.2v4/de/changelog.html
 
 Excerpts from the changelog:
 
@@ -139,10 +133,10 @@ This will enable you to select and modify the bugs you need.
 Use this text as the comment for closing the mentioned bugs:
 
 ```
-Errata updates for UCS@school 5.2 v1 have been released.
+Errata updates for UCS@school 5.2v4 have been released.
 
-https://docs.software-univention.de/ucsschool-changelog/5.2v1/en/changelog.html
-https://docs.software-univention.de/ucsschool-changelog/5.2v1/de/changelog.html
+https://docs.software-univention.de/ucsschool-changelog/5.2v4/en/changelog.html
+https://docs.software-univention.de/ucsschool-changelog/5.2v4/de/changelog.html
 
 If this error occurs again, please clone this bug.
 ```
