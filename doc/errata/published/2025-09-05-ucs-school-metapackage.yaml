@@ -13,7 +13,7 @@ bugs:
       the UCR variable ``ldap/refint`` will be set to ``true`` by UCS@school during the installation.
 
       The module ensures referential integrity for the LDAP attributes ``uniqueMember``,
-      ``ucsschoolLegalGuardian`` and `ucsschoolLegalWard``.
+      ``ucsschoolLegalGuardian`` and ``ucsschoolLegalWard``.
     de: |
       |UCSUAS| 5.2v4 benötigt das LDAP-Overlay-Modul ``refint``, welches seit UCS 5.0 per Default aktiviert ist.
       Um Probleme in |UCSUAS|-Umgebungen zu vermeiden, die mit einer früheren Version von UCS bzw. |UCSUAS|
@@ -21,4 +21,4 @@ bugs:
       |UCSUAS| auf ``true`` gesetzt.
 
       Das Modul sorgt für referentielle Integrität bei den LDAP-Attributen ``uniqueMember``,
-      ``ucsschoolLegalGuardian`` und `ucsschoolLegalWard``.
+      ``ucsschoolLegalGuardian`` und ``ucsschoolLegalWard``.
