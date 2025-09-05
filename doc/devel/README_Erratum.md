@@ -72,6 +72,8 @@ release_files=( "ucs-school-lib.yaml" "ucs-school-umc-users.yaml" )
 for file in "${release_files[@]}"; do git mv "$file" "$(echo $file | sed "s/^/..\/published\/$(date +%Y-%m-%d)-/")"; done
 ```
 
+:warning: Make sure that all moved yaml files contain a line `released: <VERSION>` with your specific UCS\@school version, for example `5.2v4`.
+
 Commit the changes to git, and `cd` to the root of the `ucsschool` repository.
 
 ## Publish UCS@school documentation
