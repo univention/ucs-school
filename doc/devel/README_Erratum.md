@@ -80,7 +80,12 @@ Note: If you want to publish only a subset of the debian packages, you will need
 for the packages which are not published somewhere.
 
 The documentation is built by a [gitlab pipeline](https://git.knut.univention.de/univention/docs.univention.de/-/pipelines)
-that is triggered by a merge from `ucsschool`.
+that has to be triggered manually: Please set the following variables when starting the pipeline:
+
+- `RUN_DOCS`: `yes`
+- `FORCE_DOCS`: `yes`
+- `CHANGELOG_TARGET_VERSION`: `5.2v4`  (use your specific UCS@school version!)
+
 Follow the pipeline to be sure it completes correctly, and then check the
 [published documentation](http://univention-repository.knut.univention.de/download/docs/).
 
