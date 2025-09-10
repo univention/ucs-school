@@ -1,5 +1,5 @@
 include:
-  - component: $CI_SERVER_FQDN/univention/dev/internal/ucsschool-ci-utils/app-release@main
+  - component: $CI_SERVER_FQDN/univention/dev/tooling/ci-components/app-release@main
     inputs:
       app_id: "ucsschool"
       mail_sender: "ucsschool-team@univention.de"
@@ -11,7 +11,7 @@ include:
       ucs_base_version: "5.2"
       release_tag_constraint: '\d.\d+v\d+'
       app_staging_version: "999.0.0-staging"
-  - component: $CI_SERVER_FQDN/univention/dev/internal/ucsschool-ci-utils/debian-package@main
+  - component: $CI_SERVER_FQDN/univention/dev/tooling/ci-components/debian-package@main
     inputs:
       ucs_base_version: "5.2"
       scope: "ucs-school-5.2"
@@ -21,7 +21,7 @@ include:
 
 parse-advisories:
   stage: build
-  image: gitregistry.knut.univention.de/univention/dev/internal/ucsschool-ci-utils/python:latest
+  image: gitregistry.knut.univention.de/univention/dev/tooling/ci-components/python:latest
   script:
     - .gitlab-ci/extract-info-from-advisory.py
   artifacts:
@@ -98,7 +98,7 @@ rename-advisories:
     GIT_AUTHOR_NAME: "UCS@school team"
   rules:
     - if: "$CI_COMMIT_TAG"
-  image: gitregistry.knut.univention.de/univention/dev/internal/ucsschool-ci-utils/python:latest
+  image: gitregistry.knut.univention.de/univention/dev/tooling/ci-components/python:latest
   script:
     - .gitlab-ci/rename-advisories
 

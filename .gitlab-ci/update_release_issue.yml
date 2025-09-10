@@ -1,5 +1,5 @@
 update release issue:
   stage: build
-  image: gitregistry.knut.univention.de/univention/dev/internal/ucsschool-ci-utils/python:latest
+  image: gitregistry.knut.univention.de/univention/dev/tooling/ci-components/python:latest
   script:
     - .gitlab-ci/update_release_issue.py
