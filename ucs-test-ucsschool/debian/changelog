@@ -1,3 +1,10 @@
+ucs-test-ucsschool (8.0.41) unstable; urgency=medium
+
+  * test: add missing executable bit to tests
+    Bug #58518
+
+ -- Jürn Brodersen <brodersen@univention.de>  Fri, 12 Sep 2025 09:58:03 +0200
+
 ucs-test-ucsschool (8.0.40) unstable; urgency=medium
 
   * test: fix 31_create_demoportal.py
