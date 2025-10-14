@@ -18,22 +18,6 @@ UCS@school requires Univention Corporate Server (UCS). In order to run UCS@schoo
 1. [Download](https://www.univention.com/products/download/) either an ISO image or a virtual machine image of UCS and setup UCS.
 2. Login to the UCS management system and open the App Center and install the [UCS@school app](https://www.univention.de/produkte/univention-app-center/app-katalog/ucsschool/).
 
-## Run pre-commit locally
-
-This project uses pre-commit to run checks on commits. The pipeline has a pre-commit job. To run the checks prior to push, you can run the following command from the project's root directory:
-
-```
-docker run -it --rm -v "$PWD:/project" -w /project --pull always gitregistry.knut.univention.de/univention/ucsschool:latest
-```
-
-For running pre-commit outside of docker, you will need the following python versions installed:
-
-* python3.7
-* python3.8
-
-*Hint*: if you run into issues running pre-commit with multiple python versions installed, you may need to install pre-commit as a python library using pip, for each python version. Be sure to close and re-open your terminal before running pre-commit again.
-
-
 ## Documentation and Support
 
 The UCS@school documentation, including a Quickstart guide, can be found at [docs.software-univention.de](https://docs.software-univention.de/) .
@@ -47,6 +31,8 @@ offerings](https://www.univention.com/download-and-support/support/commercial-su
 
 Please read the [contributing guide](./CONTRIBUTING.md) to find more information about the UCS@school development process, how to propose bugfixes and improvements.
 The [Code of Conduct contains guidelines](./CONTRIBUTING.md#code-of-conduct) we expect project participants to adhere to.
+
+For more information regarding developing within this repository, please read the [Development README](README.dev.md).
 
 ## License
 
