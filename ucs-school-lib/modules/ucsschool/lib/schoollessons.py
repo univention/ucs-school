@@ -112,6 +112,16 @@ class Lesson(object):
     def __ne__(self, other):
         return not self == other
 
+    def __hash__(self):
+        """
+        Return a hash consistent with __eq__.
+
+        __eq__ compares lessons by their begin and end times, so the hash
+        must be derived from the same attributes. Using only begin and end
+        ensures objects that compare equal have identical hashes.
+        """
+        return hash((self._begin, self._end))
+
     def intersect(self, lesson):
         return not (self.begin > lesson.end or self.end < lesson.begin)
 
