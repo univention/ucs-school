@@ -35,7 +35,7 @@ from typing import TYPE_CHECKING, Any, List, NamedTuple, Optional  # noqa: F401
 
 import pytest
 
-if sys.version_info.major > 2:
+if sys.version_info.major > 2:  # noqa: UP036
     import builtins
     from unittest import mock
 
