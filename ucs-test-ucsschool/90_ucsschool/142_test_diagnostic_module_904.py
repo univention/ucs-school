@@ -51,9 +51,9 @@ class UCSSchoolSchoolConsistency(AutoMultiSchoolEnv):
             module = self.get_diagnostic_module()
             logger.info("*** Perform test run with broken group memberships")
             out = module.execute(None)
-            assert (
-                out and (out["success"] is False) and (out["type"] == "warning")
-            ), "unexpected result from test: out={!r}".format(out)
+            assert out and (out["success"] is False) and (out["type"] == "warning"), (
+                "unexpected result from test: out={!r}".format(out)
+            )
             logger.info(
                 "Diagnostic module returned the following error message:\n%s", out["description"]
             )

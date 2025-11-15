@@ -155,7 +155,7 @@ def network(base=baseDN):
         print("\t%s" % n["name"])
         print("\tNetwork:\t%s" % n["network"])
 
-        net_ip = ipaddress.IPv4Interface(u"%s/%s" % (n["network"], n["netmask"]))
+        net_ip = ipaddress.IPv4Interface("%s/%s" % (n["network"], n["netmask"]))
         netmask = str(net_ip.netmask)
         print("\tNetmask:\t%s" % netmask)
 

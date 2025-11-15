@@ -87,9 +87,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
     display_name = DisplayName(_("Display name"))  # type: str
     school = None
     educational_servers = Attribute(_("Educational servers"), unlikely_to_change=True)  # type: List[str]
-    administrative_servers = Attribute(
-        _("Administrative servers"), unlikely_to_change=True
-    )  # type: List[str]
+    administrative_servers = Attribute(_("Administrative servers"), unlikely_to_change=True)  # type: List[str]
 
     default_roles = [role_school]  # type: List[str]
     _school_in_name = True
@@ -928,8 +926,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         """
         if not ucr.is_true("ucsschool/import/generate/import/group", False):
             self.logger.info(
-                "creation of the Import Group has been disabled by"
-                "ucsschool/import/generate/import/group"
+                "creation of the Import Group has been disabled byucsschool/import/generate/import/group"
             )
             return
         udm = UDM(lo).version(1)

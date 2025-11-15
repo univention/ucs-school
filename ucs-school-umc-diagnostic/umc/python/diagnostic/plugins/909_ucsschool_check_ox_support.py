@@ -35,6 +35,7 @@ This module checks if a UCS@school Primary Directory Node with OX installed also
 the package ucs-school-ox-support installed. If not a button pops up,
 which tries to fix this issue by installing it.
 """
+
 from __future__ import absolute_import
 
 import subprocess

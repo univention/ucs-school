@@ -22,9 +22,9 @@ from univention.testing import utils
 
 
 def test_import_shell(ucr, schoolenv):
-    assert isinstance(config, dict) and isinstance(
-        config["verbose"], bool
-    ), "Import configuration has not been not setup."
+    assert isinstance(config, dict) and isinstance(config["verbose"], bool), (
+        "Import configuration has not been not setup."
+    )
     ou_name, ou_dn = schoolenv.create_ou(name_edudc=ucr.get("hostname"))
     lo = schoolenv.open_ldap_connection(admin=True)
     for kls in [ImportStaff, ImportStudent, ImportTeacher, ImportLegalGuardian, ImportTeachersAndStaff]:

@@ -103,11 +103,12 @@ class Room(object):
         current_computers = self.get_room_computers(client)
         print("Current computers in room %s are %r" % (self.name, current_computers))
         for i, computer in enumerate(sorted(current_computers)):
-            assert (
-                computer in sorted(expected_computer_list)[i]
-            ), "Computers found %r do not match the expected: %r" % (
-                current_computers,
-                expected_computer_list,
+            assert computer in sorted(expected_computer_list)[i], (
+                "Computers found %r do not match the expected: %r"
+                % (
+                    current_computers,
+                    expected_computer_list,
+                )
             )
 
     def set_room_settings(self, client, new_settings):
@@ -153,9 +154,10 @@ class Room(object):
         rule = InternetRule()
         current_rules = rule.allRules()
         internetRules = self.get_internetRules(client)
-        assert sorted(current_rules) == sorted(
-            internetRules
-        ), "Fetched internetrules %r, do not match the existing ones %r" % (internetRules, current_rules)
+        assert sorted(current_rules) == sorted(internetRules), (
+            "Fetched internetrules %r, do not match the existing ones %r"
+            % (internetRules, current_rules)
+        )
 
     def check_atjobs(self, period, expected_existence):
         exist = False
@@ -171,20 +173,21 @@ class Room(object):
                 for i, item in enumerate(jobs)
             )
         )
-        assert (
-            exist == expected_existence
-        ), "Atjob result at(%r) is unexpected (should_exist=%r  exists=%r)" % (
-            period,
-            expected_existence,
-            exist,
+        assert exist == expected_existence, (
+            "Atjob result at(%r) is unexpected (should_exist=%r  exists=%r)"
+            % (
+                period,
+                expected_existence,
+                exist,
+            )
         )
 
     def check_displayTime(self, client, period):
         displayed_period = self.get_room_settings(client)["period"][0:-3]
         print("Time displayed (%r) - Atjobs (%r)" % (displayed_period, period))
-        assert (
-            period == displayed_period
-        ), "Time displayed (%r) is different from time at Atjobs (%r)" % (displayed_period, period)
+        assert period == displayed_period, (
+            "Time displayed (%r) is different from time at Atjobs (%r)" % (displayed_period, period)
+        )
 
     def test_time_settings(self, client):
         self.aquire_room(client)
@@ -223,11 +226,12 @@ class Room(object):
 
         # Time field is not considered in the comparision
         current_settings["period"] = settings["period"]
-        assert (
-            current_settings == settings
-        ), "Current settings (%r) are not reset back after the time out, expected (%r)" % (
-            current_settings,
-            settings,
+        assert current_settings == settings, (
+            "Current settings (%r) are not reset back after the time out, expected (%r)"
+            % (
+                current_settings,
+                settings,
+            )
         )
 
         # Checking Atjobs list
@@ -413,9 +417,10 @@ class Room(object):
 
         localCurl.close()
         print("RULE IN CONTROL = ", rule_in_control)
-        assert (
-            rule_in_control == expected_rule
-        ), "rule in control (%s) does not match the expected one (%s)" % (rule_in_control, expected_rule)
+        assert rule_in_control == expected_rule, (
+            "rule in control (%s) does not match the expected one (%s)"
+            % (rule_in_control, expected_rule)
+        )
 
     def test_internetrules_settings(self, school, user, user_dn, ip_address, ucr, client):
         # Create new workgroup and assign new internet rule to it
@@ -858,11 +863,12 @@ class UmcComputer(object):
     def check_query(self, computer_names):
         reqResult = self.query()
         names_in_result = {x["name"] for x in reqResult}
-        assert set(computer_names).issubset(
-            names_in_result
-        ), "computers from query do not contain the existing computers, found (%r), expected (%r)" % (
-            names_in_result,
-            computer_names,
+        assert set(computer_names).issubset(names_in_result), (
+            "computers from query do not contain the existing computers, found (%r), expected (%r)"
+            % (
+                names_in_result,
+                computer_names,
+            )
         )
 
     def verify_ldap(self, should_exist):
@@ -883,9 +889,7 @@ def create_homedirs(member_dn_list, open_ldap_co):
 
 
 @SetTimeout
-def check_create_share_folder(
-    share, username, dir_name, samba_workstation=""
-):  # type: (str, str, str, str) -> None
+def check_create_share_folder(share, username, dir_name, samba_workstation=""):  # type: (str, str, str, str) -> None
     """test if a user can create folders inside a given share, i.e. they have edit rights."""
     cmd = "smbclient -U {}%univention {} -c 'mkdir {}' ".format(
         shlex.quote(username), shlex.quote(share), dir_name
@@ -893,14 +897,12 @@ def check_create_share_folder(
     if samba_workstation:
         cmd += " --netbiosname={}".format(shlex.quote(samba_workstation))
     rv, stdout, stderr = exec_cmd(cmd, log=True, raise_exc=True, shell=True)  # noqa: S604
-    assert (
-        "NT_STATUS_ACCESS_DENIED" not in stdout
-    ), "Failed to create folder, got NT_STATUS_ACCESS_DENIED: {}".format(stdout)
+    assert "NT_STATUS_ACCESS_DENIED" not in stdout, (
+        "Failed to create folder, got NT_STATUS_ACCESS_DENIED: {}".format(stdout)
+    )
 
 
-def check_change_permissions(
-    filename, user_name, allowed, samba_workstation=""
-):  # type: (str, str, bool, str) -> None
+def check_change_permissions(filename, user_name, allowed, samba_workstation=""):  # type: (str, str, bool, str) -> None
     """test if user can change the permissions a given file in a share folder."""
     new_acl = "ACL:Everyone:ALLOWED/OI|CI|I/FULL"
     cmd = "echo 'univention' | smbcacls {} --user={} --add '{}'".format(filename, user_name, new_acl)

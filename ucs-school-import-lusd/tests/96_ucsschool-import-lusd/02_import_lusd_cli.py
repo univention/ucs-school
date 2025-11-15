@@ -89,9 +89,9 @@ def get_test_data(dienststellennummern: List[str], lusd_role: str) -> Any:
             test_data[0]["antwort"][lusd_role].append(new_person)
         for person in prepared_data[0]["antwort"][lusd_role]:
             new_person = copy.deepcopy(person)
-            new_person[
-                lusd_uid[lusd_role]
-            ] = f"{person[lusd_uid[lusd_role]]}-{dienststellennummer}-multi"
+            new_person[lusd_uid[lusd_role]] = (
+                f"{person[lusd_uid[lusd_role]]}-{dienststellennummer}-multi"
+            )
             new_person["dienststellennummer"] = dienststellennummer
             test_data[0]["antwort"][lusd_role].append(new_person)
     return test_data
@@ -191,7 +191,7 @@ class ServerTestHandler(BaseHTTPRequestHandler):
                             "schulen": [
                                 {
                                     "dienststellennummer": f""
-                                    f'{post_data[0]["parameter"]["schulDienststellennummern"]}',
+                                    f"{post_data[0]['parameter']['schulDienststellennummern']}",
                                     "a_lot_of_other_data": "data",
                                     "schultraeger": schultraeger,
                                 },
@@ -460,12 +460,15 @@ def test_school_move(
         json.dump(test_data_school2, fp)
     subprocess.check_call([LUSD_SCRIPT_PATH, "--skip-fetch"], env=test_env)  # nosec
     assert search_imported_users()
-    assert f"ou={schools[0]}" in lo.searchDn(
-        filter_format(
-            "(&(ucsschoolSourceUID=%s)(ucsschoolRecordUID=%s))",
-            (TEST_SOURCE_UID, test_data[0]["antwort"][lusd_role][1][lusd_uid[lusd_role]]),
-        )
-    )[0]
+    assert (
+        f"ou={schools[0]}"
+        in lo.searchDn(
+            filter_format(
+                "(&(ucsschoolSourceUID=%s)(ucsschoolRecordUID=%s))",
+                (TEST_SOURCE_UID, test_data[0]["antwort"][lusd_role][1][lusd_uid[lusd_role]]),
+            )
+        )[0]
+    )
 
     # Now move one person to school2
     test_data_school1 = copy.deepcopy(test_data)
@@ -478,12 +481,15 @@ def test_school_move(
         json.dump(test_data_school2, fp)
     subprocess.check_call([LUSD_SCRIPT_PATH, "--skip-fetch"], env=test_env)  # nosec
     assert lo.searchDn(UCS_TEST_SOURCE_FILTER)
-    assert f"ou={schools[1]}" in lo.searchDn(
-        filter_format(
-            "(&(ucsschoolSourceUID=%s)(ucsschoolRecordUID=%s))",
-            (TEST_SOURCE_UID, test_data[0]["antwort"][lusd_role][1][lusd_uid[lusd_role]]),
-        )
-    )[0]
+    assert (
+        f"ou={schools[1]}"
+        in lo.searchDn(
+            filter_format(
+                "(&(ucsschoolSourceUID=%s)(ucsschoolRecordUID=%s))",
+                (TEST_SOURCE_UID, test_data[0]["antwort"][lusd_role][1][lusd_uid[lusd_role]]),
+            )
+        )[0]
+    )
 
 
 def test_VertreterKlassen(config: None, existing_data: None, schools: List[str]) -> None:

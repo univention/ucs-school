@@ -40,16 +40,16 @@ class SkippedTestWrapper:
         consoleHandler.setFormatter(formatter)
         self.logger.addHandler(consoleHandler)
 
-        assert os.environ.get(
-            "PATH_TO_TEST_FILES"
-        ), "Environment does not specify path to check for missed tests."
+        assert os.environ.get("PATH_TO_TEST_FILES"), (
+            "Environment does not specify path to check for missed tests."
+        )
         self.logger.debug(
             f"Checking skipped tests in subdirectory of {os.environ.get('PATH_TO_TEST_FILES')} ."
         )
 
-        assert os.environ.get(
-            "FAIL_ON_MISSING_SOFTWARE"
-        ), "Environment does not specify failure condition for missing software."
+        assert os.environ.get("FAIL_ON_MISSING_SOFTWARE"), (
+            "Environment does not specify failure condition for missing software."
+        )
         self.logger.debug(
             f"Wrapper is set to fail on missing software: {os.environ.get('FAIL_ON_MISSING_SOFTWARE')} ."
         )
@@ -209,7 +209,7 @@ def test_run_skipped_test(skipped_test):
         wrapper.logger.info(f"Skipped test {skipped_test} was manually disabled from checking.")
         return
 
-    wrapper.logger.info(f"Running check on {fixed_test.replace('temp_','')}")
+    wrapper.logger.info(f"Running check on {fixed_test.replace('temp_', '')}")
     result, content = wrapper.run_single_test(fixed_test)
 
     if result is True:

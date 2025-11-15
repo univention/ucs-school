@@ -262,9 +262,9 @@ def test_base(
     import_file = make_import_file(exporter=HttpApiTestUserCsvExporter(), creator=test_user_creator)
 
     TESTER.log.info("Starting import: Expecting success.")
-    assert successful_import(
-        client, import_file.name, ou_A.name, ldap_connection
-    ), "Import threw an unexpected failure."
+    assert successful_import(client, import_file.name, ou_A.name, ldap_connection), (
+        "Import threw an unexpected failure."
+    )
 
 
 def test_ou_allowed(setup_test, make_import_file):

@@ -187,7 +187,6 @@ class TestSchoolClassAssignmentDomainAdmin(__TestSchoolClassAssignment):
 
 
 class TestSchoolClassAssignmentSchoolAdmin(__TestSchoolClassAssignment):
-
     # The schooladmin has the same primary school as the teacher
 
     @pytest.fixture(scope="class")
@@ -215,7 +214,6 @@ class TestSchoolClassAssignmentSchoolAdmin(__TestSchoolClassAssignment):
 
 
 class TestSchoolClassAssignmentSchoolAdminPrimary(__TestSchoolClassAssignment):
-
     # The schooladmins primary school (this server) is the secondary school for the teacher
 
     @pytest.fixture(scope="class")
@@ -248,7 +246,6 @@ class TestSchoolClassAssignmentSchoolAdminPrimary(__TestSchoolClassAssignment):
 
 
 class TestSchoolClassAssignmentSchoolAdminSecondary(__TestSchoolClassAssignment):
-
     # The schooladmins secondary school is the primary school (this server) for the teacher
 
     @pytest.fixture(scope="class")

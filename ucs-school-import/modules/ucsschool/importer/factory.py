@@ -31,7 +31,6 @@
 
 """Singleton to the factory currently in use."""
 
-
 import importlib
 from typing import TYPE_CHECKING, Optional, Type  # noqa: F401
 

@@ -3,6 +3,7 @@ See
 https://git.knut.univention.de/univention/ucsschool/-/blob/jkoeniger/concept-ram-proposal/doc/devel/ram/concept_proposal.md
 for the requirement identifiers.
 """
+
 import json
 
 from fastapi import FastAPI

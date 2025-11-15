@@ -86,7 +86,6 @@ class Test(CLI_Import_v2_Tester):
                 content = f.read()
 
             if input_encoding == "binary":
-
                 # overwrite csv with binary data
                 with open(fn_csv, "wb") as g:
                     g.write(bytes(range(256)))
@@ -95,7 +94,6 @@ class Test(CLI_Import_v2_Tester):
                 self.log.info("OK: Expected failure with encoding 'binary'.")
 
             elif input_encoding == "utf-16-no-bom":
-
                 # run import with expected failure due to missing BOM
                 write_formatted_csv(fn_csv, input_encoding, content)
                 self.check_logfile_error(fn_config, fn_csv)

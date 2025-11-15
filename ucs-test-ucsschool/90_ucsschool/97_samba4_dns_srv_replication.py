@@ -259,7 +259,7 @@ class TestS4DNSSRVReplication(TestSamba4):
             % (action.upper(), test_location, records)
         )
 
-        dns_edit_path = "/usr/share/univention-directory-manager-tools/" "univention-dnsedit"
+        dns_edit_path = "/usr/share/univention-directory-manager-tools/univention-dnsedit"
 
         if not path.exists(dns_edit_path):
             print(

@@ -302,8 +302,7 @@ def main():  # type: () -> None
         if not options.ou:
             while True:
                 print(
-                    "Please enter the school name (school OU name) this system shall be responsible "
-                    "for."
+                    "Please enter the school name (school OU name) this system shall be responsible for."
                 )
                 options.ou = input("OU: ")
                 if not is_valid_ou_name(options.ou):

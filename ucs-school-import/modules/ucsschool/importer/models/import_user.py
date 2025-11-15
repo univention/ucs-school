@@ -688,9 +688,7 @@ class ImportUser(User):
             except ValueError:
                 self.logger.error("Could not parse birthday.")
         elif self._schema_write_check("birthday", "birthday", "univentionBirthday"):
-            self.birthday = self.format_from_scheme(
-                "birthday", self.config["scheme"]["birthday"]
-            )  # type: str
+            self.birthday = self.format_from_scheme("birthday", self.config["scheme"]["birthday"])  # type: str
         elif self.old_user:
             self.birthday = self.old_user.birthday
         elif self.birthday == "":
@@ -911,9 +909,7 @@ class ImportUser(User):
         if self.record_uid:
             pass
         elif self._schema_write_check("record_uid", "record_uid", "ucsschoolRecordUID"):
-            self.record_uid = self.format_from_scheme(
-                "record_uid", self.config["scheme"]["record_uid"]
-            )  # type: str
+            self.record_uid = self.format_from_scheme("record_uid", self.config["scheme"]["record_uid"])  # type: str
         elif self.old_user:
             self.record_uid = self.old_user.record_uid
         return self.record_uid or ""

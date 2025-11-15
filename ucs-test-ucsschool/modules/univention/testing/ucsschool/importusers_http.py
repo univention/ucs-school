@@ -101,9 +101,7 @@ class HttpApiImportTester(ImportTestbase):
                 filename=filename, school=school, user_role=role, dryrun=dryrun
             )
             while time.time() - t0 < timeout:
-                job = client.userimportjob.get(
-                    import_job.id
-                )  # type: ResourceRepresentation.UserImportJobResource
+                job = client.userimportjob.get(import_job.id)  # type: ResourceRepresentation.UserImportJobResource
                 if job.status in ("Finished", "Aborted"):
                     return job
                 if job.result and isinstance(job.result.result, dict):

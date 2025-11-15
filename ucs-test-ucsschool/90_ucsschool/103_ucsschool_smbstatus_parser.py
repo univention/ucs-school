@@ -90,10 +90,11 @@ def check_attributes(process, expected_values):
         if attr in expected_values:
             if attr == "ipaddress":
                 value = value.rsplit(":", 1)[0]
-            assert (
-                value == expected_values[attr]
-            ), "Attribute (%s) is parsed wrong as (%s), expected in (%r)" % (
-                attr,
-                value,
-                expected_values[attr],
+            assert value == expected_values[attr], (
+                "Attribute (%s) is parsed wrong as (%s), expected in (%r)"
+                % (
+                    attr,
+                    value,
+                    expected_values[attr],
+                )
             )

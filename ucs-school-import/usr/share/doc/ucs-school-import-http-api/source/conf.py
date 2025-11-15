@@ -106,9 +106,9 @@ source_suffix = ".rst"
 master_doc = "index"
 
 # General information about the project.
-project = u"UCS@school HTTP-API import documentation"
-copyright = u"2019-2021, ucsschool-maintainers@univention.de"
-author = u"ucsschool-maintainers@univention.de"
+project = "UCS@school HTTP-API import documentation"
+copyright = "2019-2021, ucsschool-maintainers@univention.de"
+author = "ucsschool-maintainers@univention.de"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -329,8 +329,8 @@ latex_documents = [
     (
         master_doc,
         "UCSschoolHTTP-APIimportdocumentation.tex",
-        u"UCS@school HTTP-API import documentation Documentation",
-        u"ucsschool-maintainers@univention.de",
+        "UCS@school HTTP-API import documentation Documentation",
+        "ucsschool-maintainers@univention.de",
         "manual",
     ),
 ]
@@ -376,7 +376,7 @@ man_pages = [
     (
         master_doc,
         "ucsschoolhttp-apiimportdocumentation",
-        u"UCS@school HTTP-API import documentation Documentation",
+        "UCS@school HTTP-API import documentation Documentation",
         [author],
         1,
     )
@@ -396,7 +396,7 @@ texinfo_documents = [
     (
         master_doc,
         "UCSschoolHTTP-APIimportdocumentation",
-        u"UCS@school HTTP-API import documentation Documentation",
+        "UCS@school HTTP-API import documentation Documentation",
         author,
         "UCSschoolHTTP-APIimportdocumentation",
         "One line description of project.",

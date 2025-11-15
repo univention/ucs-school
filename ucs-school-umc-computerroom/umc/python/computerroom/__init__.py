@@ -257,7 +257,6 @@ class PeriodSanitizer(StringSanitizer):
 
 
 class ComputerSanitizer(StringSanitizer):
-
     instance = None
 
     def _sanitize(self, value, name, further_args):
@@ -306,7 +305,6 @@ class ComputerRoomDNSanitizer(DNSanitizer):
 
 
 class Plugin(object):
-
     gettext_domain = "ucs-school-umc-computerroom"
 
     def __init__(self, computerroom, manager):

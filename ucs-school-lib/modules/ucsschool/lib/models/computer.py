@@ -310,11 +310,11 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
 
     def get_ipv4_network(self):  # type: () -> IPv4Interface
         if self.subnet_mask is not None and len(self.ip_address) > 0:
-            network_str = u"%s/%s" % (self.ip_address[0], self.subnet_mask)
+            network_str = "%s/%s" % (self.ip_address[0], self.subnet_mask)
         elif len(self.ip_address) > 0:
-            network_str = u"%s" % (self.ip_address[0],)
+            network_str = "%s" % (self.ip_address[0],)
         else:
-            network_str = u""
+            network_str = ""
         try:
             return IPv4Interface(network_str)
         except (AddressValueError, NetmaskValueError, ValueError):
@@ -380,7 +380,7 @@ class SchoolComputer(UCSSchoolHelperAbstractClass):
                 (
                     network[1]["cn"][0].decode("UTF-8"),
                     IPv4Interface(
-                        u"%s/%s"
+                        "%s/%s"
                         % (
                             network[1]["univentionNetwork"][0].decode("utf-8"),
                             network[1]["univentionNetmask"][0].decode("utf-8"),

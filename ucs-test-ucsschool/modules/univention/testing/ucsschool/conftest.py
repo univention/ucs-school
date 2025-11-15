@@ -584,9 +584,9 @@ def check_pdfprinter_spool_permissions():
         file_owner = os.stat(spool_dir).st_uid
         user_uid = pwd.getpwnam(username).pw_uid
         print(f"*** Directory {spool_dir}:  expected={user_uid}  found={file_owner}")
-        assert (
-            file_owner == user_uid
-        ), f"Directory {spool_dir} has invalid owner: expected={user_uid}  found={file_owner}"
+        assert file_owner == user_uid, (
+            f"Directory {spool_dir} has invalid owner: expected={user_uid}  found={file_owner}"
+        )
 
     return _func
 

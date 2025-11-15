@@ -49,9 +49,9 @@ class Test(CLI_Import_v2_Tester):
         )
 
         assert csv_mapping is not None, "Could not find CSV mapping in command line arguments"
-        assert (
-            csv_mapping.group(1) == "'lastname': 'lastname', 'name': 'name'"
-        ), "CSV mapping in command line arguments is not correct: %s" % csv_mapping.group(1)
+        assert csv_mapping.group(1) == "'lastname': 'lastname', 'name': 'name'", (
+            "CSV mapping in command line arguments is not correct: %s" % csv_mapping.group(1)
+        )
 
 
 if __name__ == "__main__":

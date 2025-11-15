@@ -31,6 +31,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 """This module check the constistency of USC@school users, shares and groups"""
+
 import re
 import sys
 from typing import Dict, List, Optional, Tuple  # noqa: F401
@@ -142,9 +143,7 @@ class UserCheck(object):
 
         return errors
 
-    def get_users_from_ldap(
-        self, school, users
-    ):  # type: (str, List[str]) -> Tuple[str, Dict[str, List[bytes]]]
+    def get_users_from_ldap(self, school, users):  # type: (str, List[str]) -> Tuple[str, Dict[str, List[bytes]]]
         ldap_user_list = []
         if users:
             for user_dn in users:

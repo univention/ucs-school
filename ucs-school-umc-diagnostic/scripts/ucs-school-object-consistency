@@ -31,6 +31,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 """This module checks the consistency of USC@school users, shares, containers and groups"""
+
 import argparse
 
 from ucsschool.lib import consistency

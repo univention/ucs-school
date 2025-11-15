@@ -190,7 +190,7 @@ def test_restriction_max_legal_guardians(udm_session):
 
     expected_exception_regex = (
         r".*This student would have "
-        + re.escape(f"{MAX_LEGAL_GUARDIANS+1}")
+        + re.escape(f"{MAX_LEGAL_GUARDIANS + 1}")
         + r" assigned legal guardians, which is above the maximum allowed"
         + r" number of assigned legal guardians.*"
     )

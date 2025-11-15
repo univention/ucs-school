@@ -83,7 +83,7 @@ class UcsschoolPurgeTimestamp(simpleHook):
         """Convert b'20090101000000Z' to u'2009-01-01'. Ignores timezones."""
         ldap_val = ldap_val.decode("utf-8")
         if not ldap_val:
-            return u""
+            return ""
         ldap_date = datetime.datetime.strptime(ldap_val, cls.ldap_date_format)
         return ldap_date.strftime(cls.udm_date_format)
 

@@ -110,8 +110,9 @@ class UserImportJobCreationValidator(object):
             username=self.request.user.username, school=data["school"].name, role=data["user_role"]
         ):
             msg = (
-                "User {!r} is not allowed to start an import job for school {!r} and role "
-                "{!r}.".format(self.request.user.username, data["school"].name, data["user_role"])
+                "User {!r} is not allowed to start an import job for school {!r} and role {!r}.".format(
+                    self.request.user.username, data["school"].name, data["user_role"]
+                )
             )
             self.logger.error(msg)
             raise PermissionDenied(msg)

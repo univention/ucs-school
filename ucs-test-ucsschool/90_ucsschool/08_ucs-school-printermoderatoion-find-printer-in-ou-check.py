@@ -53,14 +53,14 @@ def test_ucs_school_printermoderatoion_find_printer_in_ou(schoolenv, ucr):
 
     # check if the printer exists in the correct OU
     for _i in range(5):
-        assert printerExist(
-            connection, newPrinterName, schoolName1
-        ), "Printer not found in the specified OU"
+        assert printerExist(connection, newPrinterName, schoolName1), (
+            "Printer not found in the specified OU"
+        )
 
         for school in [schoolName2, schoolName3]:
-            assert not printerExist(
-                connection, newPrinterName, school
-            ), "Printer underneath of wrong OU was found."
+            assert not printerExist(connection, newPrinterName, school), (
+                "Printer underneath of wrong OU was found."
+            )
 
     # delete the created printer
     doPrinter("D", newPrinterName, schoolName1, host, domainname)

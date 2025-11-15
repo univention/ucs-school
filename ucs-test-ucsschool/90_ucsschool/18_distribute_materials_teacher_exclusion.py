@@ -96,16 +96,16 @@ def test_exclude_teachers_from_distribution(
     # Cannot use 'check_distribute' here, since it only checks students and mapps
     # all users to students even if they are not.
     result, user, path = _check_recipients(expected_recipients, project.name, school, True)
-    assert (
-        result
-    ), f"Expected files for user {user.object} of project {project.name} not found! \
+    assert result, (
+        f"Expected files for user {user.object} of project {project.name} not found! \
         Distribution failed cannot find: {path}"
+    )
 
     result, user, path = _check_recipients(excluded_recipients, project.name, school, False)
-    assert (
-        result
-    ), f"Unexpected files for user {user.object} of project {project.name} found! \
+    assert result, (
+        f"Unexpected files for user {user.object} of project {project.name} found! \
         Distribution failed found: {path}"
+    )
 
     project.remove()
     project.check_remove()

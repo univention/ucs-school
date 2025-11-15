@@ -90,9 +90,7 @@ class Log(object):
         cls.emit(ud.WARN, msg)
 
 
-def relevant_change(
-    old, new, attr_list
-):  # type: (Dict[str,List[bytes]], Dict[str,List[bytes]], List[str]) -> bool
+def relevant_change(old, new, attr_list):  # type: (Dict[str,List[bytes]], Dict[str,List[bytes]], List[str]) -> bool
     """
     Check for differences between old and new.
 

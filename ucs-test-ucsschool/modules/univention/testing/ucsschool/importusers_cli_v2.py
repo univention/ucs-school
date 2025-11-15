@@ -150,9 +150,7 @@ class MyHook(UserPyHook):
             user.modify(self.lo)
         fn_touchfile = os.path.join(%(tmpdir)r, '%%s-%%s' %% (when, action))
         open(fn_touchfile, 'w').write('EXECUTED\\n')
-""" % {
-            "tmpdir": self.tmpdir
-        }
+""" % {"tmpdir": self.tmpdir}
 
         fn = os.path.join(self.hook_basedir, fn)
         self.cleanup_files.add(fn)
@@ -356,7 +354,7 @@ class ImportTestbase(object):
                     member_uid=member_uid,
                     is_member=is_member,
                     try_resync=False,
-                    **kwargs
+                    **kwargs,
                 )
         return res
 

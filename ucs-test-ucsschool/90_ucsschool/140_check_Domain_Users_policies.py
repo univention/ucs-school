@@ -19,9 +19,10 @@ def test_check_domain_users_policies(schoolenv, ucr):
     domain_users = lo.get(
         "cn=Domain Users %s,cn=groups,ou=%s,%s" % (school, school, ucr.get("ldap/base"))
     )
-    assert policy_dn.encode("UTF-8") in domain_users.get(
-        "univentionPolicyReference", []
-    ), "The policy %r is not connected to the 'Domain Users %s' group, but should be." % (
-        policy_dn,
-        school,
+    assert policy_dn.encode("UTF-8") in domain_users.get("univentionPolicyReference", []), (
+        "The policy %r is not connected to the 'Domain Users %s' group, but should be."
+        % (
+            policy_dn,
+            school,
+        )
     )

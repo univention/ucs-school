@@ -88,7 +88,7 @@ def get_exception_msg(exc):  # TODO: str(exc) would be nicer, Bug #27940, 30089,
 def udm_admin_save_user_with_extended_attributes(dn):
     user = get_udm_user_mod().get(dn)
     try:
-        for (name, default_value) in get_extended_attributes():
+        for name, default_value in get_extended_attributes():
             if not hasattr(user.props, name):
                 setattr(user.props, name, default_value)
         user.save()

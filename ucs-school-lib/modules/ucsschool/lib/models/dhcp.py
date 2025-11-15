@@ -124,7 +124,7 @@ class DHCPService(UCSSchoolHelperAbstractClass):
             }:
                 try:
                     address = ipaddress.IPv4Network(
-                        u"%s/%s"
+                        "%s/%s"
                         % (
                             ucr["interfaces/%s/address" % interface_name],
                             ucr["interfaces/%s/netmask" % interface_name],
@@ -236,7 +236,7 @@ class DHCPSubnet(UCSSchoolHelperAbstractClass):
             return self.dhcp_service.get_udm_object(lo)
 
     def get_ipv4_subnet(self):  # type: () -> ipaddress.IPv4Network
-        network_str = u"%s/%s" % (self.name, self.subnet_mask)
+        network_str = "%s/%s" % (self.name, self.subnet_mask)
         try:
             return ipaddress.IPv4Network(network_str, strict=False)
         except ValueError as exc:

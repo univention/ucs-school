@@ -8,7 +8,7 @@ logs = [
     "ucs-school-import/workers-import",
     "ucs-school-import/gunicorn_access",
     "ucs-school-import/gunicorn_error",
-    "ucs-school-import/import-configuration-error"
+    "ucs-school-import/import-configuration-error",
 ]
 
 for name in logs:
@@ -19,8 +19,8 @@ for name in logs:
         print("\t%s" % settings[setting])
 
     # Add additional entry to trigger a daemon restart for reloading of logfiles
-    print('\tlastaction')
-    print('\t\tsystemctl try-restart ucs-school-import-http-api.service')
-    print('\tendscript')
+    print("\tlastaction")
+    print("\t\tsystemctl try-restart ucs-school-import-http-api.service")
+    print("\tendscript")
     print("}")
 @!@

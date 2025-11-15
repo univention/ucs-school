@@ -330,9 +330,7 @@ def add_module_logger_to_schoollib():
         logger.info("add_module_logger_to_schoollib() should only be called once! Skipping...")
 
 
-def create_passwd(
-    length=8, dn=None, specials="$%&*-+=:.?"
-):  # type: (Optional[int], Optional[str], Optional[str]) -> str
+def create_passwd(length=8, dn=None, specials="$%&*-+=:.?"):  # type: (Optional[int], Optional[str], Optional[str]) -> str
     """pseudorandom!"""
     assert length > 0
 

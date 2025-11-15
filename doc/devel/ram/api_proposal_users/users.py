@@ -132,7 +132,7 @@ async def patch_user(
         404: {
             "model": Union[other_common_responses[404].get("model"), DetailException],  # noqa: F821
             "description": (
-                f"{other_common_responses[404].get('description')} " "Or if the target does not exist."
+                f"{other_common_responses[404].get('description')} Or if the target does not exist."
             ),
         },
     },
@@ -165,7 +165,7 @@ async def delete_user(
         404: {
             "model": Union[other_common_responses[404].get("model"), DetailException],  # noqa: F821
             "description": (
-                f"{other_common_responses[404].get('description')} " "Or if none of targets exist."
+                f"{other_common_responses[404].get('description')} Or if none of targets exist."
             ),
         },
     },
@@ -250,7 +250,7 @@ async def create_user(
         404: {
             "model": Union[other_common_responses[404].get("model"), DetailException],  # noqa: F821
             "description": (
-                f"{other_common_responses[404].get('description')} " "Or if the target does not exist."
+                f"{other_common_responses[404].get('description')} Or if the target does not exist."
             ),
         },
     },
@@ -260,7 +260,7 @@ async def list_users(
     group: str = Query(
         None,
         description=(
-            "Name of school class or work group (in the chosen school), users must be " "members of."
+            "Name of school class or work group (in the chosen school), users must be members of."
         ),
     ),
     role: SchoolUserRole = Query(
@@ -275,7 +275,7 @@ async def list_users(
     quick_search: str = Query(
         None,
         description=(
-            "Text will be searched for in 'firstname', 'lastname', 'username' and" " 'record_uid'."
+            "Text will be searched for in 'firstname', 'lastname', 'username' and 'record_uid'."
         ),
     ),
     inexact_quick_search: Optional[bool] = Query(

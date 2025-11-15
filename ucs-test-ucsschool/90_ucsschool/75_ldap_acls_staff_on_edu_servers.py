@@ -100,15 +100,15 @@ class LDAPACLCheck(UCSTestSchool):
                 bindpw="univention",
                 start_tls=2,
             )
-            assert lo.search(
-                base=self.staff_user.dn, scope="base"
-            ), "teacher is unable to find staff user"
+            assert lo.search(base=self.staff_user.dn, scope="base"), (
+                "teacher is unable to find staff user"
+            )
 
             # test with machine account
             lo = self.open_ldap_connection(machine=True, ldap_server=self.ucr.get("ldap/server/name"))
-            assert lo.search(
-                base=self.staff_user.dn, scope="base"
-            ), "machine account is unable to find staff user"
+            assert lo.search(base=self.staff_user.dn, scope="base"), (
+                "machine account is unable to find staff user"
+            )
         finally:
             cmd_list = [
                 "/usr/sbin/ucr set ucsschool/ldap/replicate_staff_to_edu={}".format(old_value),

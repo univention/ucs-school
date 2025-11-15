@@ -55,9 +55,7 @@ ucr.load()
 MIME_TYPE = magic.open(magic.MAGIC_MIME_TYPE)
 MIME_TYPE.load()
 __resource_client_class_registry = []  # type: List[Client._ResourceClient]
-__resource_representation_class_registry = (
-    {}
-)  # type: Dict[str, ResourceRepresentation._ResourceReprBase]
+__resource_representation_class_registry = {}  # type: Dict[str, ResourceRepresentation._ResourceReprBase]
 
 
 def register_resource_client_class(cls):
@@ -370,7 +368,7 @@ class Client(object):
         log_level=logging.INFO,
         ssl_verify=True,
         *args,
-        **kwargs
+        **kwargs,
     ):
         """
         UCS@school HTTP API client.
@@ -468,7 +466,7 @@ class Client(object):
             params=params,
             auth=(self.username, self.password),
             headers={"Accept": "application/json"},
-            **kwargs
+            **kwargs,
         )
         # TODO: add language to request for translated displayNames. something like:
         # request_kwargs['headers']['Accept-Language'] ='de_DE'

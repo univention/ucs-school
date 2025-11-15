@@ -96,9 +96,7 @@ class Hook(PyHook):
             raise TypeError('Hooks "model" attribute must be a ucsschool.lib.model class object.')
 
         self.lo = lo  # type: LoType
-        self.logger = logging.getLogger(
-            "ucsschool.lib.hook.{}".format(self.__class__.__name__)
-        )  # type: logging.Logger
+        self.logger = logging.getLogger("ucsschool.lib.hook.{}".format(self.__class__.__name__))  # type: logging.Logger
         self.ucr = ucr  # type: ConfigRegistry
         self.model.hook_init(self)
 

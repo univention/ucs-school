@@ -14,8 +14,8 @@ else:
         print("\t%s" % settings[setting])
 
     # Add additional entry to trigger a daemon restart for reloading of logfiles
-    print('\tlastaction')
-    print('\t\tsystemctl try-restart ucs-school-netlogon-user-logonscripts.service')
-    print('\tendscript')
+    print("\tlastaction")
+    print("\t\tsystemctl try-restart ucs-school-netlogon-user-logonscripts.service")
+    print("\tendscript")
     print("}")
 @!@

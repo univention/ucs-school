@@ -42,10 +42,11 @@ def test_peap_auth(username, password, radius_secret, should_succeed=True):
         "-" * 40,
     )
     auth_result = peap_auth(username, password, radius_secret)
-    assert (
-        auth_result == should_succeed
-    ), "PEAP authentication unexpected result (%r), while the expected is (%r)\nUser=%s" % (
-        auth_result,
-        should_succeed,
-        username,
+    assert auth_result == should_succeed, (
+        "PEAP authentication unexpected result (%r), while the expected is (%r)\nUser=%s"
+        % (
+            auth_result,
+            should_succeed,
+            username,
+        )
     )

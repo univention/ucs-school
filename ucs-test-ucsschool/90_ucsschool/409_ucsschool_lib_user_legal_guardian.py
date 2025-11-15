@@ -16,7 +16,6 @@ from ucsschool.lib.models.user import LegalGuardian, Student
 
 
 def test_create_legal_guardian(schoolenv):
-
     ou_name, _ = schoolenv.create_ou(name_edudc=schoolenv.ucr["hostname"])
 
     _, legal_guardian_dn = schoolenv.create_legal_guardian(ou_name=ou_name)
@@ -43,7 +42,6 @@ def test_create_legal_guardian(schoolenv):
 
 
 def test_create_student_with_legal_guardian(schoolenv):
-
     ou_name, _ = schoolenv.create_ou(name_edudc=schoolenv.ucr["hostname"])
 
     _, legal_guardian_dn_1 = schoolenv.create_legal_guardian(ou_name=ou_name)
@@ -66,7 +64,6 @@ def test_create_student_with_legal_guardian(schoolenv):
 
 
 def test_create_legal_guardian_with_legal_ward(schoolenv):
-
     ou_name, _ = schoolenv.create_ou(name_edudc=schoolenv.ucr["hostname"])
     class_name, class_dn = schoolenv.create_school_class(ou_name)
     _, student_dn = schoolenv.create_student(

@@ -197,8 +197,7 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP, changes):
 
     for room, IPs in roomIPs.items():
         f.write("src room-%s {\n" % (quote(room),))
-        for IP in IPs:
-            f.write("	ip	%s\n" % (IP,))
+        f.writelines("	ip	%s\n" % (IP,) for IP in IPs)
         f.write("}\n")
 
     roomlist = []
@@ -211,8 +210,7 @@ def createTemporaryConfig(fn_temp_config, configRegistry, DIR_TEMP, changes):
             roomlist.append(room)
             f.write("src %s {\n" % quote(room))
             ipaddrs = configRegistry[key].split(" ")
-            for ipaddr in ipaddrs:
-                f.write("	 ip %s\n" % ipaddr)
+            f.writelines("	 ip %s\n" % ipaddr for ipaddr in ipaddrs)
             f.write("}\n\n")
         # usergroup
         if key.startswith("proxy/filter/usergroup/"):

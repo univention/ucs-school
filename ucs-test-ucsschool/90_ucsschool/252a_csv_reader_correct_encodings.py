@@ -106,8 +106,7 @@ class Test(CLI_Import_v2_Tester):
 
                     assert (detected_encoding == input_encoding) or (
                         # special case: only used for "utf-16" encodings
-                        detected_encoding
-                        in magic_encoding_repr
+                        detected_encoding in magic_encoding_repr
                     ), "Expected encoding: %s Detected encoding: %s MagicPackageEncodingRepr: %s" % (
                         input_encoding,
                         detected_encoding,

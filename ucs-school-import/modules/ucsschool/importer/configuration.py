@@ -116,14 +116,12 @@ class ConfigurationFile(object):
                 return json.load(fp)
 
         except ValueError as ve:
-
             error = InitialisationError(
                 "Error in configuration file {!r}: {}.".format(self.filename, ve),
                 log_traceback=False,
             )
             self.err_logger.error("InitialisationError: {}".format(error))
         except IOError as exc:
-
             error = InitialisationError(
                 "Error in configuration file {!r}: {}.".format(self.filename, exc),
                 log_traceback=False,

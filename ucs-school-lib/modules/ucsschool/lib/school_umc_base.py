@@ -244,7 +244,7 @@ class SchoolBaseModule(Base):
                 if pattern:
                     search_filter_list.append(LDAP_Filter.forUsers(pattern))
                 # concatenate LDAP filters
-                search_filter = u"{}".format(
+                search_filter = "{}".format(
                     conjunction("&", [parse(subfilter) for subfilter in search_filter_list])
                 )
                 for cls in classes:
@@ -336,7 +336,7 @@ class SchoolBaseModule(Base):
                 for cls in classes:
                     search_filter_list.append(cls.type_filter)
                     # concatenate LDAP filters
-                    search_filter = u"{}".format(
+                    search_filter = "{}".format(
                         user_module.lookup_filter(
                             conjunction("&", [parse(subfilter) for subfilter in search_filter_list])
                         )
@@ -369,7 +369,7 @@ class SchoolBaseModule(Base):
                     # in both cases: ignore user
         else:
             for cls in classes:
-                filter_s = u"{}".format(
+                filter_s = "{}".format(
                     user_module.lookup_filter(
                         conjunction(
                             "&",
@@ -400,9 +400,7 @@ class LDAP_Filter:
         )
 
     @staticmethod
-    def forGroups(
-        pattern, school=None, _escape_filter_chars=True, school_prefix=""
-    ):  # type: (str, Optional[str], Optional[bool], Optional[str]) -> str
+    def forGroups(pattern, school=None, _escape_filter_chars=True, school_prefix=""):  # type: (str, Optional[str], Optional[bool], Optional[str]) -> str
         # school parameter is deprecated
         return LDAP_Filter.forAll(
             pattern,

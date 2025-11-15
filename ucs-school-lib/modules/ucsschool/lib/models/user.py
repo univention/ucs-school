@@ -104,21 +104,13 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         required=True,
         unlikely_to_change=True,
     )  # type: str
-    birthday = Birthday(
-        _("Birthday"), aka=["Birthday", "Geburtstag"], unlikely_to_change=True
-    )  # type: str
-    expiration_date = UserExpirationDate(
-        _("Expiration date"), aka=["Expiration date", "Ablaufdatum"]
-    )  # type: str
+    birthday = Birthday(_("Birthday"), aka=["Birthday", "Geburtstag"], unlikely_to_change=True)  # type: str
+    expiration_date = UserExpirationDate(_("Expiration date"), aka=["Expiration date", "Ablaufdatum"])  # type: str
     email = Email(_("Email"), aka=["Email", "E-Mail"], unlikely_to_change=True)  # type: str
     password = Password(_("Password"), aka=["Password", "Passwort"])  # type: Optional[str]
     disabled = Disabled(_("Disabled"), aka=["Disabled", "Gesperrt"])  # type: bool
-    school_classes = SchoolClassesAttribute(
-        _("Class"), aka=["Class", "Klasse"]
-    )  # type: Dict[str, List[str]]
-    workgroups = WorkgroupsAttribute(
-        _("WorkGroup"), aka=["WorkGroup", "Workgroup"]
-    )  # type: Dict[str, List[str]]
+    school_classes = SchoolClassesAttribute(_("Class"), aka=["Class", "Klasse"])  # type: Dict[str, List[str]]
+    workgroups = WorkgroupsAttribute(_("WorkGroup"), aka=["WorkGroup", "Workgroup"])  # type: Dict[str, List[str]]
 
     type_name = None  # type: str
     type_filter = (
@@ -256,9 +248,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         obj.workgroups = cls.get_workgroups(udm_obj, obj)
         return obj
 
-    def create(
-        self, lo, validate=True, check_password_policies=False
-    ):  # type: (LoType, Optional[bool], Optional[bool]) -> bool
+    def create(self, lo, validate=True, check_password_policies=False):  # type: (LoType, Optional[bool], Optional[bool]) -> bool
         self.check_password_policies = check_password_policies
         return super(User, self).create(lo=lo, validate=validate)
 
@@ -305,9 +295,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             self.password = ""  # nosec
         return success
 
-    def modify(
-        self, lo, validate=True, move_if_necessary=None, check_password_policies=False
-    ):  # type: (LoType, Optional[bool], Optional[bool], Optional[bool]) -> bool
+    def modify(self, lo, validate=True, move_if_necessary=None, check_password_policies=False):  # type: (LoType, Optional[bool], Optional[bool], Optional[bool]) -> bool
         self.check_password_policies = check_password_policies
         return super(User, self).modify(lo=lo, validate=validate, move_if_necessary=move_if_necessary)
 
@@ -446,7 +434,6 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         return groups
 
     def _validate_workgroups(self):
-
         if not isinstance(self.workgroups, Mapping):
             self.add_error(
                 "workgroups",
@@ -500,9 +487,7 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
                 except valueError as exc:
                     self.add_error("school_classes", str(exc))
 
-    def validate(
-        self, lo, validate_unlikely_changes=False, check_name=True
-    ):  # type: (LoType, Optional[bool]) -> None
+    def validate(self, lo, validate_unlikely_changes=False, check_name=True):  # type: (LoType, Optional[bool]) -> None
         super(User, self).validate(
             lo, validate_unlikely_changes=validate_unlikely_changes, check_name=check_name
         )
@@ -575,7 +560,6 @@ class User(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         return True
 
     def remove_from_groups_of_school(self, school, lo):  # type: (str, LoType) -> None
-
         for cls in (SchoolClass, WorkGroup, SchoolGroup):
             for group in cls.get_all(lo, school, filter_format("uniqueMember=%s", (self.dn,))):
                 try:

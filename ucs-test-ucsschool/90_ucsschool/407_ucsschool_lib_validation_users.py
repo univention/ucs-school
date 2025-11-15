@@ -380,9 +380,7 @@ def check_logs(dict_obj, record_tuples, public_logger_name, expected_msg):
     assert "{}".format(dict_obj) not in public_logs
 
 
-def check_did_not_log_any_error(
-    dict_obj, record_tuples, public_logger_name
-):  # type: (dict ,Any, str) -> None
+def check_did_not_log_any_error(dict_obj, record_tuples, public_logger_name):  # type: (dict ,Any, str) -> None
     public_logs = filter_log_messages(record_tuples, public_logger_name)
     secret_logs = filter_log_messages(record_tuples, VALIDATION_LOGGER)
     for log in (public_logs, secret_logs):

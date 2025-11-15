@@ -88,9 +88,7 @@ class _MayHaveSchoolSuffix(object):
 
 
 class EmailAttributesMixin(object):
-    email = Email(
-        _("Email"), udm_name="mailAddress", aka=["Email", "E-Mail"], unlikely_to_change=True
-    )  # type: str
+    email = Email(_("Email"), udm_name="mailAddress", aka=["Email", "E-Mail"], unlikely_to_change=True)  # type: str
     allowed_email_senders_users = Users(
         _("Users that are allowed to send e-mails to the group"), udm_name="allowedEmailUsers"
     )  # type: List[str]

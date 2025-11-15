@@ -101,9 +101,7 @@ def check_init_windows_profiles(member_dn_list, lo):  # type: (List[str], LoType
             )
 
 
-def check_exam_user_home_dir_permissions(
-    member_dn_list, lo, distribution_data_folder
-):  # type: (List[str], LoType, str) -> None
+def check_exam_user_home_dir_permissions(member_dn_list, lo, distribution_data_folder):  # type: (List[str], LoType, str) -> None
     for dn in member_dn_list:
         samba_workstation = lo.getAttr(dn, "sambaUserWorkstations")[0].decode("UTF-8")
         for home_dir in lo.getAttr(dn, "homeDirectory"):
@@ -259,9 +257,9 @@ def test_exam_mode_home_directories(udm_session, schoolenv, ucr):
     wait_for_s4connector()
 
     print("# Checking for changes of NT acls of teachers home directory")
-    assert tea_homedir_nt_acls == get_nt_acls(
-        f"/home/{school}/lehrer/{tea}"
-    ), "NT acls differ from before."
+    assert tea_homedir_nt_acls == get_nt_acls(f"/home/{school}/lehrer/{tea}"), (
+        "NT acls differ from before."
+    )
     assert tea_homedir_nt_acls != "", "No NT acls found."
     _check_for_nt_acl_duplicates(tea_homedir_nt_acls)
 

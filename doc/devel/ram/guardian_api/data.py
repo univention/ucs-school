@@ -1,6 +1,5 @@
 """CRUD operations on Guardian data"""
 
-
 from fastapi import APIRouter, Depends, Request
 from fastapi.security import HTTPBearer
 

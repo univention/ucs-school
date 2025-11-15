@@ -82,9 +82,7 @@ UCSSchoolHelperAbstractClassTV = TypeVar(
 
 PYHOOKS_PATH = "/var/lib/ucs-school-lib/hooks"
 PYHOOKS_BASE_CLASS = "ucsschool.lib.models.hook.Hook"
-_pyhook_loader = lazy_object_proxy.Proxy(
-    lambda: PyHooksLoader(PYHOOKS_PATH, PYHOOKS_BASE_CLASS)
-)  # type: PyHooksLoader
+_pyhook_loader = lazy_object_proxy.Proxy(lambda: PyHooksLoader(PYHOOKS_PATH, PYHOOKS_BASE_CLASS))  # type: PyHooksLoader
 
 
 class NoObject(noObject):
@@ -397,9 +395,7 @@ class UCSSchoolHelperAbstractClass(object):
                             % {"old": old_value},
                         )
 
-    def validate(
-        self, lo, validate_unlikely_changes=False, check_name=True
-    ):  # type: (LoType, Optional[bool], Optional[bool]) -> None
+    def validate(self, lo, validate_unlikely_changes=False, check_name=True):  # type: (LoType, Optional[bool], Optional[bool]) -> None
         from ucsschool.lib.models.school import School
 
         self.errors.clear()

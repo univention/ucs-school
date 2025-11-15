@@ -292,7 +292,7 @@ class Project(_Dict):
     @staticmethod
     def _get_directory_size(src):
         needed_space = 0
-        for (path, _dirs, files) in os.walk(src):
+        for path, _dirs, files in os.walk(src):
             for file in files:
                 filename = os.path.join(path, file)
                 needed_space += os.path.getsize(filename)
@@ -520,7 +520,6 @@ class Project(_Dict):
                 for part in parts:
                     startdir = os.path.join(startdir, part)
                     if os.path.isdir(startdir):  # prevent race conditions with symlink attacs
-
                         # Bug 57661: Only try to change owner/group if it is not already set
                         stat = os.stat(startdir)
                         if not (stat.st_uid == owner and stat.st_gid == group):
@@ -578,7 +577,6 @@ class Project(_Dict):
                 ijob.rm()
 
     def getRecipients(self):
-
         lo, _ = getMachineConnection()
         users = []
         for item in self.recipients:

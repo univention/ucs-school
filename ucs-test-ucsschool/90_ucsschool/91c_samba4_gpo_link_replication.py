@@ -111,10 +111,10 @@ def test_samba4_gpo_link_replication(schoolenv):
         gpo.set_gpo_link_on_slave_via_sambatool()
         # the local LDAP contains the GPO link at oudn but should not:
         assert not check_local_LDAP_for_GPO_link(gpo.gpo_reference, oudn), (
-            "A school DC can set GPO " "links for another OU"
+            "A school DC can set GPO links for another OU"
         )
         gpo.set_gpo_link_on_slave_via_s4connector()
         # the local LDAP should contains the GPO link at oudn:
         assert check_local_LDAP_for_GPO_link(gpo.gpo_reference, oudn), (
-            "A school DC cannot read GPO " "links from other OUs"
+            "A school DC cannot read GPO links from other OUs"
         )

@@ -17,9 +17,10 @@ def test_ucs_version():
 
     subprocess.call(["univention-app", "info"])
     current_version = ucr.get("version/version", "")
-    assert (
-        current_version == EXPECTED_VERSION
-    ), "Expected UCS version (%s) does not match with installed UCS version (%s)!" % (
-        EXPECTED_VERSION,
-        current_version,
+    assert current_version == EXPECTED_VERSION, (
+        "Expected UCS version (%s) does not match with installed UCS version (%s)!"
+        % (
+            EXPECTED_VERSION,
+            current_version,
+        )
     )

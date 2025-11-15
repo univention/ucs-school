@@ -77,8 +77,9 @@ def test_ldap_acls_nonedu_server(schoolenv, ucr):
             raise
         if school.admin_server.dn != dn:
             raise Exception(
-                "Looks like the non-edu domaincontroller dn {} does not match expected "
-                "DN {}\n\n".format(dn, school.admin_server.dn)
+                "Looks like the non-edu domaincontroller dn {} does not match expected DN {}\n\n".format(
+                    dn, school.admin_server.dn
+                )
             )
 
         # Bug 41818: administrative school server can only replicate staff users and

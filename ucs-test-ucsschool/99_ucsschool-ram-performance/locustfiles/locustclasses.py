@@ -71,7 +71,7 @@ class UiUserClient(HttpUser):
         add_auth_token: bool = True,
         headers: Optional[dict] = None,
         response_codes: Optional[Set] = None,
-        **kwargs
+        **kwargs,
     ) -> requests.Response:
         """Wrapper method for HttpUser.client.post, adds auth token automatically"""
         headers = headers or {}

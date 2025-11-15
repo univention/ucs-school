@@ -4,6 +4,7 @@
 
 .. moduleauthor:: Ammar Najjar <najjar@univention.de>
 """
+
 from __future__ import print_function
 
 import univention.admin.uldap
@@ -148,11 +149,12 @@ class School(object):
     def check_query(self, names):
         q = self.query()
         k = [x["name"] for x in q]
-        assert set(names).issubset(
-            set(k)
-        ), "schools from query do not contain the existing schools, found (%r), expected (%r)" % (
-            k,
-            names,
+        assert set(names).issubset(set(k)), (
+            "schools from query do not contain the existing schools, found (%r), expected (%r)"
+            % (
+                k,
+                names,
+            )
         )
 
     def dn(self):

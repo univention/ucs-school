@@ -31,6 +31,7 @@
 This module checks if on a UCS@school singleserver system or a school server from
 UCS@school version 4.4 v9 on, the UCS@school Veyon Proxy app is installed.
 """
+
 from __future__ import absolute_import
 
 import tempfile

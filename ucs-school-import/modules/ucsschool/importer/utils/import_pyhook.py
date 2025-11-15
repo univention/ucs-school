@@ -92,9 +92,7 @@ class ImportPyHook(PyHook):
         else:
             self.dry_run = dry_run
         if lo is None:
-            self.lo = (
-                get_readonly_connection()[0] if self.dry_run else get_admin_connection()[0]
-            )  # type: univention.admin.uldap.access
+            self.lo = get_readonly_connection()[0] if self.dry_run else get_admin_connection()[0]  # type: univention.admin.uldap.access
             """LDAP connection object"""
         else:
             self.lo = lo  # reuse LDAP object

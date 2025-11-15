@@ -64,9 +64,9 @@ class Test(CLI_Import_v2_Tester):
             re.DOTALL,
         )
 
-        assert (
-            stats is not None
-        ), "No statistics found in stderr, probably the import failed for another reason"
+        assert stats is not None, (
+            "No statistics found in stderr, probably the import failed for another reason"
+        )
         assert " Errors: 0" in stats.group(1), "Errors found in statistics: %s" % (stats.group(1),)
 
         usernames = set()
@@ -79,16 +79,16 @@ class Test(CLI_Import_v2_Tester):
                 num_current_usernames = group.count("', '") + 1
 
                 max_users_in_line = max(max_users_in_line, num_current_usernames)
-                assert (
-                    num_current_usernames <= columns
-                ), f"Too many usernames in one line: {num_current_usernames} (should be {columns})"
-        assert (
-            len(usernames) == number_of_users
-        ), f"Not all users were shown: {len(usernames)} out of {number_of_users}"
+                assert num_current_usernames <= columns, (
+                    f"Too many usernames in one line: {num_current_usernames} (should be {columns})"
+                )
+        assert len(usernames) == number_of_users, (
+            f"Not all users were shown: {len(usernames)} out of {number_of_users}"
+        )
         if number_of_users > columns:
-            assert (
-                max_users_in_line == columns
-            ), f"Columns setting not respected: {max_users_in_line} (should be {columns})"
+            assert max_users_in_line == columns, (
+                f"Columns setting not respected: {max_users_in_line} (should be {columns})"
+            )
 
 
 if __name__ == "__main__":

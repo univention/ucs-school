@@ -94,19 +94,17 @@ class PasswordReset(object):
 
         login = self.test_login(user, new_password)
         if change_password_on_next_login:
-            assert (
-                login.status == 401
-            ), "The user could login with new password and chgPwdNextLogin=True: status=%r" % (
-                login.status,
+            assert login.status == 401, (
+                "The user could login with new password and chgPwdNextLogin=True: status=%r"
+                % (login.status,)
             )
-            assert login.result and login.result.get(
-                "password_expired"
-            ), "The password is not expired - as expected"
+            assert login.result and login.result.get("password_expired"), (
+                "The password is not expired - as expected"
+            )
         else:
-            assert (
-                login.status == 200
-            ), "The user could not login with new password and chgPwdNextLogin=False: status=%r" % (
-                login.status,
+            assert login.status == 200, (
+                "The user could not login with new password and chgPwdNextLogin=False: status=%r"
+                % (login.status,)
             )
 
     def assert_password_change_fails(self, user):
@@ -118,9 +116,9 @@ class PasswordReset(object):
             pass  # no permissions to open the UMC module at all :-)
         except HTTPError as exc:
             # LDAP ACL's don't allow password change of that user
-            assert (
-                "permission denied" in str(exc).lower()
-            ), 'Exception did not contain "permission denied": %s' % (exc,)
+            assert "permission denied" in str(exc).lower(), (
+                'Exception did not contain "permission denied": %s' % (exc,)
+            )
         else:
             raise AssertionError("did not fail: %r" % (response,))
 

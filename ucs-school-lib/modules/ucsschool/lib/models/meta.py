@@ -130,7 +130,5 @@ class UCSSchoolHelperMetaClass(type):
         cls = super(UCSSchoolHelperMetaClass, mcs).__new__(mcs, cls_name, bases, dict(attrs))
         cls._attributes = attributes
         cls._meta = UCSSchoolHelperOptions(cls, meta)
-        cls.logger = lazy_object_proxy.Proxy(
-            lambda: logging.getLogger(inspect.getmodule(cls).__name__)
-        )  # type: logging.Logger
+        cls.logger = lazy_object_proxy.Proxy(lambda: logging.getLogger(inspect.getmodule(cls).__name__))  # type: logging.Logger
         return cls

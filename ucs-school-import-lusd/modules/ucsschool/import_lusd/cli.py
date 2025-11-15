@@ -32,6 +32,7 @@ A UCS@school command line interface to fetch
 user and group data from LUSD and import the fetched data into
 the UCS@school domain.
 """
+
 import configparser
 import json
 import logging
@@ -71,7 +72,6 @@ class ConfigurationError(ValueError):
 
 @dataclass(frozen=True)
 class Configuration:
-
     lusd_api_url: str
     lusd_api_oauth_iss: str
     school_authority: str

@@ -6,6 +6,7 @@
 
 .. moduleauthor:: Ammar Najjar <najjar@univention.de>
 """
+
 from __future__ import print_function
 
 import os
@@ -181,9 +182,7 @@ Content-Disposition: form-data; name="uploadType"
 
 html5
 --{0}--
-""".format(
-                boundary, mime_file_name, content_type, f.read(), flavor
-            )
+""".format(boundary, mime_file_name, content_type, f.read(), flavor)
         return data.replace("\n", "\r\n")
 
     def uploadFile(self, file_name, content_type=None, override_file_name=None):

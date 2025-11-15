@@ -283,7 +283,7 @@ class Instance(SchoolBaseModule):
             if "\\" in filename:  # filename seems to be a UNC / windows path
                 filename = filename.rsplit("\\", 1)[-1] or filename.replace("\\", "_").lstrip("_")
                 logger.info(
-                    "Filename seems to contain Windows path name or UNC - " "fixing filename: %r as %r",
+                    "Filename seems to contain Windows path name or UNC - fixing filename: %r as %r",
                     file["filename"],
                     filename,
                 )

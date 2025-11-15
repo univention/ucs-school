@@ -26,7 +26,7 @@ def molotov():
                 scenario,
                 "-p",
                 str(processes),
-                "-r" "1",
+                "-r1",
             ]
         )
 

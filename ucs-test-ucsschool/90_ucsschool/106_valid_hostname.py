@@ -58,11 +58,12 @@ def test_valid_hostname(ucr, schoolenv):
     def process_school(school, dc_name, should_fail=True):
         try:
             ou, oudn = schoolenv.create_ou(ou_name=school, name_edudc=dc_name, use_cache=False)
-            assert (
-                not should_fail
-            ), "Creating a school(%s) with dc_name=%s was possible, expected to fail)" % (
-                school,
-                dc_name,
+            assert not should_fail, (
+                "Creating a school(%s) with dc_name=%s was possible, expected to fail)"
+                % (
+                    school,
+                    dc_name,
+                )
             )
             print(
                 "Creating a school(%s) with dc_name=%s, expected to succeed"
@@ -72,12 +73,13 @@ def test_valid_hostname(ucr, schoolenv):
                 )
             )
         except ValidationError as ex:
-            assert should_fail and "dc_name" in str(
-                ex
-            ), "Creating a school(%s) with dc_name=%s, expected to fail: %s)" % (
-                school,
-                dc_name,
-                str(ex),
+            assert should_fail and "dc_name" in str(ex), (
+                "Creating a school(%s) with dc_name=%s, expected to fail: %s)"
+                % (
+                    school,
+                    dc_name,
+                    str(ex),
+                )
             )
 
     # Using ucs-school-import
@@ -85,11 +87,12 @@ def test_valid_hostname(ucr, schoolenv):
         cmd = ["/usr/share/ucs-school-import/scripts/create_ou", "--verbose", school, dc_name]
         try:
             subprocess.check_call(cmd)
-            assert (
-                not should_fail
-            ), "Creating a school(%s) cli with dc_name=%s was unexpectedly successful" % (
-                school,
-                dc_name,
+            assert not should_fail, (
+                "Creating a school(%s) cli with dc_name=%s was unexpectedly successful"
+                % (
+                    school,
+                    dc_name,
+                )
             )
         except subprocess.CalledProcessError:
             assert should_fail, "Creating a school(%s) cli with dc_name=%s failed unexpectedly" % (
@@ -104,19 +107,21 @@ def test_valid_hostname(ucr, schoolenv):
             school.create()
             created = True
         except AssertionError as ex:
-            assert should_fail and "DC Name:" in str(
-                ex
-            ), "Creating a school(%s) umcp with dc_name=%s, expected to fail: %s)" % (
-                school.name,
-                dc_name,
-                str(ex),
+            assert should_fail and "DC Name:" in str(ex), (
+                "Creating a school(%s) umcp with dc_name=%s, expected to fail: %s)"
+                % (
+                    school.name,
+                    dc_name,
+                    str(ex),
+                )
             )
         else:
-            assert (
-                not should_fail
-            ), "Creating a school(%s) umcp with dc_name=%s was unexpectedly successful" % (
-                school.name,
-                dc_name,
+            assert not should_fail, (
+                "Creating a school(%s) umcp with dc_name=%s was unexpectedly successful"
+                % (
+                    school.name,
+                    dc_name,
+                )
             )
         finally:
             if created:

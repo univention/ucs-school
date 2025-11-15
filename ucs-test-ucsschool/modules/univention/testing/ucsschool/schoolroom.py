@@ -87,9 +87,9 @@ class ComputerRoom(object):
         """
         print("Calling %s for %s" % ("schoolrooms/get", self.dn()))
         reqResult = self.client.umc_command("schoolrooms/get", [self.dn()]).result
-        assert (
-            bool(reqResult[0]["name"]) == should_exist
-        ), "Unexpected fetching result for school room (%r)" % (self.dn())
+        assert bool(reqResult[0]["name"]) == should_exist, (
+            "Unexpected fetching result for school room (%r)" % (self.dn())
+        )
         return reqResult[0]
 
     def check_get(self, expected_attrs):
@@ -98,11 +98,12 @@ class ComputerRoom(object):
         expected attributes.
         """
         current_attrs = self.get()
-        assert (
-            current_attrs == expected_attrs
-        ), "The current attrbutes (%r) do not match the expected ones (%r)" % (
-            current_attrs,
-            expected_attrs,
+        assert current_attrs == expected_attrs, (
+            "The current attrbutes (%r) do not match the expected ones (%r)"
+            % (
+                current_attrs,
+                expected_attrs,
+            )
         )
 
     def query(self):
@@ -118,9 +119,9 @@ class ComputerRoom(object):
 
     def check_query(self, rooms):
         current_rooms = self.query()
-        assert set(rooms).issubset(
-            set(current_rooms)
-        ), "Rooms query result: %r, expected to contain at least:%r" % (current_rooms, rooms)
+        assert set(rooms).issubset(set(current_rooms)), (
+            "Rooms query result: %r, expected to contain at least:%r" % (current_rooms, rooms)
+        )
 
     def put(self, new_attributes):
         """

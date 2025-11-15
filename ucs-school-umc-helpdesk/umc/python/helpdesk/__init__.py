@@ -52,7 +52,7 @@ _ = Translation("ucs-school-umc-helpdesk").translate
 
 def sanitize_header(header):
     for chr_ in "\x00\r\n":
-        header = header.replace(chr_, u"?")
+        header = header.replace(chr_, "?")
     return header
 
 
@@ -83,7 +83,7 @@ class Instance(SchoolBaseModule):
         category = request.options["category"]
         message = request.options["message"]
 
-        subject = u"%s (%s: %s)" % (category, _("School"), school)
+        subject = "%s (%s: %s)" % (category, _("School"), school)
 
         try:
             user = User(None, ldap_user_read, ldap_position, request.user_dn)
@@ -107,28 +107,28 @@ class Instance(SchoolBaseModule):
                 sender = "ucsschool-helpdesk@localhost"
 
         data = [
-            (_("Sender"), u"%s (%s)" % (user["displayName"], request.username)),
+            (_("Sender"), "%s (%s)" % (user["displayName"], request.username)),
             (_("School"), school),
-            (_("Mail address"), u", ".join(mails)),
-            (_("Phone number"), u", ".join(user["phone"])),
+            (_("Mail address"), ", ".join(mails)),
+            (_("Phone number"), ", ".join(user["phone"])),
             (_("Category"), category),
-            (_("Message"), u"\r\n%s" % (message,)),
+            (_("Message"), "\r\n%s" % (message,)),
         ]
-        message = u"\r\n".join(u"%s: %s" % (key, value) for key, value in data)
+        message = "\r\n".join("%s: %s" % (key, value) for key, value in data)
 
         MODULE.info(
             "sending message: %s" % ("\n".join(repr(x.strip()) for x in message.splitlines())),
         )
 
-        msg = u"From: %s\r\n" % (sanitize_header(sender),)
-        msg += u"To: %s\r\n" % (sanitize_header(", ".join(recipients)),)
-        msg += u"Subject: =?UTF-8?Q?%s?=\r\n" % (
+        msg = "From: %s\r\n" % (sanitize_header(sender),)
+        msg += "To: %s\r\n" % (sanitize_header(", ".join(recipients)),)
+        msg += "Subject: =?UTF-8?Q?%s?=\r\n" % (
             codecs.encode(sanitize_header(subject).encode("utf-8"), "quopri")
         ).decode("ASCII")
-        msg += u'Content-Type: text/plain; charset="UTF-8"\r\n'
-        msg += u"\r\n"
+        msg += 'Content-Type: text/plain; charset="UTF-8"\r\n'
+        msg += "\r\n"
         msg += message
-        msg += u"\r\n"
+        msg += "\r\n"
         msg = msg.encode("UTF-8")
 
         server = smtplib.SMTP("localhost")

@@ -350,9 +350,9 @@ class Person(object):
             server = "\\\\%s" % query_result[0][1].get("cn")[0].decode("UTF-8")
         else:
             server = "%LOGONSERVER%"
-        self._samba_info[school_base][
-            "WindowsProfileServer"
-        ] = "{}\\%USERNAME%\\windows-profiles\\default".format(server)
+        self._samba_info[school_base]["WindowsProfileServer"] = (
+            "{}\\%USERNAME%\\windows-profiles\\default".format(server)
+        )
 
     def get_samba_home_path_server(self):
         sambahome = configRegistry.get("ucsschool/import/set/sambahome")

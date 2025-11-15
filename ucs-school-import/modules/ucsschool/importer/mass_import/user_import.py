@@ -251,8 +251,7 @@ class UserImport(object):
                     six.reraise(
                         UserValidationError,
                         UserValidationError(
-                            "ValidationError when {} {} "
-                            "(source_uid:{} record_uid: {}): {}".format(
+                            "ValidationError when {} {} (source_uid:{} record_uid: {}): {}".format(
                                 action_str.lower(),
                                 user,
                                 user.source_uid,

@@ -433,10 +433,10 @@ class LDAPACLCheck(AutoMultiSchoolEnv):
                 )
                 seen_attributes = lo.get(str(dn))
                 for attr_name in expected_password_attributes:
-                    assert (
-                        attr_name in seen_attributes
-                    ), "Did not found expected password attribute {} for non-school user {}.".format(
-                        attr_name, dn
+                    assert attr_name in seen_attributes, (
+                        "Did not found expected password attribute {} for non-school user {}.".format(
+                            attr_name, dn
+                        )
                     )
 
 

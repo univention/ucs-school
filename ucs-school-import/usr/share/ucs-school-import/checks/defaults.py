@@ -36,7 +36,6 @@ See docstring of module ucsschool.importer.utils.configuration_checks on how to
 add your own checks.
 """
 
-
 import re
 import string
 

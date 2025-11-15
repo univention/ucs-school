@@ -671,7 +671,6 @@ def get_computer_dn(name):
 
 
 def import_networks(router_only=False):
-
     # usage
     usage = "%prog [options] <importFile>\n"
     if router_only:
@@ -726,7 +725,7 @@ def import_networks(router_only=False):
 
             # convert parameters to ipaddress.IPv4Network
             if "/" not in network:
-                network = u"%s/%s" % (network, default_prefixlen)
+                network = "%s/%s" % (network, default_prefixlen)
                 try:
                     network = ipaddress.IPv4Network(network, strict=False)
                 except ipaddress.AddressValueError as e:
@@ -742,7 +741,7 @@ def import_networks(router_only=False):
                 )
             else:
                 try:
-                    network = ipaddress.IPv4Network(u"%s" % (network,), strict=False)
+                    network = ipaddress.IPv4Network("%s" % (network,), strict=False)
                 except ipaddress.AddressValueError as e:
                     print(line.strip())
                     print("ERROR: %s is not a valid ip address" % e)
@@ -760,13 +759,13 @@ def import_networks(router_only=False):
                 iprangeStart = ""
                 iprangeEnd = ""
                 try:
-                    iprangeStart = ipaddress.IPv4Address(u"%s" % (tmp[0],))
+                    iprangeStart = ipaddress.IPv4Address("%s" % (tmp[0],))
                 except ipaddress.AddressValueError as e:
                     print(line.strip())
                     print("ERROR: %s is not a valid ip address" % e)
                     continue
                 try:
-                    iprangeEnd = ipaddress.IPv4Address(u"%s" % (tmp[1],))
+                    iprangeEnd = ipaddress.IPv4Address("%s" % (tmp[1],))
                 except ipaddress.AddressValueError as e:
                     print(line.strip())
                     print("ERROR: %s is not a valid ip address" % e)
@@ -785,21 +784,21 @@ def import_networks(router_only=False):
 
             if defaultrouter:
                 try:
-                    defaultrouter = ipaddress.IPv4Address(u"%s" % (defaultrouter,))
+                    defaultrouter = ipaddress.IPv4Address("%s" % (defaultrouter,))
                 except ipaddress.AddressValueError as e:
                     print(line.strip())
                     print("ERROR: %s is not a valid ip address" % e)
                     continue
             if nameserver:
                 try:
-                    nameserver = ipaddress.IPv4Address(u"%s" % (nameserver,))
+                    nameserver = ipaddress.IPv4Address("%s" % (nameserver,))
                 except ipaddress.AddressValueError as e:
                     print(line.strip())
                     print("ERROR: %s is not a valid ip address" % e)
                     continue
             if netbiosserver:
                 try:
-                    netbiosserver = ipaddress.IPv4Address(u"%s" % (netbiosserver,))
+                    netbiosserver = ipaddress.IPv4Address("%s" % (netbiosserver,))
                 except ipaddress.AddressValueError as e:
                     print(line.strip())
                     print("ERROR: %s is not a valid ip address" % e)
@@ -825,7 +824,6 @@ def import_networks(router_only=False):
 
 
 def set_inventory_number_for_computer():
-
     # usage
     usage = "%prog [options] <importFile>\n"
     usage += "  modifies computer inventory number according to import file for UCS@school\n\n"
@@ -1097,7 +1095,6 @@ def import_group():
 
     with stopped_notifier():
         for line in inf:
-
             if emptyLineRe.match(line):
                 continue
 
@@ -1292,7 +1289,6 @@ def activate_groupmembers():
         )
         out_line = ("%%s%(sep)s" * 8 + "\n") % {"sep": sepchar}
         for grp in objects:
-
             # get group members
             if "uniqueMember" in grp.oldattr:
                 grpmembers = grp.oldattr["uniqueMember"]

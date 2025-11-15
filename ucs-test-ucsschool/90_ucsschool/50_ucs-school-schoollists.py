@@ -17,7 +17,7 @@ from univention.udm import UDM
 
 
 def get_random_special_name():
-    return uts.random_string() + "\U0001F680"
+    return uts.random_string() + "\U0001f680"
 
 
 @pytest.fixture(scope="module")
@@ -151,15 +151,15 @@ def test_ucs_school_schoollists(ucr, env_test, language, separator, exclude, gro
     # build filename without timestamp
     expected_filename = f"{options['school']}-{classname}"
 
-    assert filename.startswith(
-        expected_filename
-    ), f"Received malformatted filename {filename}. Expected: {expected_filename}"
+    assert filename.startswith(expected_filename), (
+        f"Received malformatted filename {filename}. Expected: {expected_filename}"
+    )
 
     # Bug #57018 - correct mimetype in response headers
     expected_mimetype = f'text/csv; charset="{"utf-8" if separator == "," else "utf-16"}"'
     assert expected_mimetype == response.headers["Content-Type"], (
         f'Expected {expected_mimetype} as "Content-Type" header of response.'
-        f'Got: {response.headers["Content-Type"]}'
+        f"Got: {response.headers['Content-Type']}"
     )
 
     encoding = "utf-16le" if separator == "\t" else "utf-8"

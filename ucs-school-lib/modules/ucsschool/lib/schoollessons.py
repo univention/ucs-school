@@ -48,7 +48,6 @@ _ = Translation("python-ucs-school").translate
 
 
 class Lesson(object):
-
     TIME_REGEX = re.compile(r"^([01][0-9]|2[0-3]|[0-9]):([0-5][0-9])")
 
     def __init__(self, name, begin, end):

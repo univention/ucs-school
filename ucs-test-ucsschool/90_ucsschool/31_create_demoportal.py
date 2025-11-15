@@ -135,21 +135,15 @@ def test_create_school_doesnt_create_existing_school(
         "ucsschool.lib.models.School.from_binddn", return_value=[random_school]
     ) as from_binddn_mock, patch.object(
         create_demoportal_module, "SchoolClass"
-    ) as school_class_mock, patch.object(
-        create_demoportal_module, "Staff"
-    ) as staff_mock, patch.object(
+    ) as school_class_mock, patch.object(create_demoportal_module, "Staff") as staff_mock, patch.object(
         create_demoportal_module, "Student"
-    ) as student_mock, patch.object(
-        create_demoportal_module, "Teacher"
-    ) as teacher_mock, patch.object(
+    ) as student_mock, patch.object(create_demoportal_module, "Teacher") as teacher_mock, patch.object(
         create_demoportal_module, "LegalGuardian"
     ) as legal_guardian_mock, patch.object(
         create_demoportal_module.module_groups, "lookup", return_value=[SchoolMock()]
     ), patch.object(
         create_demoportal_module, "demo_password", uts.random_string()
-    ) as demo_password, patch.object(
-        create_demoportal_module, "lo", lo
-    ):
+    ) as demo_password, patch.object(create_demoportal_module, "lo", lo):
         create_demoportal_module.create_school()
 
     check_create_demoportal_call_lists(
@@ -176,21 +170,15 @@ def test_create_school_creates_missing_school(
         "ucsschool.lib.models.School.from_binddn", return_value=[]
     ) as from_binddn_mock, patch.object(
         create_demoportal_module, "SchoolClass"
-    ) as school_class_mock, patch.object(
-        create_demoportal_module, "Staff"
-    ) as staff_mock, patch.object(
+    ) as school_class_mock, patch.object(create_demoportal_module, "Staff") as staff_mock, patch.object(
         create_demoportal_module, "Student"
-    ) as student_mock, patch.object(
-        create_demoportal_module, "Teacher"
-    ) as teacher_mock, patch.object(
+    ) as student_mock, patch.object(create_demoportal_module, "Teacher") as teacher_mock, patch.object(
         create_demoportal_module, "LegalGuardian"
     ) as legal_guardian_mock, patch.object(
         create_demoportal_module.module_groups, "lookup", return_value=[SchoolMock()]
     ), patch.object(
         create_demoportal_module, "demo_password", uts.random_string()
-    ) as demo_password, patch.object(
-        create_demoportal_module, "lo", lo
-    ):
+    ) as demo_password, patch.object(create_demoportal_module, "lo", lo):
         create_demoportal_module.create_school()
 
     check_create_demoportal_call_lists(

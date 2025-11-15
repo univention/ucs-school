@@ -208,7 +208,7 @@ class Test(CLI_Import_v2_Tester):
         # 	' -> empty email addresses')
 
         self.log.info(
-            "*** 4.1 no scheme and no mapping and column filled, NEW users" " -> empty email addresses"
+            "*** 4.1 no scheme and no mapping and column filled, NEW users -> empty email addresses"
         )
 
         person_list = self.create_persons("student", "teacher", "staff", "teacher_and_staff")
@@ -225,7 +225,7 @@ class Test(CLI_Import_v2_Tester):
             person.verify()
 
         self.log.info(
-            "*** 4.2 no scheme and no mapping and column empty, NEW users" " -> empty email addresses"
+            "*** 4.2 no scheme and no mapping and column empty, NEW users -> empty email addresses"
         )
 
         person_list = self.create_persons("student", "teacher", "staff", "teacher_and_staff")

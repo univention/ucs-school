@@ -130,7 +130,7 @@ class Network(UCSSchoolHelperAbstractClass):
             except noObject:
                 return
             netmask = network.netmask  # e.g. '24'
-            network_str = u"0.0.0.0/%s" % netmask
+            network_str = "0.0.0.0/%s" % netmask
             try:
                 ipv4_network = IPv4Interface(network_str)
             except (AddressValueError, NetmaskValueError, ValueError):

@@ -69,14 +69,16 @@ def test_ldap_acls_edu_server(schoolenv, ucr):
             )[0]
         except IndexError:
             print(
-                "\n\nERROR: Looks like the edu domaincontroller {} does not exist in "
-                "LDAP\n\n".format(school.edu_server.dn)
+                "\n\nERROR: Looks like the edu domaincontroller {} does not exist in LDAP\n\n".format(
+                    school.edu_server.dn
+                )
             )
             raise
         if school.edu_server.dn != dn:
             raise Exception(
-                "Looks like the edu domaincontroller dn {} does not match expected DN "
-                "{}\n\n".format(dn, school.edu_server.dn)
+                "Looks like the edu domaincontroller dn {} does not match expected DN {}\n\n".format(
+                    dn, school.edu_server.dn
+                )
             )
 
         # Bug 41818: administrative school server can only replicate staff users and

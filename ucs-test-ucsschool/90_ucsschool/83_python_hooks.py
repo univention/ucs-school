@@ -136,9 +136,7 @@ def check_lines_for_pattern_and_words(lines, pattern, *words):
 class TestPythonHooksMeta(type):
     def __new__(mcls, cls_name, bases, attrs):
         logger.debug("Creating test methods...")
-        cls = super(TestPythonHooksMeta, mcls).__new__(
-            mcls, cls_name, bases, attrs
-        )  # type: TestPythonHooks
+        cls = super(TestPythonHooksMeta, mcls).__new__(mcls, cls_name, bases, attrs)  # type: TestPythonHooks
         models = get_ucsschool_model_classes()
         cls.func2model = {}
         cls.ignored_classes = list(CLASSES_NOT_FOR_INSTANTIATION)
@@ -283,8 +281,7 @@ class TestPythonHooks(TestCase):
         model_names = sorted([m.__name__ for m in self.models] + self.ignored_classes)
         diff = set(model_names).symmetric_difference(set(EXPECTED_CLASSES.keys()))
         assert model_names == sorted(EXPECTED_CLASSES.keys()), (
-            "=====> Did not find the classes that were expected. Expected:\n{!r}\nGot:\n{!r}\n"
-            "Diff: {!r}"
+            "=====> Did not find the classes that were expected. Expected:\n{!r}\nGot:\n{!r}\nDiff: {!r}"
         ).format(list(EXPECTED_CLASSES.keys()), model_names, sorted(diff))
 
     def test_002_subclassing(self):

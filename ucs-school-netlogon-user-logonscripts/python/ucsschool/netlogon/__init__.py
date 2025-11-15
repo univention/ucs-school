@@ -122,21 +122,21 @@ class SqliteQueue(object):
         with Cursor(self.filename) as cursor:
             # create table if missing
             cursor.execute(
-                u"CREATE TABLE IF NOT EXISTS user_queue (id INTEGER PRIMARY KEY AUTOINCREMENT, userdn"
-                u" TEXT, username TEXT)"
+                "CREATE TABLE IF NOT EXISTS user_queue (id INTEGER PRIMARY KEY AUTOINCREMENT, userdn"
+                " TEXT, username TEXT)"
             )
 
             # create index if missing
-            cursor.execute(u"CREATE INDEX IF NOT EXISTS idx_userdn ON user_queue (userdn)")
+            cursor.execute("CREATE INDEX IF NOT EXISTS idx_userdn ON user_queue (userdn)")
 
     def truncate_database(self):  # type: () -> None
         # SQLITE does not have a TRUNCATE TABLE command, but DELETE FROM
         # without WHERE is optimized to delete the entire table without
         # iterating over its rows.
         with Cursor(self.filename) as cursor:
-            cursor.execute(u"DELETE FROM user_queue")
+            cursor.execute("DELETE FROM user_queue")
         with Cursor(self.filename) as cursor:
-            cursor.execute(u"VACUUM")
+            cursor.execute("VACUUM")
 
     def add(self, users):  # type: (List[Tuple[str, str]]) -> None
         """
@@ -154,15 +154,15 @@ class SqliteQueue(object):
                     username = username.decode("utf-8")
                 if username is not None:
                     cursor.execute(
-                        u"insert or replace into user_queue (id, userdn, username) VALUES "
-                        u"((select id from user_queue where userdn = ?), ?, ?)",
+                        "insert or replace into user_queue (id, userdn, username) VALUES "
+                        "((select id from user_queue where userdn = ?), ?, ?)",
                         (userdn, userdn, username),
                     )
                 else:
                     cursor.execute(
-                        u"insert or replace into user_queue (id, userdn, username) VALUES "
-                        u"((select id from user_queue where userdn = ?), ?, "
-                        u"(select username from user_queue where userdn = ?))",
+                        "insert or replace into user_queue (id, userdn, username) VALUES "
+                        "((select id from user_queue where userdn = ?), ?, "
+                        "(select username from user_queue where userdn = ?))",
                         (userdn, userdn, userdn),
                     )
         self.logger.debug(
@@ -184,12 +184,12 @@ class SqliteQueue(object):
         if isinstance(userdn, bytes):  # Python 2
             userdn = userdn.decode("utf-8")
         with Cursor(self.filename) as cursor:
-            cursor.execute(u"DELETE FROM user_queue WHERE userdn=?", (userdn,))
+            cursor.execute("DELETE FROM user_queue WHERE userdn=?", (userdn,))
         self.logger.debug("removed entry: userdn=%r" % (userdn,))
 
     def query_next_user(self):  # type: () -> [str]
         """Returns next user dn and username of user_queue as UTF-8 encoded strings."""
-        query = u"SELECT userdn,username FROM user_queue ORDER BY id LIMIT 1"
+        query = "SELECT userdn,username FROM user_queue ORDER BY id LIMIT 1"
         self.logger.debug("starting sqlite query: %r" % (query,))
         with Cursor(self.filename) as cursor:
             cursor.execute(query)

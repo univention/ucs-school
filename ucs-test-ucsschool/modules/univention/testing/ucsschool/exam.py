@@ -6,6 +6,7 @@
 
 .. moduleauthor:: Ammar Najjar <najjar@univention.de>
 """
+
 from __future__ import print_function
 
 import glob
@@ -234,9 +235,7 @@ Content-Disposition: form-data; name="uploadType"
 
 html5
 --{0}--
-""".format(
-                boundary, mime_file_name, content_type, f.read()
-            )
+""".format(boundary, mime_file_name, content_type, f.read())
         return data.replace("\n", "\r\n")
 
     def uploadFile(self, file_name, content_type=None, override_file_name=None):
@@ -341,7 +340,6 @@ html5
         with open(self.UMC_SCHOOLEXAM_LOG_PATH) as f:
             lines = f.readlines()[-lines:]
             for line in lines:
-
                 # Bug 57661
                 assert not re.match(r".*ERROR.*failed to create/chown.*/home/.*Klassenarbeiten", line)
                 assert not re.match(r".*PermissionError:.*/home/.*Klassenarbeiten", line)

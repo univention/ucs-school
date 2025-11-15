@@ -76,10 +76,7 @@ class TestGPCReplicationOpenLDAP(TestSamba4):
             return "{" + search("{(.+?)}", stdout).group(1) + "}"
         except AttributeError as exc:
             utils.fail(
-                (
-                    "Could not find the GPO reference in the STDOUT "
-                    "'%s' of the 'samba-tool', error: '%s'"
-                )
+                ("Could not find the GPO reference in the STDOUT '%s' of the 'samba-tool', error: '%s'")
                 % (stdout, exc)
             )
 
@@ -123,8 +120,7 @@ class TestGPCReplicationOpenLDAP(TestSamba4):
         stdout, stderr = self.samba_tool("gpo", "setlink", container_dn, gpo_reference)
         if workaround.filter_deprecated(stderr):
             print(
-                ("\nAn error message while creating a GPO link using " "'samba-tool'. STDERR:\n%s")
-                % stderr
+                ("\nAn error message while creating a GPO link using 'samba-tool'. STDERR:\n%s") % stderr
             )
 
         if not stdout:
@@ -136,7 +132,7 @@ class TestGPCReplicationOpenLDAP(TestSamba4):
             )
         if container_dn not in stdout:
             utils.fail(
-                ("The linked School OU (Container) was not referenced " "in the 'samba-tool' output")
+                ("The linked School OU (Container) was not referenced in the 'samba-tool' output")
             )
         if self.gpo_reference not in stdout:
             utils.fail("The linked GPO was not referenced in the 'samba-tool' output")

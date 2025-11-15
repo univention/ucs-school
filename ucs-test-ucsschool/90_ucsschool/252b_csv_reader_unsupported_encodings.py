@@ -67,7 +67,7 @@ class Test(CLI_Import_v2_Tester):
             with pytest.raises(
                 UnsupportedEncodingError,
                 match=(
-                    fr"Unsupported encoding '{magic_encoding_repr}' detected, "
+                    rf"Unsupported encoding '{magic_encoding_repr}' detected, "
                     "please check the manual for supported encodings."
                 ),
             ):

@@ -35,19 +35,20 @@ def verify_user_move(lo, b, user, attrs, workgroup_dn, groups, oldinfo, grp1_nam
         print("FAIL2: %r; attrs=%r" % (user.dn, lo.get(user.dn)))
         raise
 
-    assert set(groups) == set(
-        user.get_udm_object(lo)["groups"]
-    ), "Moving the user %r failed... Expected groups %r != %r" % (
-        user,
-        groups,
-        user.get_udm_object(lo)["groups"],
+    assert set(groups) == set(user.get_udm_object(lo)["groups"]), (
+        "Moving the user %r failed... Expected groups %r != %r"
+        % (
+            user,
+            groups,
+            user.get_udm_object(lo)["groups"],
+        )
     )
-    assert "{}-{}".format(b, grp1_name) not in [
-        sc.name for sc in SchoolClass.get_all(lo, b)
-    ], 'Old school class "{}" was created in target school.'.format(grp1_name)
-    assert "{}-{}".format(b, grp2_name) not in [
-        sc.name for sc in SchoolClass.get_all(lo, b)
-    ], 'Old school class "{}" was created in target school.'.format(grp2_name)
+    assert "{}-{}".format(b, grp1_name) not in [sc.name for sc in SchoolClass.get_all(lo, b)], (
+        'Old school class "{}" was created in target school.'.format(grp1_name)
+    )
+    assert "{}-{}".format(b, grp2_name) not in [sc.name for sc in SchoolClass.get_all(lo, b)], (
+        'Old school class "{}" was created in target school.'.format(grp2_name)
+    )
 
 
 def test_move_users_into_another_ou(schoolenv, ucr, udm_session):

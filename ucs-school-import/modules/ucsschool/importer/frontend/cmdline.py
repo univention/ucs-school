@@ -30,6 +30,7 @@
 # <http://www.gnu.org/licenses/>.
 
 """Base class for UCS@school import tool cmdline frontends."""
+
 import grp
 import logging
 import os

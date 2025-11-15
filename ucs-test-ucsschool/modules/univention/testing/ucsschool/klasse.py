@@ -4,6 +4,7 @@
 
 .. moduleauthor:: Ammar Najjar <najjar@univention.de>
 """
+
 from __future__ import print_function
 
 import univention.testing.strings as uts
@@ -69,11 +70,12 @@ class Klasse(object):
     def check_query(self, classes_names):
         q = self.query()
         k = [x["name"] for x in q]
-        assert set(classes_names) == set(
-            k
-        ), "Classes from query do not match existing ones\nfound (%r)\nexpected (%r)" % (
-            k,
-            classes_names,
+        assert set(classes_names) == set(k), (
+            "Classes from query do not match existing ones\nfound (%r)\nexpected (%r)"
+            % (
+                k,
+                classes_names,
+            )
         )
 
     def dn(self):
@@ -110,12 +112,13 @@ class Klasse(object):
             "ucsschool_roles": [create_ucsschool_role_string(role_school_class, self.school)],
         }
         get_result = self.get()
-        assert (
-            get_result == info
-        ), "Failed get request for class %s. Returned result: %r. Expected result: %r" % (
-            self.name,
-            get_result,
-            info,
+        assert get_result == info, (
+            "Failed get request for class %s. Returned result: %r. Expected result: %r"
+            % (
+                self.name,
+                get_result,
+                info,
+            )
         )
 
     def remove(self):

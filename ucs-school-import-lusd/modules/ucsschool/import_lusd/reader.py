@@ -42,8 +42,9 @@ class LUSDReader(CsvReader):  # type: ignore[misc]
 
         if missing_attributes and not all(attr in optional_attrs for attr in missing_attributes):
             raise ConfigurationError(
-                "Attributes configured in csv:mapping missing: "
-                "{!r}. Attributes found: {!r}".format(missing_attributes, self.fieldnames)
+                "Attributes configured in csv:mapping missing: {!r}. Attributes found: {!r}".format(
+                    missing_attributes, self.fieldnames
+                )
             )
 
         user_obj: Dict[str, Any]
@@ -68,10 +69,11 @@ class LUSDReader(CsvReader):  # type: ignore[misc]
                     user_obj[attr] = self._delimiter.join(
                         [
                             f"""{school}-{
-                            class_obj["klassenname"].replace(
-                                self._delimiter,
-                                self.config.get("school_classes_invalid_character_replacement", ""),
-                            )}"""
+                                class_obj["klassenname"].replace(
+                                    self._delimiter,
+                                    self.config.get("school_classes_invalid_character_replacement", ""),
+                                )
+                            }"""
                             for class_obj in user_obj[attr]
                             if "klassenname" in class_obj
                         ]

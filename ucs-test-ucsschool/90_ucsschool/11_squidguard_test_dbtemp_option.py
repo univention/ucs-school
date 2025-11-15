@@ -61,23 +61,27 @@ def test_squidguard_test_dbtemp_option():
     def write_lists():
         with open(fn_userlist, "w") as fd:
             for i in range(1000):
-                for name in (
-                    "anton",
-                    "berta",
-                    "caesar",
-                    "doris",
-                    "emil",
-                    "frieda",
-                    "gustav",
-                    "hanna",
-                    "immo",
-                    "jane",
-                ):
-                    fd.write("%s%d\nMYDOMAIN\\%s%d\n" % (name, i, name, i))
+                fd.writelines(
+                    "%s%d\nMYDOMAIN\\%s%d\n" % (name, i, name, i)
+                    for name in (
+                        "anton",
+                        "berta",
+                        "caesar",
+                        "doris",
+                        "emil",
+                        "frieda",
+                        "gustav",
+                        "hanna",
+                        "immo",
+                        "jane",
+                    )
+                )
         with open(fn_whitelist_domains, "w") as fd:
             for i in range(5000):
-                for name in ("univention.de", "software-univention.de"):
-                    fd.write("%d.%s\nsmtp%d.%s\n" % (i, name, i, name))
+                fd.writelines(
+                    "%d.%s\nsmtp%d.%s\n" % (i, name, i, name)
+                    for name in ("univention.de", "software-univention.de")
+                )
         with open(fn_whitelist_urls, "w") as fd:
             for i in range(10000):
                 fd.write(
@@ -140,9 +144,9 @@ def test_squidguard_test_dbtemp_option():
                 cnt_new_tempdir,
             )
         )
-        assert (
-            cnt_old_vartmp < cnt_new_vartmp and cnt_old_tempdir == cnt_new_tempdir
-        ), "Unexpected number of temporary backing files"
+        assert cnt_old_vartmp < cnt_new_vartmp and cnt_old_tempdir == cnt_new_tempdir, (
+            "Unexpected number of temporary backing files"
+        )
         # tempdir should not change; at least one new file in /var/tmp/
 
         # run with special dbtemp option
@@ -171,9 +175,9 @@ def test_squidguard_test_dbtemp_option():
                 cnt_new_tempdir,
             )
         )
-        assert (
-            cnt_old_vartmp == cnt_new_vartmp and cnt_old_tempdir < cnt_new_tempdir
-        ), "Unexpected number of temporary backing files"
+        assert cnt_old_vartmp == cnt_new_vartmp and cnt_old_tempdir < cnt_new_tempdir, (
+            "Unexpected number of temporary backing files"
+        )
         # /var/tmp should not change; at least one new file in $tempdir
 
         # short functional test

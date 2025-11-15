@@ -30,6 +30,7 @@
 # <http://www.gnu.org/licenses/>.
 
 """Class to create lots of test users."""
+
 from __future__ import absolute_import
 
 import gzip
@@ -102,7 +103,7 @@ class TestUserCreator(object):
         given_len = len(self.test_data["given"])
         given_cursor = random.randint(0, given_len - 1)  # nosec
         while True:
-            yield u"{}{}".format(self.test_data["given"][given_cursor], give_modifier)
+            yield "{}{}".format(self.test_data["given"][given_cursor], give_modifier)
             given_cursor += 1
             if given_cursor == given_len:
                 # used all names, append number
@@ -117,7 +118,7 @@ class TestUserCreator(object):
         family_len = len(self.test_data["family"])
         family_cursor = random.randint(0, family_len - 1)  # nosec
         while True:
-            yield u"{}{}".format(self.test_data["family"][family_cursor], family_modifier)
+            yield "{}{}".format(self.test_data["family"][family_cursor], family_modifier)
             family_cursor += 1
             if family_cursor == family_len:
                 # used all names, append number

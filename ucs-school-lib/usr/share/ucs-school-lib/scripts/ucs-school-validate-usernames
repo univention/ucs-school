@@ -33,6 +33,7 @@
 See Bug #56152 / https://forge.univention.org/bugzilla/show_bug.cgi?id=56152
 and GitLab Issue https://git.knut.univention.de/univention/ucsschool/-/issues/1050
 """
+
 import csv
 import enum
 import pathlib
@@ -86,7 +87,6 @@ def get_all_invalid_users() -> List[InvalidUser]:
     all_invalid_users: List[InvalidUser] = []
 
     for school in all_schools:
-
         # Use ldap directly to fetch usernames for a school
         # for large systems, this might take multiple minutes otherwise
         all_users: List[Tuple[str, Dict]] = lo.search(
@@ -115,13 +115,10 @@ def report_invalid_users(all_invalid_users: List[InvalidUser], silent=False) -> 
     """Report information about invalid users to the standard output"""
     number_of_invalid_usernames = len(all_invalid_users)
     if silent:
-
         sys.stdout.write(f"{number_of_invalid_usernames}")
         sys.stdout.flush()
     else:
-
         if len(all_invalid_users) > 0:
-
             print("\nTable with invalid usernames:")
             print('\n"Username" "School Name" "Distinguished Name" "Reason"')
             for invalid_user in all_invalid_users:
@@ -156,7 +153,6 @@ def write_output_file(all_invalid_users: List[InvalidUser], output_path: pathlib
 
 
 def setup_parser() -> ArgumentParser:
-
     parser = ArgumentParser(
         description=f"{__file__} checks all present UCS@School user names for compliance with the "
         f"Windows naming conventions. Without any options,"
@@ -192,7 +188,6 @@ def setup_parser() -> ArgumentParser:
 
 
 def main() -> None:
-
     parser = setup_parser()
     args = parser.parse_args()
 

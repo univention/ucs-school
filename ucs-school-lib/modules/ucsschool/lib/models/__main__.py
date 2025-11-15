@@ -200,7 +200,7 @@ def print_object(obj, print_attrs=None):  # type: (UCSSchoolModel, Optional[str]
     def srepr(x):
         def encode(s):
             if PY2:  # pragma: no cover
-                return s.encode("UTF-8") if isinstance(s, type(u"")) else s
+                return s.encode("UTF-8") if isinstance(s, type("")) else s
             return s.decode("UTF-8") if isinstance(s, type(b"")) else s
 
         if isinstance(x, list):
@@ -255,9 +255,7 @@ def cli(ctx, debug):  # type: (click.core.Context, bool) -> None
     type=(str, str),
     multiple=True,
 )
-def create(
-    model, name, school, multi_value, single_value
-):  # type: (str, str, str, Iterable[Tuple[str, str]], Iterable[Tuple[str, str]]) -> None
+def create(model, name, school, multi_value, single_value):  # type: (str, str, str, Iterable[Tuple[str, str]], Iterable[Tuple[str, str]]) -> None
     logger.debug(
         "create: model=%r name=%r school=%r multi_value=%r single_value=%r",
         model,

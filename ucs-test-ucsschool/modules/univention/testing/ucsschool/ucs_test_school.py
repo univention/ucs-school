@@ -234,9 +234,9 @@ class UCSTestSchool(object):
         getMachoneConnection().
         """
         assert not (admin and machine)
-        assert not (
-            binddn or bindpw
-        ), 'Arguments "binddn" and "bindpw" are ignored and UCSTestDomainAdminCredentials() used.'
+        assert not (binddn or bindpw), (
+            'Arguments "binddn" and "bindpw" are ignored and UCSTestDomainAdminCredentials() used.'
+        )
 
         account = utils.UCSTestDomainAdminCredentials()
         if not ldap_server:
@@ -955,7 +955,7 @@ class UCSTestSchool(object):
         is_teacher=None,  # type: Optional[bool]
         wait_for_replication=True,  # type: Optional[bool]
         *args,
-        **kwargs
+        **kwargs,
     ):  # type: (...) -> Tuple[str, str]
         """Accepts same arguments as :py:func:`create_user()`."""
         schools = schools if schools else [ou_name]
@@ -983,7 +983,7 @@ class UCSTestSchool(object):
             is_teacher=is_teacher,
             wait_for_replication=wait_for_replication,
             *args,
-            **kwargs
+            **kwargs,
         )
         user = User.from_dn(dn, ou_name, self.lo)
         user_udm = user.get_udm_object(self.lo)

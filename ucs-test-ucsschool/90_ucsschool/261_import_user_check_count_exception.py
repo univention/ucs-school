@@ -63,8 +63,7 @@ def test_tolerate_errors(import_tester, m_error_hook, tolerate_errors, expected_
     config.update_entry("tolerate_errors", tolerate_errors)
 
     import_tester.log.info(
-        '*** Importing a user from each role, two with firstname starting with "M" should be an '
-        "error..."
+        '*** Importing a user from each role, two with firstname starting with "M" should be an error...'
     )
     person_list = []
     for i in range(5):

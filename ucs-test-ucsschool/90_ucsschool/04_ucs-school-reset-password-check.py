@@ -52,9 +52,9 @@ def _test_pwd_reset(
         with pytest.raises(expected_reset_result):
             reset()
     else:
-        assert (
-            reset() == expected_reset_result
-        ), "umcp command schoolusers/password/reset was unexpectedly successful"
+        assert reset() == expected_reset_result, (
+            "umcp command schoolusers/password/reset was unexpectedly successful"
+        )
 
     # test if old password does NOT work
     auth_response = auth(host, target_user, "univention")

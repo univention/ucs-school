@@ -212,11 +212,12 @@ class User(Person):
     def check_query(self, users_dn):
         q = self.query()
         k = [x["$dn$"] for x in q]
-        assert set(users_dn).issubset(
-            set(k)
-        ), "users from query do not contain the existing users, found (%r), expected (%r)" % (
-            k,
-            users_dn,
+        assert set(users_dn).issubset(set(k)), (
+            "users from query do not contain the existing users, found (%r), expected (%r)"
+            % (
+                k,
+                users_dn,
+            )
         )
 
     def remove(self, remove_from_school=None):

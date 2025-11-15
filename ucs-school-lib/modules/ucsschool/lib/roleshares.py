@@ -29,6 +29,7 @@
 # <http://www.gnu.org/licenses/>.
 
 """Role specific shares"""
+
 from __future__ import print_function
 
 import os
@@ -65,9 +66,7 @@ def roleshare_path(role, school_ou, ucr):  # type: (str, str, ConfigRegistry) ->
         return os.path.join(school_ou, ucs_school_name_i18n(role))
 
 
-def roleshare_home_subdir(
-    school_ou, roles, ucr=None
-):  # type: (str, List[str], Optional[ConfigRegistry]) -> str
+def roleshare_home_subdir(school_ou, roles, ucr=None):  # type: (str, List[str], Optional[ConfigRegistry]) -> str
     if not ucr:
         ucr = ConfigRegistry()
         ucr.load()

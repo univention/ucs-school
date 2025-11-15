@@ -344,9 +344,9 @@ class Test_FactoryConf(object):
         ldap_diff = self.diff_ldap_status()
         new_users = [x for x in ldap_diff.new if x.startswith("uid=")]
         self.logger.debug("new_users=%r", new_users)
-        assert all(
-            explodeDn(user)[0].endswith("foo") for user in new_users
-        ), "Not all usernames end with 'foo': %r" % (new_users,)
+        assert all(explodeDn(user)[0].endswith("foo") for user in new_users), (
+            "Not all usernames end with 'foo': %r" % (new_users,)
+        )
         self.logger.info("\n\n*** OK: all usernames end with 'foo'.\n\n")
 
     def test_json_writer(self):
@@ -379,11 +379,12 @@ class Test_FactoryConf(object):
         assert len(jsout) == 8, "Expected %d objects in export, found %d." % (8, len(jsout))
         vn_in = {x["Vorname"] for x in users}
         vn_out = {x["firstname"].encode("utf-8") if str is bytes else x["firstname"] for x in jsout}
-        assert not vn_in.difference(
-            vn_out
-        ), "Input and output does not match:\nvn_in=%r\nvn_out=%r\nvn_in.difference(vn_out)=%r" % (
-            vn_in,
-            vn_out,
-            vn_in.difference(vn_out),
+        assert not vn_in.difference(vn_out), (
+            "Input and output does not match:\nvn_in=%r\nvn_out=%r\nvn_in.difference(vn_out)=%r"
+            % (
+                vn_in,
+                vn_out,
+                vn_in.difference(vn_out),
+            )
         )
         self.logger.info("\n\n*** OK: JSON output.\n\n")

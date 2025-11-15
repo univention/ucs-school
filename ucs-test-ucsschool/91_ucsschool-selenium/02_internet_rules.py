@@ -57,9 +57,9 @@ class UMCTester(object):
             list_type = ucr.get("proxy/filter/setting/{}/filtertype".format(rulename_blacklist))
             d1 = ucr.get("proxy/filter/setting/{}/domain/blacklisted/1".format(rulename_blacklist))
             d2 = ucr.get("proxy/filter/setting/{}/domain/blacklisted/2".format(rulename_blacklist))
-            assert (
-                list_type == "blacklist-pass"
-            ), "List type is {}, not blacklist-pass as expected".format(list_type)
+            assert list_type == "blacklist-pass", (
+                "List type is {}, not blacklist-pass as expected".format(list_type)
+            )
             assert priority == "9", "Priority is {}, not 9 as expected".format(priority)
             assert d1 == "example.com", "Domain entry 1 is n{}, not example.com as expected".format(d1)
             assert d1 == "example.com", "Domain entry 1 is n{}, not example.com as expected".format(d2)
