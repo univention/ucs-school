@@ -31,7 +31,7 @@ def peap_auth(username, password, radius_secret):
     return result[0] == 0
 
 
-def test_peap_auth(username, password, radius_secret, should_succeed=True):
+def test_peap_auth(username, password, radius_secret, should_succeed):
     print(
         "*** PEAP AUTH: user: %s, password: %s, should_succeed: %r"
         % (
