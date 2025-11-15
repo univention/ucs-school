@@ -160,7 +160,7 @@ class ImportLUSD:
                 school_id_map=normalize_schools(dict(file_config["SchoolMappings"])),
                 lusd_api_url=os.environ.get("LUSD_URL", "https://ucs.hessen.de"),
                 lusd_api_oauth_iss=os.environ.get("LUSD_ISS", "1ebdb8ea000457f8095a"),
-                school_authority=file_config["Settings"].get("school_authority", None),
+                school_authority=file_config["Settings"].get("school_authority", ""),
             )
         except KeyError as exc:
             self.setup_logging()
