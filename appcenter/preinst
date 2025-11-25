@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+# SPDX-License-Identifier: AGPL-3.0-only
+# SPDX-FileCopyrightText: 2025 Univention GmbH
+#
+# Script that runs in docker host before installing the app.
+#
+
+while [ $# -gt 0 ]; do
+	case "$1" in
+        "--error-file")
+			shift
+			errorfile="$1"
+			shift
+			;;
+        "--old-version")
+			shift
+			old_version="$1"
+			shift
+			;;
+		*)
+			shift
+			;;
+	esac
+done
+
+# Issue univention/dev/education/ucsschool-api-plugins/id-broker-plugin#141
+# block the update to the newest version of UCS@school if
+# - id-broker-id-connector-plugin is installed
+# - the UCS@school ID Connector is installed
+# - the installed version if the UCS@school ID Connector is smaller that 4.0.0
+if LANG=C dpkg-query -W -f '${Status}\n' id-broker-id-connector-plugin 2>&1 | grep -q "^install" ; then
+	ID_CONNECTOR_VERSION="$(ucr get appcenter/apps/ucsschool-id-connector/version)"
+	if dpkg --compare-versions "$ID_CONNECTOR_VERSION" lt-nl 4.0.0 ; then
+		message="
+If the 'id-broker-id-connector-plugin' package is installed, UCS@school can
+only be updated to the latest version once the 'UCS@school ID Connector' app
+has been updated to at least version 4.0.0 (current version: $ID_CONNECTOR_VERSION)
+"
+		echo -e "$message" > "$errorfile"
+		exit 1
+	fi
+fi
+
+exit 0
