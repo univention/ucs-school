@@ -2,8 +2,9 @@ variables:
   IMAGE_UCS_EC2_TOOLS: "gitregistry.knut.univention.de/univention/dist/ucs-ec2-tools:latest"
 
 include:
-  - project: univention/infrastructure/docker-services
-    file: pre-commit.yml
+  - component: $CI_SERVER_FQDN/univention/dev/tooling/ci-components/pre-commit@main
+    inputs:
+      commit_msg_hooks: "conventional-pre-commit issue-reference"
   - project: univention/dev/tooling/ci-components
     file: fragments/openstack.yaml
   - project: univention/dev/tooling/ci-components
@@ -22,16 +23,6 @@ include:
             - "doc/ucsschool-changelog/**/*"
             - "doc/errata/**/*"
         when: always
-
-run pre-commit:
-  stage: build
-  extends: .pre-commit
-
-lint_commit_messages:
-  variables:
-    HOOK_IDS: "conventional-pre-commit issue-reference"
-  stage: build
-  extends: .lint_commit_messages
 
 integration_tests:
   extends: .run_openstack_cfg
