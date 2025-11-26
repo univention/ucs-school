@@ -30,12 +30,13 @@ done
 # - the UCS@school ID Connector is installed
 # - the installed version if the UCS@school ID Connector is smaller that 4.0.0
 if LANG=C dpkg-query -W -f '${Status}\n' id-broker-id-connector-plugin 2>&1 | grep -q "^install" ; then
+	ID_CONNECTOR_VERSION_MINIMUM="4.0.0"
 	ID_CONNECTOR_VERSION="$(ucr get appcenter/apps/ucsschool-id-connector/version)"
-	if dpkg --compare-versions "$ID_CONNECTOR_VERSION" lt-nl 4.0.0 ; then
+	if dpkg --compare-versions "$ID_CONNECTOR_VERSION" lt-nl "$ID_CONNECTOR_VERSION_MINIMUM" ; then
 		message="
 If the 'id-broker-id-connector-plugin' package is installed, UCS@school can
 only be updated to the latest version once the 'UCS@school ID Connector' app
-has been updated to at least version 4.0.0 (current version: $ID_CONNECTOR_VERSION)
+has been updated to at least version $ID_CONNECTOR_VERSION_MINIMUM (current version: $ID_CONNECTOR_VERSION)
 "
 		echo -e "$message" > "$errorfile"
 		exit 1
