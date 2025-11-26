@@ -1,3 +1,10 @@
+ucs-test-ucsschool (8.0.42) unstable; urgency=medium
+
+  * test: Increase id-broker integration-tests timeout
+    Issue univention/dev/education/ucsschool-api-plugins/id-broker-plugin#140
+
+ -- Silas Wieberneit <silas.wieberneit.extern@univention.de>  Do, 27 Nov 2025 08:58:03 +0200
+
 ucs-test-ucsschool (8.0.41) unstable; urgency=medium
 
   * test: add missing executable bit to tests
