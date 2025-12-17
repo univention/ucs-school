@@ -53,6 +53,12 @@ def get_extended_attributes():
     ]
 
 
+@lru_cache(maxsize=1)
+def on_master_or_backup_node() -> bool:
+    server_role = ucr.get("server/role", "")
+    return server_role in ("domaincontroller_master", "domaincontroller_backup")
+
+
 def get_exception_msg(exc):  # TODO: str(exc) would be nicer, Bug #27940, 30089, 30088
     msg = getattr(exc, "message", "")
     for arg in exc.args:
@@ -139,14 +145,22 @@ class Instance(SchoolBaseModule):
             user["pwdChangeNextLogin"] = "1" if pwdChangeNextLogin else "0"
             user.modify()
 
-        try:
-            _password_reset(request, ldap_user_write)
-            self.finished(request.id, True)
-            #  This is needed here to properly finish the request without continuation if everyting
-            #  worked well.
-            return
-        except:  # noqa: F841, E722
-            udm_admin_save_user_with_extended_attributes(request.options["userDN"])
+        if on_master_or_backup_node():
+            # NOTE: In cases of missing extended attributes UDM will fail to set the password.
+            # Therefore we try to set the password first and in case of an exception we
+            # update the extended attributes and try again.
+            try:
+                _password_reset(request, ldap_user_write)
+                self.finished(request.id, True)
+                # This is needed here to properly finish the request without continuation
+                # if everything worked well.
+                return
+            except Exception as exc:
+                MODULE.process("dn=%r" % (request.options["userDN"],))
+                MODULE.process("exception=%s" % (type(exc),))
+                MODULE.process("note=Cannot reset password, trying to update extended attributes first")
+                # NOTE: only on master/backup we can update extended attributes
+                udm_admin_save_user_with_extended_attributes(request.options["userDN"])
 
         try:
             _password_reset(request, ldap_user_write)
