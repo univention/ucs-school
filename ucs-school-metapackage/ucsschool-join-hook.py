@@ -299,10 +299,11 @@ def pre_joinscripts_hook(options):  # type: (Any) -> None
             "--do-not-call-join-scripts",
             "--noninteractive",
             "--do-not-revert",
+            "--username",
+            options.lo.getAttr(options.binddn, "uid")[0].decode("UTF-8"),
+            "--pwdfile",
+            options.bindpwdfile,
         ]
-        if options.server_role not in ("domaincontroller_master", "domaincontroller_backup"):
-            username = options.lo.getAttr(options.binddn, "uid")[0].decode("UTF-8")
-            cmd.extend(["--username", username, "--pwdfile", options.bindpwdfile])
         call_cmd_locally(*cmd)
 
     # if not all packages are installed, then try to install them again
@@ -407,10 +408,11 @@ def install_veyon_app(options, roles_pkg_list):  # type: (Any, List[str]) -> Non
         "must_have_valid_license",
         "--do-not-call-join-scripts",
         "--noninteractive",
+        "--username",
+        options.lo.getAttr(options.binddn, "uid")[0].decode("UTF-8"),
+        "--pwdfile",
+        options.bindpwdfile,
     ]
-    if options.server_role not in ("domaincontroller_master", "domaincontroller_backup"):
-        username = options.lo.getAttr(options.binddn, "uid")[0].decode("UTF-8")
-        cmd.extend(["--username", username, "--pwdfile", options.bindpwdfile])
     try:
         call_cmd_locally(*cmd)
     except CallCommandError as exc:
