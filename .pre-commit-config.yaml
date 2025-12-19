@@ -126,5 +126,63 @@ repos:
         language: pygrep
         entry: '.*\n(\n(Issue ([a-zA-Z_/-]+)#\d+|Bug #\d+))+\n?(\n#.*)*\Z'
         args: ["--multiline", "--negate"]
+  - repo: https://git.knut.univention.de/univention/infrastructure/pre-commit-hooks/pre-commit-copyright
+    rev: 0.1.0
+    hooks:
+      - id: reuse-toml-dry-run
+      - id: reuse-toml
+        stages: [ manual ]
+  - repo: https://github.com/fsfe/reuse-tool
+    rev: v6.2.0
+    hooks:
+      - id: reuse
+        alias: reuse-annotate
+        name: "reuse annotate"
+        args: ["annotate", "-c", "Univention GmbH", "-l", "AGPL-3.0-only", "--skip-unrecognised", "--skip-existing", "--template", "univention"]
+        pass_filenames: true
+        description: "Annotate all unlicensed files as AGPL-3.0-only with Univention GmbH copyright"
+        stages: [ manual ]
+        # we have to specify everything covered by REUSE.toml again due to https://github.com/fsfe/reuse-tool/issues/1190
+        # ignoring __init__.py due to https://github.com/fsfe/reuse-tool/issues/1179
+        # MAKE SURE THIS IS IN SYNC WITH REUSE.toml / update-reuse-toml.py !
+        <<: &common
+          exclude: "^.*[.]1$\
+                   |^doc/.*[.]csv\
+                   |^doc/.*[.]svg\
+                   |^doc/.*[.]jpeg\
+                   |^doc/.*[.]jpg\
+                   |^doc/.*[.]json\
+                   |^doc/.*[.]png\
+                   |^doc/.*[.]pdf\
+                   |^doc/errata/.*[.]yaml$\
+                   |^.*/umc/icons/.*[.]png\
+                   |^.*/umc/icons/.*[.]svg\
+                   |^.*/umc/icons/.*[.]svgz\
+                   |^ucs-school-import/README.md\
+                   |^ucs-school-import/examples/.*[.]csv\
+                   |^ucs-school-import/usr/share/doc/.*\
+                   |^ucs-school-import-lusd/usr/share/ucs-school-import-lusd/.*[.]json\
+                   |^ucs-school-import-lusd/README.md\
+                   |^ucs-school-import/usr/share/ucs-school-import/configs/.*[.]json\
+                   |^ucs-school-import/usr/share/ucs-school-import/schema/.*[.]json\
+                   |^ucs-school-metapackage/README.md\
+                   |^ucs-school-metapackage/ucsschool[.]png\
+                   |^ucs-school-metapackage/ucsschool[.]svg\
+                   |^ucs-school-netlogon-user-logonscripts/.*[.]png\
+                   |^ucs-school-umc-common/data/icons/scalable/category-ucs-school-.*[.]svg\
+                   |^ucs-school-umc-lists/umc/js/schoollists/lo_import_hl_.*[.]png\
+                   |^ucs-school-veyon-windows/README.md\
+                   |^CODE_OF_CONDUCT.md\
+                   |^CONTRIBUTING.md\
+                   |^PULL_REQUEST_TEMPLATE.md\
+                   |^SECURITY.md\
+                   |^.*[.]cfg$\
+                   |^.*[.]conf$\
+                   |^ucs-test-ucsschool/[0-9].*$\
+                   "
+      - id: reuse
+        alias: reuse-lint
+        stages: [ manual ]
+      - id: reuse-lint-file
 default_language_version:
   python: python3.11

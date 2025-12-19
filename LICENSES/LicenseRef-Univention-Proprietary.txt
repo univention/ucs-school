@@ -1,0 +1,2 @@
+These files are licensed under the Univention GmbH Terms of Use:
+https://www.univention.com/products/download/terms-of-use/

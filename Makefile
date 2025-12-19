@@ -1,4 +1,7 @@
-.PHONY: help format lint setup_devel_env
+# SPDX-FileCopyrightText: 2025 Univention GmbH
+# SPDX-License-Identifier: AGPL-3.0-only
+#
+.PHONY: help format lint setup_devel_env reuse copyright
 .DEFAULT_GOAL := help
 
 define PRINT_HELP_PYSCRIPT
@@ -32,3 +35,11 @@ format-all: ## This formats all python files in the repository
 	-pre-commit run -a --hook-stage manual ucr-ruff-fix
 	-pre-commit run -a --hook-stage manual ruff-edit
 	-pre-commit run -a --hook-stage manual black-edit
+
+reuse:
+	-{ git diff --name-only; git ls-files --others --exclude-standard; git diff --cached --name-only; } | xargs pre-commit run --hook-stage manual reuse-annotate --files
+
+copyright:
+	-python3 update-reuse-toml.py
+	-pre-commit run -a --hook-stage manual reuse-annotate
+	-pre-commit run -a --hook-stage manual reuse-lint
