@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2025 Univention GmbH
+# SPDX-License-Identifier: AGPL-3.0-only
+
 date: '%Y-%m-%d %H:%M:%S'
 cmdline: !!omap
 -   NOTSET: '%(asctime)s %(levelname)-5s %(module)s.%(funcName)s:%(lineno)d  %(message)s'

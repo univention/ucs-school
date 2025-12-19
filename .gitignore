@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2025 Univention GmbH
+# SPDX-License-Identifier: AGPL-3.0-only
+
 # personal ignores like editor or IDE specific configuration files can be placed in .git/info/exclude
 
 doc/**/_build

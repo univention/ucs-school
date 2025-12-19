@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2025 Univention GmbH
+# SPDX-License-Identifier: AGPL-3.0-only
+
 import datetime
 from enum import StrEnum
 from typing import Annotated, Any, Dict, List, Literal, Optional, Tuple, TypedDict, Union

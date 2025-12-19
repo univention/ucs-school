@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2025 Univention GmbH
+# SPDX-License-Identifier: AGPL-3.0-only
+
 import random
 from enum import Enum
 from ipaddress import IPv4Interface, IPv4Network

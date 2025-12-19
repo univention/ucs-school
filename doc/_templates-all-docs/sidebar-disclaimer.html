@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2025 Univention GmbH
+SPDX-License-Identifier: AGPL-3.0-only
+-->
+
 <div class="navbar_extra_footer">
     {% if pdf_download_filename %}<p><a href='{{ pathto(pdf_download_filename, 1)|e }}' target='_blank'><i class='far fa-file-pdf'></i> {{ _('Download PDF') }}</a></p>{% endif %}
     {% if repository_link %}<p><a href='{{ repository_link }}' target='_blank'><i class='fas fa-code'></i> {{ _('Source Repository') }}</a></p>{% endif %}

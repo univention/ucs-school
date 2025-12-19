@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2025 Univention GmbH
+SPDX-License-Identifier: AGPL-3.0-only
+-->
+
 # UCS@school documentation
 
 The UCS@school documentation uses the Sphinx tool chain and the reStructedText

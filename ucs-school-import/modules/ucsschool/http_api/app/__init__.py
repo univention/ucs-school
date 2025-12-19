@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2025 Univention GmbH
+# SPDX-License-Identifier: AGPL-3.0-only
+
 from __future__ import absolute_import, unicode_literals
 
 # This will make sure the app is always imported when

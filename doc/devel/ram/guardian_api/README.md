@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2025 Univention GmbH
+SPDX-License-Identifier: AGPL-3.0-only
+-->
+
 # Guardian HTTP API proposal
 
 This API was created in the context of the Guardian ([see concept](https://git.knut.univention.de/univention/ucsschool/-/blob/jkoeniger/concept-ram-proposal/doc/devel/ram/concept_proposal.md)) and Issue [ucsschool#1006](https://git.knut.univention.de/univention/ucsschool/-/issues/1006).

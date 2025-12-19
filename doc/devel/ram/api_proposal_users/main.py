@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2025 Univention GmbH
+# SPDX-License-Identifier: AGPL-3.0-only
+
 from fastapi import Depends, FastAPI
 from fastapi.security import OAuth2PasswordRequestForm
 from groups import router as groups_router

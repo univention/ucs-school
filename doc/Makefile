@@ -1,4 +1,8 @@
 #!/usr/bin/make -f
+
+# SPDX-FileCopyrightText: 2025 Univention GmbH
+# SPDX-License-Identifier: AGPL-3.0-only
+
 mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
 mkfile_dir := $(dir $(mkfile_path))
 DIRS := $(dir $(wildcard */Makefile))

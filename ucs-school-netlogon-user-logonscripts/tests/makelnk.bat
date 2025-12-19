@@ -1,3 +1,6 @@
+REM SPDX-FileCopyrightText: 2025 Univention GmbH
+REM SPDX-License-Identifier: AGPL-3.0-only
+
 @echo off & setlocal
 ::For Windows NT 4.0 users only!!!
 ::Creates LNK and PIF files from the command line.

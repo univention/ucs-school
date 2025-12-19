@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2025 Univention GmbH
+SPDX-License-Identifier: AGPL-3.0-only
+-->
+
 # UCS@school architecture graphs
 
 This directory contains drawings of various aspects and perspectives of the UCS@school architecture.

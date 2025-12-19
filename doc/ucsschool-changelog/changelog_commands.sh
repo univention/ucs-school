@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2025 Univention GmbH
+# SPDX-License-Identifier: AGPL-3.0-only
+
 # command aliases for working with changelog.rst editing
 # see README doc/ucsschool-changelog/README.md
 alias clean='docker run -ti --rm -v "$PWD:/project" -w /project --network=host -u $UID docker-registry.knut.univention.de/knut/sphinx-base:latest env --chdir doc/ucsschool-changelog make clean'

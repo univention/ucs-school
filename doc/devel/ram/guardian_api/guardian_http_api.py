@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2025 Univention GmbH
+# SPDX-License-Identifier: AGPL-3.0-only
+
 """
 See
 https://git.knut.univention.de/univention/ucsschool/-/blob/jkoeniger/concept-ram-proposal/doc/devel/ram/concept_proposal.md
