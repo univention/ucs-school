@@ -1,7 +1,7 @@
 #!/usr/share/ucs-test/runner /usr/bin/pytest-3 -s -l -v
 # -*- coding: utf-8 -*-
 
-# SPDX-FileCopyrightText: 2020-2025 Univention GmbH
+# SPDX-FileCopyrightText: 2020-2026 Univention GmbH
 # SPDX-License-Identifier: AGPL-3.0-only
 
 import calendar

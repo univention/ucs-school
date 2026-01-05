@@ -4,7 +4,7 @@
 # UCS@school
 #  config registry module for the netlogon script
 #
-# SPDX-FileCopyrightText: 2012-2025 Univention GmbH
+# SPDX-FileCopyrightText: 2012-2026 Univention GmbH
 # SPDX-License-Identifier: AGPL-3.0-only
 
 from __future__ import print_function

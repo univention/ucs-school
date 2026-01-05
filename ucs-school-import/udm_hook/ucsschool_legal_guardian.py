@@ -2,7 +2,7 @@
 #
 # UCS@school legal guardian hook
 #
-# Copyright (C) 2025 Univention GmbH
+# Copyright (C) 2025-2026 Univention GmbH
 #
 # https://www.univention.de/
 #

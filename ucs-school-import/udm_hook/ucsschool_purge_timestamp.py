@@ -2,7 +2,7 @@
 #
 # UCS@school purge timestamp hook
 #
-# Copyright (C) 2017-2025 Univention GmbH
+# Copyright (C) 2017-2026 Univention GmbH
 #
 # https://www.univention.de/
 #

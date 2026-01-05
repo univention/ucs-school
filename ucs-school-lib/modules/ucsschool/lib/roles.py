@@ -4,7 +4,7 @@
 # UCS@school lib
 #  module: UCS@school specific roles
 #
-# SPDX-FileCopyrightText: 2014-2025 Univention GmbH
+# SPDX-FileCopyrightText: 2014-2026 Univention GmbH
 # SPDX-License-Identifier: AGPL-3.0-only
 
 from typing import Optional, Tuple  # noqa: F401

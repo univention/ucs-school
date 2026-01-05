@@ -3,7 +3,7 @@
 # UCS@school UMC module schoolexam-master
 #  UMC module delivering backend services for ucs-school-umc-exam
 #
-# SPDX-FileCopyrightText: 2013-2025 Univention GmbH
+# SPDX-FileCopyrightText: 2013-2026 Univention GmbH
 # SPDX-License-Identifier: AGPL-3.0-only
 """
 UCS@school UMC module schoolexam-master

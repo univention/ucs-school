@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-# SPDX-FileCopyrightText: 2020-2025 Univention GmbH
+# SPDX-FileCopyrightText: 2020-2026 Univention GmbH
 # SPDX-License-Identifier: AGPL-3.0-only
 """
 This module checks if on a UCS@school singleserver system or a school server from

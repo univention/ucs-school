@@ -4,7 +4,7 @@
 #
 # UCS@school Diagnosis Module
 #
-# SPDX-FileCopyrightText: 2020-2025 Univention GmbH
+# SPDX-FileCopyrightText: 2020-2026 Univention GmbH
 # SPDX-License-Identifier: AGPL-3.0-only
 """
 This module checks if a UCS@school Primary Directory Node with OX installed also has

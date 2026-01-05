@@ -4,7 +4,7 @@
 # Univention Management Console module:
 #   Manage room and their associated computers
 #
-# SPDX-FileCopyrightText: 2012-2025 Univention GmbH
+# SPDX-FileCopyrightText: 2012-2026 Univention GmbH
 # SPDX-License-Identifier: AGPL-3.0-only
 
 from typing import TYPE_CHECKING, List  # noqa: F401

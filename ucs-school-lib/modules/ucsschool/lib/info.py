@@ -4,7 +4,7 @@
 # UCS@school lib
 #  module: UCS@school simple query interface
 #
-# SPDX-FileCopyrightText: 2018-2025 Univention GmbH
+# SPDX-FileCopyrightText: 2018-2026 Univention GmbH
 # SPDX-License-Identifier: AGPL-3.0-only
 
 from collections import namedtuple

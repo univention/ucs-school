@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Univention UCS@school
-# SPDX-FileCopyrightText: 2017-2025 Univention GmbH
+# SPDX-FileCopyrightText: 2017-2026 Univention GmbH
 # SPDX-License-Identifier: AGPL-3.0-only
 
 """Base class for all Python based import hooks."""
