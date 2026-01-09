@@ -56,6 +56,8 @@ from ucsschool.lib.roles import (
 )
 from univention.admin.uexceptions import ldapError, noObject
 from univention.testing import utils
+from univention.udm import UDM
+from univention.udm.modules.users_user import UsersUserObject
 
 if TYPE_CHECKING:
     from univention.admin.uldap import access as LoType  # noqa: F401
@@ -182,6 +184,7 @@ class UCSTestSchool(object):
         self.lo = self.open_ldap_connection()
         self.udm = udm_test.UCSTestUDM()
         # self.ou_cloner = OUCloner(self.lo)  # Bug #53151: deactived code for now.
+        self.original_pw_policies: Dict[str, List[str]] = {}
 
     def __enter__(self):
         return self
@@ -293,6 +296,8 @@ class UCSTestSchool(object):
     def cleanup(self, wait_for_replication=True):
         """Cleanup all objects created by the UCS@school test environment"""
         logger.info("Performing UCSTestSchool cleanup...")
+        self._cleanup_policies()
+
         for ou_name in self._cleanup_ou_names:
             self.cleanup_ou(ou_name, wait_for_replication=False)
 
@@ -506,6 +511,55 @@ class UCSTestSchool(object):
                 )
                 name_edudc = None
         return name_edudc
+
+    def create_password_policy(
+        self, ou_name: str, name: str = "testPwdPolicy", quality_check: bool = True
+    ) -> str:
+        """
+        Creates a password policy and assigns a password policy to the given OU
+
+        :param ou_name: Name of the OU where the password policy should be created
+        :param name: Name of the password policy
+        :param quality_check: Whether to enable quality check for the password policy
+        :return: DN of the created password policy
+        """
+        # create password policy
+        properties = {
+            "position": "cn=policies,{}".format(self.get_ou_base_dn(ou_name)),
+            "name": name,
+            "pwQualityCheck": "TRUE" if quality_check else "FALSE",
+        }
+        return self.udm.create_object("policies/pwhistory", **properties)
+
+    def modify_object_add_policy(self, dn: str, policy_dn: str) -> None:
+        """
+        Applies the given password policy to the dn, remembers original policies for cleanup
+
+        NOTE This method is a workaround for univention/dev/education/ucsschool#1501
+        """
+        UsersUserObject._policies_encoder = None  # Bug 58985: force reset of _policies_encoder
+        udm = UDM(self.lo).version(3)
+        udm_object = udm.obj_by_dn(dn)
+        if dn not in self.original_pw_policies:
+            self.original_pw_policies[dn] = udm_object.policies["policies/pwhistory"]
+            new_policies = [policy_dn]
+        else:
+            new_policies = udm_object.policies["policies/pwhistory"] + [policy_dn]
+        udm_object.policies["policies/pwhistory"] = new_policies
+        udm_object.save()
+        UsersUserObject._policies_encoder = None  # Bug 58985: force reset of _policies_encoder
+
+    def _cleanup_policies(self) -> None:
+        """Restores original password policies for OUs modified during the test"""
+        UsersUserObject._policies_encoder = None  # Bug 58985: force reset of _policies_encoder
+        udm = UDM(self.lo).version(3)
+        for dn, policies in self.original_pw_policies.items():
+            logger.info("Restoring original policies for %s", dn)
+            udm_object = udm.obj_by_dn(dn)
+            udm_object.policies["policies/pwhistory"] = policies
+            udm_object.save()
+        self.original_pw_policies = {}
+        UsersUserObject._policies_encoder = None  # Bug 58985: force reset of _policies_encoder
 
     def create_ou(
         self,
