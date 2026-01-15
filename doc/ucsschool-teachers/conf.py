@@ -89,7 +89,7 @@ if "spelling" in sys.argv:
     tokenizer_lang = "de_DE"
     spelling_show_suggestions = True
     spelling_warning = True
-    spelling_word_list_filename = []
+    spelling_word_list_filename = ["spelling_wordlist"]
 
 root_doc = "index"
 

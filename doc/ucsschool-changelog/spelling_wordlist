@@ -27,3 +27,5 @@ Overlay-Module
 UDM-Hooks
 Fallback
 Kommunikations
+Pre-Join-Hook
+pre-join
