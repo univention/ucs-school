@@ -1,4 +1,4 @@
-ucs-school-metapackage (17.0.0) unstable; urgency=medium
+ucs-school-metapackage (17.0.1) unstable; urgency=medium
 
   * Always supply the appcenter cmd in the pre-join hook with username and
     password, because the appcenter always demands it if a preinst script

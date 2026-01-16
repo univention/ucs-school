@@ -72,6 +72,19 @@ class CallCommandError(Exception):
     pass
 
 
+class NoUsernameErorr(Exception):
+    pass
+
+
+def get_username(options):
+    try:
+        return options.lo.getAttr(options.binddn, "uid")[0].decode("UTF-8")
+    except IndexError:
+        # This can happen if it was called on a primary server.
+        # In that case we only have cn=admin which can not be converted to a username
+        raise NoUsernameErorr()
+
+
 def get_lo(options):  # type: (Any) -> univention.admin.uldap.access
     log.info("Connecting to LDAP as %r ...", options.binddn)
     try:
@@ -300,7 +313,7 @@ def pre_joinscripts_hook(options):  # type: (Any) -> None
             "--noninteractive",
             "--do-not-revert",
             "--username",
-            options.lo.getAttr(options.binddn, "uid")[0].decode("UTF-8"),
+            get_username(options),
             "--pwdfile",
             options.bindpwdfile,
         ]
@@ -400,22 +413,22 @@ def install_veyon_app(options, roles_pkg_list):  # type: (Any, List[str]) -> Non
 
     log.info("Installing 'UCS@school Veyon Proxy' app (%r)...", VEYON_APP_ID)
     log.info("Log output of the installation goes to 'appcenter.log'.")
-    cmd = [
-        "/usr/bin/univention-app",
-        "install",
-        VEYON_APP_ID,
-        "--skip-check",
-        "must_have_valid_license",
-        "--do-not-call-join-scripts",
-        "--noninteractive",
-        "--username",
-        options.lo.getAttr(options.binddn, "uid")[0].decode("UTF-8"),
-        "--pwdfile",
-        options.bindpwdfile,
-    ]
     try:
+        cmd = [
+            "/usr/bin/univention-app",
+            "install",
+            VEYON_APP_ID,
+            "--skip-check",
+            "must_have_valid_license",
+            "--do-not-call-join-scripts",
+            "--noninteractive",
+            "--username",
+            get_username(options),
+            "--pwdfile",
+            options.bindpwdfile,
+        ]
         call_cmd_locally(*cmd)
-    except CallCommandError as exc:
+    except (CallCommandError, NoUsernameErorr) as exc:
         # don't exit program if veyon proxy app cannot be installed
         log.error("#" * 79)
         log.error("# Error installing the 'UCS@school Veyon Proxy' app.                          #")

@@ -4,7 +4,7 @@ released:
 version: [0]
 scope: ucs_5.2-0-ucs-school-5.2
 src: ucs-school-metapackage
-fix: 17.0.0
+fix: 17.0.1
 bugs:
   58971:
     en: The UCS@school pre-join hook has been updated to fix a bug which broke the installation
