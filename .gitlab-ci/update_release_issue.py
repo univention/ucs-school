@@ -18,7 +18,6 @@ RELEASE_EXCEPTIONS = ["ucs-test-ucsschool"]
 
 
 class RelaeseIssue:
-
     context_re = r"## Context\/description[^#]*\n\n#"
     packages_re = r"## Packages to be released[^#]*\n\n#"
 
@@ -135,23 +134,55 @@ class RelaeseIssue:
             headers=self.headers,
         )
         if resp.status_code != 200 or len(resp.json()) == 0:
-            resp = requests.get(
-                "https://git.knut.univention.de/api/v4/projects/1574/templates/issues/release_issue",
-                headers=self.headers,
-            )
-            resp.raise_for_status()
-            resp = requests.post(
-                "https://git.knut.univention.de/api/v4/projects/1574/issues",
-                headers=self.headers,
-                data={
-                    "title": self._get_issue_title(),
-                    "description": resp.json()["content"],
-                },
-            )
-            resp.raise_for_status()
-            return resp.json()
+            return self._create_new_issue()
         else:
             return resp.json()[0]
+
+    def _create_new_issue(self):
+        resp = requests.get(
+            "https://git.knut.univention.de/api/v4/projects/1574/templates/issues/release_issue",
+            headers=self.headers,
+        )
+        resp.raise_for_status()
+        resp = requests.post(
+            "https://git.knut.univention.de/api/v4/projects/1574/issues",
+            headers=self.headers,
+            data={
+                "title": self._get_issue_title(),
+                "description": resp.json()["content"],
+            },
+        )
+        resp.raise_for_status()
+        # A status can only be set on a WorkItem
+        # The rest api doesn't support WorkItems :(
+        mutation = """
+mutation($noteableId: NoteableID!, $body: String!) {
+  createNote(input: { noteableId: $noteableId, body: $body }) {
+    note {
+      id
+      body
+      createdAt
+    }
+    errors
+  }
+}
+"""
+        variables = {
+            "noteableId": f"gid://gitlab/WorkItem/{resp.json()['id']}",
+            "body": '/status "Planned" ',
+        }
+        headers = {
+            "Authorization": f"Bearer {self.headers['PRIVATE-TOKEN']}",
+            "Content-Type": "application/json",
+        }
+        note_resp = requests.post(
+            "https://git.knut.univention.de/api/graphql",
+            json={"query": mutation, "variables": variables},
+            headers=headers,
+        )
+        note_resp.raise_for_status()
+        print(note_resp.json())
+        return resp.json()
 
     def _update_release_issue(self, issue):
         schoolversion = self.latest_app["schoolversion"]
