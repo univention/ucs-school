@@ -127,6 +127,15 @@ class Instance(SchoolBaseModule):
     def password_reset(self, request, ldap_user_write=None):
         """Reset the password of the user"""
 
+        def _log_dn(request) -> None:
+            MODULE.process("dn=%r" % (request.options["userDN"],))
+
+        def _log_exc_type(exc) -> None:
+            MODULE.process("exception=%s" % (type(exc),))
+
+        def _log_exc_obj(exc) -> None:
+            MODULE.process("exception=%s" % (exc,))
+
         def _password_reset(request, ldap_user_write=None):
             userdn = request.options["userDN"]
             pwdChangeNextLogin = request.options["nextLogin"]
@@ -156,8 +165,8 @@ class Instance(SchoolBaseModule):
                 # if everything worked well.
                 return
             except Exception as exc:
-                MODULE.process("dn=%r" % (request.options["userDN"],))
-                MODULE.process("exception=%s" % (type(exc),))
+                _log_dn(request)
+                _log_exc_type(exc)
                 MODULE.process("note=Cannot reset password, trying to update extended attributes first")
                 # NOTE: only on master/backup we can update extended attributes
                 udm_admin_save_user_with_extended_attributes(request.options["userDN"])
@@ -166,12 +175,12 @@ class Instance(SchoolBaseModule):
             _password_reset(request, ldap_user_write)
             self.finished(request.id, True)
         except udm_exceptions.permissionDenied as exc:
-            MODULE.process("dn=%r" % (request.options["userDN"],))
-            MODULE.process("exception=%s" % (type(exc),))
+            _log_dn(request)
+            _log_exc_type(exc)
             raise UMC_Error(_("permission denied"))
         except udm_exceptions.base as exc:
-            MODULE.process("dn=%r" % (request.options["userDN"],))
-            MODULE.process("exception=%s" % (exc,))
+            _log_dn(request)
+            _log_exc_obj(exc)
             raise UMC_Error("%s" % (get_exception_msg(exc)))
 
     def passwordexpiry_to_days(self, timestr):
