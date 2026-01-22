@@ -1,3 +1,9 @@
+ucs-school-umc-users (17.0.2) unstable; urgency=medium
+
+  * Bug #57888: fix error on replicas for password policies
+
+ -- Jürn Brodersen <brodersen@univention.de>  Fri, 23 Jan 2026 00:51:32 +0100
+
 ucs-school-umc-users (17.0.1) unstable; urgency=medium
 
   * Bug 58209: escape values to fix possible xss

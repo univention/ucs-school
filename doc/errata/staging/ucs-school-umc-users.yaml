@@ -1,0 +1,11 @@
+product: ucsschool
+release: "5.2"
+released:
+version: [0]
+scope: ucs_5.2-0-ucs-school-5.2
+src: ucs-school-umc-users
+fix: 17.0.2
+bugs:
+  57888:
+    en: Password policy errors are now shown correctly.
+    de: Passwortrichtlinienfehler werden nun korrekt angezeigt.
