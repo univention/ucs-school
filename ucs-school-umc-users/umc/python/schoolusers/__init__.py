@@ -71,7 +71,7 @@ def udm_admin_save_user_with_extended_attributes(dn):
     user = get_udm_user_mod().get(dn)
     try:
         for name, default_value in get_extended_attributes():
-            if not hasattr(user.props, name):
+            if not hasattr(user.props, name) or getattr(user.props, name) is None:
                 setattr(user.props, name, default_value)
         user.save()
     except udm_exceptions.base as exc:
@@ -154,26 +154,22 @@ class Instance(SchoolBaseModule):
             user["pwdChangeNextLogin"] = "1" if pwdChangeNextLogin else "0"
             user.modify()
 
-        if on_master_or_backup_node():
-            # NOTE: In cases of missing extended attributes UDM will fail to set the password.
-            # Therefore we try to set the password first and in case of an exception we
-            # update the extended attributes and try again.
+        try:
             try:
                 _password_reset(request, ldap_user_write)
-                self.finished(request.id, True)
-                # This is needed here to properly finish the request without continuation
-                # if everything worked well.
-                return
-            except Exception as exc:
-                _log_dn(request)
-                _log_exc_type(exc)
-                MODULE.process("note=Cannot reset password, trying to update extended attributes first")
-                # NOTE: only on master/backup we can update extended attributes
-                udm_admin_save_user_with_extended_attributes(request.options["userDN"])
-
-        try:
-            _password_reset(request, ldap_user_write)
-            self.finished(request.id, True)
+            except udm_exceptions.insufficientInformation as exc:
+                if on_master_or_backup_node():
+                    # In cases of missing extended attributes UDM will fail to set the password.
+                    # We try to update the extended attributes and try again.
+                    _log_dn(request)
+                    _log_exc_type(exc)
+                    MODULE.process(
+                        "note=Cannot reset password, trying to update extended attributes first"
+                    )
+                    udm_admin_save_user_with_extended_attributes(request.options["userDN"])
+                    _password_reset(request, ldap_user_write)
+                else:
+                    raise
         except udm_exceptions.permissionDenied as exc:
             _log_dn(request)
             _log_exc_type(exc)
@@ -182,6 +178,7 @@ class Instance(SchoolBaseModule):
             _log_dn(request)
             _log_exc_obj(exc)
             raise UMC_Error("%s" % (get_exception_msg(exc)))
+        self.finished(request.id, True)
 
     def passwordexpiry_to_days(self, timestr):
         """
