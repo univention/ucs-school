@@ -1,7 +1,7 @@
 #!/usr/share/ucs-test/runner pytest-3 -s -l -v
 ## desc: ucs-school-reset-password-required-attr
 ## roles: [domaincontroller_master, domaincontroller_slave]
-## tags: [apptest,ucsschool,ucsschool_base1]
+## tags: [apptest,ucsschool,ucsschool_base1,ucs-school-umc-users]
 ## exposure: dangerous
 ## packages: [ucs-school-umc-users]
 
