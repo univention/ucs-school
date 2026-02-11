@@ -905,7 +905,8 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         """
         if not ucr.is_true("ucsschool/import/generate/import/group", False):
             self.logger.info(
-                "creation of the Import Group has been disabled byucsschool/import/generate/import/group"
+                "creation of the Import Group has been disabled by "
+                "ucsschool/import/generate/import/group"
             )
             return
         udm = UDM(lo).version(1)
