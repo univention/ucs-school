@@ -1,0 +1,20 @@
+product: ucsschool
+release: "5.2"
+released:
+version: [0]
+scope: ucs_5.2-0-ucs-school-5.2
+src: ucs-school-lib
+fix: 15.2.0
+bugs:
+  58505:
+    en: |
+      Support for the Apple School Manager Connector on central replica nodes.
+      The library supports with the parameter ``filter_local`` at function
+      ``ucsschool.lib.model.School.get_all`` that non-local schools from the
+      LDAP are also listed.
+    de: |
+      Unterstützung für den Apple School Manager Connector auf einem Zentralen
+      Replica Node.
+      Die Bibliothek unterstützt in der Funktion
+      ``ucsschool.lib.model.School.get_all`` mit dem Parameter ``filter_local``,
+      dass auch nicht lokale Schulen aus dem LDAP gelistet werden.

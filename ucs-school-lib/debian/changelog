@@ -1,3 +1,14 @@
+ucs-school-lib (15.2.0) unstable; urgency=medium
+
+  * feat: add parameter filter_local to
+    ucsschool.lib.model.School.get_all supporting ASMC
+    when syncing to apple-school-manager on a central
+    replica node.
+    Issue univention/dev/education/apple-school-manager#15
+    Bug #58505
+
+ -- Jan Gietzel <jan.gietzel@univention.de>  Mon, 12 Feb 2026 11:20:05 +0100
+
 ucs-school-lib (15.1.5) unstable; urgency=medium
 
   * fix: object cleanup must be done before remove

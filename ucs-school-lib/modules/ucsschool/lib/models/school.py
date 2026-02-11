@@ -693,7 +693,9 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         return obj
 
     @classmethod
-    def get_all(cls, lo, filter_str=None, easy_filter=False, respect_local_oulist=True):
+    def get_all(
+        cls, lo, filter_str=None, easy_filter=False, respect_local_oulist=True, filter_local=True
+    ):
         schools = super(School, cls).get_all(
             lo, school=None, filter_str=filter_str, easy_filter=easy_filter
         )
@@ -702,7 +704,8 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             cls.logger.debug("All Schools: Schools overridden by UCR variable ucsschool/local/oulist")
             ous = [x.strip() for x in oulist.split(",")]
             schools = [school for school in schools if school.name in ous]
-        return cls._filter_local_schools(schools, lo)
+
+        return cls._filter_local_schools(schools, lo) if filter_local else schools
 
     @classmethod
     def _filter_local_schools(cls, schools, lo):
