@@ -6,6 +6,8 @@
 # SPDX-FileCopyrightText: 2014-2026 Univention GmbH
 # SPDX-License-Identifier: AGPL-3.0-only
 
+from __future__ import annotations
+
 import socket
 import subprocess
 from typing import TYPE_CHECKING, List  # noqa: F401
@@ -47,7 +49,7 @@ from .share import MarketplaceShare
 from .utils import _, flatten, ucr
 
 if TYPE_CHECKING:
-    from .base import LoType  # noqa: F401
+    from .base import LoType, UCSSchoolModel  # noqa: F401
 
 
 class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
@@ -694,8 +696,13 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
 
     @classmethod
     def get_all(
-        cls, lo, filter_str=None, easy_filter=False, respect_local_oulist=True, filter_local=True
-    ):
+        cls,
+        lo: LoType,
+        filter_str: str | None = None,
+        easy_filter: str | None = False,
+        respect_local_oulist: bool = True,
+        filter_local: bool = True,
+    ) -> list[UCSSchoolModel]:
         schools = super(School, cls).get_all(
             lo, school=None, filter_str=filter_str, easy_filter=easy_filter
         )
@@ -708,7 +715,7 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
         return cls._filter_local_schools(schools, lo) if filter_local else schools
 
     @classmethod
-    def _filter_local_schools(cls, schools, lo):
+    def _filter_local_schools(cls, schools: list[UCSSchoolModel], lo: LoType) -> list[UCSSchoolModel]:
         if ucr.get("server/role") in ("domaincontroller_master", "domaincontroller_backup"):
             return schools
         return [
