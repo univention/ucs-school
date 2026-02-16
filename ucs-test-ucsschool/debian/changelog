@@ -1,3 +1,10 @@
+ucs-test-ucsschool (8.0.44) unstable; urgency=medium
+
+  * test: add test for School.get_all
+    Issue univention/dev/education/apple-school-manager#15
+
+ -- Jürn Brodersen <brodersen@univention.de>  Mon, 16 Feb 2026 20:39:37 +0100
+
 ucs-test-ucsschool (8.0.43) unstable; urgency=medium
 
   * test: add test for password palicy error handling
