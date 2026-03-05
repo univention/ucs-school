@@ -1,6 +1,6 @@
 product: ucsschool
 release: "5.2"
-released:
+released: 5.2v5
 version: [0]
 scope: ucs_5.2-0-ucs-school-5.2
 src: ucs-school-metapackage
