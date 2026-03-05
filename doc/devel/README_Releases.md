@@ -65,9 +65,10 @@ Set all Bugs published with this release to *CLOSED*.
 You can get the bug numbers with this snippet:
 
 ```shell
-cd ~/git/doc/errata/published/
-grep bug: 2019-04-11-*.yaml | cut -d: -f2- | tr -d 'bug: []' | tr ',' '\n' | sort -u | tr '\n' ',' ; echo
+today="$(date +%F)"  # e.g. 2026-03-05
+grep -RhoP '^\s{2}\K\d+(?=:\s*$)' doc/errata/published/${today}-*.yaml | paste -sd, -
 ```
+
 List the bugs in Bugzilla in the extended search by pasting the list in *Bugs numbered*.
 Now click on *Change Several Bugs at Once* underneath the columns.
 This will enable you to select and modify the bugs you need.
