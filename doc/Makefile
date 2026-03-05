@@ -9,9 +9,9 @@ DIRS := $(dir $(wildcard */Makefile))
 USER_ID := $(shell id -u)
 TARGET_LANG ?= de
 SPHINXOPTS ?= "-q -W --keep-going"
-DOCKER_REGISTRY := docker-registry.knut.univention.de
-SPHINX_DOCKER_BASE = $(DOCKER_REGISTRY)/knut/sphinx-base:latest
-SPHINX_DOCKER_FULL = $(DOCKER_REGISTRY)/sphinx:latest
+DOCKER_REGISTRY := gitregistry.knut.univention.de
+SPHINX_DOCKER_BASE = $(DOCKER_REGISTRY)/univention/dev/docs/sphinx-docker/base:latest
+SPHINX_DOCKER_FULL = $(DOCKER_REGISTRY)/univention/dev/docs/sphinx-docker/base:latest
 DOCKER_USER_CMD := docker run --rm -v "$(mkfile_dir)..:/project" -w /project/doc --network=host -u "$(USER_ID)"
 DOCKER_CMD := docker run --rm -v "$(mkfile_dir)..:/project" -w /project/doc --network=host
 

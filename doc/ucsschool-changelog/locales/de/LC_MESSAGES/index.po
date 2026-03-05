@@ -5,14 +5,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: UCS@school - 5.0v3 Changelog \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-02 09:23+0000\n"
+"POT-Creation-Date: 2026-03-05 14:14+0000\n"
 "PO-Revision-Date: 2023-02-06 09:57+0100\n"
 "Last-Translator: Univention GmbH <packages@univention.de>\n"
 "Language-Team: Univention GmbH <packages@univention.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.16.0\n"
+"Generated-By: Babel 2.18.0\n"
 
 #: ../../index.rst:9
 msgid "|UCSUAS|-Update"
@@ -21,11 +21,11 @@ msgstr "|UCSUAS|-Update"
 #: ../../index.rst:11
 msgid ""
 "This document contains the changelogs with the detailed change "
-"information for the update of |UCSUAS| from version 5.2v3 to 5.2v4."
+"information for the update of |UCSUAS| from version 5.2v4 to 5.2v5."
 msgstr ""
 "Dieses Dokument enthält die Changelogs mit den detaillierten "
-"Änderungsinformationen zum Update von |UCSUAS| von Version 5.2v3 nach "
-"5.2v4."
+"Änderungsinformationen zum Update von |UCSUAS| von Version 5.2v4 nach "
+"5.2v5."
 
 #: ../../index.rst:14
 msgid ""
@@ -38,109 +38,62 @@ msgstr ""
 "changelog>`."
 
 #: ../../index.rst:19
-msgid "New |UCSUAS| role"
-msgstr "Neue |UCSUAS|-Benutzerrolle"
+msgid "Maintenance release to enforce an updated ID Connector"
+msgstr "Wartungsrelease zur Erzwingung eines aktualisierten ID Connector"
 
 #: ../../index.rst:20
-msgid "|UCSUAS| 5.2v4 adds a new role to |UCSUAS|: the Legal Guardian."
-msgstr "|UCSUAS| 5.2v4 fügt eine neue Benutzerrolle hinzu: den Sorgeberechtigten."
+msgid ""
+"|UCSUAS| 5.2v5 adds a preinstallation hook to enforce an updated ID "
+"Connector."
+msgstr ""
+"|UCSUAS| 5.2v5 fügt einen Pre-Installations-Hook hinzu, um einen "
+"aktualisierten ID Connector zu erzwingen."
 
 #: ../../index.rst:22
-msgid ""
-"The new role \"Legal Guardian\" gives administrators the ability to "
-"assign legal guardians to students. A legal guardian can be a parent or a"
-" person appointed by a court to care for a minor child. This enables "
-"school authorities to maintain a single source of truth across all "
-"integrated applications that require contact with legal guardians. The "
-"centralized approach significantly enhances data consistency and "
-"security, especially in communication and service platforms by avoiding "
-"data fragmentation across schools."
-msgstr ""
-"Die neue Rolle \"Sorgeberechtigter\" gibt Administratoren die "
-"Möglichkeit, Schülern Sorgeberechtigte zuzuweisen. Ein Sorgeberechtigter "
-"kann ein Elternteil oder eine vom Gericht bestellte Person sein, die für "
-"ein minderjähriges Kind sorgt. Dadurch können Schulbehörden eine einzige "
-"zuverlässige Datenquelle für alle integrierten Anwendungen pflegen, die "
-"den Kontakt zu Sorgeberechtigten erfordern. Der zentralisierte Ansatz "
-"verbessert die Datenkonsistenz und Datensicherheit erheblich, "
-"insbesondere in Kommunikations- und Serviceplattformen, da eine "
-"Datenfragmentierung zwischen den Schulen vermieden wird."
-
-#: ../../index.rst:29
 msgid "What's new?"
 msgstr "Was ist neu?"
 
-#: ../../index.rst:31
+#: ../../index.rst:24
 msgid ""
-"Administrators can create legal guardians in the UMC module “Users "
-"(Schools)”."
+"Together with the 4.0.0 release of the ID Connector, administrators can "
+"now push legal guardians to the ID Broker."
 msgstr ""
-"Administratoren können im UMC-Modul \"Benutzer (Schulen)\" "
-"Sorgeberechtigte anlegen."
+"Mit der Version 4.0.0 des ID Connectors können Administratoren nun "
+"Erziehungsberechtigte an den ID Broker weiterleiten."
 
-#: ../../index.rst:32
+#: ../../index.rst:25
 msgid ""
-"Administrators can link legal guardians to students on the student detail"
-" page and students to Legal Guardians on the legal guardian detail page."
+"Together with the Apple School Manager Connector 5.1.1, administrators "
+"can now install the Apple School Manager Connector on a central replica "
+"node."
 msgstr ""
-"Mit der UMC können Administratoren Sorgeberechtigte mit Schülern und "
-"Schüler mit Sorgeberechtigten verknüpfen."
+"Zusammen mit dem Apple School Manager Connector 5.1.1 können "
+"Administratoren den Apple School Manager Connector nun auf zentralen "
+"Replica Node installieren."
 
-#: ../../index.rst:33
+#: ../../index.rst:26
 msgid ""
-"Administrators can import legal guardians via CLI and web-based import "
-"and link them to existing students."
+"Users now get an error message on the UMC if they reset a password and it"
+" fails the dictionary word policy."
 msgstr ""
-"Administratoren können Sorgeberechtigte über die Kommandozeile und das "
-"webbasierte Importmodul importieren und sie mit bestehenden Schülern "
-"verknüpfen."
+"Benutzer erhalten nun eine Fehlermeldung auf der UMC, wenn sie ein "
+"Passwort zurücksetzen und dieses gegen die Richtlinie für "
+"Wörterbuchwörter verstößt."
 
-#: ../../index.rst:34
+#: ../../index.rst:30
 msgid ""
-"The Kelvin API now supports creating, reading, modifying and deleting "
-"legal guardians, as well as assigning guardians to existing students."
+"If you have the ID Connector App installed, you must first update it, "
+"before updating to |UCSUAS| 5.2v5"
 msgstr ""
-"Die Kelvin-API unterstützt jetzt das Erstellen, Lesen, Modifizieren und "
-"Löschen von Sorgeberechtigten sowie für die Zuweisung von "
-"Sorgeberechtigten zu bestehenden Schülern."
+"Wenn Sie die ID Connector App installiert haben, müssen Sie diese "
+"zunächst aktualisieren, bevor Sie das Update auf |UCSUAS| 5.2v5 "
+"durchführen können."
 
 #: ../../index.rst:35
-msgid ""
-"A student can have up to 4 legal guardians assigned and a legal guardian "
-"can be assigned to up to 10 students."
-msgstr ""
-"Einem Schüler können bis zu 4 Sorgeberechtigte zugewiesen werden, und ein"
-" Sorgeberechtigter kann bis zu 10 Schülern zugewiesen werden."
-
-#: ../../index.rst:39
-msgid ""
-"You must install version 3.0.0 of the Kelvin API in order to set legal "
-"guardians in |UCSUAS| with the Kelvin API. If a component uses the "
-"``PUT`` method of the new Kelvin API, specifying assigned students and "
-"assigned legal guardians is optional, but an empty list is used as the "
-"default value by the Kelvin API. Therefore, if Kelvin API clients do not "
-"send values for assigned legal guardians or assigned students when using "
-"the ``PUT`` method, the existing links between students and legal "
-"guardians will be removed from the corresponding objects. Update your "
-"Kelvin API client and send all values to prevent this behavior."
-msgstr ""
-"Sie müssen die Kelvin-API in Version 3.0.0 installieren, um "
-"Sorgeberechtigte in |UCSUAS| setzen zu können. Wenn Sie die "
-"``PUT``-Methode der neuen Kelvin-API verwenden, ist die Angabe von "
-"Schülern und Sorgeberechtigten zwar optional, aber es wird eine leere "
-"Liste als Standardwert von der Kelvin-API verwendet. Senden Kelvin-"
-"Clients bei der Verwendung der ``PUT``-Methode keine Werte für zu "
-"verknüpfende Sorgeberechtigte oder Schüler, werden bereits vorhandenen "
-"Verknüpfungen zwischen Sorgeberechtigten und Schülern an den "
-"entsprechenden Objekten entfernt. Aktualisieren Sie Ihren Kelvin-API-"
-"Client, damit dieser alle Werte sendet, um das beschriebene Verhalten zu "
-"vermeiden."
-
-#: ../../index.rst:50
 msgid "General notes on the update"
 msgstr "Generelle Hinweise zum Update"
 
-#: ../../index.rst:52
+#: ../../index.rst:37
 msgid ""
 "During the update, services within the domain may fail. For this reason, "
 "the update should be performed within a maintenance window. It is "
@@ -154,7 +107,7 @@ msgstr ""
 "zunächst in einer Testumgebung einzuspielen und zu testen. Die "
 "Testumgebung sollte dabei identisch zur Produktivumgebung sein."
 
-#: ../../index.rst:57
+#: ../../index.rst:42
 msgid ""
 "Please note that depending on the size of the |UCSUAS| environment, this "
 "update may take longer than usual to complete. This is because additional"
@@ -166,11 +119,11 @@ msgstr ""
 " dass zusätzliche LDAP-Strukturen für die neue Rolle \"Sorgeberechtigte\""
 " erstellt und die LDAP-Indizes aktualisiert werden müssen."
 
-#: ../../index.rst:65
+#: ../../index.rst:50
 msgid "Update process"
 msgstr "Update-Prozess"
 
-#: ../../index.rst:67
+#: ../../index.rst:52
 msgid ""
 "Major updates for |UCSUAS| are released in the Univention App Center as a"
 " standalone app update. Minor updates and bug fixes (errata for |UCSUAS|)"
