@@ -7,7 +7,7 @@
 
 ## joinscript api: bindpwdfile
 
-VERSION=32
+VERSION=33
 . /usr/share/univention-join/joinscripthelper.lib
 . /usr/share/univention-lib/ldap.sh
 joinscript_init

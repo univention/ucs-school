@@ -1,0 +1,12 @@
+product: ucsschool
+release: "5.2"
+released:
+version: [0]
+scope: ucs_5.2-0-ucs-school-5.2
+src: ucs-school-ldap-acls-master
+fix: 20.0.0
+bugs:
+  56913:
+    en: Teachers can now reset passwords when an account is locked.
+    de: Lehrer dürfen nun Passwörter zurücksetzen, wenn ein Konto gesperrt ist.
+

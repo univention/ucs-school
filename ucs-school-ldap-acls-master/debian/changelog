@@ -1,3 +1,9 @@
+ucs-school-ldap-acls-master (20.0.0) unstable; urgency=medium
+
+  * Bug #56913 fix: allow teachers to reset passwords if account is locked
+
+ -- Florian Best <best@univention.de>  Thu, 19 Mar 2026 12:07:29 +0100
+
 ucs-school-ldap-acls-master (19.1.2) unstable; urgency=medium
 
   * fix: add default value for ucsschool/ldap/default/container/legal_guardians

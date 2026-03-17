@@ -7,12 +7,15 @@
 
 from __future__ import print_function
 
+import contextlib
+import warnings
 from dataclasses import dataclass
 from enum import Enum
 from typing import Callable, Dict, Generator, List
 
 import pytest
 
+import univention.testing.active_directory as ad
 import univention.testing.strings as uts
 import univention.testing.ucr as ucr_test
 import univention.testing.ucsschool.ucs_test_school as utu
@@ -21,6 +24,7 @@ from univention.testing import utils
 from univention.testing.umc import Client
 
 INIT_PASSWORD = "univention"
+LOCKOUT_ATTEMPTS = 3
 
 
 def random_password() -> str:
@@ -37,6 +41,82 @@ def auth(host, username, password):
         return client.authenticate(username, password)
     except HTTPError as exc:
         return exc.response
+
+
+@contextlib.contextmanager
+def samba_account_lockout_policy(
+    threshold: int = 3, duration: int = 30, reset_after: int = 30
+) -> Generator[None, None, None]:
+    """Enable Samba account-lockout policy for the duration of the with-block, then restore."""
+    domain_pw = ad.DomainPasswordSettings(ad.ActiveDirectorySettings(is_local_connect=True))
+    original = domain_pw.get()
+    domain_pw.set(
+        ad.DomainPasswordsettingsData(
+            account_lockout_threshold=threshold,
+            account_lockout_duration=duration,
+            reset_account_lockout_after=reset_after,
+        )
+    )
+    try:
+        yield
+    finally:
+        try:
+            domain_pw.set(original)
+        except ad.SambaToolException as exc:
+            msg = "Teardown failed while restoring Samba password policy: %s" % (exc,)
+            warnings.warn(msg, RuntimeWarning, stacklevel=2)
+
+
+@pytest.fixture(autouse=True)
+def _samba_lockout_policy_for_test(request: pytest.FixtureRequest) -> Generator[None, None, None]:
+    """
+    Wrap tests that set `lock_target_user_before_reset` with the Samba lockout policy.
+
+    The policy is restored after the test regardless of pass or failure.
+    """
+    callspec = getattr(request.node, "callspec", None)
+    params: TestCaseData | None = callspec.params.get("params") if callspec else None
+    if params and params.lock_target_user_before_reset:
+        with samba_account_lockout_policy(threshold=LOCKOUT_ATTEMPTS):
+            yield
+    else:
+        yield
+
+
+def lock_user_with_wrong_samba_password(username: str, attempts: int) -> None:
+    """Lock the given user by attempting to authenticate with a wrong password repeatedly."""
+    shares = ad.Shares(settings=ad.ActiveDirectorySettings(is_local_connect=True))
+    for _ in range(attempts):
+        # We intentionally expect authentication failures here to trigger lockout.
+        with contextlib.suppress(
+            ad.LogonFailureException,
+            ad.AccountLockedOutException,
+            ad.SmbClientException,
+        ):
+            shares.list(username, "wrong_pwd")
+
+    # verify that the account is actually locked
+    with pytest.raises((ad.AccountLockedOutException)):
+        ad.Shares(settings=ad.ActiveDirectorySettings(is_local_connect=True)).list(
+            username, INIT_PASSWORD
+        )
+
+
+def validate_samba_login(target_user: str, new_password: str) -> None:
+    samba_login_error = None
+    try:
+        ad.Shares(settings=ad.ActiveDirectorySettings(is_local_connect=True)).list(
+            target_user, new_password
+        )
+    except (
+        ad.AccountLockedOutException,
+        ad.LogonFailureException,
+        ad.SmbClientException,
+    ) as exc:
+        samba_login_error = exc
+    assert samba_login_error is None, (
+        "Samba login with new password failed after reset: %s" % samba_login_error
+    )
 
 
 class Entity(Enum):
@@ -56,6 +136,7 @@ class TestCaseData:
     expected_auth_for_new_password: int
     expect_password_expired: bool
     password_generator: Callable[[], str]
+    lock_target_user_before_reset: bool = False
 
 
 @dataclass
@@ -334,6 +415,36 @@ def school_environment() -> Generator[InfixtureType, None, None]:
             ),
             id="#15: Teacher fails to reset student password to simple password (chgPwdNextLogin=False)",
         ),
+        pytest.param(
+            TestCaseData(
+                acting_user=Entity.TEACHER,
+                flavor="student",
+                target=Entity.STUDENT,
+                chg_pwd_on_next_login=False,
+                expected_reset_result=True,
+                expected_auth_for_old_password=401,
+                expected_auth_for_new_password=200,
+                expect_password_expired=False,
+                password_generator=random_password,
+                lock_target_user_before_reset=True,
+            ),
+            id="#16: Teacher resets password of Samba-locked student",
+        ),
+        pytest.param(
+            TestCaseData(
+                acting_user=Entity.ADMIN,
+                flavor="student",
+                target=Entity.STUDENT,
+                chg_pwd_on_next_login=False,
+                expected_reset_result=True,
+                expected_auth_for_old_password=401,
+                expected_auth_for_new_password=200,
+                expect_password_expired=False,
+                password_generator=random_password,
+                lock_target_user_before_reset=True,
+            ),
+            id="#17: Schooladmin resets password of Samba-locked student",
+        ),
     ],
 )
 def test_password_reset(
@@ -355,6 +466,9 @@ def test_password_reset(
 
     client = Client(stack.host, acting_user, INIT_PASSWORD)
 
+    if params.lock_target_user_before_reset:
+        lock_user_with_wrong_samba_password(target_user, attempts=LOCKOUT_ATTEMPTS)
+
     def reset():
         try:
             result = client.umc_command("schoolusers/password/reset", options, params.flavor).result
@@ -374,6 +488,9 @@ def test_password_reset(
         assert reset() == params.expected_reset_result, (
             "umcp command schoolusers/password/reset was unexpectedly successful"
         )
+
+    if params.lock_target_user_before_reset and params.expected_reset_result is True:
+        validate_samba_login(target_user, new_password)
 
     # test if old password does NOT work
     auth_response = auth(stack.host, target_user, INIT_PASSWORD)
