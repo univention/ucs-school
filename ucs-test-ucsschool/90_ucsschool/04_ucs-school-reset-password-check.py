@@ -22,6 +22,7 @@ import univention.testing.ucsschool.ucs_test_school as utu
 from univention.lib.umc import BadRequest, Forbidden, HTTPError
 from univention.testing import utils
 from univention.testing.umc import Client
+from univention.testing.utils import package_installed
 
 INIT_PASSWORD = "univention"
 LOCKOUT_ATTEMPTS = 3
@@ -81,6 +82,16 @@ def _samba_lockout_policy_for_test(request: pytest.FixtureRequest) -> Generator[
             yield
     else:
         yield
+
+
+@pytest.fixture(autouse=True)
+def _eventually_skip_samba_lockout_tests(request: pytest.FixtureRequest) -> None:
+    """Skip Samba lockout test cases when `univention-samba4` not installed."""
+    callspec = getattr(request.node, "callspec", None)
+    params: TestCaseData | None = callspec.params.get("params") if callspec else None
+    if params and params.lock_target_user_before_reset:
+        if not package_installed("univention-samba4"):
+            pytest.skip("Samba lockout reset cases require univention-samba4")
 
 
 def lock_user_with_wrong_samba_password(username: str, attempts: int) -> None:
