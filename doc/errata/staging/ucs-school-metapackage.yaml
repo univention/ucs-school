@@ -1,0 +1,13 @@
+product: ucsschool
+release: "5.2"
+released:
+version: [0]
+scope: ucs_5.2-0-ucs-school-5.2
+src: ucs-school-metapackage
+fix: 17.1.0
+bugs:
+  55911:
+    en: Respect custom group and user default values for "Well Known" AD objects.
+        This fixes a join failure into domains that previously took part in an AD Takeover.
+    de: Benutzerdefinierte Standardwerte von Gruppen und Benutzern, für "Well Known" AD-Objekte, werden nun berücksichtigt.
+        Dadurch wird ein Fehler beim Beitritt zu Domänen behoben, die zuvor an einer AD Migration beteiligt waren.

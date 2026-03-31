@@ -1,3 +1,9 @@
+ucs-school-metapackage (17.1.0) unstable; urgency=medium
+
+  * Bug #55911: consider localized names for well known SIDs
+
+ -- Jürn Brodersen <brodersen@univention.de>  Tue, 31 Mar 2026 14:16:59 +0200
+
 ucs-school-metapackage (17.0.1) unstable; urgency=medium
 
   * Always supply the appcenter cmd in the pre-join hook with username and
