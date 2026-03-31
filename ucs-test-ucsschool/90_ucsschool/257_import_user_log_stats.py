@@ -75,7 +75,7 @@ class Test(CLI_Import_v2_Tester):
             match = re.search(r"\[(.*)\]", line)
             if match:
                 group = match.group(1)
-                usernames.update(set(group.split(",")))
+                usernames.update(set(re.findall("'([^']*)'", group)))
                 num_current_usernames = group.count("', '") + 1
 
                 max_users_in_line = max(max_users_in_line, num_current_usernames)
