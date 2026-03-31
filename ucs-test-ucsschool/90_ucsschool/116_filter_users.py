@@ -7,7 +7,7 @@
 ## exposure: dangerous
 ## packages: [ucs-school-umc-groups]
 
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -15,7 +15,6 @@ import univention.admin.uexceptions as udm_exceptions
 from ucsschool.lib.models import User
 from ucsschool.lib.school_umc_base import Display
 from univention.lib.umc import BadRequest
-from univention.management.console.log import MODULE
 from univention.management.console.modules import UMC_Error
 from univention.management.console.modules.schoolgroups import _filter_users
 from univention.testing import utils
@@ -30,11 +29,12 @@ test_user = User(name="test_user", schools=["test_school"], dn="test_user_dn")
 
 @pytest.mark.parametrize("flavor", flavors)
 @patch.object(User, "from_dn", side_effect=udm_exceptions.noObject)
-@patch.object(MODULE, "error")
-def test_filter_users_fails_if_not_user_exist(user_from_dn_mock, module_error_mock, flavor):
-    result = _filter_users(["fake_user"], "fake_school", flavor)
+def test_filter_users_fails_if_not_user_exist(user_from_dn_mock, flavor):
+    with patch("univention.management.console.modules.schoolgroups.MODULE") as module_mock:
+        module_mock.error = MagicMock()
+        result = _filter_users(["fake_user"], "fake_school", flavor)
     user_from_dn_mock.assert_called()
-    module_error_mock.assert_called()
+    module_mock.error.assert_called()
     assert result == []
 
 

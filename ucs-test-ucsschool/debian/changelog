@@ -1,3 +1,11 @@
+ucs-test-ucsschool (8.0.46) unstable; urgency=medium
+
+  * test: 90_ucsschool.116_filter_users.
+          test_filter_users_fails_if_not_user_exist[workgroup-admin]
+    Issue univention/dev/education/ucsschool#1521
+
+ -- Jürn Brodersen <brodersen@univention.de>  Tue, 31 Mar 2026 16:02:03 +0200
+
 ucs-test-ucsschool (8.0.45) unstable; urgency=medium
 
   * feat: Add test cases for password reset tests on samba locked out
