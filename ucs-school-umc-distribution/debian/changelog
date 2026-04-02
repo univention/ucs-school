@@ -1,3 +1,10 @@
+ucs-school-umc-distribution (19.1.0) unstable; urgency=low
+
+  * Issue univention/dev/education/ucsschool#1251: Add `Project.exists` and
+    improve logging
+
+ -- Johannes Königer <koeniger@univention.de>  Tue, 02 Apr 2026 15:13:27 +0200
+
 ucs-school-umc-distribution (19.0.1) unstable; urgency=low
 
   * Bug #58209: escape relevant backend data to prevent XSS

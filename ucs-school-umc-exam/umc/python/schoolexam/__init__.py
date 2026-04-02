@@ -341,10 +341,10 @@ class Instance(SchoolBaseModule):
         }
         if not sender:
             raise UMC_Error(_('Could not authenticate user "%s"!') % request.user_dn)
-        project = util.distribution.Project.load(request.options.get("name", ""))
-        logger.info("loaded project=%r", project)
         orig_files = []
         if update:
+            project = util.distribution.Project.load(request.options.get("name", ""))
+            logger.info("loaded project=%r", project)
             if not project:
                 raise UMC_Error(
                     _("The specified exam does not exist: %s") % request.options.get("name", "")
@@ -358,7 +358,7 @@ class Instance(SchoolBaseModule):
             logger.info("updating project=%r with new_values=%r", project, new_values)
             project.update(new_values)
         else:
-            if project:
+            if util.distribution.Project.exists(request.options.get("name", "")):
                 raise UMC_Error(
                     _(
                         'An exam with the name "%s" already exists. Please choose a different name '
@@ -522,10 +522,9 @@ class Instance(SchoolBaseModule):
             raise UMC_Error(_('Could not authenticate user "%s"!') % request.user_dn)
 
         def _thread():
-            project = util.distribution.Project.load(request.options.get("name", ""))
-            logger.info("loaded project=%r", project)
+            projectname = request.options.get("name", "")
             directory = request.options["directory"]
-            if project:
+            if util.distribution.Project.exists(projectname):
                 my.project = self._save_exam(request, update=True, ldap_user_read=ldap_user_read)
             else:
                 my.project = self._save_exam(request, update=False, ldap_user_read=ldap_user_read)

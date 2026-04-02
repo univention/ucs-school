@@ -812,22 +812,29 @@ class Project(_Dict):
         return os.path.abspath(path)
 
     @staticmethod
-    def load(projectfile):
-        """Load the given project file and create a new Project instance."""
-        project = None
-
+    def exists(projectfile):
         if not projectfile:
-            MODULE.info("Empty project filename has been passed to Project.load()")
-            return None
+            MODULE.warning("Empty project filename has been passed to Project.exists()")
+            return False
 
         try:
             fn_project = Project.sanitize_project_filename(projectfile)
         except InvalidProjectFilename:
-            return None
+            MODULE.warning("Invalid project filename: %s" % projectfile)
+            return False
 
-        if not os.path.exists(fn_project):
-            MODULE.error("Cannot load project - project file %s does not exist" % fn_project)
-            return None
+        project_exists = os.path.exists(fn_project)
+        return project_exists
+
+    @staticmethod
+    def load(projectfile):
+        """Load the given project file and create a new Project instance."""
+        project = None
+
+        if not Project.exists(projectfile):
+            MODULE.info("Project %s does not exist." % projectfile)
+            return project
+        fn_project = Project.sanitize_project_filename(projectfile)
 
         try:
             # load project dictionary from JSON file

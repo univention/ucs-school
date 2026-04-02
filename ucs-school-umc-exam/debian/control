@@ -18,7 +18,7 @@ Depends:
  python3-ucsschool-lib,
  python3-ldap,
  python3-samba,
- ucs-school-umc-distribution,
+ ucs-school-umc-distribution (>= 19.1.0),
  univention-management-console-server (>= 12.0.31-10),
  ${misc:Depends},
  ${python3:Depends},
