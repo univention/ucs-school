@@ -5,7 +5,7 @@
 ## roles: [domaincontroller_slave]
 ## exposure: dangerous
 ## packages:
-##   - ucs-school-metapackage
+##   - ucs-school-replica
 ## bugs: [55911]
 
 import subprocess
