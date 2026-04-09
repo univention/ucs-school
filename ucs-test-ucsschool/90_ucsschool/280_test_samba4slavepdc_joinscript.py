@@ -4,8 +4,13 @@
 ## tags: [apptest,ucsschool,ucsschool_import1]
 ## roles: [domaincontroller_slave]
 ## exposure: dangerous
-## packages:
-##   - ucs-school-replica
+## packages-not:
+##   - ucs-school-multiserver
+##   - ucs-school-singleserver
+##   - ucs-school-central-replica
+##   - ucs-school-master
+##   - ucs-school-singlemaster
+##   - ucs-school-central-slave
 ## bugs: [55911]
 
 import subprocess
