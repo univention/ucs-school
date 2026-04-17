@@ -18,7 +18,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 	  <name>Assigning classes</name>
 	  <description>Associate classes with a teacher</description>
 	</flavor>
-	<flavor id="workgroup" icon="schoolgroupss-workgroup" priority="20">
+	<flavor id="workgroup" icon="schoolgroups-workgroup" priority="20">
 	  <name>Edit workgroups</name>
 	  <description>Edit members of workgroups</description>
 	</flavor>

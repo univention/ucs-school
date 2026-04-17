@@ -1,0 +1,11 @@
+product: ucsschool
+release: "5.2"
+released:
+version: [0]
+scope: ucs_5.2-0-ucs-school-5.2
+src: ucs-school-umc-groups
+fix: 11.2.1
+bugs:
+  55267:
+    en: Fixed multiple issues with the edit workgroup flavor for teachers.
+    de: Mehrere Fehler mit dem Modul "Arbeitsgruppen verwalten" für Lehrer wurden behoben.

@@ -1,3 +1,9 @@
+ucs-school-umc-groups (11.2.1) unstable; urgency=medium
+
+  * Bug #55267: Fix "Edit workgroups" module (flavor "workgroups").
+
+ -- Johannes Königer <koeniger@univention.de>  Tue, 06 Oct 2026 12:00:00 +0200
+
 ucs-school-umc-groups (11.2.0) unstable; urgency=medium
 
   * feat: the teacher grid shows the primary email address instead of the

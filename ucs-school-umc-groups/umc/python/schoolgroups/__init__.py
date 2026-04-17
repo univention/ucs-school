@@ -214,12 +214,12 @@ class Instance(SchoolBaseModule):
 
         result = group.to_dict()
 
-        if request.flavor == "workgroup-admin":
-            result["create_share"] = GroupShare.from_school_group(group).exists(ldap_user_read)
-            result["allowed_email_senders_groups"] = [
-                {"id": dn, "label": explode_rdn(dn, True)[0]}
-                for dn in result["allowed_email_senders_groups"]
-            ]
+        # only workgroups have mail settings; classes and teachers lack these keys
+        if klass is WorkGroup:
+            if result["email"]:
+                result["create_email"] = True
+                result["email_exists"] = True
+
             umc_users = []
             for user_dn in result["allowed_email_senders_users"]:
                 user = User.from_dn(user_dn, None, ldap_user_read)
@@ -227,9 +227,13 @@ class Instance(SchoolBaseModule):
                     {"id": user_dn, "label": Display.user(user.get_udm_object(ldap_user_read))}
                 )
             result["allowed_email_senders_users"] = umc_users
-            if result["email"]:
-                result["create_email"] = True
-                result["email_exists"] = True
+            result["allowed_email_senders_groups"] = [
+                {"id": dn, "label": explode_rdn(dn, True)[0]}
+                for dn in result["allowed_email_senders_groups"]
+            ]
+
+        if request.flavor == "workgroup-admin":
+            result["create_share"] = GroupShare.from_school_group(group).exists(ldap_user_read)
 
         if request.flavor == "teacher":
             schools = group.schools

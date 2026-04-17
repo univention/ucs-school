@@ -9,7 +9,7 @@
 
 ## joinscript api: bindpwdfile
 
-VERSION=3
+VERSION=4
 
 . /usr/share/univention-join/joinscripthelper.lib
 . /usr/share/univention-lib/umc.sh
@@ -20,12 +20,33 @@ joinscript_init
 umc_init
 
 # operation sets for admins (class and workgroup administration) and teachers
-# (only the workgroup administration)
+# (only the workgroup administration or editing)
 umc_operation_create "schoolgroups-all" "Group administration" "" "schoolgroups/*"
 umc_operation_create "schoolgroups-workgroup-admin" "Workgroup administration" "workgroup-admin" "schoolgroups/*"
 umc_operation_create "schoolgroups-class" "Class administration" "class" "schoolgroups/*"
 umc_operation_create "schoolgroups-teacher" "Teacher administration" "teacher" "schoolgroups/*"
-umc_operation_create "schoolgroups-workgroup" "Workgroup editing" "workgroup" "schoolgroups/query" "schoolgroups/classes" "schoolgroups/users" "schoolgroups/schools" "schoolgroups/put" "schoolgroups/get"
+umc_operation_create "schoolgroups-workgroup" "Workgroup editing" "workgroup" "schoolgroups/query" "schoolgroups/groups" "schoolgroups/classes" "schoolgroups/users" "schoolgroups/schools" "schoolgroups/put" "schoolgroups/get"
+
+# umc_operation_create skips existing sets, so add commands introduced later explicitly.
+workgroup_operation_add () {
+	command="$1"
+	dn="cn=schoolgroups-workgroup,cn=operations,cn=UMC,cn=univention,$ldap_base"
+	operations="$(univention-ldapsearch -LLL -o ldif-wrap=no -s base -b "$dn" umcOperationSetCommand |
+		sed -ne 's/^umcOperationSetCommand: //p')"
+	# not replicated yet: this run created the set, so it already contains the command
+	[ -n "$operations" ] || return 0
+	# any UDM edit of the set stores "command:"
+	printf '%s\n' "$operations" | grep -qxF -e "$command" -e "$command:" && return 0
+	# repeated --set keeps the stored commands as they are; --append rewrites them all as "command:"
+	set --
+	while read -r operation; do
+		set -- "$@" --set operation="$operation"
+	done <<-EOF
+		$operations
+	EOF
+	umc_udm settings/umc_operationset modify --dn "$dn" "$@" --set operation="$command" || exit $?
+}
+workgroup_operation_add "schoolgroups/groups"
 
 # create empty UMC access policies
 ucs_school_policies_create

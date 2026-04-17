@@ -173,7 +173,7 @@ define([
 		getMultiSelectWidget: function() {
 			return lang.mixin(this.inherited(arguments), {
 				label: this.moduleFlavor == 'workgroup' ? _('Students') : _('Members'),
-				description: _('Teachers and students that belong to the current workgroup'),
+				description: this.moduleFlavor == 'workgroup' ? _('Students that belong to the current workgroup') : _('Teachers and students that belong to the current workgroup'),
 				queryOptions: lang.hitch(this, function() {
 					if (this.moduleFlavor == 'workgroup') {
 						return { group: 'student' };
