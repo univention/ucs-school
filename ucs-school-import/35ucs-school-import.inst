@@ -9,7 +9,7 @@
 ## joinscript api: bindpwdfile
 
 # shellcheck disable=SC2034
-VERSION=36
+VERSION=37
 
 # shellcheck source=/dev/null
 . /usr/share/univention-join/joinscripthelper.lib
@@ -96,7 +96,8 @@ ucs_registerLDAPExtension "$@" --schema /usr/share/ucs-school-import/schema/ucs-
 ucs_registerLDAPExtension "$@" --ucsversionstart "4.4-0" --ucsversionend "5.99-0" --udm_hook /usr/share/ucs-school-import/hooks.d/schoolOU.py || die
 ucs_registerLDAPExtension "$@" --ucsversionstart "4.4-0" --ucsversionend "5.99-0" --udm_hook /usr/share/ucs-school-import/hooks.d/schoolAdminGroup.py || die
 ucs_registerLDAPExtension "$@" --ucsversionstart "4.4-0" --ucsversionend "5.99-0" --udm_hook /usr/share/ucs-school-import/schema/ucsschool_user_options.py --udm_hook_messagecatalog /usr/share/ucs-school-import/schema/de.mo || die
-ucs_registerLDAPExtension "$@" --ucsversionstart "4.4-0" --ucsversionend "5.99-0" --udm_hook /usr/share/ucs-school-import/schema/ucsschool_purge_timestamp.py || die
+ucs_registerLDAPExtension "$@" --ucsversionstart "4.4-0" --ucsversionend "5.2-5" --udm_hook /usr/share/ucs-school-import/schema/ucsschool_purge_timestamp_525.py || die
+ucs_registerLDAPExtension "$@" --ucsversionstart "5.2-6" --ucsversionend "5.99-0" --udm_hook /usr/share/ucs-school-import/schema/ucsschool_purge_timestamp.py || die
 ucs_registerLDAPExtension "$@" --ucsversionstart "4.4-0" --ucsversionend "5.99-0" --udm_hook /usr/share/ucs-school-import/schema/ucsschool_role_computers.py || die
 ucs_registerLDAPExtension "$@" --ucsversionstart "5.0-0" --ucsversionend "5.99-0" --udm_hook /usr/share/ucs-school-import/schema/ucsschool_legal_guardian.py --udm_hook_messagecatalog /usr/share/ucs-school-import/schema/de.mo || die
 ucs_registerLDAPExtension "$@" --ucsversionstart "5.0-0" --ucsversionend "5.99-0" --udm_hook /usr/share/ucs-school-import/schema/ucsschool_legal_ward.py --udm_hook_messagecatalog /usr/share/ucs-school-import/schema/de.mo || die

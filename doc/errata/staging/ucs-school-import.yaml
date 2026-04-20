@@ -1,0 +1,25 @@
+product: ucsschool
+release: "5.2"
+released:
+version: [0]
+scope: ucs_5.2-0-ucs-school-5.2
+src: ucs-school-import
+fix: 20.0.0
+bugs:
+  59216:
+    en: >
+        Use the new ``map/unmap`` functions in the ``ucsschool_purge_timestamp.py``.
+        The updated hook will be used for UCS systems 5.2-6 and above,
+        while the old version of the hook will be used on older systems for compatibility.
+        If the updated hook should be used earlier it can be activated as follows:
+        ``udm settings/udm_hook modify --set ucsversionend=5.2-4 --dn cn=ucsschool_purge_timestamp_525,cn=udm_hook,cn=univention,dc=ucs,dc=test && udm settings/udm_hook modify --set ucsversionstart=5.2-5 --dn cn=ucsschool_purge_timestamp,cn=udm_hook,cn=univention,dc=ucs,dc=test``
+
+        This will fix issues in combination with delegated administration.
+    de: >
+        Verwenden der neuen Funktionen ``map/unmap`` in der Datei ``ucsschool_purge_timestamp.py``.
+        Der aktualisierte Hook wird für UCS-Systeme der Versionen 5.2–6 und höher verwendet,
+        während die alte Version des Hooks aus Kompatibilitätsgründen auf älteren Systemen zum Einsatz kommt.
+        Sollte der aktualisierte Hook früher verwendet werden, kann er wie folgt aktiviert werden:
+        ``udm settings/udm_hook modify --set ucsversionend=5.2-4 --dn cn=ucsschool_purge_timestamp_525,cn=udm_hook,cn=univention,dc=ucs,dc=test && udm settings/udm_hook modify --set ucsversionstart=5.2-5 --dn cn=ucsschool_purge_timestamp,cn=udm_hook,cn=univention,dc=ucs,dc=test``
+
+        Dies behebt Probleme in Verbindung mit der delegierten Verwaltung.
