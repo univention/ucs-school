@@ -3,6 +3,7 @@ Browserfensters
 Cachings
 Cross-Site-Scripting
 CSS-Dateien
+delegativen
 Django
 Fallback
 iframe
@@ -18,6 +19,7 @@ preinstallation
 Pre-Installations-Hook
 pre-join
 Pre-Join-Hook
+Purge-Timestamp-Hooks
 Replica
 Replicas
 Samba-SPN-Liste
@@ -29,6 +31,7 @@ UCR-Variable
 UCS-Logo
 UDM-Hooks
 UMC-Import
+UMC-Probleme
 Validierungsfehler
 Validierungsfehlern
 Wartungsrelease

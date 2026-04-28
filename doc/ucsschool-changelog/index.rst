@@ -9,25 +9,42 @@
 ***************
 
 This document contains the changelogs with the detailed change information for
-the update of |UCSUAS| from version 5.2v4 to 5.2v5.
+the update of |UCSUAS| from version 5.2v5 to 5.2v6.
 
 The change information for previous version jumps can be found at :external+uv-navigation:ref:`the changelog overview page <ucsschool-changelog>`.
 
 .. _changelog-new-role:
 
-Maintenance release to enforce an updated ID Connector
-======================================================
-|UCSUAS| 5.2v5 adds a preinstallation hook to enforce an updated ID Connector.
+Maintenance release 5.2v6
+=========================
+|UCSUAS| 5.2v6 is a maintenance release with bug fixes.
 
 What's new?
 
-* Together with the 4.0.0 release of the ID Connector, administrators can now push legal guardians to the ID Broker.
-* Together with the Apple School Manager Connector 5.1.1, administrators can now install the Apple School Manager Connector on a central replica node.
-* Users now get an error message on the UMC if they reset a password and it fails the dictionary word policy.
+* The ``ucsschool_purge_timestamp.py`` hook has been updated to use the new ``map``/``unmap`` functions on UCS systems running version 5.2-6 and above. This fixes UMC issues in combination with delegated administration.
+* Teachers can now reset passwords regardless of whether the student's account is locked.
+* Join failures into domains that previously took part in an AD takeover are now fixed.
 
-.. warning::
+.. _changelog-hook-early:
 
-  If you have the ID Connector App installed, you must first update it, before updating to |UCSUAS| 5.2v5
+Activating the updated purge timestamp hook early
+-------------------------------------------------
+
+.. note::
+
+   UCS 5.2-5 Errata 416 is required on all systems in the domain to activate the hook early.
+
+The updated ``ucsschool_purge_timestamp.py`` hook is automatically activated during the update to UCS 5.2-6.
+To activate it on UCS 5.2-5 systems with the required errata applied, run the following commands:
+
+.. code-block:: console
+
+   $ udm settings/udm_hook modify \
+       --set ucsversionend=5.2-4 \
+       --dn "cn=ucsschool_purge_timestamp_525,cn=udm_hook,cn=univention,$(ucr get ldap/base)"
+   $ udm settings/udm_hook modify \
+       --set ucsversionstart=5.2-5 \
+       --dn "cn=ucsschool_purge_timestamp,cn=udm_hook,cn=univention,$(ucr get ldap/base)"
 
 .. _changelog-prepare:
 
@@ -41,8 +58,6 @@ environment should be identical to the production environment.
 
 Please note that depending on the size of the |UCSUAS| environment,
 this update may take longer than usual to complete.
-This is because additional LDAP structures for new role Legal Guardians need to be created
-and LDAP indices must be updated.
 
 .. _changelog-newerrata:
 

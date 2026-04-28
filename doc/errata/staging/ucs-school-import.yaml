@@ -9,17 +9,17 @@ bugs:
   59216:
     en: >
         Use the new ``map/unmap`` functions in the ``ucsschool_purge_timestamp.py``.
-        The updated hook will be used for UCS systems 5.2-6 and above,
-        while the old version of the hook will be used on older systems for compatibility.
-        If the updated hook should be used earlier it can be activated as follows:
-        ``udm settings/udm_hook modify --set ucsversionend=5.2-4 --dn cn=ucsschool_purge_timestamp_525,cn=udm_hook,cn=univention,dc=ucs,dc=test && udm settings/udm_hook modify --set ucsversionstart=5.2-5 --dn cn=ucsschool_purge_timestamp,cn=udm_hook,cn=univention,dc=ucs,dc=test``
+        The updated hook will be used automatically on UCS systems running version 5.2-6 and above,
+        while the previous hook will be used on older systems for backward compatibility.
+        Once you upgrade every UCS system in the domain to at least version 5.2-5 errata 416, you can activate the updated hook early by running the following commands:
+        ``udm settings/udm_hook modify --set ucsversionend=5.2-4 --dn "cn=ucsschool_purge_timestamp_525,cn=udm_hook,cn=univention,$(ucr get ldap/base)" && udm settings/udm_hook modify --set ucsversionstart=5.2-5 --dn "cn=ucsschool_purge_timestamp,cn=udm_hook,cn=univention,$(ucr get ldap/base)"``
 
-        This will fix issues in combination with delegated administration.
+        This will fix issues in UMC in combination with delegated administration.
     de: >
-        Verwenden der neuen Funktionen ``map/unmap`` in der Datei ``ucsschool_purge_timestamp.py``.
-        Der aktualisierte Hook wird für UCS-Systeme der Versionen 5.2–6 und höher verwendet,
+        Nutzung der neuen Funktionen ``map/unmap`` in der Datei ``ucsschool_purge_timestamp.py``.
+        Der aktualisierte Hook wird automatisch für UCS-Systeme mit der Version 5.2–6 oder höher verwendet,
         während die alte Version des Hooks aus Kompatibilitätsgründen auf älteren Systemen zum Einsatz kommt.
-        Sollte der aktualisierte Hook früher verwendet werden, kann er wie folgt aktiviert werden:
-        ``udm settings/udm_hook modify --set ucsversionend=5.2-4 --dn cn=ucsschool_purge_timestamp_525,cn=udm_hook,cn=univention,dc=ucs,dc=test && udm settings/udm_hook modify --set ucsversionstart=5.2-5 --dn cn=ucsschool_purge_timestamp,cn=udm_hook,cn=univention,dc=ucs,dc=test``
+        Sobald jedes UCS-System der Domäne auf Version 5.2-5 Errata 416 oder höher aktualisiert wurde, kann der aktualisierte Hook auch vorab durch die Ausführung der folgenden Befehle aktiviert werden:
+        ``udm settings/udm_hook modify --set ucsversionend=5.2-4 --dn "cn=ucsschool_purge_timestamp_525,cn=udm_hook,cn=univention,$(ucr get ldap/base)" && udm settings/udm_hook modify --set ucsversionstart=5.2-5 --dn "cn=ucsschool_purge_timestamp,cn=udm_hook,cn=univention,$(ucr get ldap/base)"``
 
-        Dies behebt Probleme in Verbindung mit der delegierten Verwaltung.
+        Dies behebt Fehlermeldungen in der UMC in Verbindung mit der delegativen Administration.
