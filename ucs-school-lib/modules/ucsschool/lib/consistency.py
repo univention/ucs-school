@@ -6,7 +6,7 @@
 #
 # SPDX-FileCopyrightText: 2020-2026 Univention GmbH
 # SPDX-License-Identifier: AGPL-3.0-only
-"""This module check the constistency of USC@school users, shares and groups"""
+"""This module checks the consistency of UCS@school users, shares and groups"""
 
 import re
 import sys
@@ -267,9 +267,8 @@ class UserCheck(object):
             for ou in user_obj.school_classes:
                 if ou.encode("UTF-8") not in attrs["ucsschoolSchool"]:
                     issues.append(
-                        "Is member of class {} but school property is not correspondingly set.".format(
-                            user_obj.school_classes[ou][0]
-                        )
+                        "Is member of class {} but LDAP attribute ucsschoolSchool "
+                        "is not correspondingly set.".format(user_obj.school_classes[ou][0])
                     )
 
         return issues
