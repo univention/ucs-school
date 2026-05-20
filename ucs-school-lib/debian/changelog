@@ -1,3 +1,12 @@
+ucs-school-lib (15.2.1) unstable; urgency=medium
+
+  * fix(consistency): add check for missing ucsschoolSchool attribute in
+    user objects
+    Issue univention/dev/education/ucsschool#1487
+    Bug #58521
+
+ -- Jan Gietzel <jan.gietzel@univention.de>  Wed, 20 May 2026 08:54:58 +0200
+
 ucs-school-lib (15.2.0) unstable; urgency=medium
 
   * feat: add parameter filter_local to

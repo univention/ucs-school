@@ -255,14 +255,22 @@ class UserCheck(object):
         if not user_obj.school_classes and user_obj.is_student(self.lo):
             issues.append("Is not a member of any school class.")
 
-        # Users should also be member of the corresponding school
-        for ou in user_obj.school_classes:
-            if ou.encode("UTF-8") not in attrs["ucsschoolSchool"]:
-                issues.append(
-                    "Is member of class {} but school property is not correspondingly set.".format(
-                        user_obj.school_classes[ou][0]
+        # Check if ucsschoolSchool is existent
+        if "ucsschoolSchool" not in attrs:
+            issues.append(
+                "User object is an inconsistent UCS@school user. "
+                "Missing LDAP attribute: ucsschoolSchool."
+            )
+
+        else:
+            # Users should also be member of the corresponding school
+            for ou in user_obj.school_classes:
+                if ou.encode("UTF-8") not in attrs["ucsschoolSchool"]:
+                    issues.append(
+                        "Is member of class {} but school property is not correspondingly set.".format(
+                            user_obj.school_classes[ou][0]
+                        )
                     )
-                )
 
         return issues
 
