@@ -191,5 +191,20 @@ repos:
         alias: reuse-lint
         stages: [ manual ]
       - id: reuse-lint-file
+  - repo: local
+    hooks:
+      - id: basedpyright-baseline
+        name: basedpyright (relative to baseline)
+        language: docker_image
+        entry: 'gitregistry.knut.univention.de/univention/dev/tooling/ci-components/basedpyright:branch-jgietzel-typehintbasedpyright sh -c ''basedpyright --pythonversion 3.11 --baselinefile basedpyright-baseline.json --baselinemode=auto "$@"'' --'
+        types: [python]
+
+      - id: basedpyright
+        name: basedpyright
+        language: docker_image
+        entry: 'gitregistry.knut.univention.de/univention/dev/tooling/ci-components/basedpyright:branch-jgietzel-typehintbasedpyright sh -c ''basedpyright --pythonversion 3.11 --baselinefile /tmp/nonexistent-basedpyright-baseline.json "$@"'' --'
+        stages: [manual]
+        types: [python]
+
 default_language_version:
   python: python3.11
