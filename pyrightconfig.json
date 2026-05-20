@@ -10,5 +10,6 @@
     "ucs-school-umc-helpdesk/modules",
     "ucs-test-ucsschool/modules",
     "ucs-school-netlogon-user-logonscripts/python"
-  ]
+  ],
+  "reportImplicitStringConcatenation": "none"
 }

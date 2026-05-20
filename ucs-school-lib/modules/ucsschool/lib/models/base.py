@@ -1054,7 +1054,7 @@ class UCSSchoolHelperAbstractClass(object):
 
     @classmethod
     def from_dn(cls, dn, school, lo, superordinate=None):
-        # type: (str, str, LoType, Optional[SuperOrdinateType]) -> UCSSchoolModel
+        # type: (str, Optional[str], LoType, Optional[SuperOrdinateType]) -> UCSSchoolModel
         """
         Returns a new instance based on the UDM object found at dn
         raises noObject if the udm_module does not match the dn
