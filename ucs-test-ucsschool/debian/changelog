@@ -1,3 +1,11 @@
+ucs-test-ucsschool (8.0.49) unstable; urgency=medium
+
+  * 15_ucsschool_check_windows_printer_driver_for_pdf_printer: force English
+    output from the localized `net` tool so the value check works
+    Bug #59323
+
+ -- Jürn Brodersen <brodersen@univention.de>  Mon, 08 Jun 2026 11:52:00 +0200
+
 ucs-test-ucsschool (8.0.48) unstable; urgency=medium
 
   * add test for joinscript + changed default names
