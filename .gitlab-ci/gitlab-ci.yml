@@ -7,6 +7,8 @@ variables:
 include:
   - component: $CI_SERVER_FQDN/univention/dev/tooling/ci-components/pre-commit@main
     inputs:
+      skip_hooks: "basedpyright-container-baseline"
+      manual_stage_hooks: "basedpyright-native-baseline"
       commit_msg_hooks: "conventional-pre-commit issue-reference"
   - project: univention/dev/tooling/ci-components
     file: fragments/openstack.yaml
