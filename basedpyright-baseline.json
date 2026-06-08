@@ -68146,6 +68146,14 @@
                 }
             },
             {
+                "code": "reportDeprecated",
+                "range": {
+                    "startColumn": 56,
+                    "endColumn": 64,
+                    "lineCount": 1
+                }
+            },
+            {
                 "code": "reportUnusedCallResult",
                 "range": {
                     "startColumn": 4,
@@ -130606,6 +130614,14 @@
                 "range": {
                     "startColumn": 4,
                     "endColumn": 71,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportDeprecated",
+                "range": {
+                    "startColumn": 57,
+                    "endColumn": 65,
                     "lineCount": 1
                 }
             },
@@ -193212,10 +193228,34 @@
                 }
             },
             {
-                "code": "reportOptionalMemberAccess",
+                "code": "reportArgumentType",
+                "range": {
+                    "startColumn": 40,
+                    "endColumn": 54,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportUnknownVariableType",
+                "range": {
+                    "startColumn": 20,
+                    "endColumn": 25,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportGeneralTypeIssues",
+                "range": {
+                    "startColumn": 29,
+                    "endColumn": 46,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportUnknownArgumentType",
                 "range": {
                     "startColumn": 26,
-                    "endColumn": 30,
+                    "endColumn": 31,
                     "lineCount": 1
                 }
             },
@@ -254210,14 +254250,6 @@
                 }
             },
             {
-                "code": "reportUnusedCallResult",
-                "range": {
-                    "startColumn": 12,
-                    "endColumn": 31,
-                    "lineCount": 1
-                }
-            },
-            {
                 "code": "reportOptionalMemberAccess",
                 "range": {
                     "startColumn": 21,
@@ -309424,6 +309456,22 @@
                 }
             },
             {
+                "code": "reportAny",
+                "range": {
+                    "startColumn": 12,
+                    "endColumn": 16,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportAny",
+                "range": {
+                    "startColumn": 19,
+                    "endColumn": 48,
+                    "lineCount": 1
+                }
+            },
+            {
                 "code": "reportOptionalMemberAccess",
                 "range": {
                     "startColumn": 31,
@@ -338862,6 +338910,22 @@
                 "range": {
                     "startColumn": 12,
                     "endColumn": 25,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportAny",
+                "range": {
+                    "startColumn": 18,
+                    "endColumn": 50,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportAny",
+                "range": {
+                    "startColumn": 18,
+                    "endColumn": 59,
                     "lineCount": 1
                 }
             },
