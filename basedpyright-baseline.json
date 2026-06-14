@@ -205334,22 +205334,6 @@
                     "endColumn": 25,
                     "lineCount": 1
                 }
-            },
-            {
-                "code": "reportUnknownArgumentType",
-                "range": {
-                    "startColumn": 49,
-                    "endColumn": 60,
-                    "lineCount": 1
-                }
-            },
-            {
-                "code": "reportUnknownArgumentType",
-                "range": {
-                    "startColumn": 61,
-                    "endColumn": 72,
-                    "lineCount": 1
-                }
             }
         ],
         "./ucs-test-ucsschool/00_checks/30_check_DNS_UCRVs.py": [

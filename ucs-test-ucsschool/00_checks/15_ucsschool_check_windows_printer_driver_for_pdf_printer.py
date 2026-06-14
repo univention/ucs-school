@@ -5,35 +5,38 @@
 ## exposure: safe
 ## packages: [ucs-school-umc-printermoderation]
 
-from __future__ import print_function
-
 import os
 import subprocess
 
+import pytest
 
-def check_value(path: str, key: str, value: str) -> None:
+
+def registry_value(path: str, key: str) -> str | None:
     cmd = ["net", "registry", "getvalue", path, key]
     # Force English output so we can match on the "Value " prefix below;
     # the `net` tool is localized and would otherwise print a translated prefix.
-    env = dict(os.environ, LANG="C", LC_ALL="C")
-    out, _ = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=env).communicate()
-    found = None
-    print(path + " " + key)
-    for i in out.decode("UTF-8").split("\n"):
-        print(i)
-        if i.startswith("Value "):
-            found = i.split("=")[1].strip().strip('"')
-    assert found == value, "expected '%s\\%s' to be '%s', but got '%s'" % (
-        path,
-        key,
-        value,
-        found,
+    env = dict(os.environ, LANG="C.UTF-8", LC_ALL="C.UTF-8")
+    result = subprocess.run(cmd, check=True, stdout=subprocess.PIPE, env=env, text=True)
+
+    for line in result.stdout.splitlines():
+        print(line)
+        if line.startswith("Value "):
+            return line.split("=", 1)[1].strip().strip('"')
+
+    return None
+
+
+@pytest.mark.parametrize(
+    "path_suffix,key",
+    [
+        ("", "Printer Driver"),
+        (r"\DsSpooler", "driverName"),
+    ],
+)
+def test_ucsschool_check_windows_printer_driver_for_pdf_printer(ucr, path_suffix: str, key: str):
+    driver_name = ucr.get("ucsschool/printermoderation/windows/driver/name")
+    actual = registry_value(
+        rf"HKLM\Software\Microsoft\Windows NT\CurrentVersion\Print\Printers\PDFDrucker{path_suffix}", key
     )
 
-
-def test_ucsschool_check_windows_printer_driver_for_pdf_printer(ucr):
-    driver_name = ucr.get("ucsschool/printermoderation/windows/driver/name")
-    printer_name = "PDFDrucker"
-    registry_path = r"HKLM\Software\Microsoft\Windows NT\CurrentVersion\Print\Printers\%s" % printer_name
-    check_value(registry_path, "Printer Driver", driver_name)
-    check_value(registry_path + r"\DsSpooler", "driverName", driver_name)
+    assert actual == driver_name
