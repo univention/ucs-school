@@ -8,6 +8,7 @@ define([
 	"dojo/_base/declare",
 	"dojo/_base/lang",
 	"dojo/_base/array",
+	"dojox/html/entities",
 	"umc/tools",
 	"umc/dialog",
 	"umc/widgets/Module",
@@ -16,11 +17,13 @@ define([
 	"umc/widgets/SearchBox",
 	"umc/widgets/ComboBox",
 	"umc/widgets/SearchForm",
+	"umc/widgets/Text",
+	"umc/widgets/Tooltip",
 	"umc/modules/schoolgroups/WorkgroupDetailPage",
 	"umc/modules/schoolgroups/ClassDetailPage",
 	"umc/modules/schoolgroups/TeacherDetailPage",
 	"umc/i18n!umc/modules/schoolgroups"
-], function(declare, lang, array, tools, dialog, Module, Grid, Page, SearchBox, ComboBox, SearchForm, WorkgroupDetailPage, ClassDetailPage, TeacherDetailPage, _) {
+], function(declare, lang, array, entities, tools, dialog, Module, Grid, Page, SearchBox, ComboBox, SearchForm, Text, Tooltip, WorkgroupDetailPage, ClassDetailPage, TeacherDetailPage, _) {
 	var ModuleBase = declare("umc.modules.schoolgroups", [Module], {
 		idProperty: '$dn$',
 		_grid: null,
@@ -195,13 +198,44 @@ define([
 				name: 'school_classes',
 				label: _('Class'),
 				formatter: lang.hitch(this, function(values, id, all_values) {
-					var classes = [];
-					tools.forIn(values, function(school, school_classes) {
-						classes = classes.concat(array.map(school_classes, function(value) {
-							return value.indexOf(school + '-') === -1 ? value : value.slice(school.length + 1) + ' (' + school + ')';
-						}));
+					var cellGroups = [];
+					var tooltipGroups = [];
+					// language-aware sort; numeric so '2a' sorts before '10a'
+					var localeSort = function(a, b) {
+						return a.localeCompare(b, undefined, {numeric: true});
+					};
+					var schools = [];
+					tools.forIn(values, function(school) {
+						schools.push(school);
 					});
-					return classes.join(', ');
+					schools.sort(localeSort);
+					array.forEach(schools, function(school) {
+						var school_classes = values[school];
+						var sortedClasses = school_classes.slice().sort(localeSort);
+						// drop the redundant '<school>-' prefix; the school is shown as the group label
+						var groupedClasses = array.map(sortedClasses, function(value) {
+							return value.indexOf(school + '-') === -1 ? value : value.slice(school.length + 1);
+						}).join(', ');
+						// same grouping in the cell (single line, truncated with an ellipsis)
+						// and in the tooltip (one group per line, school in bold)
+						cellGroups.push(entities.encode(school) + ': ' + entities.encode(groupedClasses));
+						tooltipGroups.push('<b>' + entities.encode(school) + ':</b> ' + entities.encode(groupedClasses));
+					});
+
+					var widget = new Text({
+						content: cellGroups.join('; ')
+					});
+					this.own(widget);
+
+					if (tooltipGroups.length) {
+						var tooltip = new Tooltip({
+							label: tooltipGroups.join('<br>'),
+							connectId: [widget.domNode],
+							position: ['below', 'above']
+						});
+						widget.own(tooltip);
+					}
+					return widget;
 				})
 			}];
 		}
