@@ -86,13 +86,13 @@ define([
 			this._searchPage.addChild(this._grid);
 
 			if (!this.multiSelect) {
-				var innerGrid = this._grid._grid;
+				let innerGrid = this._grid._grid;
 
 				// The "select all" header checkbox makes no sense with single selection.
 				// Setting allowSelectAll: false would drop it, but that breaks the header
 				// layout (dgrid then renders the column label instead), so just disable the
 				// rendered checkbox.
-				var selectorColumn = innerGrid._selectorColumns[0];
+				let selectorColumn = innerGrid._selectorColumns[0];
 				if (selectorColumn && selectorColumn._selectorHeaderCheckbox) {
 					selectorColumn._selectorHeaderCheckbox.$checkbox.set('disabled', true);
 				}
@@ -102,7 +102,7 @@ define([
 				// directly and bypass the single-selection handling. Enforce it manually by
 				// deselecting any previously selected row whenever a new row gets selected.
 				innerGrid.on('dgrid-select', lang.hitch(this, function(evt) {
-					var keepId = String(evt.rows[evt.rows.length - 1].id);
+					let keepId = String(evt.rows[evt.rows.length - 1].id);
 					array.forEach(innerGrid.getSelectedIDs(), function(id) {
 						if (String(id) !== keepId) {
 							innerGrid.deselect(id);
