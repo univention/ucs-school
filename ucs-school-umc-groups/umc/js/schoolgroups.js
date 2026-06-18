@@ -24,6 +24,12 @@ define([
 	"umc/modules/schoolgroups/TeacherDetailPage",
 	"umc/i18n!umc/modules/schoolgroups"
 ], function(declare, lang, array, entities, tools, dialog, Module, Grid, Page, SearchBox, ComboBox, SearchForm, Text, Tooltip, WorkgroupDetailPage, ClassDetailPage, TeacherDetailPage, _) { // eslint-disable-line max-params
+	// language-aware sort; numeric so '2a' sorts before '10a'
+	// eslint-disable-next-line unicorn/consistent-function-scoping -- AMD module: define() callback is already the highest scope
+	function localeSort(a, b) {
+		return a.localeCompare(b, undefined, {numeric: true});
+	}
+
 	var ModuleBase = declare("umc.modules.schoolgroups", [Module], {
 		idProperty: '$dn$',
 		_grid: null,
@@ -200,10 +206,6 @@ define([
 				formatter: lang.hitch(this, function(values, id, all_values) {
 					let cellGroups = [];
 					let tooltipGroups = [];
-					// language-aware sort; numeric so '2a' sorts before '10a'
-					let localeSort = function(a, b) {
-						return a.localeCompare(b, undefined, {numeric: true});
-					};
 					let schools = [];
 					tools.forIn(values, function(school) {
 						schools.push(school);
