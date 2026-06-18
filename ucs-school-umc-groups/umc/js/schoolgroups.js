@@ -198,22 +198,22 @@ define([
 				name: 'school_classes',
 				label: _('Class'),
 				formatter: lang.hitch(this, function(values, id, all_values) {
-					var cellGroups = [];
-					var tooltipGroups = [];
+					let cellGroups = [];
+					let tooltipGroups = [];
 					// language-aware sort; numeric so '2a' sorts before '10a'
-					var localeSort = function(a, b) {
+					let localeSort = function(a, b) {
 						return a.localeCompare(b, undefined, {numeric: true});
 					};
-					var schools = [];
+					let schools = [];
 					tools.forIn(values, function(school) {
 						schools.push(school);
 					});
 					schools.sort(localeSort);
 					array.forEach(schools, function(school) {
-						var school_classes = values[school];
-						var sortedClasses = school_classes.slice().sort(localeSort);
+						let school_classes = values[school];
+						let sortedClasses = school_classes.slice().sort(localeSort);
 						// drop the redundant '<school>-' prefix; the school is shown as the group label
-						var groupedClasses = array.map(sortedClasses, function(value) {
+						let groupedClasses = array.map(sortedClasses, function(value) {
 							return value.indexOf(school + '-') === -1 ? value : value.slice(school.length + 1);
 						}).join(', ');
 						// same grouping in the cell (single line, truncated with an ellipsis)
@@ -222,13 +222,13 @@ define([
 						tooltipGroups.push('<b>' + entities.encode(school) + ':</b> ' + entities.encode(groupedClasses));
 					});
 
-					var widget = new Text({
+					let widget = new Text({
 						content: cellGroups.join('; ')
 					});
 					this.own(widget);
 
 					if (tooltipGroups.length) {
-						var tooltip = new Tooltip({
+						let tooltip = new Tooltip({
 							label: tooltipGroups.join('<br>'),
 							connectId: [widget.domNode],
 							position: ['below', 'above']
