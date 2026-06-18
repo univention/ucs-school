@@ -23,7 +23,7 @@ define([
 	"umc/modules/schoolgroups/ClassDetailPage",
 	"umc/modules/schoolgroups/TeacherDetailPage",
 	"umc/i18n!umc/modules/schoolgroups"
-], function(declare, lang, array, entities, tools, dialog, Module, Grid, Page, SearchBox, ComboBox, SearchForm, Text, Tooltip, WorkgroupDetailPage, ClassDetailPage, TeacherDetailPage, _) {
+], function(declare, lang, array, entities, tools, dialog, Module, Grid, Page, SearchBox, ComboBox, SearchForm, Text, Tooltip, WorkgroupDetailPage, ClassDetailPage, TeacherDetailPage, _) { // eslint-disable-line max-params
 	var ModuleBase = declare("umc.modules.schoolgroups", [Module], {
 		idProperty: '$dn$',
 		_grid: null,
