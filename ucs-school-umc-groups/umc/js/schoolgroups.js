@@ -93,7 +93,7 @@ define([
 				// layout (dgrid then renders the column label instead), so just disable the
 				// rendered checkbox.
 				let selectorColumn = innerGrid._selectorColumns[0];
-				if (selectorColumn && selectorColumn._selectorHeaderCheckbox) {
+				if (selectorColumn?._selectorHeaderCheckbox) {
 					selectorColumn._selectorHeaderCheckbox.$checkbox.set('disabled', true);
 				}
 
