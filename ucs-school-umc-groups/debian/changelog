@@ -1,3 +1,10 @@
+ucs-school-umc-groups (11.1.1) unstable; urgency=medium
+
+  * Bug #59515: group and sort classes by school in the assign-classes grid
+    and show the same grouping in a per-cell tooltip
+
+ -- Jürn Brodersen <brodersen@univention.de>  Thu, 18 Jun 2026 17:43:40 +0200
+
 ucs-school-umc-groups (11.1.0) unstable; urgency=medium
 
   * Allow legal guardians in workgrups

@@ -1,0 +1,19 @@
+product: ucsschool
+release: "5.2"
+released:
+version: [0]
+scope: ucs_5.2-0-ucs-school-5.2
+src: ucs-school-umc-groups
+fix: 11.1.1
+bugs:
+  59515:
+    en: |
+      In the assign-classes grid the school classes are now grouped and sorted
+      by school. Schools and classes are sorted language-aware (numeric, so
+      '2a' precedes '10a') and a per-cell tooltip shows the same grouping with
+      one school per line.
+    de: |
+      In der Klassenzuweisungstabelle werden die Schulklassen jetzt nach Schule
+      gruppiert und sortiert. Schulen und Klassen werden sprachabhängig sortiert
+      (numerisch, sodass '2a' vor '10a' steht) und ein Tooltip pro Zelle zeigt
+      dieselbe Gruppierung mit einer Schule pro Zeile.
