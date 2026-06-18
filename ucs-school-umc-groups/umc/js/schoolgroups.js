@@ -47,6 +47,9 @@ define([
 		autosearchVariable: '',
 		autoSearch: true,
 		DetailPage: null,
+		// whether more than one row may be selected in the grid; only useful
+		// for flavors that offer a multi action (e.g. delete).
+		multiSelect: false,
 
 		selectablePagesToLayoutMapping: {
 			_searchPage: 'searchpage-grid'
@@ -75,11 +78,38 @@ define([
 			this._grid = new Grid({
 				actions: this.getGridActions(),
 				columns: this.getGridColumns(),
+				gridOptions: this.multiSelect ? {} : {selectionMode: 'single'},
 				moduleStore: this.moduleStore,
 				hideContextActionsWhenNoSelection: false,
 				allowHTML: false
 			});
 			this._searchPage.addChild(this._grid);
+
+			if (!this.multiSelect) {
+				var innerGrid = this._grid._grid;
+
+				// The "select all" header checkbox makes no sense with single selection.
+				// Setting allowSelectAll: false would drop it, but that breaks the header
+				// layout (dgrid then renders the column label instead), so just disable the
+				// rendered checkbox.
+				var selectorColumn = innerGrid._selectorColumns[0];
+				if (selectorColumn && selectorColumn._selectorHeaderCheckbox) {
+					selectorColumn._selectorHeaderCheckbox.$checkbox.set('disabled', true);
+				}
+
+				// dgrid only enforces selectionMode 'single' for clicks on the row body,
+				// not for the checkboxes of the selector column: those toggle the selection
+				// directly and bypass the single-selection handling. Enforce it manually by
+				// deselecting any previously selected row whenever a new row gets selected.
+				innerGrid.on('dgrid-select', lang.hitch(this, function(evt) {
+					var keepId = String(evt.rows[evt.rows.length - 1].id);
+					array.forEach(innerGrid.getSelectedIDs(), function(id) {
+						if (String(id) !== keepId) {
+							innerGrid.deselect(id);
+						}
+					});
+				}));
+			}
 
 			var widgets = [{
 				type: ComboBox,
@@ -266,6 +296,8 @@ define([
 	});
 
 	var WorkgroupAdmin = declare([WorkGroup], {
+		// keep multi selection here, the delete action operates on multiple objects
+		multiSelect: true,
 		helpText: _('This module allows to create, modify and delete class comprehensive workgroups. Arbitrary students and teacher of the school can be selected as group members.'),
 		getGridActions: function() {
 			var actions = this.inherited(arguments);
