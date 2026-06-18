@@ -33,7 +33,7 @@ define([
 	// drop the redundant '<school>-' prefix; the school is shown as the group label
 	function stripSchoolPrefix(school_classes, school) {
 		return array.map(school_classes, function(value) {
-			return value.indexOf(school + '-') === -1 ? value : value.slice(school.length + 1);
+			return value.includes(school + '-') ? value.slice(school.length + 1) : value;
 		});
 	}
 
