@@ -30,6 +30,13 @@ define([
 		return a.localeCompare(b, undefined, {numeric: true});
 	}
 
+	// drop the redundant '<school>-' prefix; the school is shown as the group label
+	function stripSchoolPrefix(school_classes, school) {
+		return array.map(school_classes, function(value) {
+			return value.indexOf(school + '-') === -1 ? value : value.slice(school.length + 1);
+		});
+	}
+
 	var ModuleBase = declare("umc.modules.schoolgroups", [Module], {
 		idProperty: '$dn$',
 		_grid: null,
@@ -214,10 +221,7 @@ define([
 					array.forEach(schools, function(school) {
 						let school_classes = values[school];
 						let sortedClasses = school_classes.slice().sort(localeSort);
-						// drop the redundant '<school>-' prefix; the school is shown as the group label
-						let groupedClasses = array.map(sortedClasses, function(value) {
-							return value.indexOf(school + '-') === -1 ? value : value.slice(school.length + 1);
-						}).join(', ');
+						let groupedClasses = stripSchoolPrefix(sortedClasses, school).join(', ');
 						// same grouping in the cell (single line, truncated with an ellipsis)
 						// and in the tooltip (one group per line, school in bold)
 						cellGroups.push(entities.encode(school) + ': ' + entities.encode(groupedClasses));
