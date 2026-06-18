@@ -4,7 +4,7 @@ released:
 version: [0]
 scope: ucs_5.2-0-ucs-school-5.2
 src: ucs-school-umc-groups
-fix: 11.1.1
+fix: 11.1.2
 bugs:
   59515:
     en: |
@@ -12,8 +12,14 @@ bugs:
       by school. Schools and classes are sorted language-aware (numeric, so
       '2a' precedes '10a') and a per-cell tooltip shows the same grouping with
       one school per line.
+
+      The user group modules now use single row selection so that only one
+      group can be selected at a time.
     de: |
       In der Klassenzuweisungstabelle werden die Schulklassen jetzt nach Schule
       gruppiert und sortiert. Schulen und Klassen werden sprachabhängig sortiert
       (numerisch, sodass '2a' vor '10a' steht) und ein Tooltip pro Zelle zeigt
       dieselbe Gruppierung mit einer Schule pro Zeile.
+
+      Die Module für Benutzergruppen verwenden jetzt eine Einzelzeilenauswahl,
+      sodass immer nur eine Gruppe gleichzeitig ausgewählt werden kann.
