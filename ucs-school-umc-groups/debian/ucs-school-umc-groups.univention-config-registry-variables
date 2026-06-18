@@ -4,17 +4,38 @@ Description[en]=De-/activates the automatic search when opening the module "Assi
 Type=bool
 Categories=management-umc
 
+[ucsschool/assign-classes/autosearch_on_change]
+Description[de]=Definiert ob bei jeder Änderung der Schule die Liste automatisch neu geladen werden soll im Modul "Klassen zuordnen".
+Description[en]=Defines if the list should be reloaded automatically after a change in the school selection in the module "Assign classes".
+Type=bool
+Categories=management-umc
+Default=true
+
 [ucsschool/assign-teachers/autosearch]
 Description[de]=De-/Aktiviert die automatische Suche beim öffnen des Modul "Lehrer zuordnen".
 Description[en]=De-/activates the automatic search when opening the module "Assign teachers".
 Type=bool
 Categories=management-umc
 
+[ucsschool/assign-teachers/autosearch_on_change]
+Description[de]=Definiert ob bei jeder Änderung der Schule die Liste automatisch neu geladen werden soll im Modul "Lehrer zuordnen".
+Description[en]=Defines if the list should be reloaded automatically after a change in the school selection in the module "Assign teachers".
+Type=bool
+Categories=management-umc
+Default=true
+
 [ucsschool/workgroups/autosearch]
 Description[de]=De-/Aktiviert die automatische Suche beim öffnen des Modul "Arbeitsgruppen Verwalten".
 Description[en]=De-/activates the automatic search when opening the module "Manage workgroups".
 Type=bool
 Categories=management-umc
+
+[ucsschool/workgroups/autosearch_on_change]
+Description[de]=Definiert ob bei jeder Änderung der Schule die Liste automatisch neu geladen werden soll im Modul "Arbeitsgruppen Verwalten".
+Description[en]=Defines if the list should be reloaded automatically after a change in the school selection in the module "Manage workgroups".
+Type=bool
+Categories=management-umc
+Default=true
 
 [ucsschool/workgroups/mailaddress]
 Description[de]=Definiert ein Schema, nach dem die Emailadresse einer Arbeitsgruppe berechnet wird. Wenn diese Variable gesetzt ist, wird das Feature in der UMC angezeigt. Default: <empty>, Beispiel: {ou}-{name}@example.com

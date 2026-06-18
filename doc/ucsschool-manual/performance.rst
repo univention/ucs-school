@@ -126,3 +126,37 @@ Benutzer/Klassen/Rechner/Schulen
    Wie die automatische Suche auch für andere (nicht schulbezogene) UMC-Module
    deaktiviert wird, steht in :ref:`umc-search-auto` in
    :cite:t:`ucs-performance-guide` (nur in Englisch verfügbar).
+
+.. _school-performance-autosearch-on-change:
+
+Automatische Suche beim Wechsel der Schule deaktivieren
+-------------------------------------------------------
+
+Einige Module führen die Suche zusätzlich automatisch erneut aus, wenn die
+ausgewählte Schule (bzw. Klasse) gewechselt wird. Da die automatische Suche beim
+Öffnen eines Moduls immer auf der ersten Schule erfolgt und damit häufig nicht
+die gewünschte Schule trifft, lässt sich die Suche beim Wechsel der Auswahl
+unabhängig von der Suche beim Öffnen über die folgenden |UCSUCRV|\ n steuern.
+Ist die jeweilige Variable auf ``false`` gesetzt, wird beim Wechsel der Auswahl
+keine automatische Suche ausgelöst.
+
+Passwörter (Schüler), Passwörter (Lehrer), Passwörter (Mitarbeiter)
+   :envvar:`ucsschool/passwordreset/autosearch_on_change`
+
+Lehrer zuordnen
+   :envvar:`ucsschool/assign-teachers/autosearch_on_change`
+
+Klassen zuordnen
+   :envvar:`ucsschool/assign-classes/autosearch_on_change`
+
+Arbeitsgruppen verwalten
+   :envvar:`ucsschool/workgroups/autosearch_on_change`
+
+Klassen (Assistenten)
+   :envvar:`ucsschool/wizards/schoolwizards/classes/autosearch_on_change`
+
+Rechner (Assistenten)
+   :envvar:`ucsschool/wizards/schoolwizards/computers/autosearch_on_change`
+
+Alle Assistenten-Module
+   :envvar:`ucsschool/wizards/autosearch_on_change`

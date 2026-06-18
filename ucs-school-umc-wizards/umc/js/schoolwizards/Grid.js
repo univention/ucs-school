@@ -25,6 +25,7 @@ define([
 
 		fullWidth: true,
 		autoSearch: true,
+		autoSearchOnChange: true,
 		udmLinkEnabled: null,
 		module: null,
 		umcpCommand: null,
@@ -179,6 +180,19 @@ define([
 				buttons: buttons,
 				onSearch: lang.hitch(this, 'filter')
 			});
+			this._searchForm.ready().then(lang.hitch(this, function() {
+				// re-run the search when the school selection is changed. The watch is
+				// attached after the form is ready, so the initial value assignment does
+				// not trigger it; the initial search is handled by autoSearch below.
+				let schoolWidget = this._searchForm.getWidget('school');
+				if (schoolWidget) {
+					schoolWidget.watch('value', lang.hitch(this, function() {
+						if (this.autoSearchOnChange) {
+							this._searchForm.submit();
+						}
+					}));
+				}
+			}));
 			if (this.autoSearch) {
 				this._searchForm.ready().then(lang.hitch(this, function() {
 					this.filter({type: 'all'});

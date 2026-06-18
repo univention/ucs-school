@@ -65,8 +65,9 @@ define([
 					}));
 				})
 			);
-			var ucrVariables = tools.ucr(['ucsschool/wizards/udmlink', 'ucsschool/wizards/autosearch', 'ucsschool/wizards/' + this.moduleFlavor + '/autosearch']).then(lang.hitch(this, lang.hitch(this, function(ucr) {
+			let ucrVariables = tools.ucr(['ucsschool/wizards/udmlink', 'ucsschool/wizards/autosearch', 'ucsschool/wizards/' + this.moduleFlavor + '/autosearch', 'ucsschool/wizards/autosearch_on_change', 'ucsschool/wizards/' + this.moduleFlavor + '/autosearch_on_change']).then(lang.hitch(this, lang.hitch(this, function(ucr) {
 				this.autoSearch = tools.isTrue(ucr['ucsschool/wizards/' + this.moduleFlavor + '/autosearch'] || ucr['ucsschool/wizards/autosearch'] || true);
+				this.autoSearchOnChange = tools.isTrue(ucr['ucsschool/wizards/' + this.moduleFlavor + '/autosearch_on_change'] || ucr['ucsschool/wizards/autosearch_on_change'] || true);
 				var udmLink = ucr['ucsschool/wizards/udmlink'];
 				this.udmLinkEnabled = udmLink === null || tools.isTrue(udmLink);
 			})));
@@ -85,6 +86,7 @@ define([
 				schools: this.schools,
 				udmLinkEnabled: this.udmLinkEnabled,
 				autoSearch: this.autoSearch,
+				autoSearchOnChange: this.autoSearchOnChange,
 				umcpCommand: lang.hitch(this, 'umcpCommand'),
 				moduleFlavor: this.moduleFlavor,
 				module: this

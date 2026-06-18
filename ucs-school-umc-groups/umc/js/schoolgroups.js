@@ -44,8 +44,15 @@ define([
 		_detailPage: null,
 		helpText: '',
 		mailAddressPattern: '',
+		// UCR variable that controls the automatic search when the module is opened.
 		autosearchVariable: '',
 		autoSearch: true,
+		// UCR variable that controls the automatic search when the selected school
+		// is changed. Configurable independently because the initial search is often
+		// performed on the wrong school (the first one), so customers want to disable
+		// it without disabling the search on an explicit school change.
+		autosearchOnChangeVariable: '',
+		autoSearchOnChange: true,
 		DetailPage: null,
 		// whether more than one row may be selected in the grid; only useful
 		// for flavors that offer a multi action (e.g. delete).
@@ -58,8 +65,9 @@ define([
 		buildRendering: function() {
 			this.inherited(arguments);
 
-			this.standbyDuring(tools.ucr([this.autosearchVariable, 'ucsschool/workgroups/mailaddress'])).then(lang.hitch(this, function(vars) {
+			this.standbyDuring(tools.ucr([this.autosearchVariable, this.autosearchOnChangeVariable, 'ucsschool/workgroups/mailaddress'])).then(lang.hitch(this, function(vars) {
 				this.autoSearch = tools.isTrue(vars[this.autosearchVariable] || this.autoSearch);
+				this.autoSearchOnChange = tools.isTrue(vars[this.autosearchOnChangeVariable] || this.autoSearchOnChange);
 				this.mailAddressPattern = vars['ucsschool/workgroups/mailaddress'] || '';
 				this.renderSearchForm();
 			}));
@@ -119,7 +127,16 @@ define([
 				label: _('School'),
 				size: 'TwoThirds',
 				umcpCommand: lang.hitch(this, 'umcpCommand'),
-				autoHide: true
+				autoHide: true,
+				onChange: lang.hitch(this, function() {
+					// trigger the search on an explicit school change. The guard skips the
+					// onChange that fires while the form is still being initialized; the
+					// initial search is handled by onValuesInitialized (and gated by the
+					// separate 'autosearch' variable).
+					if (this._valuesInitialized && this.autoSearchOnChange) {
+						this._search();
+					}
+				})
 			}, {
 				type: SearchBox,
 				'class': 'umcTextBoxOnBody',
@@ -146,16 +163,23 @@ define([
 					}
 				}),
 				onValuesInitialized: lang.hitch(this, function() {
-					var values = this._searchForm.get('value');
-					if (values.school && this.autoSearch) {
-						this._grid.filter(values);
+					this._valuesInitialized = true;
+					if (this.autoSearch) {
+						this._search();
 					}
-			 	 })
+				})
 			});
 			this.standbyDuring(this._searchForm.ready());
 
 			this._searchPage.addChild(this._searchForm);
 			this._searchPage.startup();
+		},
+
+		_search: function() {
+			let values = this._searchForm.get('value');
+			if (values.school) {
+				this._grid.filter(values);
+			}
 		},
 
 		createDetailPage: function() {
@@ -208,6 +232,7 @@ define([
 
 	var Class = declare([ModuleBase], {
 		autosearchVariable: 'ucsschool/assign-teachers/autosearch',
+		autosearchOnChangeVariable: 'ucsschool/assign-teachers/autosearch_on_change',
 		DetailPage: ClassDetailPage,
 		helpText: _('This module allows the maintenance of the membership of class groups. Teachers can be assigned or removed as group members.'),
 		detailPageHeaderText: _('Edit class'),
@@ -225,6 +250,7 @@ define([
 
 	var Teacher = declare([Class], {
 		autosearchVariable: 'ucsschool/assign-classes/autosearch',
+		autosearchOnChangeVariable: 'ucsschool/assign-classes/autosearch_on_change',
 		DetailPage: TeacherDetailPage,
 		helpText: _('This module allows the maintenance of class memberships of teachers. The selected teacher can be added to one or multiple classes.'),
 		detailPageHeaderText: _('Assigning of classes to a teacher'),
@@ -280,6 +306,7 @@ define([
 
 	var WorkGroup = declare([ModuleBase], {
 		autosearchVariable: 'ucsschool/workgroups/autosearch',
+		autosearchOnChangeVariable: 'ucsschool/workgroups/autosearch_on_change',
 		DetailPage: WorkgroupDetailPage,
 		helpText: _('This module allows to modify class comprehensive workgroups. Arbitrary students and teacher of the school can be selected as group members.'),
 		detailPageHeaderText: _('Edit workgroup'),

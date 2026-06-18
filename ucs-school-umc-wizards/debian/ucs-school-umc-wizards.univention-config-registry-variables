@@ -21,3 +21,24 @@ Description[de]=Schaltet die Evaluierung von Passwort Richtlinien während des A
 Description[en]=Enables the evaluation of password policies during the creation of new Users in the Users UMC module (default: no).
 Type=bool
 Categories=management-umc
+
+[ucsschool/wizards/autosearch_on_change]
+Description[de]=Definiert modulübergreifend, ob bei jeder Änderung der Schule die Liste in den Assistenten-Modulen automatisch neu geladen werden soll. Wird durch die modulspezifische Variante überschrieben.
+Description[en]=Defines globally if the list in the wizard modules should be reloaded automatically after a change in the school selection. Overridden by the module specific variant.
+Type=bool
+Categories=management-umc
+Default=true
+
+[ucsschool/wizards/schoolwizards/classes/autosearch_on_change]
+Description[de]=Definiert ob bei jeder Änderung der Schule die Liste automatisch neu geladen werden soll im Modul "Klassen (Assistenten)".
+Description[en]=Defines if the list should be reloaded automatically after a change in the school selection in the module "Classes (wizards)".
+Type=bool
+Categories=management-umc
+Default=true
+
+[ucsschool/wizards/schoolwizards/computers/autosearch_on_change]
+Description[de]=Definiert ob bei jeder Änderung der Schule die Liste automatisch neu geladen werden soll im Modul "Rechner (Assistenten)".
+Description[en]=Defines if the list should be reloaded automatically after a change in the school selection in the module "Computers (wizards)".
+Type=bool
+Categories=management-umc
+Default=true
