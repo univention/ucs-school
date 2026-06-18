@@ -1,3 +1,9 @@
+ucs-school-umc-wizards (13.1.2) unstable; urgency=medium
+
+  * Bug #59515: configure autosearch on school change separately
+
+ -- Jürn Brodersen <brodersen@univention.de>  Thu, 18 Jun 2026 18:41:15 +0200
+
 ucs-school-umc-wizards (13.1.1) unstable; urgency=medium
 
   * fix: clear legal guardian / legal ward widget after creating a user
