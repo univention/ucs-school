@@ -48,8 +48,8 @@ msgid "Finished"
 msgstr "Fertiggestellt"
 
 #: umc/js/schoolusers.js:96 umc/js/schoolusers.js:154
-msgid "Name"
-msgstr "Name"
+msgid "User"
+msgstr "Benutzer"
 
 #: umc/js/schoolusers.js:308
 msgid "New password"
@@ -96,12 +96,8 @@ msgid "Setting passwords"
 msgstr "Passwort setzen"
 
 #: umc/js/schoolusers.js:153
-msgid ""
-"Specifies the substring pattern which is searched for in the first name, "
-"surname and username"
-msgstr ""
-"Definiert die Zeichenkette, nach der in den Attributen Vorname, Nachname "
-"und Benutzername gesucht wird"
+msgid "Enter a search term to filter by first name, surname or username."
+msgstr "Geben Sie einen Suchbegriff ein, um nach Vorname, Nachname oder Benutzername zu filtern."
 
 #: umc/js/schoolusers.js:302
 msgid "User has to change password on next login"

@@ -26,7 +26,7 @@ Mit den folgenden Schritten kann ein Schülerpasswort neu gesetzt werden:
 
      Zurücksetzen von Schülerpasswörtern
 
-* Durch Eingabe von Benutzer-, Vor- und/oder Nachname in das Eingabefeld *Name*
+* Durch Eingabe von Benutzer-, Vor- und/oder Nachname in das Eingabefeld *Benutzer*
   und anschließendem Klick auf :guilabel:`Suchen` kann auch gezielt nach einem
   Schüler gesucht werden.
 

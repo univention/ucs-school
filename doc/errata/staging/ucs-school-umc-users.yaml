@@ -1,0 +1,11 @@
+product: ucsschool
+release: "5.2"
+released:
+version: [0]
+scope: ucs_5.2-0-ucs-school-5.2
+src: ucs-school-umc-users
+fix: 17.0.3
+bugs:
+  59515:
+    en: The "Name" column and search field in the password reset module are now labeled "User" and the search description has been clarified.
+    de: Die Spalte und das Suchfeld "Name" im Modul zum Zurücksetzen von Passwörtern heißen nun "Benutzer", und die Beschreibung der Suche wurde verständlicher formuliert.

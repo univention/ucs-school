@@ -59,7 +59,7 @@ define([
 
 			var columns = [{
 				name: 'name',
-				label: _('Name'),
+				label: _('User'),
 				width: '60%'
 			}, {
 				name: 'passwordexpiry',
@@ -120,8 +120,8 @@ define([
 				name: 'pattern',
 				size: 'TwoThirds',
 				value: '',
-				description: _('Specifies the substring pattern which is searched for in the first name, surname and username'),
-				label: _('Name'),
+				description: _('Enter a search term to filter by first name, surname or username.'),
+				label: _('User'),
 				inlineLabel: _('Search...'),
 				onSearch: lang.hitch(this, function() {
 					this._searchForm.submit();
