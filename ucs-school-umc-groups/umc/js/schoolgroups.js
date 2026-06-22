@@ -47,6 +47,7 @@ define([
 		// UCR variable that controls the automatic search when the module is opened.
 		autosearchVariable: '',
 		autoSearch: true,
+		_showEmail: false,
 		// UCR variable that controls the automatic search when the selected school
 		// is changed. Configurable independently because the initial search is often
 		// performed on the wrong school (the first one), so customers want to disable
@@ -65,10 +66,11 @@ define([
 		buildRendering: function() {
 			this.inherited(arguments);
 
-			this.standbyDuring(tools.ucr([this.autosearchVariable, this.autosearchOnChangeVariable, 'ucsschool/workgroups/mailaddress'])).then(lang.hitch(this, function(vars) {
+			this.standbyDuring(tools.ucr([this.autosearchVariable, this.autosearchOnChangeVariable, 'ucsschool/workgroups/mailaddress', 'ucsschool/umc/grid/show-email-instead-of-username'])).then(lang.hitch(this, function(vars) {
 				this.autoSearch = tools.isTrue(vars[this.autosearchVariable] || this.autoSearch);
 				this.autoSearchOnChange = tools.isTrue(vars[this.autosearchOnChangeVariable] || this.autoSearchOnChange);
 				this.mailAddressPattern = vars['ucsschool/workgroups/mailaddress'] || '';
+				this._showEmail = tools.isTrue(vars['ucsschool/umc/grid/show-email-instead-of-username']);
 				this.renderSearchForm();
 			}));
 		},
@@ -261,7 +263,8 @@ define([
 				label: _('Name'),
 				formatter: lang.hitch(this, function(nothing, id) {
 					var item = this._grid.getRowValues(id);
-					return '' + item.display_name + ' (' + item.name + ')';
+					const identifier = (this._showEmail && item.email) ? item.email : item.name;
+					return '' + item.display_name + ' (' + identifier + ')';
 				})
 			}, {
 				name: 'school_classes',

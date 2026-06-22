@@ -102,7 +102,7 @@ class Instance(SchoolBaseModule):
             group=klass,
             user_type=request.flavor,
             pattern=request.options.get("pattern", ""),
-            attr=["givenName", "sn", "shadowLastChange", "shadowMax", "uid"],
+            attr=["givenName", "sn", "shadowLastChange", "shadowMax", "uid", "mailPrimaryAddress"],
         ):
             dn = entry["dn"]
             attrs = entry["attrs"]

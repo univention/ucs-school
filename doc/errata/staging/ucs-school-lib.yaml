@@ -4,7 +4,7 @@ released:
 version: [0]
 scope: ucs_5.2-0-ucs-school-5.2
 src: ucs-school-lib
-fix: 15.2.1
+fix: 15.3.0
 bugs:
   58521:
     en: >
@@ -16,3 +16,14 @@ bugs:
       einer Konsistenzprüfung für eine Benutzer-DN löste der Checker einen
       unbehandelten Fehlerfall aus, wenn das LDAP-Objekt nicht über das Attribut
       `ucsschoolSchool` verfügte.
+  notes:
+    en: |
+      ``Display.user()`` and ``Display.user_ldap()`` now show the primary email
+      address instead of the username when the UCR variable
+      ``ucsschool/umc/grid/show-email-instead-of-username`` is set. Users
+      without a primary email address keep showing their username.
+    de: |
+      ``Display.user()`` und ``Display.user_ldap()`` zeigen nun die primäre
+      E-Mail-Adresse anstelle des Benutzernamens an, wenn die UCR-Variable
+      ``ucsschool/umc/grid/show-email-instead-of-username`` gesetzt ist. Benutzer
+      ohne primäre E-Mail-Adresse werden weiterhin mit ihrem Benutzernamen angezeigt.

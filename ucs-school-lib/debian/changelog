@@ -1,3 +1,12 @@
+ucs-school-lib (15.3.0) unstable; urgency=medium
+
+  * feat: Display.user() and Display.user_ldap() show the primary email
+    address instead of the username when the UCR variable
+    ucsschool/umc/grid/show-email-instead-of-username is set. Users without a
+    primary email address keep showing their username.
+
+ -- Johannes Königer <koeniger@univention.de>  Mon, 22 Jun 2026 12:00:00 +0200
+
 ucs-school-lib (15.2.1) unstable; urgency=medium
 
   * fix(consistency): add check for missing ucsschoolSchool attribute in

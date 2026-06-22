@@ -6,6 +6,7 @@ Build-Depends:
  debhelper-compat (= 13),
  ucslint,
  univention-management-console-dev,
+ univention-config-dev,
 Standards-Version: 3.8.2
 
 Package: ucs-school-umc-common

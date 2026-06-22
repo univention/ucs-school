@@ -1,0 +1,5 @@
+[ucsschool/umc/grid/show-email-instead-of-username]
+Description[de]=Ist diese Variable gesetzt, zeigen die UMC-Listenansichten der UCS@school-Module die primäre E-Mail-Adresse anstelle des Benutzernamens an. Benutzer ohne primäre E-Mail-Adresse werden weiterhin mit ihrem Benutzernamen angezeigt (Standard: no).
+Description[en]=If set, the grid views of the UCS@school UMC modules display the primary email address instead of the username. Users without a primary email address are still shown with their username (default: no).
+Type=bool
+Categories=management-umc

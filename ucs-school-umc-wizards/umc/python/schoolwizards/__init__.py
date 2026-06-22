@@ -29,7 +29,7 @@ from ucsschool.lib.models.user import (
     User,
 )
 from ucsschool.lib.models.utils import add_module_logger_to_schoollib
-from ucsschool.lib.school_umc_base import SchoolBaseModule, SchoolSanitizer
+from ucsschool.lib.school_umc_base import Display, SchoolBaseModule, SchoolSanitizer
 from ucsschool.lib.school_umc_ldap_connection import ADMIN_WRITE, USER_READ, USER_WRITE, LDAP_Connection
 from univention.admin.filter import conjunction
 from univention.admin.uexceptions import base as uldapBaseException, noObject
@@ -330,6 +330,28 @@ class Instance(SchoolBaseModule, SchoolImport):
                 ret.append({"id": obj.dn, "label": obj.info.get("fqdn", obj.info["name"])})
         return ret
 
+    @staticmethod
+    def _resolve_user_options(dns, ldap_user_read):
+        """
+        Resolve a list of user DNs to ``{id, label}`` entries for a
+        MultiObjectSelect widget. The label shows the primary email address
+        instead of the username when
+        ``ucsschool/umc/grid/show-email-instead-of-username`` is set, falling
+        back to the username when no email address is available.
+        """
+        show_email = Display.show_email_instead_of_username()
+        options = []
+        for dn in dns:
+            attrs = ldap_user_read.get(dn, attr=["uid", "mailPrimaryAddress"])
+            uid = attrs.get("uid", [b""])[0].decode("utf-8")
+            email = attrs.get("mailPrimaryAddress", [b""])[0].decode("utf-8")
+            label = email if show_email and email else uid
+            if not label:
+                # the referenced user is not readable: fall back to the DN's RDN value
+                label = dn.split(",", 1)[0].split("=", 1)[-1]
+            options.append({"id": dn, "label": label})
+        return options
+
     @sanitize_object(**{"$dn$": DNSanitizer(required=True)})
     @response
     @LDAP_Connection()
@@ -344,7 +366,12 @@ class Instance(SchoolBaseModule, SchoolImport):
         ):
             MODULE.process("Getting %r" % (obj))
             obj = obj.from_dn(obj.old_dn, obj.school, ldap_user_read)
-            ret.append(obj.to_dict())
+            data = obj.to_dict()
+            if isinstance(obj, User):
+                for field in ("legal_guardians", "legal_wards"):
+                    if data.get(field):
+                        data[field] = self._resolve_user_options(data[field], ldap_user_read)
+            ret.append(data)
         return ret
 
     @response

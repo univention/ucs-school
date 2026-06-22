@@ -10,6 +10,7 @@ define([
 	"dojo/_base/lang",
 	"dojo/_base/array",
 	"dojox/html/entities",
+	"umc/tools",
 	"umc/widgets/SearchBox",
 	"umc/widgets/ComboBox",
 	"umc/widgets/Text",
@@ -18,7 +19,7 @@ define([
 	"umc/modules/schoolwizards/Grid",
 	"umc/modules/schoolwizards/utils",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, array, entities, SearchBox, ComboBox, Text, Tooltip, UserWizard, Grid, utils, _) { // eslint-disable-line max-params
+], function(declare, lang, array, entities, tools, SearchBox, ComboBox, Text, Tooltip, UserWizard, Grid, utils, _) { // eslint-disable-line max-params
 
 	return declare("umc.modules.schoolwizards.UserGrid", [Grid], {
 
@@ -29,6 +30,17 @@ define([
 		firstObject: _('the first school user'),
 		createObjectWizard: UserWizard,
 		sortFields: ['display_name'],
+		_showEmail: false,
+
+		buildRendering: function() {
+			this.inherited(arguments);
+			// Decide whether the grid identifies users by their primary email address
+			// instead of the username. The flag is read lazily by the formatter on each
+			// search (the columns are rebuilt by filter()), so it is reliably set in time.
+			this.standbyDuring(tools.ucr(['ucsschool/umc/grid/show-email-instead-of-username'])).then(lang.hitch(this, function(vars) {
+				this._showEmail = tools.isTrue(vars['ucsschool/umc/grid/show-email-instead-of-username']);
+			}));
+		},
 
 		getGridColumnsWithSchool: function() {
 			return this.getGridColumns();
@@ -38,9 +50,13 @@ define([
 			return [{
 				name: 'display_name',
 				label: _('Name'),
+				// The email primary address is usually longer than the username, so give
+				// the Name column more room when it is displayed instead of the username.
+				width: this._showEmail ? '50%' : 'auto',
 				formatter: lang.hitch(this, function(nothing, id) {
 					var item = this._grid.getRowValues(id);
-					return '' + item.display_name + ' (' + item.name + ')';
+					const identifier = (this._showEmail && item.email) ? item.email : item.name;
+					return '' + item.display_name + ' (' + identifier + ')';
 				}),
 				description: _('Name of the %s.', this.objectNameSingular)
 			}, {

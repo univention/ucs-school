@@ -436,17 +436,26 @@ class LDAP_Filter:
 
 class Display:
     @staticmethod
-    def user(udm_object):  # type: (UdmObject) -> str
+    def show_email_instead_of_username() -> bool:
+        """Whether grids/labels should identify users by their primary email address."""
+        return bool(ucr.is_true("ucsschool/umc/grid/show-email-instead-of-username"))
+
+    @staticmethod
+    def user(udm_object: UdmObject) -> str:
         fullname = udm_object["lastname"]
         if "firstname" in udm_object and udm_object["firstname"]:  # noqa: RUF019
             fullname += ", %(firstname)s" % udm_object
 
+        if Display.show_email_instead_of_username() and udm_object.get("mailPrimaryAddress"):
+            return fullname + " (%(mailPrimaryAddress)s)" % udm_object
         return fullname + " (%(username)s)" % udm_object
 
     @staticmethod
-    def user_ldap(ldap_object):  # type: (Dict[str, Any]) -> str
+    def user_ldap(ldap_object: dict[str, Any]) -> str:
         fullname = ldap_object.get("sn", [b""])[0].decode("utf-8")
         if ldap_object.get("givenName", [b""])[0]:
             fullname += ", %s" % ldap_object["givenName"][0].decode("utf-8")
 
+        if Display.show_email_instead_of_username() and ldap_object.get("mailPrimaryAddress", [b""])[0]:
+            return fullname + " (%s)" % ldap_object["mailPrimaryAddress"][0].decode("utf-8")
         return fullname + " (%s)" % ldap_object["uid"][0].decode("utf-8")

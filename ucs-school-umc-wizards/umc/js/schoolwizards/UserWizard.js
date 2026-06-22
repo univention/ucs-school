@@ -31,6 +31,7 @@ define([
 		_maxUsernameLength: 15,
 		_checkMaxUsernameLength: "true",
 		_optionalVisibleFields: [],
+		_showEmail: false,
 
 		_isOptionalFieldVisible: function(fieldName) {
 			return array.indexOf(this._optionalVisibleFields, fieldName) > -1;
@@ -41,7 +42,8 @@ define([
 				'ucsschool/ldap/default/userprefix/exam',
 				'ucsschool/ldap/check/username/lengthlimit',
 				'ucsschool/username/max_length',
-				'ucsschool/wizards/schoolwizards/users/optional_visible_fields'
+				'ucsschool/wizards/schoolwizards/users/optional_visible_fields',
+				'ucsschool/umc/grid/show-email-instead-of-username'
 			]).then(lang.hitch(this, function(result) {
 				// cache the user prefix and update help text
 				this._examUserPrefix = result['ucsschool/ldap/default/userprefix/exam'] || 'exam-';
@@ -50,6 +52,7 @@ define([
 				this._maxUsernameLength = this._maxUsernameLengthUcr - this._examUserPrefix.length;
 				var optionalVisibleFieldsStr = result['ucsschool/wizards/schoolwizards/users/optional_visible_fields'] || '';
 				this._optionalVisibleFields = optionalVisibleFieldsStr.split(' ');
+				this._showEmail = tools.isTrue(result['ucsschool/umc/grid/show-email-instead-of-username']);
 			}));
 		},
 
@@ -213,14 +216,15 @@ define([
 					options_type: 'student',
 				}
 			};
-			let parseQueryResult = function(data) {
-				return array.map(data.result, function(user) {
+			let parseQueryResult = lang.hitch(this, function(data) {
+				return array.map(data.result, lang.hitch(this, function(user) {
+					var identifier = (this._showEmail && user.email) ? user.email : user.name;
 					return {
 						id: user['$dn$'],
-						label: tools.explodeDn(user['$dn$'], true).shift() || ''
+						label: identifier || tools.explodeDn(user['$dn$'], true).shift() || ''
 					}
-				});
-			};
+				}));
+			});
 			let widget = {
 				type: MultiObjectSelect,
 				name: mapping[widgetType].name,

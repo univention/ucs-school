@@ -4,8 +4,17 @@ released:
 version: [0]
 scope: ucs_5.2-0-ucs-school-5.2
 src: ucs-school-umc-users
-fix: 17.0.3
+fix: 17.1.0
 bugs:
   59515:
     en: The "Name" column and search field in the password reset module are now labeled "User" and the search description has been clarified.
     de: Die Spalte und das Suchfeld "Name" im Modul zum Zurücksetzen von Passwörtern heißen nun "Benutzer", und die Beschreibung der Suche wurde verständlicher formuliert.
+  notes:
+    en: |
+      The password module now fetches the primary email address so the user
+      list can show it instead of the username when the UCR variable
+      ``ucsschool/umc/grid/show-email-instead-of-username`` is set.
+    de: |
+      Das Passwort-Modul liest nun die primäre E-Mail-Adresse aus, damit die
+      Benutzerliste sie anstelle des Benutzernamens anzeigen kann, wenn die
+      UCR-Variable ``ucsschool/umc/grid/show-email-instead-of-username`` gesetzt ist.

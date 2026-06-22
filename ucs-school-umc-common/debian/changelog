@@ -1,3 +1,12 @@
+ucs-school-umc-common (11.1.0) unstable; urgency=medium
+
+  * feat: register UCR variable
+    ucsschool/umc/grid/show-email-instead-of-username, which makes the
+    UCS@school UMC grids display the primary email address instead of the
+    username.
+
+ -- Johannes Königer <koeniger@univention.de>  Mon, 22 Jun 2026 12:00:00 +0200
+
 ucs-school-umc-common (11.0.0) unstable; urgency=medium
 
   * UCS@school 5.2
