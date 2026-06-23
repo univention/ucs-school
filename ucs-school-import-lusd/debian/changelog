@@ -1,3 +1,12 @@
+ucs-school-import-lusd (2.0.4) unstable; urgency=medium
+
+  * fix: remove school and user_role placeholder empty strings from
+    shipped import configs to prevent them from overwriting CLI arguments
+    when used as include-by-role targets
+    Issue univention/dev/education/ucsschool#59487
+
+ -- Ole Schwiegert <ole.schwiegert.extern@univention.de>  Mon, 16 Jun 2026 10:00:00 +0200
+
 ucs-school-import-lusd (2.0.3) unstable; urgency=medium
 
   * Bug #58464: Adjust test data to include classnames with dashes

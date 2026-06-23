@@ -1,0 +1,30 @@
+product: ucsschool
+release: "5.2"
+released: 5.2v6
+version: [0]
+scope: ucs_5.2-0-ucs-school-5.2
+src: ucs-school-import-lusd
+fix: 2.0.4
+bugs:
+  59487:
+    en: >
+        The LUSD import configuration files no longer contain empty placeholder
+        values for ``school`` and ``user_role``. Previously, users using
+        ``include:by_role`` with a configuration file derived from the shipped
+        LUSD configs would see the import fail with
+        "No 'school' was specified in the configuration", because the include
+        file's empty strings overwrote the values passed on the command line.
+        After upgrading, users must also remove ``"school": ""`` and
+        ``"user_role": ""`` from any custom include files they maintain
+        outside of ``/usr/share/ucs-school-import-lusd/``.
+    de: >
+        Die LUSD-Importkonfigurationsdateien enthalten keine leeren Platzhalterwerte
+        mehr für ``school`` und ``user_role``. Bisher kam es bei Nutzern, die
+        ``include:by_role`` mit einer von den mitgelieferten LUSD-Konfigurationen
+        abgeleiteten Datei nutzten, zu einem Importfehler mit der Meldung
+        :spelling:ignore:`„No 'school' was specified in the configuration"`,
+        da die leeren Zeichenketten der Include-Datei die per Kommandozeile
+        übergebenen Werte überschrieben.
+        Nach dem Upgrade müssen Nutzer ``"school": ""`` und ``"user_role": ""``
+        auch aus selbst verwalteten Include-Dateien außerhalb von
+        ``/usr/share/ucs-school-import-lusd/`` entfernen.
