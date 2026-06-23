@@ -17,7 +17,8 @@ define([
 	"umc/widgets/SearchBox",
 	"umc/widgets/ComboBox",
 	"umc/modules/schoolrooms/DetailPage",
-	"umc/i18n!umc/modules/schoolrooms"
+	"umc/i18n!umc/modules/schoolrooms",
+	"xstyle/css!umc/modules/ucsschool-common.css"
 ], function(declare, lang, aspect, entities, dialog, Grid, Module, Page, SearchForm, SearchBox, ComboBox, DetailPage, _) {
 
 	return declare("umc.modules.schoolrooms", [ Module ], {

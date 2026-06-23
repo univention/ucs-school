@@ -134,6 +134,9 @@ define([
 			}, {
 				type: MultiObjectSelect,
 				name: 'recipients',
+				onCreateDialog: function(dialog) {
+					dialog.domNode.classList.add('ucsschoolMultiObjectSelectDialog');
+				},
 				dialogTitle: _('Assign classes/workgroups'),
 				label: _('Assigned classes/workgroups'),
 				description: _('List of groups that are marked to receive the teaching materials'),

@@ -97,6 +97,9 @@ define([
 			}, {
 				type: MultiObjectSelect,
 				name: 'allowed_email_senders_users',
+				onCreateDialog: function(dialog) {
+					dialog.domNode.classList.add('ucsschoolMultiObjectSelectDialog');
+				},
 				label: _('Restrict permission to send emails to this group to the following users'),
 				visible: false,
 				queryWidgets: array.filter([{
@@ -121,6 +124,9 @@ define([
 			}, {
 				type: MultiObjectSelect,
 				name: 'allowed_email_senders_groups',
+				onCreateDialog: function(dialog) {
+					dialog.domNode.classList.add('ucsschoolMultiObjectSelectDialog');
+				},
 				label: _('Restrict permission to send emails to this group to the following groups'),
 				visible: false,
 				queryWidgets: array.filter([{

@@ -26,8 +26,10 @@ bugs:
     en: |
       The user grid and the legal guardian / legal ward selection now show the
       primary email address instead of the username when the UCR variable
-      ``ucsschool/umc/grid/show-email-instead-of-username`` is set.
+      ``ucsschool/umc/grid/show-email-instead-of-username`` is set. The "add
+      object" selection dialog is also wider now.
     de: |
       Die Benutzer-Listenansicht sowie die Auswahl der Sorgeberechtigten / Schülern zeigen
       nun die primäre E-Mail-Adresse anstelle des Benutzernamens an, wenn die
       UCR-Variable ``ucsschool/umc/grid/show-email-instead-of-username`` gesetzt ist.
+      Der Dialog zum Hinzufügen von Objekten ist nun ebenfalls breiter.

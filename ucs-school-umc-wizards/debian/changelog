@@ -3,6 +3,8 @@ ucs-school-umc-wizards (13.2.0) unstable; urgency=medium
   * feat: the user grid and the legal guardian / legal ward selection show the
     primary email address instead of the username when
     ucsschool/umc/grid/show-email-instead-of-username is set.
+  * feat: load the shared ucsschool-common.css so the "add object" selection
+    dialog (e.g. for legal guardians / wards) is wider.
 
  -- Johannes Königer <koeniger@univention.de>  Mon, 22 Jun 2026 12:00:00 +0200
 

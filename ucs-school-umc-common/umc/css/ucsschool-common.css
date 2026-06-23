@@ -1,0 +1,26 @@
+/*
+ * SPDX-FileCopyrightText: 2025-2026 Univention GmbH
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
+/*
+ * Shared styling for the UCS@school UMC modules.
+ * Installed to .../js/umc/modules/ucsschool-common.css and loaded by the
+ * ucs-school-umc-* modules via `xstyle/css!umc/modules/ucsschool-common.css`.
+ */
+
+/*
+ * Widen the MultiObjectSelect "add object" selection dialog. The framework
+ * dialog has no width of its own and sizes to its content, which is too narrow
+ * for the user labels shown in the UCS@school modules
+ * (e.g. "Firstname Lastname (mail/username)").
+ *
+ * The rule is scoped to the ucsschoolMultiObjectSelectDialog class, which the
+ * UCS@school widgets add to their dialog via the MultiObjectSelect
+ * `onCreateDialog` hook. This keeps the styling from leaking into the
+ * MultiObjectSelect dialogs of non-UCS@school (core) UMC modules.
+ */
+.ucsschoolMultiObjectSelectDialog {
+	width: 90%;
+	max-width: 650px;
+}

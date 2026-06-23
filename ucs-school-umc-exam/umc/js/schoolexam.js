@@ -35,7 +35,8 @@ define([
 	"umc/widgets/MultiUploader",
 	"umc/widgets/StandbyMixin",
 	"umc/widgets/ProgressBar",
-	"umc/i18n!umc/modules/schoolexam"
+	"umc/i18n!umc/modules/schoolexam",
+	"xstyle/css!umc/modules/ucsschool-common.css"
 ], function(declare, lang, array, entities, aspect, all, topic, Deferred, domClass, app, dialog, tools, RebootGrid, RecipientsGrid, Wizard, Module,
 			Page, Grid, SearchForm, SearchBox, TextBox, Text, TextArea, ComboBox, TimeBox, CheckBox, MultiObjectSelect, MultiUploader, StandbyMixin, ProgressBar, _) {
 	// helper function that sanitizes a given filename
@@ -172,6 +173,9 @@ define([
 				}, {
 					type: MultiObjectSelect,
 					name: 'recipients',
+					onCreateDialog: function(dialog) {
+						dialog.domNode.classList.add('ucsschoolMultiObjectSelectDialog');
+					},
 					dialogTitle: _('Participating classes/workgroups'),
 					label: _('Participating classes/workgroups'),
 					description: _('Groups that are participating in the exam'),

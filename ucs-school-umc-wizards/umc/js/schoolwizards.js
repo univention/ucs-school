@@ -17,7 +17,8 @@ define([
 	"umc/modules/schoolwizards/ClassGrid",
 	"umc/modules/schoolwizards/ComputerGrid",
 	"umc/modules/schoolwizards/SchoolGrid",
-	"umc/i18n!umc/modules/schoolwizards"
+	"umc/i18n!umc/modules/schoolwizards",
+	"xstyle/css!umc/modules/ucsschool-common.css"
 ], function(declare, lang, all, topic, tools, dialog, Module, UserGridChooseSchool, ClassGrid, ComputerGrid, SchoolGrid, _) {
 	var grids = {
 		'schoolwizards/users': UserGridChooseSchool,

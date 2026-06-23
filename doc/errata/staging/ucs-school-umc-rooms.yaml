@@ -1,0 +1,15 @@
+product: ucsschool
+release: "5.2"
+released:
+version: [0]
+scope: ucs_5.2-0-ucs-school-5.2
+src: ucs-school-umc-rooms
+fix: 18.1.0
+bugs:
+  notes:
+    en: |
+      The MultiObjectSelect "add object" selection dialog is now wider, via the
+      shared stylesheet of ucs-school-umc-common.
+    de: |
+      Der MultiObjectSelect-Dialog zum Hinzufügen von Objekten ist nun breiter,
+      über das gemeinsame Stylesheet von ucs-school-umc-common.

@@ -76,6 +76,9 @@ define([
 			return {
 				type: MultiObjectSelect,
 				name: this.multiWidgetName,
+				onCreateDialog: function(dialog) {
+					dialog.domNode.classList.add('ucsschoolMultiObjectSelectDialog');
+				},
 				queryWidgets: array.filter([{
 					type: ComboBox,
 					name: 'school',

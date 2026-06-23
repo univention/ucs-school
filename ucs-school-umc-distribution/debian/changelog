@@ -1,3 +1,10 @@
+ucs-school-umc-distribution (19.2.0) unstable; urgency=medium
+
+  * feat: load the shared ucsschool-common.css so the MultiObjectSelect "add
+    object" selection dialog is wider.
+
+ -- Johannes Königer <koeniger@univention.de>  Mon, 22 Jun 2026 12:00:00 +0200
+
 ucs-school-umc-distribution (19.1.0) unstable; urgency=low
 
   * Issue univention/dev/education/ucsschool#1251: Add `Project.exists` and

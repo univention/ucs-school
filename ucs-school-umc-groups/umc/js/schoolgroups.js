@@ -22,7 +22,8 @@ define([
 	"umc/modules/schoolgroups/WorkgroupDetailPage",
 	"umc/modules/schoolgroups/ClassDetailPage",
 	"umc/modules/schoolgroups/TeacherDetailPage",
-	"umc/i18n!umc/modules/schoolgroups"
+	"umc/i18n!umc/modules/schoolgroups",
+	"xstyle/css!umc/modules/ucsschool-common.css"
 ], function(declare, lang, array, entities, tools, dialog, Module, Grid, Page, SearchBox, ComboBox, SearchForm, Text, Tooltip, WorkgroupDetailPage, ClassDetailPage, TeacherDetailPage, _) { // eslint-disable-line max-params
 	// language-aware sort; numeric so '2a' sorts before '10a'
 	// eslint-disable-next-line unicorn/consistent-function-scoping -- AMD module: define() callback is already the highest scope

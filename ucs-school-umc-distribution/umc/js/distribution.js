@@ -18,7 +18,8 @@ define([
 	"umc/widgets/SearchBox",
 	"umc/widgets/ComboBox",
 	"umc/modules/distribution/DetailPage",
-	"umc/i18n!umc/modules/distribution"
+	"umc/i18n!umc/modules/distribution",
+	"xstyle/css!umc/modules/ucsschool-common.css"
 ], function(declare, lang, Deferred, entities, dialog, tools, Grid, Module, Page, SearchForm, SearchBox, ComboBox, DetailPage, _) {
 
 	var cmpUsername = function(a, b) {

@@ -35,9 +35,11 @@ bugs:
     en: |
       The teacher grid now shows the primary email address instead of the
       username when the UCR variable
-      ``ucsschool/umc/grid/show-email-instead-of-username`` is set.
+      ``ucsschool/umc/grid/show-email-instead-of-username`` is set. The "add
+      object" selection dialog is also wider now.
     de: |
       Die Lehrer-Listenansicht zeigt nun die primäre E-Mail-Adresse anstelle des
       Benutzernamens an, wenn die UCR-Variable
-      ``ucsschool/umc/grid/show-email-instead-of-username`` gesetzt ist.
+      ``ucsschool/umc/grid/show-email-instead-of-username`` gesetzt ist. Der Dialog
+      zum Hinzufügen von Objekten ist nun ebenfalls breiter.
 

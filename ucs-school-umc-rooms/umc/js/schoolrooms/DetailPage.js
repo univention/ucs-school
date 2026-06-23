@@ -75,6 +75,9 @@ define([
 			}, {
 				type: MultiObjectSelect,
 				name: 'computers',
+				onCreateDialog: function(dialog) {
+					dialog.domNode.classList.add('ucsschoolMultiObjectSelectDialog');
+				},
 				label: _('Computers in the room'),
 				queryWidgets: [{
 					type: ComboBox,

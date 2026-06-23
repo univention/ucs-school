@@ -229,6 +229,9 @@ define([
 			let widget = {
 				type: MultiObjectSelect,
 				name: mapping[widgetType].name,
+				onCreateDialog: function(dialog) {
+					dialog.domNode.classList.add('ucsschoolMultiObjectSelectDialog');
+				},
 				label: mapping[widgetType].label,
 				description: mapping[widgetType].description,
 				queryWidgets: [{

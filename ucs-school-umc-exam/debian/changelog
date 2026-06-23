@@ -1,3 +1,10 @@
+ucs-school-umc-exam (12.1.0) unstable; urgency=medium
+
+  * feat: load the shared ucsschool-common.css so the MultiObjectSelect "add
+    object" selection dialog is wider (depends on ucs-school-umc-common).
+
+ -- Johannes Königer <koeniger@univention.de>  Thu, 02 Jul 2026 12:00:00 +0200
+
 ucs-school-umc-exam (12.0.9) unstable; urgency=low
 
   * Bug #59515: sort the classes in the recipients grid language-aware and show
