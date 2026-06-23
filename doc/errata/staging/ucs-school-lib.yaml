@@ -21,9 +21,13 @@ bugs:
       ``Display.user()`` and ``Display.user_ldap()`` now show the primary email
       address instead of the username when the UCR variable
       ``ucsschool/umc/grid/show-email-instead-of-username`` is set. Users
-      without a primary email address keep showing their username.
+      without a primary email address keep showing their username. In addition,
+      the user search filter now also matches the primary email address, so user
+      lists can be filtered by mail address.
     de: |
       ``Display.user()`` und ``Display.user_ldap()`` zeigen nun die primäre
       E-Mail-Adresse anstelle des Benutzernamens an, wenn die UCR-Variable
       ``ucsschool/umc/grid/show-email-instead-of-username`` gesetzt ist. Benutzer
       ohne primäre E-Mail-Adresse werden weiterhin mit ihrem Benutzernamen angezeigt.
+      Zusätzlich berücksichtigt der Benutzer-Suchfilter nun auch die primäre
+      E-Mail-Adresse, sodass Benutzerlisten nach E-Mail-Adresse gefiltert werden können.

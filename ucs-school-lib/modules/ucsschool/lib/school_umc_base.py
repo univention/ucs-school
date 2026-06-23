@@ -371,8 +371,13 @@ class LDAP_Filter:
 
     @staticmethod
     def forUsers(pattern, _escape_filter_chars=True):  # type: (str, Optional[bool]) -> str
+        attrs = ["lastname", "username", "firstname"]
+        if bool(ucr.is_true("ucsschool/umc/show-email-instead-of-username")):
+            attrs = ["lastname", "mailPrimaryAddress", "firstname"]
         return LDAP_Filter.forAll(
-            pattern, ["lastname", "username", "firstname"], _escape_filter_chars=_escape_filter_chars
+            pattern,
+            attrs,
+            _escape_filter_chars=_escape_filter_chars,
         )
 
     @staticmethod

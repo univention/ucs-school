@@ -4,6 +4,8 @@ ucs-school-lib (15.3.0) unstable; urgency=medium
     address instead of the username when the UCR variable
     ucsschool/umc/grid/show-email-instead-of-username is set. Users without a
     primary email address keep showing their username.
+  * feat: the user search filter (LDAP_Filter.forUsers) now also matches the
+    primary email address, so user lists can be filtered by mail address.
 
  -- Johannes Königer <koeniger@univention.de>  Mon, 22 Jun 2026 12:00:00 +0200
 
