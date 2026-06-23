@@ -218,10 +218,11 @@ define([
 			};
 			let parseQueryResult = lang.hitch(this, function(data) {
 				return array.map(data.result, lang.hitch(this, function(user) {
-					var identifier = (this._showEmail && user.email) ? user.email : user.name;
+					let identifier = (this._showEmail && user.email) ? user.email : user.name;
+					identifier = identifier || tools.explodeDn(user['$dn$'], true).shift() || '';
 					return {
 						id: user['$dn$'],
-						label: identifier || tools.explodeDn(user['$dn$'], true).shift() || ''
+						label: user.display_name ? (user.display_name + ' (' + identifier + ')') : identifier
 					}
 				}));
 			});

@@ -10,7 +10,7 @@
 import functools
 import re
 from enum import Enum
-from typing import TYPE_CHECKING, Any, Iterator, Optional, Set, Union  # noqa: F401
+from typing import TYPE_CHECKING, Any, Iterator, Optional, Set, Union, cast  # noqa: F401
 
 import six
 
@@ -331,24 +331,31 @@ class Instance(SchoolBaseModule, SchoolImport):
         return ret
 
     @staticmethod
-    def _resolve_user_options(dns, ldap_user_read):
+    def _resolve_user_options(dns: list[str], ldap_user_read: "LoType") -> list[dict[str, str]]:
         """
         Resolve a list of user DNs to ``{id, label}`` entries for a
-        MultiObjectSelect widget. The label shows the primary email address
-        instead of the username when
-        ``ucsschool/umc/grid/show-email-instead-of-username`` is set, falling
-        back to the username when no email address is available.
+        MultiObjectSelect widget. The label has the form
+        ``Firstname Lastname (identifier)``, where the identifier is the primary
+        email address when ``ucsschool/umc/grid/show-email-instead-of-username``
+        is set (and an email exists), otherwise the username.
         """
-        show_email = Display.show_email_instead_of_username()
-        options = []
+        show_email = bool(Display.show_email_instead_of_username())
+        options: list[dict[str, str]] = []
         for dn in dns:
-            attrs = ldap_user_read.get(dn, attr=["uid", "mailPrimaryAddress"])
+            attrs = cast(
+                "dict[str, list[bytes]]",
+                ldap_user_read.get(dn, attr=["uid", "givenName", "sn", "mailPrimaryAddress"]),
+            )
             uid = attrs.get("uid", [b""])[0].decode("utf-8")
+            firstname = attrs.get("givenName", [b""])[0].decode("utf-8")
+            lastname = attrs.get("sn", [b""])[0].decode("utf-8")
             email = attrs.get("mailPrimaryAddress", [b""])[0].decode("utf-8")
-            label = email if show_email and email else uid
-            if not label:
+            identifier = email if show_email and email else uid
+            if not identifier:
                 # the referenced user is not readable: fall back to the DN's RDN value
-                label = dn.split(",", 1)[0].split("=", 1)[-1]
+                identifier = dn.split(",", 1)[0].split("=", 1)[-1]
+            display_name = " ".join(part for part in (firstname, lastname) if part)
+            label = "{} ({})".format(display_name, identifier) if display_name else identifier
             options.append({"id": dn, "label": label})
         return options
 
