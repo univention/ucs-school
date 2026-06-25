@@ -1,7 +1,7 @@
 #!/usr/share/ucs-test/runner /usr/share/ucs-test/playwright
 # -*- coding: utf-8 -*-
 ## desc: |
-##  Test that ucsschool/umc/grid/show-email-instead-of-username makes the
+##  Test that ucsschool/umc/show-email-instead-of-username makes the
 ##  UCS@school UMC modules identify users by their primary email address instead
 ##  of the username: the user wizard grid, the legal guardian / legal ward
 ##  selection of a user, and the password reset (schoolusers) grid.
@@ -24,7 +24,7 @@ from univention.config_registry import handler_set, handler_unset
 from univention.testing.browser.lib import UCSLanguage, UMCBrowserTest
 from univention.testing.ucsschool.importusers import get_mail_domain
 
-UCR_VAR = "ucsschool/umc/grid/show-email-instead-of-username"
+UCR_VAR = "ucsschool/umc/show-email-instead-of-username"
 
 Env = namedtuple("Env", ["school", "ward_mail", "unassigned_mail", "guardian_mail"])
 

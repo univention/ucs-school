@@ -443,7 +443,7 @@ class Display:
     @staticmethod
     def show_email_instead_of_username() -> bool:
         """Whether grids/labels should identify users by their primary email address."""
-        return bool(ucr.is_true("ucsschool/umc/grid/show-email-instead-of-username"))
+        return bool(ucr.is_true("ucsschool/umc/show-email-instead-of-username"))
 
     @staticmethod
     def user(udm_object: UdmObject) -> str:

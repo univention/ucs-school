@@ -37,8 +37,8 @@ define([
 			// Decide whether the grid identifies users by their primary email address
 			// instead of the username. The flag is read lazily by the formatter on each
 			// search (the columns are rebuilt by filter()), so it is reliably set in time.
-			this.standbyDuring(tools.ucr(['ucsschool/umc/grid/show-email-instead-of-username'])).then(lang.hitch(this, function(vars) {
-				this._showEmail = tools.isTrue(vars['ucsschool/umc/grid/show-email-instead-of-username']);
+			this.standbyDuring(tools.ucr(['ucsschool/umc/show-email-instead-of-username'])).then(lang.hitch(this, function(vars) {
+				this._showEmail = tools.isTrue(vars['ucsschool/umc/show-email-instead-of-username']);
 			}));
 		},
 

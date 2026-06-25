@@ -43,7 +43,7 @@ define([
 				'ucsschool/ldap/check/username/lengthlimit',
 				'ucsschool/username/max_length',
 				'ucsschool/wizards/schoolwizards/users/optional_visible_fields',
-				'ucsschool/umc/grid/show-email-instead-of-username'
+				'ucsschool/umc/show-email-instead-of-username'
 			]).then(lang.hitch(this, function(result) {
 				// cache the user prefix and update help text
 				this._examUserPrefix = result['ucsschool/ldap/default/userprefix/exam'] || 'exam-';
@@ -52,7 +52,7 @@ define([
 				this._maxUsernameLength = this._maxUsernameLengthUcr - this._examUserPrefix.length;
 				var optionalVisibleFieldsStr = result['ucsschool/wizards/schoolwizards/users/optional_visible_fields'] || '';
 				this._optionalVisibleFields = optionalVisibleFieldsStr.split(' ');
-				this._showEmail = tools.isTrue(result['ucsschool/umc/grid/show-email-instead-of-username']);
+				this._showEmail = tools.isTrue(result['ucsschool/umc/show-email-instead-of-username']);
 			}));
 		},
 

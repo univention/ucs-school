@@ -35,19 +35,19 @@ def auth(username, password):
 
 @pytest.fixture(scope="module", autouse=True)
 def ensure_ucr_show_email_default():
-    ucr_test.UCSTestConfigRegistry().handler_unset(["ucsschool/umc/grid/show-email-instead-of-username"])
+    ucr_test.UCSTestConfigRegistry().handler_unset(["ucsschool/umc/show-email-instead-of-username"])
     subprocess.check_call(["systemctl", "restart", "univention-management-console-server"])
 
 
 @pytest.fixture(scope="module")
 def ucr_show_email():
     ucr = ucr_test.UCSTestConfigRegistry()
-    ucr.handler_set(["ucsschool/umc/grid/show-email-instead-of-username=1"])
+    ucr.handler_set(["ucsschool/umc/show-email-instead-of-username=1"])
     subprocess.check_call(["systemctl", "restart", "univention-management-console-server"])
     try:
         yield ucr
     finally:
-        ucr.handler_unset(["ucsschool/umc/grid/show-email-instead-of-username"])
+        ucr.handler_unset(["ucsschool/umc/show-email-instead-of-username"])
         subprocess.check_call(["systemctl", "restart", "univention-management-console-server"])
 
 
@@ -284,7 +284,7 @@ def test_name_shows_email(
     email_attr,
 ):
     """
-    When UCR ucsschool/umc/grid/show-email-instead-of-username=1, the displayed
+    When UCR ucsschool/umc/show-email-instead-of-username=1, the displayed
     name uses the email address instead of the username across all query flavors.
     See Display.user_ldap() and 117_display_email_and_search_filter.py.
     """

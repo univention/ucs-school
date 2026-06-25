@@ -2,7 +2,7 @@
 ## -*- coding: utf-8 -*-
 ## desc: |
 ##  test Display.user()/Display.user_ldap() showing the email instead of the
-##  username (UCR ucsschool/umc/grid/show-email-instead-of-username) and that
+##  username (UCR ucsschool/umc/show-email-instead-of-username) and that
 ##  LDAP_Filter.forUsers() also searches the primary email address
 ## roles: [domaincontroller_master]
 ## tags: [ucsschool,apptest,ucsschool_base1]

@@ -1,7 +1,7 @@
 ucs-school-umc-common (11.1.0) unstable; urgency=medium
 
   * feat: register UCR variable
-    ucsschool/umc/grid/show-email-instead-of-username, which makes the
+    ucsschool/umc/show-email-instead-of-username, which makes the
     UCS@school UMC grids display the primary email address instead of the
     username.
   * feat: ship a shared stylesheet (umc/modules/ucsschool-common.css) that

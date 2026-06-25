@@ -67,11 +67,11 @@ define([
 		buildRendering: function() {
 			this.inherited(arguments);
 
-			this.standbyDuring(tools.ucr([this.autosearchVariable, this.autosearchOnChangeVariable, 'ucsschool/workgroups/mailaddress', 'ucsschool/umc/grid/show-email-instead-of-username'])).then(lang.hitch(this, function(vars) {
+			this.standbyDuring(tools.ucr([this.autosearchVariable, this.autosearchOnChangeVariable, 'ucsschool/workgroups/mailaddress', 'ucsschool/umc/show-email-instead-of-username'])).then(lang.hitch(this, function(vars) {
 				this.autoSearch = tools.isTrue(vars[this.autosearchVariable] || this.autoSearch);
 				this.autoSearchOnChange = tools.isTrue(vars[this.autosearchOnChangeVariable] || this.autoSearchOnChange);
 				this.mailAddressPattern = vars['ucsschool/workgroups/mailaddress'] || '';
-				this._showEmail = tools.isTrue(vars['ucsschool/umc/grid/show-email-instead-of-username']);
+				this._showEmail = tools.isTrue(vars['ucsschool/umc/show-email-instead-of-username']);
 				this.renderSearchForm();
 			}));
 		},

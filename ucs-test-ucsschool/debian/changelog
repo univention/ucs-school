@@ -2,14 +2,14 @@ ucs-test-ucsschool (8.0.51) unstable; urgency=medium
 
   * 117_display_email_and_search_filter: cover Display.user()/user_ldap()
     showing the email instead of the username
-    (ucsschool/umc/grid/show-email-instead-of-username) and LDAP_Filter.forUsers
+    (ucsschool/umc/show-email-instead-of-username) and LDAP_Filter.forUsers
     matching the primary email address.
   * 04_ucs-school-umc-users-command-schoolusers-query: assert the displayed
     name format of the password module query result.
   * 07_show_email_instead_of_username: selenium test that the user wizard grid,
     the legal guardian / legal ward selection and the password reset grid show
     the primary email address instead of the username when
-    ucsschool/umc/grid/show-email-instead-of-username is set (UMC server is
+    ucsschool/umc/show-email-instead-of-username is set (UMC server is
     restarted so the backend re-reads the variable).
 
  -- Johannes Königer <koeniger@univention.de>  Thu, 02 Jul 2026 12:00:00 +0200

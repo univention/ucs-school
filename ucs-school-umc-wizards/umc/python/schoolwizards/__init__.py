@@ -336,7 +336,7 @@ class Instance(SchoolBaseModule, SchoolImport):
         Resolve a list of user DNs to ``{id, label}`` entries for a
         MultiObjectSelect widget. The label has the form
         ``Firstname Lastname (identifier)``, where the identifier is the primary
-        email address when ``ucsschool/umc/grid/show-email-instead-of-username``
+        email address when ``ucsschool/umc/show-email-instead-of-username``
         is set (and an email exists), otherwise the username.
         """
         show_email = bool(Display.show_email_instead_of_username())
