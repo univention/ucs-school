@@ -5,6 +5,9 @@
 
 doc/**/_build
 .cache/
+.claude/
+__pycache__
+*.pyc
 .pybuild/
 build/
 *.buildinfo
