@@ -1,4 +1,14 @@
 {
   "venvPath": ".",
-  "pythonVersion": "3.11"
+  "pythonVersion": "3.11",
+  "extraPaths": [
+    "ucs-school-import/modules",
+    "ucs-school-import-lusd/modules",
+    "ucs-school-lib/modules",
+    "ucs-school-umc-exam/modules",
+    "ucs-school-radius-802.1x/modules",
+    "ucs-school-umc-helpdesk/modules",
+    "ucs-test-ucsschool/modules",
+    "ucs-school-netlogon-user-logonscripts/python"
+  ]
 }
