@@ -43,6 +43,7 @@ path = [
     "doc/substitutions-en.txt",
     "pyproject.toml",
     "release-postup-preup/README.txt",
+    "requirements-typecheck.txt",
     "test/**.cfg",
     "ucs-test-ucsschool/90_ucsschool/factoryconftest.json",
     "basedpyright-baseline.json",

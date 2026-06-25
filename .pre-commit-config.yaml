@@ -203,7 +203,9 @@ repos:
           export XDG_CACHE_HOME=/src/.cache/uv/xdg-cache;
           export XDG_DATA_HOME=/src/.cache/uv/xdg-data;
           mkdir -p "$UV_CACHE_DIR" "$HOME" "$XDG_CACHE_HOME" "$XDG_DATA_HOME";
-          uvx --python 3.11 basedpyright \
+          uvx --python 3.11 \
+            --with-requirements requirements-typecheck.txt \
+            basedpyright \
             --project pyrightconfig.json \
             --baselinefile basedpyright-baseline.json \
             --baselinemode=auto' --
@@ -214,7 +216,9 @@ repos:
         name: basedpyright (relative to baseline, native)
         language: system
         entry: |
-          sh -c 'uvx basedpyright \
+          sh -c 'uvx \
+            --with-requirements requirements-typecheck.txt \
+            basedpyright \
             --project pyrightconfig.json \
             --baselinefile basedpyright-baseline.json \
             --baselinemode=auto' --
@@ -232,7 +236,10 @@ repos:
           export XDG_CACHE_HOME=/src/.cache/uv/xdg-cache;
           export XDG_DATA_HOME=/src/.cache/uv/xdg-data;
           mkdir -p "$UV_CACHE_DIR" "$HOME" "$XDG_CACHE_HOME" "$XDG_DATA_HOME";
-          uvx --python 3.11 basedpyright \
+          uvx \
+            --python 3.11 \
+            --with-requirements requirements-typecheck.txt \
+            basedpyright \
             --project pyrightconfig.json \
             --baselinefile /tmp/nonexistent-basedpyright-baseline.json' --
         stages: [manual]
@@ -249,7 +256,10 @@ repos:
           export XDG_CACHE_HOME=/src/.cache/uv/xdg-cache;
           export XDG_DATA_HOME=/src/.cache/uv/xdg-data;
           mkdir -p "$UV_CACHE_DIR" "$HOME" "$XDG_CACHE_HOME" "$XDG_DATA_HOME";
-          uvx --python 3.11 basedpyright \
+          uvx \
+            --python 3.11 \
+            --with-requirements requirements-typecheck.txt \
+            basedpyright \
             --project pyrightconfig.json \
             --baselinefile basedpyright-baseline.json \
             --writebaseline .' --
