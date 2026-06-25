@@ -18,7 +18,7 @@ bugs:
   notes:
     en: |
       The MultiObjectSelect "add object" selection dialog is now wider, via the
-      shared stylesheet of ucs-school-umc-common.
+      shared style sheet of ``ucs-school-umc-common``.
     de: |
       Der MultiObjectSelect-Dialog zum Hinzufügen von Objekten ist nun breiter,
-      über das gemeinsame Stylesheet von ucs-school-umc-common.
+      über das gemeinsame Stylesheet von ``ucs-school-umc-common``.
