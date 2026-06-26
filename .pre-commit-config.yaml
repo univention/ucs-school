@@ -204,6 +204,7 @@ repos:
           export XDG_DATA_HOME=/src/.cache/uv/xdg-data;
           mkdir -p "$UV_CACHE_DIR" "$HOME" "$XDG_CACHE_HOME" "$XDG_DATA_HOME";
           uvx --python 3.11 \
+            --from basedpyright==1.39.8 \
             --with-requirements requirements-typecheck.txt \
             basedpyright \
             --project pyrightconfig.json \
@@ -217,6 +218,7 @@ repos:
         language: system
         entry: |
           sh -c 'uvx \
+            --from basedpyright==1.39.8 \
             --with-requirements requirements-typecheck.txt \
             basedpyright \
             --project pyrightconfig.json \
@@ -238,6 +240,7 @@ repos:
           mkdir -p "$UV_CACHE_DIR" "$HOME" "$XDG_CACHE_HOME" "$XDG_DATA_HOME";
           uvx \
             --python 3.11 \
+            --from basedpyright==1.39.8 \
             --with-requirements requirements-typecheck.txt \
             basedpyright \
             --project pyrightconfig.json \
@@ -258,6 +261,7 @@ repos:
           mkdir -p "$UV_CACHE_DIR" "$HOME" "$XDG_CACHE_HOME" "$XDG_DATA_HOME";
           uvx \
             --python 3.11 \
+            --from basedpyright==1.39.8 \
             --with-requirements requirements-typecheck.txt \
             basedpyright \
             --project pyrightconfig.json \

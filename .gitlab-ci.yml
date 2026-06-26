@@ -57,6 +57,7 @@ include:
       before_script:
         - uv sync --python 3.11
         - uv pip install --requirements requirements-typecheck.txt
+      basedpyright_version: "1.39.8"
       baseline_file: basedpyright-baseline.json
       job_rules:
         - if: $CI_MERGE_REQUEST_ID
