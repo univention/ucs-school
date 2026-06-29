@@ -9,7 +9,7 @@
 from __future__ import print_function
 
 import subprocess
-from collections import namedtuple
+from typing import Literal, NamedTuple, cast
 
 import pytest
 
@@ -24,6 +24,25 @@ from univention.testing.umc import Client
 PASSWORD = "univention"
 
 
+class SchoolEnvironment(NamedTuple):
+    teacher: str
+    teacher_dn: str
+    teacher_email: str
+    students: list[str]
+    students_dns: list[str]
+    student_dn: str
+    student_email: str
+    class_name: str
+    class_dn: str
+    school_names: list[str]
+    school_dns: list[str]
+    school_admin: str
+    school_admin_dn: str
+    teacher_and_staff: str
+    teacher_and_staff_dn: str
+    teacher_and_staff_email: str
+
+
 def auth(username, password):
     try:
         client = Client(username=username, password=password)
@@ -36,19 +55,19 @@ def auth(username, password):
 @pytest.fixture(scope="module", autouse=True)
 def ensure_ucr_show_email_default():
     ucr_test.UCSTestConfigRegistry().handler_unset(["ucsschool/umc/show-email-instead-of-username"])
-    subprocess.check_call(["systemctl", "restart", "univention-management-console-server"])
+    _ = subprocess.check_call(["systemctl", "restart", "univention-management-console-server"])
 
 
 @pytest.fixture(scope="module")
 def ucr_show_email():
     ucr = ucr_test.UCSTestConfigRegistry()
     ucr.handler_set(["ucsschool/umc/show-email-instead-of-username=1"])
-    subprocess.check_call(["systemctl", "restart", "univention-management-console-server"])
+    _ = subprocess.check_call(["systemctl", "restart", "univention-management-console-server"])
     try:
         yield ucr
     finally:
         ucr.handler_unset(["ucsschool/umc/show-email-instead-of-username"])
-        subprocess.check_call(["systemctl", "restart", "univention-management-console-server"])
+        _ = subprocess.check_call(["systemctl", "restart", "univention-management-console-server"])
 
 
 @pytest.fixture(scope="module")
@@ -128,28 +147,6 @@ def school_environment(get_hostname):
         )
 
         utils.wait_for_replication_and_postrun()
-
-        SchoolEnvironment = namedtuple(
-            "SchoolEnvironment",
-            [
-                "teacher",
-                "teacher_dn",
-                "teacher_email",
-                "students",
-                "students_dns",
-                "student_dn",
-                "student_email",
-                "class_name",
-                "class_dn",
-                "school_names",
-                "school_dns",
-                "school_admin",
-                "school_admin_dn",
-                "teacher_and_staff",
-                "teacher_and_staff_dn",
-                "teacher_and_staff_email",
-            ],
-        )
 
         yield SchoolEnvironment(
             teacher,
@@ -274,28 +271,27 @@ def test_search_query(school_environment, get_hostname, usertype, flavor):
         ("school_admin", "staff", "teacher_and_staff_dn", "teacher_and_staff_email"),
     ],
 )
+@pytest.mark.usefixtures("ucr_show_email")
 def test_name_shows_email(
-    ucr_show_email,
-    school_environment,
-    get_hostname,
-    flavor,
-    authenticating_user,
-    dn_attr,
-    email_attr,
+    school_environment: SchoolEnvironment,
+    flavor: str,
+    authenticating_user: Literal["teacher", "school_admin"],
+    dn_attr: str,
+    email_attr: str,
 ):
     """
     When UCR ucsschool/umc/show-email-instead-of-username=1, the displayed
     name uses the email address instead of the username across all query flavors.
     See Display.user_ldap() and 117_display_email_and_search_filter.py.
     """
-    client = auth(getattr(school_environment, authenticating_user), PASSWORD)
+    client = auth(cast(str, getattr(school_environment, authenticating_user)), PASSWORD)
     options = {
         "class": "None",
         "pattern": "",
         "school": school_environment.school_names[0],
     }
     response = client.umc_command("schoolusers/query", options, flavor)
-    expected_dn = getattr(school_environment, dn_attr)
-    expected_email = getattr(school_environment, email_attr)
+    expected_dn = cast(str, getattr(school_environment, dn_attr))
+    expected_email = cast(str, getattr(school_environment, email_attr))
     user_result = next(r for r in response.result if r["id"] == expected_dn)
     assert user_result["name"].endswith("({})".format(expected_email))

@@ -79,5 +79,5 @@ class TestForUsersFilter:
         assert "mailPrimaryAddress=" in LDAP_Filter.forUsers("pattern")
 
     @pytest.mark.parametrize("attr", ["lastname", "username", "firstname"])
-    def test_still_searches_name_attributes(self, attr):
+    def test_still_searches_name_attributes(self, attr: str):
         assert "%s=" % attr in LDAP_Filter.forUsers("pattern")

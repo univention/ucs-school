@@ -14,7 +14,7 @@
 
 import subprocess
 import time
-from collections import namedtuple
+from typing import NamedTuple
 
 import pytest
 from playwright.sync_api import expect
@@ -26,11 +26,16 @@ from univention.testing.ucsschool.importusers import get_mail_domain
 
 UCR_VAR = "ucsschool/umc/show-email-instead-of-username"
 
-Env = namedtuple("Env", ["school", "ward_mail", "unassigned_mail", "guardian_mail"])
+
+class Env(NamedTuple):
+    school: str
+    ward_mail: str
+    unassigned_mail: str
+    guardian_mail: str
 
 
 def _restart_umc():
-    subprocess.call(["/bin/systemctl", "restart", "univention-management-console-server"])
+    _ = subprocess.call(["/bin/systemctl", "restart", "univention-management-console-server"])
     # wait for the UMC server to be ready again
     time.sleep(5)
 
@@ -60,14 +65,14 @@ def email_mode_env():
         _ward_name, ward_dn = schoolenv.create_user(
             school, username="stu-ward-pw", firstname="StuWard", lastname="Test", mailaddress=ward_mail
         )
-        schoolenv.create_user(
+        _ = schoolenv.create_user(
             school,
             username="stu-free-pw",
             firstname="StuFree",
             lastname="Test",
             mailaddress=unassigned_mail,
         )
-        schoolenv.create_user(
+        _ = schoolenv.create_user(
             school,
             username="lg-mail-pw",
             firstname="LgMail",
@@ -86,7 +91,7 @@ def email_mode_env():
             _restart_umc()
 
 
-def test_user_wizard_email_display(umc_browser_test: UMCBrowserTest, email_mode_env) -> None:
+def test_user_wizard_email_display(umc_browser_test: UMCBrowserTest, email_mode_env: Env) -> None:
     env = email_mode_env
     ward_username_label = "(stu-ward-pw)"
     unassigned_username_label = "(stu-free-pw)"
@@ -127,7 +132,9 @@ def test_user_wizard_email_display(umc_browser_test: UMCBrowserTest, email_mode_
     expect(dialog.get_by_text(unassigned_username_label)).to_have_count(0)
 
 
-def test_password_reset_grid_email_display(umc_browser_test: UMCBrowserTest, email_mode_env) -> None:
+def test_password_reset_grid_email_display(
+    umc_browser_test: UMCBrowserTest, email_mode_env: Env
+) -> None:
     env = email_mode_env
     ward_username_label = "(stu-ward-pw)"
 

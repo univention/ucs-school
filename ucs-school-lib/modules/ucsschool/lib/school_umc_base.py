@@ -7,7 +7,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 
 import re
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple  # noqa: F401
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, TypedDict  # noqa: F401
 
 from ldap.filter import escape_filter_chars, filter_format
 
@@ -49,6 +49,13 @@ class SchoolSanitizer(StringSanitizer):
                 result={"no_school_found": True},
             )
         return value
+
+
+class _UserLdapEntry(TypedDict):
+    """A single LDAP query result as returned by ``_users_ldap_no_exc``."""
+
+    dn: str
+    attrs: dict[str, list[bytes]] | noObject
 
 
 class SchoolBaseModule(Base):
@@ -249,8 +256,15 @@ class SchoolBaseModule(Base):
                 users.extend(user.get_udm_object(ldap_connection) for user in _users)
         return users
 
-    def _users_ldap(self, ldap_connection, school, group=None, user_type=None, pattern="", attr=None):
-        # type: (LoType, str, Optional[str], Optional[str], Optional[str], Optional[str]) -> List[Tuple[str, Dict[str, Any]]]  # noqa: E501
+    def _users_ldap(
+        self,
+        ldap_connection: "LoType",
+        school: str,
+        group: str | None = None,
+        user_type: str | None = None,
+        pattern: str = "",
+        attr: list[str] | None = None,
+    ) -> list[tuple[str, dict[str, list[bytes]]]]:
         """
         Returns a list of LDAP query result tuples (dn, attr) of all users
         given  `pattern`, `school` (search base) and `group`.
@@ -273,9 +287,14 @@ class SchoolBaseModule(Base):
         return users
 
     def _users_ldap_no_exc(
-        self, ldap_connection, school, group=None, user_type=None, pattern="", attr=None
-    ):
-        # type: (LoType, str, Optional[str], Optional[str], Optional[str], Optional[str]) -> List[Dict[str,any]|any]  # noqa: E501
+        self,
+        ldap_connection: "LoType",
+        school: str,
+        group: str | None = None,
+        user_type: str | None = None,
+        pattern: str = "",
+        attr: list[str] | None = None,
+    ) -> list[_UserLdapEntry]:
         """
         Returns a list of LDAP query result tuples (dn, attr) of all users
         given  `pattern`, `school` (search base) and `group`.
@@ -446,7 +465,7 @@ class Display:
         return bool(ucr.is_true("ucsschool/umc/show-email-instead-of-username"))
 
     @staticmethod
-    def user(udm_object: UdmObject) -> str:
+    def user(udm_object: "UdmObject") -> str:
         fullname = udm_object["lastname"]
         if "firstname" in udm_object and udm_object["firstname"]:  # noqa: RUF019
             fullname += ", %(firstname)s" % udm_object
@@ -456,7 +475,7 @@ class Display:
         return fullname + " (%(username)s)" % udm_object
 
     @staticmethod
-    def user_ldap(ldap_object: dict[str, Any]) -> str:
+    def user_ldap(ldap_object: dict[str, list[bytes]]) -> str:
         fullname = ldap_object.get("sn", [b""])[0].decode("utf-8")
         if ldap_object.get("givenName", [b""])[0]:
             fullname += ", %s" % ldap_object["givenName"][0].decode("utf-8")
