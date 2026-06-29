@@ -5,10 +5,17 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 # UCS@school release issue
 
+| Product Value || Reasoning |
+|-|-|-|
+| User Impact | 0 | + covered by other issues  |
+| Product Enablement | 0 | + only release |
+
 ## Accounting
 
 - Univention GmbH (424)
-- Development: UCS@school Development (22605)
+- Development: Product Maintenance (14954)
+
+kaze://localhost/14954?desc=UCS%40school+Release
 
 ## Context/description
 
