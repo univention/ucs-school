@@ -99,11 +99,12 @@ class RelaeseIssue:
             if pkg_name in unreleased_packages:
                 double_package_name_error = f"Package: {pkg_name} exists multiple times!"
                 raise RuntimeError(double_package_name_error)
-            if pkg_name not in released_sources_pkgs or not released_sources_pkgs[pkg_name].startswith(
-                changelog.full_version
-            ):
+            # A brand-new source package is not part of any published app version,
+            # so it has no "old" version (None) instead of raising a KeyError.
+            old_version = released_sources_pkgs.get(pkg_name)
+            if old_version is None or not old_version.startswith(changelog.full_version):
                 unreleased_packages[pkg_name] = {
-                    "old": released_sources_pkgs[pkg_name],
+                    "old": old_version,
                     "new": changelog.full_version,
                     "bugs": self._get_bugs(pkg_name),
                 }
@@ -117,42 +118,105 @@ class RelaeseIssue:
             return []
         return list(data.get("bugs", {}).keys())
 
+    def _update_type(self):
+        return "APP" if self._has_major_update() else "PACKAGE"
+
     def _get_issue_title(self):
         schoolversion = self.latest_app["schoolversion"]
-        update_type = "PACKAGE"
-        if self._has_major_update():
+        if self._update_type() == "APP":
             schoolversion = str(int(schoolversion) + 1)
-            update_type = "APP"
-        return f"[{update_type}] Release UCS@school {self.latest_app['ucsversion']}v{schoolversion}"
+        version = f"{self.latest_app['ucsversion']}v{schoolversion}"
+        return f"[{self._update_type()}] Release UCS@school {version}"
 
-    def _get_release_issue(self):
+    def _issue_template(self):
+        template = "package_update_issue" if self._update_type() == "PACKAGE" else "release_issue"
         resp = requests.get(
-            "https://git.knut.univention.de/api/v4/projects/1574/search",
-            data={
-                "scope": "issues",
-                "search": self._get_issue_title(),
-                "state": "opened",
-                "fields": "title",
-            },
-            headers=self.headers,
-        )
-        if resp.status_code != 200 or len(resp.json()) == 0:
-            return self._create_new_issue()
-        else:
-            return resp.json()[0]
-
-    def _create_new_issue(self):
-        resp = requests.get(
-            "https://git.knut.univention.de/api/v4/projects/1574/templates/issues/release_issue",
+            f"https://git.knut.univention.de/api/v4/projects/1574/templates/issues/{template}",
             headers=self.headers,
         )
         resp.raise_for_status()
+        return resp.json()["content"]
+
+    def _find_existing_release_issue(self):
+        """
+        Return the open release issue for this UCS version, regardless of update type.
+
+        Both update types share the same identity (one release being assembled per
+        UCS version), so we match on the title pattern instead of the exact title.
+        This lets us find a `[PACKAGE]` issue even when the release has meanwhile
+        escalated to `[APP]` (and vice versa), so it can be converted in place
+        instead of creating a duplicate and losing its comments.
+        """
+        title_re = re.compile(
+            rf"^\[(?:APP|PACKAGE)\] Release UCS@school {re.escape(self.ucsversion)}v\d+$"
+        )
+        resp = requests.get(
+            "https://git.knut.univention.de/api/v4/projects/1574/issues",
+            headers=self.headers,
+            params={
+                "state": "opened",
+                "search": "Release UCS@school",
+                "in": "title",
+                "per_page": "100",
+            },
+        )
+        resp.raise_for_status()
+        for issue in resp.json():
+            if title_re.match(issue["title"]):
+                return issue
+        return None
+
+    def _get_release_issue(self):
+        desired_title = self._get_issue_title()
+        issue = self._find_existing_release_issue()
+        if issue is None:
+            return self._create_new_issue()
+        if issue["title"] != desired_title:
+            issue = self._convert_issue(issue, desired_title)
+        return issue
+
+    def _convert_issue(self, issue, desired_title):
+        """
+        Convert an existing issue between a package update and an app release.
+
+        The issue is kept (so its comments and discussion are preserved); only the
+        title and the description template are swapped and an explanatory note is
+        added. The context/packages sections are filled in afterwards by
+        `_update_release_issue`.
+        """
+        print(f"Converting release issue '{issue['title']}' -> '{desired_title}'")
+        kind = "an app release" if self._update_type() == "APP" else "a package update"
+        self._add_note(
+            issue["iid"],
+            f"This release issue was automatically converted from **{issue['title']}** to "
+            f"**{desired_title}**, because the set of unreleased packages now requires {kind}.",
+        )
+        resp = requests.put(
+            f"https://git.knut.univention.de/api/v4/projects/1574/issues/{issue['iid']}",
+            headers=self.headers,
+            data={"title": desired_title},
+        )
+        resp.raise_for_status()
+        issue = resp.json()
+        # Swap the body to the template that matches the new update type.
+        issue["description"] = self._issue_template()
+        return issue
+
+    def _add_note(self, iid, body):
+        resp = requests.post(
+            f"https://git.knut.univention.de/api/v4/projects/1574/issues/{iid}/notes",
+            headers=self.headers,
+            data={"body": body},
+        )
+        resp.raise_for_status()
+
+    def _create_new_issue(self):
         resp = requests.post(
             "https://git.knut.univention.de/api/v4/projects/1574/issues",
             headers=self.headers,
             data={
                 "title": self._get_issue_title(),
-                "description": resp.json()["content"],
+                "description": self._issue_template(),
             },
         )
         resp.raise_for_status()
@@ -189,7 +253,7 @@ mutation($noteableId: NoteableID!, $body: String!) {
 
     def _update_release_issue(self, issue):
         schoolversion = self.latest_app["schoolversion"]
-        if self._has_major_update():
+        if self._update_type() == "APP":
             schoolversion = str(int(schoolversion) + 1)
         description = re.sub(
             self.context_re,
@@ -200,7 +264,8 @@ mutation($noteableId: NoteableID!, $body: String!) {
             self.packages_re,
             self.packages_template.format(
                 packages="\n".join(
-                    f"- `{package}`: **{v['old']}** -> **{v['new']}** ({self._get_bug_string(package)})"
+                    f"- `{package}`: **{v['old'] if v['old'] is not None else 'new package'}** "
+                    f"-> **{v['new']}** ({self._get_bug_string(package)})"
                     for package, v in self.unreleased_packages.items()
                 )
             ),
@@ -223,9 +288,21 @@ mutation($noteableId: NoteableID!, $body: String!) {
             f"[{bug}](https://forge.univention.org/bugzilla/show_bug.cgi?id={bug})" for bug in bugs
         )
 
+    @staticmethod
+    def _major_version(version):
+        # Drop a Debian epoch ("4:5.2" -> "5.2") and take the leading number of
+        # the upstream version. Returns 0 if no leading digit is present.
+        upstream = version.split(":", 1)[-1]
+        match = re.match(r"\d+", upstream)
+        return int(match.group()) if match else 0
+
     def _has_major_update(self):
         for version in self.unreleased_packages.values():
-            if version["old"].split(".")[0] < version["new"].split(".")[0]:
+            # A new source package cannot be shipped as an errata into an
+            # existing app version, so it always requires a full app release.
+            if version["old"] is None:
+                return True
+            if self._major_version(version["old"]) < self._major_version(version["new"]):
                 return True
         return False
 

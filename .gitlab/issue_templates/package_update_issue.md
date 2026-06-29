@@ -27,17 +27,18 @@ UCS@school {{ version }} has to be released...
 
 ## Acceptance criteria
 
+See [README_Erratum.md](https://git.knut.univention.de/univention/dev/education/ucsschool/-/blob/5.2/doc/devel/README_Erratum.md) for details on each step.
+
 - Pre-Release Preparation
   - [ ] Prepare a VM for testing
   - [ ] Verify you can do an errata release, not a full release
   - [ ] Verify Jenkins tests
-- [ ] Update Test Appcenter
-- [ ] Publish to production App Center
+  - [ ] Verify the advisories in `doc/errata/staging/` are correct and complete
+- [ ] Trigger the errata release by pushing a `release-<version>-errataN` tag (uploads packages into the existing app version in the test App Center)
+- [ ] Publish to production App Center (trigger the `do_release` job; announcement email + chat message are then sent automatically)
 - [ ] Publish changelog and manual
-- [ ] Update public documentation
-  - [ ] Send announcement email
-  - [ ] Update bugzilla bugs
-  - [ ] Make announcement in chat
+- [ ] Review and merge the automatic "move advisories to published" merge request
+- [ ] Close the released Bugzilla bugs
 - [ ] QA the release
 
 ## Guidelines

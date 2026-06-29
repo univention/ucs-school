@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 
 include:
-  - component: $CI_SERVER_FQDN/univention/dev/tooling/ci-components/app-release@main
+  - component: $CI_SERVER_FQDN/univention/dev/tooling/ci-components/app-release@2
     inputs:
       app_id: "ucsschool"
       mail_sender: "ucsschool-team@univention.de"
@@ -10,11 +10,12 @@ include:
       mail_subject: "UCS@school package update"
       changelog_link: "https://docs.software-univention.de/ucsschool-changelog/latest/en/index.html"
       mail_recipient: "app-announcement@univention.de"
-      chat_destination: "#ucsschool"
+      chat_destination: "#product-announcements"
       ucs_base_version: "5.2"
       release_tag_constraint: '\d.\d+v\d+'
       app_staging_version: "999.0.0-staging"
-  - component: $CI_SERVER_FQDN/univention/dev/tooling/ci-components/debian-package@main
+      release_text_file: "release_text.txt"
+  - component: $CI_SERVER_FQDN/univention/dev/tooling/ci-components/debian-package@2
     inputs:
       ucs_base_version: "5.2"
       scope: "ucs-school-5.2"
@@ -113,3 +114,38 @@ close-bugzilla:
   manual_confirmation: "Did you close all released bugzilla bugs?"
   script:
     - echo "close bugs in bugzilla"
+
+# Render the announcement body (release_text.txt) and mail subject used by the
+# app-release component's send_mail and send_chat_message jobs. The wording and
+# subject adapt to a full app release vs. an errata (package update into an
+# existing version), based on IS_ERRATA exported by create_app_version, and link
+# to the version-specific English and German changelogs. The exported SUBJECT
+# overrides the component's mail_subject input for send_mail.
+.render_release_text: &render_release_text
+  - |
+    if [ "$IS_ERRATA" == "true" ]; then
+      RELEASE_HEADLINE="Errata have just been released for ${APP_NAME} ${APP_VERSION}."
+      export SUBJECT="UCS@school package update for ${APP_VERSION}"
+    else
+      RELEASE_HEADLINE="${APP_NAME} has just been released in version ${APP_VERSION}."
+      export SUBJECT="UCS@school ${APP_VERSION} released"
+    fi
+    cat > release_text.txt <<EOF
+    Hello,
+
+    ${RELEASE_HEADLINE}
+
+    The changelog is available here:
+
+    - https://docs.software-univention.de/ucsschool-changelog/${APP_VERSION}/en/changelog.html
+    - https://docs.software-univention.de/ucsschool-changelog/${APP_VERSION}/de/changelog.html
+
+    Best regards
+    ${AUTHOR_ALIAS}
+    EOF
+
+send_mail:
+  before_script: *render_release_text
+
+send_chat_message:
+  before_script: *render_release_text

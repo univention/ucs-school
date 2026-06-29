@@ -42,53 +42,49 @@ Check the following Jenkins jobs for any unusual failures that might be connecte
 - [Upgrade Multiserver Test](https://jenkins2022.knut.univention.de/view/UCS@school/job/UCSschool-5.2/job/Upgrade%20Multiserver/)
 - [Upgrade Singleserver Test](https://jenkins2022.knut.univention.de/view/UCS@school/job/UCSschool-5.2/job/Upgrade%20Singleserver/)
 
-## Push changes to Test Appcenter
+## Trigger the errata release with a tag
 
-**NOTE:** If you are doing the release for `4.4`, execute the following steps on `dimma`.
-Otherwise, execute the steps on `ladda`.
-
-Make sure you have the current version of `ucsschool` and release scripts:
-
-```shell
-for DIR in ~/git/*; do (cd $DIR; git pull); done
-```
-
-Now push the changes to the Test Appcenter.
-For example, to upload `ucs-school-import ucs-school-umc-internetrules` and `ucs-school-import` to UCS@school 5.2 v1:
+A package update (errata) is published into an **already published** app version (for example
+`5.2v4`) without creating a new app version. This is triggered by pushing a git tag of the form
+`release-<app_version>-errata<N>`, where `<app_version>` is the existing version and `<N>` is an
+incrementing counter so that several errata can be shipped into the same app version:
 
 ```shell
-cd ~/git/ucsschool/doc/errata/staging
-copy_app_binaries --yes-i-really-want-to-upload-to-published-components -r 5.2 -v "5.2v4" -u \
-    ucs-school-import.yaml \
-    ucs-school-umc-internetrules.yaml
+# first errata into 5.2v4
+git tag release-5.2v4-errata1
+git push origin release-5.2v4-errata1
 ```
+
+The tag pipeline then automatically:
+
+- resolves the app version to `5.2v4` and verifies it already exists (it never creates a new
+  version and never touches the existing version's `ini`/`README` metafiles);
+- builds the source packages referenced by the advisories in `doc/errata/staging/` on the UCS
+  build system and uploads the resulting `.deb`s into the existing version in the **test** App
+  Center (`--upload-packages-although-published`);
+- runs `validate-advisories` and `check-bugzilla-bugs` on the staged advisories.
+
+If the version part of the tag does not already exist in the App Center, `create_app_version`
+fails fast — an errata can only update a published version. For a brand-new app version, do a
+full [application release](README_Releases.md) (`release-<version>` without the `-errataN` suffix)
+instead.
 
 ## Publish to production App Center
 
-The following code can be executed on `omar`.
+In the tag pipeline, trigger the manual `do_release` job. It copies the updated component from the
+test App Center to production on `omar` and syncs the mirror. The subsequent `check_release` job
+verifies the published `ini`.
 
-The correct version string, for example `ucsschool_20230802094418`, can be found in the [Test AppCenter](https://appcenter-test.software-univention.de/meta-inf/5.2/ucsschool/) by navigating to the last (published) version.
+Once `do_release` succeeds, the pipeline automatically:
 
-```shell
-cd /mnt/omar/vmwares/mirror/appcenter
-./copy_from_appcenter.test.sh 5.2 ucsschool_20240318112841  # copies the given version to public app center on local mirror!
-sudo update_mirror.sh -v appcenter  # syncs the local mirror to the public download server!
-```
+- sends the announcement email (`send_mail`) and the chat message (`send_chat_message`);
+- creates the GitLab release (`create_gitlab_release`);
+- opens a merge request (`rename-advisories`) that moves the released advisories from
+  `doc/errata/staging/` to `doc/errata/published/`, renamed with the current date and with
+  `released: <app_version>` filled in. Review and merge that MR.
 
-## Move the advisories to published
-
-You will need the list of YAML files you edited in the [Verify YAML Advisories](README_check_release_packages.md#verify-yaml-advisories) step.
-In your local `ucsschool` repository, move the YAML advisories into the `doc/errata/published` folder, renamed with the current date:
-
-```shell
-cd doc/errata/staging
-release_files=( "ucs-school-lib.yaml" "ucs-school-umc-users.yaml" )
-for file in "${release_files[@]}"; do git mv "$file" "$(echo $file | sed "s/^/..\/published\/$(date +%Y-%m-%d)-/")"; done
-```
-
-:warning: Make sure that all moved yaml files contain a line `released: <VERSION>` with your specific UCS\@school version, for example `5.2v4`.
-
-Commit the changes to git, and `cd` to the root of the `ucsschool` repository.
+The "Update public information" steps below are largely automated by these jobs — the sections are
+kept for reference and for the steps that still need a human (closing the Bugzilla bugs and QA).
 
 ## Publish UCS@school documentation
 
@@ -110,13 +106,15 @@ commit from Jenkins and check the [staged documentation](http://univention-repos
 
 ### Send the release announcement email
 
-Send an internal announcement mail with the following text (**Adapt version and name**):
+This is done automatically by the `send_mail` job after `do_release` succeeds. The body is
+rendered from the `.render_release_text` template in `.gitlab-ci/release.yml`; for an errata it
+reads (with the version filled in from the tag):
 
 ```
 To: app-announcement@univention.de
-Subject: App Center: UCS@school updated
+Subject: UCS@school package update for 5.2v4
 
-Hello everyone,
+Hello,
 
 Errata have just been released for UCS@school 5.2v4.
 
@@ -125,14 +123,12 @@ The changelog is available here:
 - https://docs.software-univention.de/ucsschool-changelog/5.2v4/en/changelog.html
 - https://docs.software-univention.de/ucsschool-changelog/5.2v4/de/changelog.html
 
-Excerpts from the changelog:
-
-- ...
-- ...
-
-Best regards,
+Best regards
 UCS@school Team
 ```
+
+If you need to highlight specific changelog excerpts, edit `.render_release_text` before tagging,
+or send a manual follow-up mail.
 
 ### Close Bugzilla bugs
 
@@ -160,8 +156,8 @@ If this error occurs again, please clone this bug.
 
 ### Make an announcement in chat
 
-Drop a message in `#ucsschool` in RocketChat, to let people know who might be
-waiting for the release to finish.
+This is done automatically by the `send_chat_message` job (same rendered text as the email),
+posting to `#product-announcements` in RocketChat after `do_release` succeeds.
 
 ## QA Errata Release
 
