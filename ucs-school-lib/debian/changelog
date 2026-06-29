@@ -1,3 +1,13 @@
+ucs-school-lib (15.3.1) unstable; urgency=medium
+
+  * Bug #59576: remove a school's users before its OU. This relocates
+    multi-school users homed in the deleted school instead of deleting
+    them, and leaves the "Domain Users <school>" primary group
+    unreferenced when it is deleted, so the S4 connector can replicate
+    the group deletion to Samba 4.
+
+ -- Jürn Brodersen <brodersen@univention.de>  Wed, 15 Jul 2026 22:41:21 +0200
+
 ucs-school-lib (15.3.0) unstable; urgency=medium
 
   * feat: Display.user() and Display.user_ldap() show the primary email

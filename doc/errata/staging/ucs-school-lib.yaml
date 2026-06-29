@@ -1,0 +1,31 @@
+product: ucsschool
+release: "5.2"
+released:
+version: [0]
+scope: ucs_5.2-0-ucs-school-5.2
+src: ucs-school-lib
+fix: 15.3.1
+bugs:
+  59576:
+    en: |
+      When a school was deleted, its users were detached from the school only
+      after the school OU - including the "Domain Users <school>" primary group -
+      had already been removed. As a result, a user belonging to several schools
+      whose primary school was the deleted one was deleted entirely instead of
+      being relocated to one of its remaining schools. In addition, the S4
+      connector could not replicate the deletion of the primary group to Samba 4
+      ("Refusing to delete ... still the :spelling:ignore:`primaryGroupID` for N users"). The users
+      are now removed before the OU, so multi-school users are relocated and the
+      primary group is no longer referenced when it is deleted.
+    de: |
+      Beim Löschen einer Schule wurden deren Benutzer erst von der Schule getrennt,
+      nachdem die Schul-OU - einschließlich der primären Gruppe "Domain Users
+      <school>" - bereits entfernt worden war. Dadurch wurde ein Benutzer, der
+      mehreren Schulen angehört und dessen primäre Schule die gelöschte war,
+      vollständig gelöscht, anstatt in eine seiner verbleibenden Schulen verschoben
+      zu werden. Zudem konnte der S4-Connector das Löschen der primären Gruppe nicht
+      nach Samba 4 replizieren
+      (:spelling:ignore:`"Refusing to delete ... still the primaryGroupID for N users"`).
+      Die Benutzer werden nun vor der OU entfernt, sodass Benutzer mit
+      mehreren Schulen verschoben werden und die primäre Gruppe beim Löschen nicht
+      mehr referenziert wird.

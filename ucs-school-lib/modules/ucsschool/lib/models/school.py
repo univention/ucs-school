@@ -609,6 +609,18 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
     def remove_without_hooks(self, lo):
         from ucsschool.lib.models.user import User
 
+        # Bug #59576: detach/relocate the school's users *before* removing the OU. The
+        # cascading OU removal in super().remove_without_hooks() also deletes the
+        # "Domain Users <school>" group, which is the primaryGroupID of every user in
+        # this school. If the users still reference it when it is deleted, the S4
+        # connector cannot replicate the group deletion to Samba4 and fails with
+        # "Refusing to delete ... still the primaryGroupID for N users". Removing the
+        # users first deletes single-school users and resets the primaryGroup of
+        # cross-school users (via change_school), so the group is unreferenced by the
+        # time it is removed.
+        for user in User.get_all(lo, self.name):
+            user.remove_from_school(self.name, lo)
+
         success = super(School, self).remove_without_hooks(lo)
         for grpdn in (
             "cn=OU%(ou)s-Member-Verwaltungsnetz,cn=ucsschool,cn=groups,%(basedn)s",
@@ -621,8 +633,6 @@ class School(RoleSupportMixin, UCSSchoolHelperAbstractClass):
             grpdn = grpdn % {"ou": escape_dn_chars(self.name), "basedn": ucr.get("ldap/base")}
             self._remove_udm_object("groups/group", grpdn, lo)
 
-        for user in User.get_all(lo, self.name):
-            user.remove_from_school(self.name, lo)
         return success
 
     def get_schools(self):
