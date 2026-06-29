@@ -404,6 +404,41 @@ Zuordnung durch Kommata zu trennen, z.B. ``firstname Vorname,lastname
 Nachname,Class Klasse,username Username``. Für ``Class`` wird dabei die
 ausgewählte Klasse eingesetzt.
 
+.. _school-setup-generic-show-email-instead-of-username:
+
+Anzeige der E-Mail-Adresse anstelle des Benutzernamens
+======================================================
+
+.. versionadded:: 5.2v7
+
+   Ab |UCSUAS| 5.2v7 können die UCS@school-UMC-Module Benutzer anhand ihrer
+   primären E-Mail-Adresse anstelle des Benutzernamens kennzeichnen.
+
+Standardmäßig identifizieren die UCS@school-UMC-Module Benutzer anhand ihres
+Benutzernamens, zum Beispiel ``Doe, John (jdoe)``.
+
+.. envvar:: ucsschool/umc/show-email-instead-of-username
+
+   Ist diese Variable gesetzt, zeigen die Listenansichten und Auswahldialoge der
+   UCS@school-UMC-Module die primäre E-Mail-Adresse anstelle des Benutzernamens
+   an, zum Beispiel ``Doe, John (john.doe@example.com)``. Benutzer ohne primäre
+   E-Mail-Adresse werden weiterhin mit ihrem Benutzernamen angezeigt. Der
+   Standardwert ist ``no``.
+
+Die Einstellung ändert den Benutzerbezeichner in den folgenden
+UCS@school-UMC-Modulen:
+
+* *Passwörter (Schüler)* und *Passwörter (Lehrer)*,
+* die Klassen- und Arbeitsgruppenmodule (*Lehrer zuordnen*, *Klassen zuordnen*, *Arbeitsgruppen bearbeiten/verwalten*),
+* die Schulassistenten (*Benutzer (Schulen)*),
+* das Modul zur Druckermoderation (*Drucker moderieren*).
+
+.. note::
+
+   Die Variable ``ucsschool/umc/show-email-instead-of-username`` wird in den
+   Modulen Computerraum, Klassenarbeiten und Materialverteilung nicht
+   vollständig unterstützt und kann dort zu Inkonsistenzen führen.
+
 .. _school-setup-generic-configure-material-distribution:
 
 Konfiguration der Materialverteilung

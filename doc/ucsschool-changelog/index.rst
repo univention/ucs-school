@@ -20,7 +20,7 @@ Release 5.2v7
 
 What's new?
 
-* The UCS@school UMC modules can now identify users by their primary email address instead of their username, controlled by the new UCR variable ``ucsschool/umc/show-email-instead-of-username``. Independently of this variable, user searches now always match the primary email address as well.
+* The UCS@school UMC modules can now identify users by their primary email address instead of their username, controlled by the new UCR variable ``ucsschool/umc/show-email-instead-of-username``.
 
 .. _changelog-show-email:
 
@@ -39,15 +39,15 @@ Users without a primary email address keep being shown with their username.
 
 The setting changes the user identifier in the following UCS@school UMC modules:
 
-* *Passwords (students)* and *Passwords (teachers)* – the *User* column,
-* the class and workgroup modules (*Assign teachers*, *Assign classes*, *Edit/Administrate workgroups*) – the *Name* column and the member selection (``MultiObjectSelect``) dialogs,
-* the school wizards (*Users (schools)*) – the *Name* column and the "add user" labels, which now additionally include the user's full name
+* *Passwords (students)* and *Passwords (teachers)*
+* The class and workgroup modules (*Assign teachers*, *Assign classes*, *Edit/Administrate workgroups*)
+* The school wizards (*Users (schools)*)
+* Printer moderation module (*Moderate printers*)
 
 .. note::
 
-   The user search now matches the primary email address as well, **independently** of this variable: search-by-email is always active and is not controlled by ``ucsschool/umc/show-email-instead-of-username``.
-   Administrators can therefore filter user lists by email address whether or not the email address is displayed.
-   The variable only affects how users are *displayed*; it changes neither the username nor any authentication behavior.
+   The UCR variable ``ucsschool/umc/show-email-instead-of-username`` is not fully supported in
+   the Computer Room, Exam Mode, and Distribution modules and may show inconsistencies.
 
 .. _changelog-prepare:
 
