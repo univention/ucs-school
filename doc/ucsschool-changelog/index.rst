@@ -9,42 +9,45 @@
 ***************
 
 This document contains the changelogs with the detailed change information for
-the update of |UCSUAS| from version 5.2v5 to 5.2v6.
+the update of |UCSUAS| from version 5.2v6 to 5.2v7.
 
 The change information for previous version jumps can be found at :external+uv-navigation:ref:`the changelog overview page <ucsschool-changelog>`.
 
 .. _changelog-new-role:
 
-Maintenance release 5.2v6
-=========================
-|UCSUAS| 5.2v6 is a maintenance release with bug fixes.
+Release 5.2v7
+=============
 
 What's new?
 
-* The ``ucsschool_purge_timestamp.py`` hook has been updated to use the new ``map``/``unmap`` functions on UCS systems running version 5.2-6 and above. This fixes UMC issues in combination with delegated administration.
-* Teachers can now reset passwords regardless of whether the student's account is locked.
-* Join failures into domains that previously took part in an AD takeover are now fixed.
+* The UCS@school UMC modules can now identify users by their primary email address instead of their username, controlled by the new UCR variable ``ucsschool/umc/show-email-instead-of-username``. Independently of this variable, user searches now always match the primary email address as well.
 
-.. _changelog-hook-early:
+.. _changelog-show-email:
 
-Activating the updated purge timestamp hook early
--------------------------------------------------
+Showing the primary email address instead of the username
+---------------------------------------------------------
 
-.. note::
-
-   UCS 5.2-5 Errata 416 is required on all systems in the domain to activate the hook early.
-
-The updated ``ucsschool_purge_timestamp.py`` hook is automatically activated during the update to UCS 5.2-6.
-To activate it on UCS 5.2-5 systems with the required errata applied, run the following commands:
+By default, the UCS@school UMC modules identify users by their username, for example ``Doe, John (jdoe)``.
+Environments that use the email address as the primary identifier for their users can now switch the displayed identifier by setting the new UCR variable ``ucsschool/umc/show-email-instead-of-username``:
 
 .. code-block:: console
 
-   $ udm settings/udm_hook modify \
-       --set ucsversionend=5.2-4 \
-       --dn "cn=ucsschool_purge_timestamp_525,cn=udm_hook,cn=univention,$(ucr get ldap/base)"
-   $ udm settings/udm_hook modify \
-       --set ucsversionstart=5.2-5 \
-       --dn "cn=ucsschool_purge_timestamp,cn=udm_hook,cn=univention,$(ucr get ldap/base)"
+   $ ucr set ucsschool/umc/show-email-instead-of-username=yes
+
+When the variable is set, the affected views show the primary email address in place of the username, for example ``Doe, John (john.doe@example.com)``.
+Users without a primary email address keep being shown with their username.
+
+The setting changes the user identifier in the following UCS@school UMC modules:
+
+* *Passwords (students)* and *Passwords (teachers)* – the *User* column,
+* the class and workgroup modules (*Assign teachers*, *Assign classes*, *Edit/Administrate workgroups*) – the *Name* column and the member selection (``MultiObjectSelect``) dialogs,
+* the school wizards (*Users (schools)*) – the *Name* column and the "add user" labels, which now additionally include the user's full name
+
+.. note::
+
+   The user search now matches the primary email address as well, **independently** of this variable: search-by-email is always active and is not controlled by ``ucsschool/umc/show-email-instead-of-username``.
+   Administrators can therefore filter user lists by email address whether or not the email address is displayed.
+   The variable only affects how users are *displayed*; it changes neither the username nor any authentication behavior.
 
 .. _changelog-prepare:
 

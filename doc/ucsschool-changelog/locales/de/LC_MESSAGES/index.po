@@ -3,9 +3,9 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 msgid ""
 msgstr ""
-"Project-Id-Version: UCS@school - 5.0v3 Changelog \n"
+"Project-Id-Version: UCS@school - 5.2v7 Changelog \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-28 12:41+0000\n"
+"POT-Creation-Date: 2026-06-29 15:20+0000\n"
 "PO-Revision-Date: 2023-02-06 09:57+0100\n"
 "Last-Translator: Univention GmbH <packages@univention.de>\n"
 "Language-Team: Univention GmbH <packages@univention.de>\n"
@@ -21,11 +21,11 @@ msgstr "|UCSUAS|-Update"
 #: ../../index.rst:11
 msgid ""
 "This document contains the changelogs with the detailed change "
-"information for the update of |UCSUAS| from version 5.2v5 to 5.2v6."
+"information for the update of |UCSUAS| from version 5.2v6 to 5.2v7."
 msgstr ""
 "Dieses Dokument enthält die Changelogs mit den detaillierten "
-"Änderungsinformationen zum Update von |UCSUAS| von Version 5.2v5 nach "
-"5.2v6."
+"Änderungsinformationen zum Update von |UCSUAS| von Version 5.2v6 nach "
+"5.2v7."
 
 #: ../../index.rst:14
 msgid ""
@@ -38,73 +38,112 @@ msgstr ""
 "changelog>`."
 
 #: ../../index.rst:19
-msgid "Maintenance release 5.2v6"
-msgstr "Wartungsrelease 5.2v6"
+msgid "Release 5.2v7"
+msgstr "Release 5.2v7"
 
-#: ../../index.rst:20
-msgid "|UCSUAS| 5.2v6 is a maintenance release with bug fixes."
-msgstr "|UCSUAS| 5.2v6 ist ein Wartungsrelease mit Fehlerbehebungen."
-
-#: ../../index.rst:22
+#: ../../index.rst:21
 msgid "What's new?"
 msgstr "Was ist neu?"
 
-#: ../../index.rst:24
+#: ../../index.rst:23
 msgid ""
-"The ``ucsschool_purge_timestamp.py`` hook has been updated to use the new"
-" ``map``/``unmap`` functions on UCS systems running version 5.2-6 and "
-"above. This fixes UMC issues in combination with delegated "
-"administration."
+"The UCS@school UMC modules can now identify users by their primary email "
+"address instead of their username, controlled by the new UCR variable "
+"``ucsschool/umc/show-email-instead-of-username``. Independently of this "
+"variable, user searches now always match the primary email address as "
+"well."
 msgstr ""
-"Der ``ucsschool_purge_timestamp.py``-Hook wurde aktualisiert, um die "
-"neuen ``map``/``unmap``-Funktionen auf UCS-Systemen ab Version 5.2-6 zu "
-"verwenden. Dies behebt UMC-Probleme in Verbindung mit der delegativen "
-"Administration."
+"Die UCS@school-UMC-Module können Benutzer nun anhand ihrer primären E"
+"-Mail-Adresse anstelle des Benutzernamens kennzeichnen. Dies wird über "
+"die neue UCR-Variable ``ucsschool/umc/show-email-instead-of-username`` "
+"gesteuert. Unabhängig von dieser Variable berücksichtigt die "
+"Benutzersuche nun immer zusätzlich die primäre E-Mail-Adresse."
 
-#: ../../index.rst:25
+#: ../../index.rst:28
+msgid "Showing the primary email address instead of the username"
+msgstr "Anzeige der primären E-Mail-Adresse anstelle des Benutzernamens"
+
+#: ../../index.rst:30
 msgid ""
-"Teachers can now reset passwords regardless of whether the student's "
-"account is locked."
+"By default, the UCS@school UMC modules identify users by their username, "
+"for example ``Doe, John (jdoe)``. Environments that use the email address"
+" as the primary identifier for their users can now switch the displayed "
+"identifier by setting the new UCR variable ``ucsschool/umc/show-email-"
+"instead-of-username``:"
 msgstr ""
-"Lehrer können nun Passwörter zurücksetzen, unabhängig davon, ob das Konto "
-"des Schülers gesperrt ist."
-
-#: ../../index.rst:26
-msgid ""
-"Join failures into domains that previously took part in an AD takeover "
-"are now fixed."
-msgstr ""
-"Fehler beim Beitritt zu Domänen, die zuvor an einer AD-Migration "
-"beteiligt waren, wurden behoben."
-
-#: ../../index.rst:31
-msgid "Activating the updated purge timestamp hook early"
-msgstr "Frühzeitige Aktivierung des aktualisierten Purge-Timestamp-Hooks"
-
-#: ../../index.rst:35
-msgid ""
-"UCS 5.2-5 Errata 416 is required on all systems in the domain to activate"
-" the hook early."
-msgstr ""
-"UCS 5.2-5 Errata 416 wird auf allen System in der Domäne benötigt, um den"
-" Hook vorab zu aktivieren."
+"Standardmäßig kennzeichnen die UCS@school-UMC-Module Benutzer anhand ihres "
+"Benutzernamens, zum Beispiel ``Doe, John (jdoe)``. Umgebungen, die die "
+"E-Mail-Adresse als primären Bezeichner für ihre Benutzer verwenden, können "
+"den angezeigten Bezeichner nun umstellen, indem sie die neue UCR-Variable "
+"``ucsschool/umc/show-email-instead-of-username`` setzen:"
 
 #: ../../index.rst:37
 msgid ""
-"The updated ``ucsschool_purge_timestamp.py`` hook is automatically "
-"activated during the update to UCS 5.2-6. To activate it on UCS 5.2-5 "
-"systems with the required errata applied, run the following commands:"
+"When the variable is set, the affected views show the primary email "
+"address in place of the username, for example ``Doe, John "
+"(john.doe@example.com)``. Users without a primary email address keep "
+"being shown with their username."
 msgstr ""
-"Der aktualisierte ``ucsschool_purge_timestamp.py``-Hook wird automatisch "
-"während des Updates auf UCS 5.2-6 aktiviert. Um ihn auf UCS-5.2-5-Systemen "
-"mit den erforderlichen Errata zu aktivieren, führen Sie die folgenden "
-"Befehle aus:"
+"Ist die Variable gesetzt, zeigen die betroffenen Ansichten die primäre E"
+"-Mail-Adresse anstelle des Benutzernamens an, zum Beispiel ``Doe, John "
+"(john.doe@example.com)``. Benutzer ohne primäre E-Mail-Adresse werden "
+"weiterhin mit ihrem Benutzernamen angezeigt."
 
-#: ../../index.rst:52
+#: ../../index.rst:40
+msgid ""
+"The setting changes the user identifier in the following UCS@school UMC "
+"modules:"
+msgstr ""
+"Die Einstellung ändert den Benutzerbezeichner in den folgenden UCS"
+"@school-UMC-Modulen:"
+
+#: ../../index.rst:42
+msgid "*Passwords (students)* and *Passwords (teachers)* – the *User* column,"
+msgstr "*Passwörter (Schüler)* und *Passwörter (Lehrer)* – die Spalte *Benutzer*,"
+
+#: ../../index.rst:43
+msgid ""
+"the class and workgroup modules (*Assign teachers*, *Assign classes*, "
+"*Edit/Administrate workgroups*) – the *Name* column and the member "
+"selection (``MultiObjectSelect``) dialogs,"
+msgstr ""
+"die Klassen- und Arbeitsgruppenmodule (*Lehrer zuordnen*, *Klassen "
+"zuordnen*, *Arbeitsgruppen bearbeiten/verwalten*) – die Spalte *Name* und"
+" die Dialoge zur Mitgliederauswahl (``MultiObjectSelect``),"
+
+#: ../../index.rst:44
+msgid ""
+"the school wizards (*Users (schools)*) – the *Name* column and the \"add "
+"user\" labels, which now additionally include the user's full name"
+msgstr ""
+"die Schulassistenten (*Benutzer (Schulen)*) – die Spalte *Name* und die "
+"Beschriftungen beim Hinzufügen von Benutzern, die nun zusätzlich den "
+"vollständigen Namen des Benutzers enthalten"
+
+#: ../../index.rst:48
+msgid ""
+"The user search now matches the primary email address as well, "
+"**independently** of this variable: search-by-email is always active and "
+"is not controlled by ``ucsschool/umc/show-email-instead-of-username``. "
+"Administrators can therefore filter user lists by email address whether "
+"or not the email address is displayed. The variable only affects how "
+"users are *displayed*; it changes neither the username nor any "
+"authentication behavior."
+msgstr ""
+"Die Benutzersuche berücksichtigt nun zusätzlich die primäre E-Mail-"
+"Adresse, und zwar **unabhängig** von dieser Variable: Die Suche nach E"
+"-Mail-Adresse ist immer aktiv und wird nicht über ``ucsschool/umc/show-"
+"email-instead-of-username`` gesteuert. Administratoren können "
+"Benutzerlisten daher nach E-Mail-Adresse filtern, unabhängig davon, ob "
+"die E-Mail-Adresse angezeigt wird. Die Variable beeinflusst nur, wie "
+"Benutzer *angezeigt* werden; sie ändert weder den Benutzernamen noch das "
+"Authentifizierungsverhalten."
+
+#: ../../index.rst:55
 msgid "General notes on the update"
 msgstr "Generelle Hinweise zum Update"
 
-#: ../../index.rst:54
+#: ../../index.rst:57
 msgid ""
 "During the update, services within the domain may fail. For this reason, "
 "the update should be performed within a maintenance window. It is "
@@ -118,7 +157,7 @@ msgstr ""
 "zunächst in einer Testumgebung einzuspielen und zu testen. Die "
 "Testumgebung sollte dabei identisch zur Produktivumgebung sein."
 
-#: ../../index.rst:59
+#: ../../index.rst:62
 msgid ""
 "Please note that depending on the size of the |UCSUAS| environment, this "
 "update may take longer than usual to complete."
@@ -126,11 +165,11 @@ msgstr ""
 "Bitte beachten Sie, dass diese Aktualisierung je nach Größe der "
 "|UCSUAS|-Umgebung länger als gewöhnlich dauern kann."
 
-#: ../../index.rst:65
+#: ../../index.rst:68
 msgid "Update process"
 msgstr "Update-Prozess"
 
-#: ../../index.rst:67
+#: ../../index.rst:70
 msgid ""
 "Major updates for |UCSUAS| are released in the Univention App Center as a"
 " standalone app update. Minor updates and bug fixes (errata for |UCSUAS|)"
@@ -150,60 +189,3 @@ msgstr ""
 "werden dann entsprechend um einen neuen Abschnitt erweitert, aus dem "
 "ersichtlich wird, zu welchem Zeitpunkt welche Pakete veröffentlicht und "
 "welche Fehler dabei behoben wurden."
-
-#~ msgid "Maintenance release to enforce an updated ID Connector"
-#~ msgstr "Wartungsrelease zur Erzwingung eines aktualisierten ID Connector"
-
-#~ msgid ""
-#~ "|UCSUAS| 5.2v5 adds a preinstallation "
-#~ "hook to enforce an updated ID "
-#~ "Connector."
-#~ msgstr ""
-#~ "|UCSUAS| 5.2v5 fügt einen Pre-"
-#~ "Installations-Hook hinzu, um einen "
-#~ "aktualisierten ID Connector zu erzwingen."
-
-#~ msgid ""
-#~ "Together with the 4.0.0 release of "
-#~ "the ID Connector, administrators can now"
-#~ " push legal guardians to the ID "
-#~ "Broker."
-#~ msgstr ""
-#~ "Mit der Version 4.0.0 des ID "
-#~ "Connectors können Administratoren nun "
-#~ "Erziehungsberechtigte an den ID Broker "
-#~ "weiterleiten."
-
-#~ msgid ""
-#~ "Together with the Apple School Manager"
-#~ " Connector 5.1.1, administrators can now"
-#~ " install the Apple School Manager "
-#~ "Connector on a central replica node."
-#~ msgstr ""
-#~ "Zusammen mit dem Apple School Manager"
-#~ " Connector 5.1.1 können Administratoren den"
-#~ " Apple School Manager Connector nun "
-#~ "auf zentralen Replica Node installieren."
-
-#~ msgid ""
-#~ "Users now get an error message on"
-#~ " the UMC if they reset a "
-#~ "password and it fails the dictionary "
-#~ "word policy."
-#~ msgstr ""
-#~ "Benutzer erhalten nun eine Fehlermeldung "
-#~ "auf der UMC, wenn sie ein Passwort"
-#~ " zurücksetzen und dieses gegen die "
-#~ "Richtlinie für Wörterbuchwörter verstößt."
-
-#~ msgid ""
-#~ "If you have the ID Connector App"
-#~ " installed, you must first update it,"
-#~ " before updating to |UCSUAS| 5.2v5"
-#~ msgstr ""
-#~ "Wenn Sie die ID Connector App "
-#~ "installiert haben, müssen Sie diese "
-#~ "zunächst aktualisieren, bevor Sie das "
-#~ "Update auf |UCSUAS| 5.2v5 durchführen "
-#~ "können."
-
