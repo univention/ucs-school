@@ -10,6 +10,7 @@ SPDX-PackageDownloadLocation = "https://www.univention.com/products/ucsschool/"
 [[annotations]]
 path = [
     "**.gitignore",
+    "**.gitattributes",
     ".bandit",
     ".black",
     ".flake8",
