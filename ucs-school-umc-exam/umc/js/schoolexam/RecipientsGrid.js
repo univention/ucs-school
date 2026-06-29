@@ -12,8 +12,9 @@ define([
 	"dojo/store/Memory",
 	"umc/widgets/Grid",
 	"umc/widgets/Text",
+	"umc/widgets/Tooltip",
 	"umc/i18n!umc/modules/schoolexam"
-], function(declare, lang, entities, Observable, Memory, Grid, Text, _) {
+], function(declare, lang, entities, Observable, Memory, Grid, Text, Tooltip, _) { // eslint-disable-line max-params
 	return declare("umc.modules.schoolexam.RecipientsGrid", [Grid], {
 		/**
 		 * This grid lists all students, that are members of a provided list of groups (classes, working groups)
@@ -35,9 +36,27 @@ define([
 				{
 					name: 'school_classes',
 					label: _('School classes'),
-					formatter: function(value, user) {
-						return entities.encode(user['school_classes'].join(', '));
-					}
+					formatter: lang.hitch(this, function(value, user) {
+						// language-aware sort; numeric so '2a' sorts before '10a'
+						const classes = (user['school_classes'] || []).slice().sort(function(a, b) {
+							return a.localeCompare(b, undefined, {numeric: true});
+						});
+						const content = classes.join(', ');
+						const widget = new Text({
+							content: entities.encode(content)
+						});
+						this.own(widget);
+						// the cell truncates with an ellipsis; the tooltip shows the full list
+						if (content) {
+							const tooltip = new Tooltip({
+								label: entities.encode(content),
+								connectId: [widget.domNode],
+								position: ['below', 'above']
+							});
+							widget.own(tooltip);
+						}
+						return widget;
+					})
 				}
 			]
 		},

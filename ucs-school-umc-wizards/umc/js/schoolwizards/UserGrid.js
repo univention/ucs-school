@@ -12,11 +12,13 @@ define([
 	"dojox/html/entities",
 	"umc/widgets/SearchBox",
 	"umc/widgets/ComboBox",
+	"umc/widgets/Text",
+	"umc/widgets/Tooltip",
 	"umc/modules/schoolwizards/UserWizard",
 	"umc/modules/schoolwizards/Grid",
 	"umc/modules/schoolwizards/utils",
 	"umc/i18n!umc/modules/schoolwizards"
-], function(declare, lang, array, entities, SearchBox, ComboBox, UserWizard, Grid, utils, _) {
+], function(declare, lang, array, entities, SearchBox, ComboBox, Text, Tooltip, UserWizard, Grid, utils, _) { // eslint-disable-line max-params
 
 	return declare("umc.modules.schoolwizards.UserGrid", [Grid], {
 
@@ -49,7 +51,7 @@ define([
 				name: 'school_classes',
 				label: _('Class'),
 				description: _('Class of the %s.', this.objectNameSingular),
-				formatter: lang.hitch(this, 'school_classesFormatter'),
+				formatter: lang.hitch(this, 'school_classesCell'),
 				sortFormatter: lang.hitch(this, 'school_classesFormatter')
 			}, {
 				name: 'disabled',
@@ -64,10 +66,37 @@ define([
 			}];
 		},
 
-		school_classesFormatter: function(values) {
-			return array.map(values[this.school], lang.hitch(this, function(value) {
+		_sortedSchoolClasses: function(values) {
+			// language-aware sort; numeric so '2a' sorts before '10a'
+			const classes = (values[this.school] || []).slice().sort(function(a, b) {
+				return a.localeCompare(b, undefined, {numeric: true});
+			});
+			// drop the redundant '<school>-' prefix; the grid is scoped to one school
+			return array.map(classes, lang.hitch(this, function(value) {
 				return value.indexOf(this.school + '-') === -1 ? value : value.slice(this.school.length + 1);
-			})).join(', ');
+			}));
+		},
+
+		school_classesFormatter: function(values) {
+			return this._sortedSchoolClasses(values).join(', ');
+		},
+
+		school_classesCell: function(values) {
+			const content = this._sortedSchoolClasses(values).join(', ');
+			const widget = new Text({
+				content: entities.encode(content)
+			});
+			this.own(widget);
+			// the cell truncates with an ellipsis; the tooltip shows the full list
+			if (content) {
+				const tooltip = new Tooltip({
+					label: entities.encode(content),
+					connectId: [widget.domNode],
+					position: ['below', 'above']
+				});
+				widget.own(tooltip);
+			}
+			return widget;
 		},
 
 		getObjectIdName: function(item) {

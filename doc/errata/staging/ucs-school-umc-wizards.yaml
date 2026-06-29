@@ -4,14 +4,21 @@ released:
 version: [0]
 scope: ucs_5.2-0-ucs-school-5.2
 src: ucs-school-umc-wizards
-fix: 13.1.2
+fix: 13.1.3
 bugs:
   59515:
     en: |
       The automatic search when changing the selected school can now be configured
       independently from the search when opening the module via the new
       ``ucsschool/wizards/.../autosearch_on_change`` UCR variables.
+
+      In the user grid the classes are now sorted language-aware (numeric, so
+      '2a' precedes '10a') and a per-cell tooltip shows the full list.
     de: |
       Die automatische Suche beim Wechsel der ausgewählten Schule kann nun
       unabhängig von der Suche beim Öffnen des Moduls über die neuen
       UCR-Variablen ``ucsschool/wizards/.../autosearch_on_change`` konfiguriert werden.
+
+      In der Benutzertabelle werden die Klassen jetzt sprachabhängig sortiert
+      (numerisch, sodass '2a' vor '10a' steht) und ein Tooltip pro Zelle zeigt
+      die vollständige Liste.

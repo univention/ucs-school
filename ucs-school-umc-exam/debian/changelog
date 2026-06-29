@@ -1,3 +1,10 @@
+ucs-school-umc-exam (12.0.9) unstable; urgency=low
+
+  * Bug #59515: sort the classes in the recipients grid language-aware and show
+    the full list in a per-cell tooltip
+
+ -- Jürn Brodersen <brodersen@univention.de>  Mon, 29 Jun 2026 11:00:00 +0200
+
 ucs-school-umc-exam (12.0.8) unstable; urgency=low
 
   * Issue univention/dev/education/ucsschool#1251: Improve logging
