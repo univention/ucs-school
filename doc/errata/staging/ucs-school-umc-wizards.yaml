@@ -4,7 +4,7 @@ released:
 version: [0]
 scope: ucs_5.2-0-ucs-school-5.2
 src: ucs-school-umc-wizards
-fix: 13.2.0
+fix: 14.0.0
 bugs:
   59515:
     en: |
