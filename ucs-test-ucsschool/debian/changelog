@@ -1,3 +1,9 @@
+ucs-test-ucsschool (8.0.50) unstable; urgency=medium
+
+  * Bug #58521: test_missing_ucsschool_school_attribute
+
+ -- Jürn Brodersen <brodersen@univention.de>  Tue, 30 Jun 2026 12:51:19 +0200
+
 ucs-test-ucsschool (8.0.49) unstable; urgency=medium
 
   * 15_ucsschool_check_windows_printer_driver_for_pdf_printer: force English

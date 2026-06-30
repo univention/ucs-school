@@ -2,12 +2,17 @@
 ## -*- coding: utf-8 -*-
 ## desc: test ucsschool.lib.models.group.WorkGroup CRUD operations
 ## roles: [domaincontroller_master]
-## tags: [apptest,ucsschool,ucsschool_import1]
+## tags: [apptest,ucsschool,ucsschool_import1,ucs-school-umc-diagnostic,ucs-school-lib]
 ## exposure: dangerous
 ## packages:
 ##   - python3-ucsschool-lib
 
-from typing import Tuple  # noqa: F401
+from __future__ import annotations
+
+from typing import (
+    TYPE_CHECKING,
+    Tuple,  # noqa: F401
+)
 
 import pytest
 
@@ -19,6 +24,10 @@ from ucsschool.lib.roles import create_ucsschool_role_string, role_staff, role_s
 from ucsschool.lib.schoolldap import SchoolSearchBase
 from univention.testing import utils
 from univention.udm import UDM
+
+if TYPE_CHECKING:
+    from univention.testing.ucsschool.ucs_test_school import UCSTestSchool
+
 
 with ucr_test.UCSTestConfigRegistry() as ucr:
     ucr.load()
@@ -136,6 +145,25 @@ def test_wrong_school_role_for_each_school(schoolenv, ucr_hostname, udm_instance
     stdout, stderr = exec_script(None)
     expected_error = "User does not have UCS@school Role {}:school".format("student")
     assert_error_msg_in_script_output(stdout, student_dn, expected_error)
+
+
+def test_missing_ucsschool_school_attribute(schoolenv: UCSTestSchool, ucr_hostname: str):
+    # Regression test for Bug #58521: a user object missing the ucsschoolSchool LDAP
+    # attribute must be reported as inconsistent instead of crashing the check.
+    ou_name, _ = schoolenv.create_ou(name_edudc=ucr_hostname)
+    _, dn = schoolenv.create_student(ou_name, wait_for_replication=False)
+
+    # ucsschoolSchool is an optional (MAY) attribute in the LDAP schema, so it can be
+    # removed to simulate an inconsistent user object.
+    schoolenv.lo.modify(
+        dn, [("ucsschoolSchool", schoolenv.lo.get(dn, ["ucsschoolSchool"], required=True), [])]
+    )
+
+    # The per-school search filters on ucsschoolSchool, which we just removed, so the
+    # domain-wide run (no --school) is required to pick up the user.
+    stdout, _ = exec_script(None)
+    expected_error = "Missing LDAP attribute: ucsschoolSchool."
+    assert_error_msg_in_script_output(stdout, dn, expected_error)
 
 
 def input_ids_wrong_group_membership(role_and_prefix):  # type: (Tuple[str, str, str]) -> str
