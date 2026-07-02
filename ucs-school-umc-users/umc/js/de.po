@@ -99,6 +99,10 @@ msgstr "Passwort setzen"
 msgid "Enter a search term to filter by first name, surname or username."
 msgstr "Geben Sie einen Suchbegriff ein, um nach Vorname, Nachname oder Benutzername zu filtern."
 
+#: umc/js/schoolusers.js:151
+msgid "Enter a search term to filter by first name, surname or email address."
+msgstr "Geben Sie einen Suchbegriff ein, um nach Vorname, Nachname oder E-Mail-Adresse zu filtern."
+
 #: umc/js/schoolusers.js:302
 msgid "User has to change password on next login"
 msgstr "Benutzer muss das Passwort bei der nächsten Anmeldung ändern"

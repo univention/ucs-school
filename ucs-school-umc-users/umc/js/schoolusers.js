@@ -184,6 +184,14 @@ define([
 			this._searchPage.addChild(this._grid);
 			this.addChild(this._searchPage);
 
+			tools.ucr(['ucsschool/umc/show-email-instead-of-username']).then(lang.hitch(this, function(ucr) {
+				if (tools.isTrue(ucr['ucsschool/umc/show-email-instead-of-username'])) {
+					this._searchForm.ready().then(lang.hitch(this, function() {
+						this._searchForm.getWidget('pattern').set('description', _('Enter a search term to filter by first name, surname or email address.'));
+					}));
+				}
+			}));
+
 			tools.ucr(['ucsschool/passwordreset/password-change-on-next-login', 'ucsschool/passwordreset/force-password-change-on-next-login']).then(lang.hitch(this, function(ucr) {
 				this.changeOnNextLogin = tools.isTrue(ucr['ucsschool/passwordreset/password-change-on-next-login'] || true);
 				this.changeOnNextLoginDisabled = tools.isTrue(ucr['ucsschool/passwordreset/force-password-change-on-next-login'] || false);
