@@ -146,8 +146,8 @@ def test_password_reset_grid_email_display(
     page.get_by_role("textbox", name="School").click()
     page.get_by_role("textbox", name="School").fill(env.school)
     # search for the ward student (also commits the school combobox value)
-    page.get_by_role("textbox", name="Name", exact=True).fill("stu-ward-pw")
-    page.get_by_role("textbox", name="Name", exact=True).press("Enter")
+    page.get_by_role("textbox", name="User", exact=True).fill("stu-ward-pw")
+    page.get_by_role("textbox", name="User", exact=True).press("Enter")
 
     # the password reset grid identifies the student by email, not username
     expect(page.get_by_role("gridcell", name=env.ward_mail)).to_be_visible(timeout=30000)
