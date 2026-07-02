@@ -396426,10 +396426,18 @@
                 }
             },
             {
-                "code": "reportUnknownMemberType",
+                "code": "reportUnknownVariableType",
                 "range": {
                     "startColumn": 4,
-                    "endColumn": 20,
+                    "endColumn": 14,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportUnknownMemberType",
+                "range": {
+                    "startColumn": 17,
+                    "endColumn": 34,
                     "lineCount": 1
                 }
             },
@@ -396437,7 +396445,15 @@
                 "code": "reportUnknownMemberType",
                 "range": {
                     "startColumn": 4,
-                    "endColumn": 59,
+                    "endColumn": 26,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportUnknownMemberType",
+                "range": {
+                    "startColumn": 4,
+                    "endColumn": 65,
                     "lineCount": 1
                 }
             },
@@ -396477,7 +396493,7 @@
                 "code": "reportUnknownMemberType",
                 "range": {
                     "startColumn": 4,
-                    "endColumn": 20,
+                    "endColumn": 26,
                     "lineCount": 1
                 }
             },
@@ -396485,7 +396501,7 @@
                 "code": "reportUnknownMemberType",
                 "range": {
                     "startColumn": 4,
-                    "endColumn": 56,
+                    "endColumn": 62,
                     "lineCount": 1
                 }
             },
@@ -396549,7 +396565,7 @@
                 "code": "reportUnknownMemberType",
                 "range": {
                     "startColumn": 4,
-                    "endColumn": 20,
+                    "endColumn": 26,
                     "lineCount": 1
                 }
             },
@@ -396557,7 +396573,7 @@
                 "code": "reportUnknownMemberType",
                 "range": {
                     "startColumn": 4,
-                    "endColumn": 59,
+                    "endColumn": 65,
                     "lineCount": 1
                 }
             },
