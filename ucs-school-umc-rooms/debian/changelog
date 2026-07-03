@@ -2,6 +2,7 @@ ucs-school-umc-rooms (18.1.0) unstable; urgency=medium
 
   * feat: load the shared ucsschool-common.css so the MultiObjectSelect "add
     object" selection dialog is wider.
+    Bug #59515
 
  -- Johannes Königer <koeniger@univention.de>  Mon, 22 Jun 2026 12:00:00 +0200
 

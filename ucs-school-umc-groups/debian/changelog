@@ -4,6 +4,7 @@ ucs-school-umc-groups (11.2.0) unstable; urgency=medium
     username when ucsschool/umc/show-email-instead-of-username is set.
   * feat: load the shared ucsschool-common.css so the "add object" selection
     dialog (e.g. for group members) is wider.
+    Bug #59515
 
  -- Johannes Königer <koeniger@univention.de>  Mon, 29 Jun 2026 12:00:00 +0200
 

@@ -16,7 +16,7 @@ bugs:
       einer Konsistenzprüfung für eine Benutzer-DN löste der Checker einen
       unbehandelten Fehlerfall aus, wenn das LDAP-Objekt nicht über das Attribut
       `ucsschoolSchool` verfügte.
-  notes:
+  59515:
     en: |
       ``Display.user()`` and ``Display.user_ldap()`` now show the primary email
       address instead of the username when the UCR variable

@@ -7,6 +7,7 @@ ucs-school-umc-common (11.1.0) unstable; urgency=medium
   * feat: ship a shared stylesheet (umc/modules/ucsschool-common.css) that
     widens the MultiObjectSelect "add object" selection dialog uniformly across
     the UCS@school UMC modules.
+    Bug #59515
 
  -- Johannes Königer <koeniger@univention.de>  Mon, 22 Jun 2026 12:00:00 +0200
 

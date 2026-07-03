@@ -6,7 +6,7 @@ scope: ucs_5.2-0-ucs-school-5.2
 src: ucs-school-umc-common
 fix: 11.1.0
 bugs:
-  notes:
+  59515:
     en: |
       A new UCR variable ``ucsschool/umc/show-email-instead-of-username``
       is added. If set, the grid views of the UCS@school UMC modules

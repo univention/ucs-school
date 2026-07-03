@@ -7,39 +7,37 @@ src: ucs-school-umc-groups
 fix: 11.2.0
 bugs:
   59515:
-    en: |
-      In the assign-classes grid the school classes are now grouped and sorted
-      by school. Schools and classes are sorted language-aware (numeric, so
-      '2a' precedes '10a') and a per-cell tooltip shows the same grouping with
-      one school per line.
+    - en: |
+        In the assign-classes grid the school classes are now grouped and sorted
+        by school. Schools and classes are sorted language-aware (numeric, so
+        '2a' precedes '10a') and a per-cell tooltip shows the same grouping with
+        one school per line.
 
-      The user group modules now use single row selection so that only one
-      group can be selected at a time.
+        The user group modules now use single row selection so that only one
+        group can be selected at a time.
 
-      The automatic search when changing the selected school can now be configured
-      independently from the search when opening the module via the new
-      ``ucsschool/.../autosearch_on_change`` UCR variables.
-    de: |
-      In der Klassenzuweisungstabelle werden die Schulklassen jetzt nach Schule
-      gruppiert und sortiert. Schulen und Klassen werden sprachabhängig sortiert
-      (numerisch, sodass '2a' vor '10a' steht) und ein Tooltip pro Zelle zeigt
-      dieselbe Gruppierung mit einer Schule pro Zeile.
+        The automatic search when changing the selected school can now be configured
+        independently from the search when opening the module via the new
+        ``ucsschool/.../autosearch_on_change`` UCR variables.
+      de: |
+        In der Klassenzuweisungstabelle werden die Schulklassen jetzt nach Schule
+        gruppiert und sortiert. Schulen und Klassen werden sprachabhängig sortiert
+        (numerisch, sodass '2a' vor '10a' steht) und ein Tooltip pro Zelle zeigt
+        dieselbe Gruppierung mit einer Schule pro Zeile.
 
-      Die Module für Benutzergruppen verwenden jetzt eine Einzelzeilenauswahl,
-      sodass immer nur eine Gruppe gleichzeitig ausgewählt werden kann.
+        Die Module für Benutzergruppen verwenden jetzt eine Einzelzeilenauswahl,
+        sodass immer nur eine Gruppe gleichzeitig ausgewählt werden kann.
 
-      Die automatische Suche beim Wechsel der ausgewählten Schule kann nun
-      unabhängig von der Suche beim Öffnen des Moduls über die neuen
-      UCR-Variablen ``ucsschool/.../autosearch_on_change`` konfiguriert werden.
-  notes:
-    en: |
-      The teacher grid now shows the primary email address instead of the
-      username when the UCR variable
-      ``ucsschool/umc/show-email-instead-of-username`` is set. The "add
-      object" selection dialog is also wider now.
-    de: |
-      Die Lehrer-Listenansicht zeigt nun die primäre E-Mail-Adresse anstelle des
-      Benutzernamens an, wenn die UCR-Variable
-      ``ucsschool/umc/show-email-instead-of-username`` gesetzt ist. Der Dialog
-      zum Hinzufügen von Objekten ist nun ebenfalls breiter.
-
+        Die automatische Suche beim Wechsel der ausgewählten Schule kann nun
+        unabhängig von der Suche beim Öffnen des Moduls über die neuen
+        UCR-Variablen ``ucsschool/.../autosearch_on_change`` konfiguriert werden.
+    - en: |
+        The teacher grid now shows the primary email address instead of the
+        username when the UCR variable
+        ``ucsschool/umc/show-email-instead-of-username`` is set. The "add
+        object" selection dialog is also wider now.
+      de: |
+        Die Lehrer-Listenansicht zeigt nun die primäre E-Mail-Adresse anstelle des
+        Benutzernamens an, wenn die UCR-Variable
+        ``ucsschool/umc/show-email-instead-of-username`` gesetzt ist. Der Dialog
+        zum Hinzufügen von Objekten ist nun ebenfalls breiter.

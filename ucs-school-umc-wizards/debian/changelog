@@ -8,6 +8,7 @@ ucs-school-umc-wizards (14.0.0) unstable; urgency=medium
     the username.
   * feat: load the shared ucsschool-common.css so the "add object" selection
     dialog (e.g. for legal guardians / wards) is wider.
+    Bug #59515
 
  -- Johannes Königer <koeniger@univention.de>  Thu, 02 Jul 2026 12:00:00 +0200
 

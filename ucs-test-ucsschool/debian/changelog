@@ -11,6 +11,7 @@ ucs-test-ucsschool (8.0.51) unstable; urgency=medium
     the primary email address instead of the username when
     ucsschool/umc/show-email-instead-of-username is set (UMC server is
     restarted so the backend re-reads the variable).
+    Bug #59515
 
  -- Johannes Königer <koeniger@univention.de>  Thu, 02 Jul 2026 12:00:00 +0200
 

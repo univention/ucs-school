@@ -3,6 +3,7 @@ ucs-school-umc-users (17.1.0) unstable; urgency=medium
   * feat: fetch mailPrimaryAddress in the password grid query so the user
     list can show the primary email address instead of the username when
     ucsschool/umc/show-email-instead-of-username is set.
+    Bug #59515
 
  -- Johannes Königer <koeniger@univention.de>  Thu, 25 Jun 2026 10:00:00 +0200
 

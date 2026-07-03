@@ -7,29 +7,28 @@ src: ucs-school-umc-wizards
 fix: 14.0.0
 bugs:
   59515:
-    en: |
-      The automatic search when changing the selected school can now be configured
-      independently from the search when opening the module via the new
-      ``ucsschool/wizards/.../autosearch_on_change`` UCR variables.
+    - en: |
+        The automatic search when changing the selected school can now be configured
+        independently from the search when opening the module via the new
+        ``ucsschool/wizards/.../autosearch_on_change`` UCR variables.
 
-      In the user grid the classes are now sorted language-aware (numeric, so
-      '2a' precedes '10a') and a per-cell tooltip shows the full list.
-    de: |
-      Die automatische Suche beim Wechsel der ausgewählten Schule kann nun
-      unabhängig von der Suche beim Öffnen des Moduls über die neuen
-      UCR-Variablen ``ucsschool/wizards/.../autosearch_on_change`` konfiguriert werden.
+        In the user grid the classes are now sorted language-aware (numeric, so
+        '2a' precedes '10a') and a per-cell tooltip shows the full list.
+      de: |
+        Die automatische Suche beim Wechsel der ausgewählten Schule kann nun
+        unabhängig von der Suche beim Öffnen des Moduls über die neuen
+        UCR-Variablen ``ucsschool/wizards/.../autosearch_on_change`` konfiguriert werden.
 
-      In der Benutzertabelle werden die Klassen jetzt sprachabhängig sortiert
-      (numerisch, sodass '2a' vor '10a' steht) und ein Tooltip pro Zelle zeigt
-      die vollständige Liste.
-  notes:
-    en: |
-      The user grid and the legal guardian / legal ward selection now show the
-      primary email address instead of the username when the UCR variable
-      ``ucsschool/umc/show-email-instead-of-username`` is set. The "add
-      object" selection dialog is also wider now.
-    de: |
-      Die Benutzer-Listenansicht sowie die Auswahl der Sorgeberechtigten / Schülern zeigen
-      nun die primäre E-Mail-Adresse anstelle des Benutzernamens an, wenn die
-      UCR-Variable ``ucsschool/umc/show-email-instead-of-username`` gesetzt ist.
-      Der Dialog zum Hinzufügen von Objekten ist nun ebenfalls breiter.
+        In der Benutzertabelle werden die Klassen jetzt sprachabhängig sortiert
+        (numerisch, sodass '2a' vor '10a' steht) und ein Tooltip pro Zelle zeigt
+        die vollständige Liste.
+    - en: |
+        The user grid and the legal guardian / legal ward selection now show the
+        primary email address instead of the username when the UCR variable
+        ``ucsschool/umc/show-email-instead-of-username`` is set. The "add
+        object" selection dialog is also wider now.
+      de: |
+        Die Benutzer-Listenansicht sowie die Auswahl der Sorgeberechtigten / Schülern zeigen
+        nun die primäre E-Mail-Adresse anstelle des Benutzernamens an, wenn die
+        UCR-Variable ``ucsschool/umc/show-email-instead-of-username`` gesetzt ist.
+        Der Dialog zum Hinzufügen von Objekten ist nun ebenfalls breiter.
