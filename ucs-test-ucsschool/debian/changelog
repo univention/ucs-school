@@ -1,3 +1,15 @@
+ucs-test-ucsschool (8.0.53) unstable; urgency=medium
+
+  * 51_ucs-school-configurable-schoollists: test all class-list attributes
+    deterministically instead of a random sample and split off the
+    invalid-attribute error case
+    Issue univention/dev/education/ucsschool#1549
+  * compare school_classes and workgroups order-independently in the user
+    get-request check to avoid spurious failures between primary and replica
+    Issue univention/dev/education/ucsschool#1549
+
+ -- Jürn Brodersen <brodersen@univention.de>  Mon, 06 Jul 2026 15:44:41 +0200
+
 ucs-test-ucsschool (8.0.52) unstable; urgency=medium
 
   * Bug #59323: make test more pytest-ish
