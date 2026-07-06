@@ -97,6 +97,7 @@ validate-advisories:
 
 rename-advisories:
   stage: cleanup
+  needs: []
   variables:
     GIT_AUTHOR_EMAIL: "ucsschool-team@univention.de"
     GIT_AUTHOR_NAME: "UCS@school team"
