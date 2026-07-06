@@ -167,14 +167,18 @@ class User(Person):
         # ignore order
         get_result["schools"] = set(get_result["schools"])
         get_result["ucsschool_roles"] = set(get_result["ucsschool_roles"])
+        # The order of the class/workgroup lists is not significant and may differ
+        # between primary and replica, so compare them order-independently.
+        for key in ("school_classes", "workgroups"):
+            for container in (get_result, info):
+                value = container.get(key)
+                if isinstance(value, dict):
+                    container[key] = {k: set(v) for k, v in value.items()}
         diff = []
         if get_result != info:
             for key in set(get_result.keys()) | set(info.keys()):
                 result_value = get_result.get(key)
                 info_value = info.get(key)
-                if key in ("school_classes", "workgroups"):
-                    result_value = {k: set(v) for k, v in result_value.items()}
-                    info_value = {k: set(v) for k, v in info_value.items()}
                 if result_value != info_value:
                     diff.append("%s: Got:\n%r; expected:\n%r" % (key, result_value, info_value))
         assert get_result == info, "Failed get request for user %s:\n%s" % (
