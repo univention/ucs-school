@@ -7,8 +7,14 @@
     "ucs-school-lib/modules",
     "ucs-school-netlogon-user-logonscripts/python",
     "ucs-school-radius-802.1x/modules",
+    "ucs-school-umc-computerroom/umc/python",
+    "ucs-school-umc-distribution/umc/python",
     "ucs-school-umc-exam/modules",
+    "ucs-school-umc-exam/umc/python",
+    "ucs-school-umc-groups/umc/python",
     "ucs-school-umc-helpdesk/modules",
+    "ucs-school-umc-lists/umc/python",
+    "ucs-school-umc-wizards/umc/python",
     "ucs-test-ucsschool/modules"
   ],
   "reportImplicitStringConcatenation": "none"
