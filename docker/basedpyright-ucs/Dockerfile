@@ -3,13 +3,38 @@
 ARG UCS_VERSION=526
 ARG UCS_BASE_IMAGE_TAG=latest
 
+# Used only as a source for the dev-branch apt key + helper script (see
+# UCS_DEV_BRANCH below) - ucs-base-python-* doesn't ship these, ucs-base-dev-*
+# does.
+FROM gitregistry.knut.univention.de/univention/dev/projects/ucs-base-image/ucs-base-dev-${UCS_VERSION}:${UCS_BASE_IMAGE_TAG} AS ucs-dev-branch-tools
+
 FROM gitregistry.knut.univention.de/univention/dev/projects/ucs-base-image/ucs-base-python-${UCS_VERSION}:${UCS_BASE_IMAGE_TAG}
 
-# Note: the packages index is already included in the base image. Running
-# "apt-get update" here would pull in newer errata and make this image
-# non-reproducible against a rolling errata channel, so we skip it.
+# Optional: build against an in-development branch of the `ucs` repo instead
+# of the released errata channel, mirroring ucs-base-image's own
+# dev.Dockerfile.usage-example. Leave empty (default) to use only the
+# released/errata index already baked into the base image - matching
+# ucs-base-image's reproducibility guidance below, we skip "apt-get update"
+# in that case.
+#
+# If set (e.g. --build-arg UCS_DEV_BRANCH=5-2-2), a git branch named
+# "your/branch" becomes slug "your-branch" here; find the generated slug in
+# the output of the pipeline job that built the debian package for that
+# branch.
+ARG UCS_DEV_BRANCH=""
+
+COPY --from=ucs-dev-branch-tools /etc/apt/trusted.gpg.d/development-key-omar.gpg /etc/apt/trusted.gpg.d/development-key-omar.gpg
+COPY --from=ucs-dev-branch-tools /usr/local/bin/ucs-dev-add-branch.sh /usr/local/bin/ucs-dev-add-branch.sh
+
+# Note: without UCS_DEV_BRANCH, the packages index is already included in the
+# base image. Running "apt-get update" in that case would pull in newer
+# errata and make this image non-reproducible against a rolling errata
+# channel, so we only do it when a dev branch was actually added.
 # hadolint ignore=DL3008
-RUN apt-get install --assume-yes --verbose-versions --no-install-recommends \
+RUN if [ -n "$UCS_DEV_BRANCH" ]; then \
+      ucs-dev-add-branch.sh "$UCS_DEV_BRANCH" && apt-get update; \
+    fi \
+    && apt-get install --assume-yes --verbose-versions --no-install-recommends \
       python3-venv python3-pip \
       python3-univention-config-registry \
       python3-univention-directory-manager \
@@ -31,7 +56,8 @@ COPY requirements-typecheck.txt /tmp/requirements-typecheck.txt
 # imports via basedpyright's own "--pythonpath /usr/bin/python3" flag instead
 # of relying on this venv.
 RUN python3 -m venv --system-site-packages /opt/basedpyright-venv \
-    && /opt/basedpyright-venv/bin/pip install --no-cache-dir "basedpyright==1.39.8" uv -r /tmp/requirements-typecheck.txt \
+    && /opt/basedpyright-venv/bin/pip install --no-cache-dir \
+         "basedpyright==1.39.8" uv -r /tmp/requirements-typecheck.txt \
     && rm /tmp/requirements-typecheck.txt \
     && ln -s /opt/basedpyright-venv/bin/uv /usr/local/bin/uv \
     && ln -s /opt/basedpyright-venv/bin/uvx /usr/local/bin/uvx

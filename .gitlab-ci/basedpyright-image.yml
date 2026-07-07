@@ -7,6 +7,15 @@ include:
     file:
       - "templates/kaniko.yaml"
 
+variables:
+  UCS_DEV_BRANCH:
+    value: ""
+    description: >-
+      Optional: build basedpyright-ucs against this ucs repo dev branch slug
+      (see docker/basedpyright-ucs/Dockerfile, ARG UCS_DEV_BRANCH) instead of
+      the released errata channel. Leave empty for the normal, reproducible
+      build.
+
 build_basedpyright_image:
   extends: ".kaniko"
   stage: build
@@ -14,7 +23,9 @@ build_basedpyright_image:
     IMAGE_NAME: "basedpyright-ucs"
     KANIKO_BUILD_CONTEXT: "."
     DOCKERFILE_PATH: "docker/basedpyright-ucs/Dockerfile"
+    KANIKO_ARGS: "--build-arg UCS_DEV_BRANCH=${UCS_DEV_BRANCH}"
   rules:
+    - if: $UCS_DEV_BRANCH != ""
     - if: $CI_MERGE_REQUEST_ID
       changes:
         - docker/basedpyright-ucs/Dockerfile
