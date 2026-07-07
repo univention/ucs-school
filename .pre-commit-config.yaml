@@ -197,16 +197,8 @@ repos:
         name: basedpyright (relative to baseline)
         language: docker_image
         entry: |
-          gitregistry.knut.univention.de/univention/dev/tooling/ci-components/uv:latest sh -c '
-          export UV_CACHE_DIR=/src/.cache/uv/cache;
-          export HOME=/src/.cache/uv/home;
-          export XDG_CACHE_HOME=/src/.cache/uv/xdg-cache;
-          export XDG_DATA_HOME=/src/.cache/uv/xdg-data;
-          mkdir -p "$UV_CACHE_DIR" "$HOME" "$XDG_CACHE_HOME" "$XDG_DATA_HOME";
-          uvx --python 3.11 \
-            --from basedpyright==1.39.8 \
-            --with-requirements requirements-typecheck.txt \
-            basedpyright \
+          gitregistry.knut.univention.de/univention/dev/education/ucsschool/basedpyright-ucs:latest sh -c '
+          /opt/basedpyright-venv/bin/basedpyright \
             --project pyrightconfig.json \
             --baselinefile basedpyright-baseline.json \
             --baselinemode=auto' --
@@ -232,17 +224,8 @@ repos:
         name: basedpyright (lint file, no baseline)
         language: docker_image
         entry: |
-          gitregistry.knut.univention.de/univention/dev/tooling/ci-components/uv:latest sh -c '
-          export UV_CACHE_DIR=/src/.cache/uv/cache;
-          export HOME=/src/.cache/uv/home;
-          export XDG_CACHE_HOME=/src/.cache/uv/xdg-cache;
-          export XDG_DATA_HOME=/src/.cache/uv/xdg-data;
-          mkdir -p "$UV_CACHE_DIR" "$HOME" "$XDG_CACHE_HOME" "$XDG_DATA_HOME";
-          uvx \
-            --python 3.11 \
-            --from basedpyright==1.39.8 \
-            --with-requirements requirements-typecheck.txt \
-            basedpyright \
+          gitregistry.knut.univention.de/univention/dev/education/ucsschool/basedpyright-ucs:latest sh -c '
+          /opt/basedpyright-venv/bin/basedpyright \
             --project pyrightconfig.json \
             --baselinefile /tmp/nonexistent-basedpyright-baseline.json' --
         stages: [manual]
@@ -253,17 +236,8 @@ repos:
         name: basedpyright (write baseline)
         language: docker_image
         entry: |
-          gitregistry.knut.univention.de/univention/dev/tooling/ci-components/uv:latest sh -c '
-          export UV_CACHE_DIR=/src/.cache/uv/cache;
-          export HOME=/src/.cache/uv/home;
-          export XDG_CACHE_HOME=/src/.cache/uv/xdg-cache;
-          export XDG_DATA_HOME=/src/.cache/uv/xdg-data;
-          mkdir -p "$UV_CACHE_DIR" "$HOME" "$XDG_CACHE_HOME" "$XDG_DATA_HOME";
-          uvx \
-            --python 3.11 \
-            --from basedpyright==1.39.8 \
-            --with-requirements requirements-typecheck.txt \
-            basedpyright \
+          gitregistry.knut.univention.de/univention/dev/education/ucsschool/basedpyright-ucs:latest sh -c '
+          /opt/basedpyright-venv/bin/basedpyright \
             --project pyrightconfig.json \
             --baselinefile basedpyright-baseline.json \
             --writebaseline .' --

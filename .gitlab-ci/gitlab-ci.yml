@@ -5,6 +5,7 @@ variables:
   IMAGE_UCS_EC2_TOOLS: "gitregistry.knut.univention.de/univention/dist/ucs-ec2-tools:latest"
 
 include:
+  - local: .gitlab-ci/basedpyright-image.yml
   - component: $CI_SERVER_FQDN/univention/dev/tooling/ci-components/pre-commit@2
     inputs:
       skip_hooks: "basedpyright-container-baseline"
@@ -13,8 +14,9 @@ include:
   - component: $CI_SERVER_FQDN/univention/dev/tooling/ci-components/python-type-hint-coverage-basedpyright@2
     inputs:
       pipeline_stage: build
-      python_paths: .
+      python_paths: --pythonpath /usr/bin/python3 .
       python_version: "3.11"
+      uv_image: gitregistry.knut.univention.de/univention/dev/education/ucsschool/basedpyright-ucs:latest
       before_script:
         - uv sync --python 3.11
         - uv pip install --requirements requirements-typecheck.txt

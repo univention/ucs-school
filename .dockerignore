@@ -4,3 +4,4 @@
 # last match wins <https://docs.docker.com/engine/reference/builder/#dockerignore-file>
 *
 !.*
+!/requirements-typecheck.txt
