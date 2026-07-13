@@ -13,9 +13,7 @@
 #   ucsschoolAdministrator
 # - check that each member of an admins-school group is a ucsschoolAdministrator
 
-from __future__ import absolute_import
-
-from typing import Dict, List, Tuple, Union  # noqa: F401
+from __future__ import annotations
 
 from ucsschool.lib.roles import get_role_info, role_school_admin
 from univention.lib.i18n import Translation
@@ -41,8 +39,7 @@ FORBIDDEN_GROUPS_WARN_STR = "forbidden group"
 MALFORMED_GROUP_WARN_STR = "malformed group"
 
 
-def get_group_school(attrs):
-    # type: (Dict[str, List[bytes]]) -> Union[str, None]
+def get_group_school(attrs: dict[str, list[bytes]]) -> str | None:
     """
     Returns the group's ucsschoolSchool value, or None if the attribute
     is missing or empty (e.g. for a group with an inconsistent LDAP entry).
@@ -53,8 +50,9 @@ def get_group_school(attrs):
     return school[0].decode("UTF-8")
 
 
-def is_forbidden_group(grp_school, admin_schools, admin_dn, grp_unique_mems):
-    # type: (Union[str, None], List[str], str, List[str]) -> bool
+def is_forbidden_group(
+    grp_school: str | None, admin_schools: list[str], admin_dn: str, grp_unique_mems: list[str]
+) -> bool:
     """
     If the admin is listed in the admin group of a school the
     corresponding school must be part of its schools.
@@ -64,8 +62,9 @@ def is_forbidden_group(grp_school, admin_schools, admin_dn, grp_unique_mems):
     return grp_school not in admin_schools and admin_dn in grp_unique_mems
 
 
-def get_forbidden_group_dns(admin, groups):
-    # type: (Dict[str, Union[str, List[str]]], List[Tuple[str, Dict[str, List[bytes]]]]) -> List[str]
+def get_forbidden_group_dns(
+    admin: dict[str, str | list[str]], groups: list[tuple[str, dict[str, list[bytes]]]]
+) -> list[str]:
     forbidden = []
     for dn, attrs in groups:
         if is_forbidden_group(
@@ -78,8 +77,7 @@ def get_forbidden_group_dns(admin, groups):
     return forbidden
 
 
-def make_warning_message(problem_dict, problem_desc):
-    # type: (Dict[str, List[str]], str) -> str
+def make_warning_message(problem_dict: dict[str, list[str]], problem_desc: str) -> str:
     details = "\n\n" + _("The following {} problems were detected:".format(problem_desc))  # noqa: INT002
     for dn, problems in problem_dict.items():
         details += "\n\n  {}".format(dn)
@@ -88,11 +86,12 @@ def make_warning_message(problem_dict, problem_desc):
     return description + details
 
 
-def search_admin_objects(lo, user_filter):
-    # type: (access, str) -> Tuple[List[Dict[str, Union[str, List[str]]]], List[str]]
+def search_admin_objects(
+    lo: access, user_filter: str
+) -> tuple[list[dict[str, str | list[str]]], list[str]]:
     """Searches for admin objects with object class ucsschoolAdministrator"""
-    admins = []  # type: List[Dict[str, Union[str, List[str]]]]
-    admin_dns = []  # type: List[str]
+    admins: list[dict[str, str | list[str]]] = []
+    admin_dns: list[str] = []
     for dn, attr in lo.search(filter=user_filter, attr=["ucsschoolSchool", "ucsschoolRole"]):
         admin_dns.append(dn)
         try:
@@ -107,14 +106,12 @@ def search_admin_objects(lo, user_filter):
     return admins, admin_dns
 
 
-def get_admin_schools(admin):
-    # type: (Dict[str, List[str]]) -> List[str]
+def get_admin_schools(admin: dict[str, list[str]]) -> list[str]:
     """Retrieves the school names of the admin from its role property."""
     return [get_role_info(role)[2] for role in admin["roles"] if role_school_admin in role]
 
 
-def is_missing_group(group_attrs, admin_dn, school):
-    # type: (Dict[str, List[bytes]], str, str) -> bool
+def is_missing_group(group_attrs: dict[str, list[bytes]], admin_dn: str, school: str) -> bool:
     """
     Returns true if the group's ucsschoolSchool property is the school of admin,
     but admin is not registered in the group.
@@ -125,8 +122,9 @@ def is_missing_group(group_attrs, admin_dn, school):
     return grp_school == school and admin_dn.encode("UTF-8") not in group_attrs.get("uniqueMember", [])
 
 
-def get_missing_group_dns(admin, groups):
-    # type: (Dict[str, Union[str, List[str]]], List[str]) -> List[str]
+def get_missing_group_dns(
+    admin: dict[str, str | list[str]], groups: list[tuple[str, dict[str, list[bytes]]]]
+) -> list[str]:
     missing = []
     for school in get_admin_schools(admin):
         for dn, attrs in groups:
@@ -135,13 +133,14 @@ def get_missing_group_dns(admin, groups):
     return missing
 
 
-def record_non_admin_group_members(admin_dns, groups):
-    # type: (List[str], List[str]) -> Dict[str, List[str]]
+def record_non_admin_group_members(
+    admin_dns: list[str], groups: list[tuple[str, dict[str, list[bytes]]]]
+) -> dict[str, list[str]]:
     """
     Checks whether each group member is a ucsschoolAdministrator and
     records and returns a problem description correspondingly.
     """
-    detected_non_admin_group_members = {}  # type: Dict[str, List[str]]
+    detected_non_admin_group_members: dict[str, list[str]] = {}
     for dn, attr in groups:
         for member in attr.get("uniqueMember", []):
             member = member.decode("UTF-8")
@@ -155,13 +154,14 @@ def record_non_admin_group_members(admin_dns, groups):
     return detected_non_admin_group_members
 
 
-def record_malformed_groups(groups):
-    # type: (List[Tuple[str, Dict[str, List[bytes]]]]) -> Dict[str, List[str]]
+def record_malformed_groups(
+    groups: list[tuple[str, dict[str, list[bytes]]]],
+) -> dict[str, list[str]]:
     """
     Checks whether each group has a ucsschoolSchool attribute and
     records and returns a problem description correspondingly.
     """
-    detected_malformed_groups = {}  # type: Dict[str, List[str]]
+    detected_malformed_groups: dict[str, list[str]] = {}
     for dn, attrs in groups:
         if get_group_school(attrs) is None:
             detected_malformed_groups.setdefault(dn, []).append(
@@ -174,8 +174,8 @@ def record_malformed_groups(groups):
 
 
 def run(_umc_instance):
-    detected_missing_group_dns = {}  # type: Dict[str, List[str]]
-    detected_forbidden_group_dns = {}  # type: Dict[str, List[str]]
+    detected_missing_group_dns: dict[str, list[str]] = {}
+    detected_forbidden_group_dns: dict[str, list[str]] = {}
     lo = getAdminConnection()
     admins, admin_dns = search_admin_objects(lo, USER_FILTER)
     groups = lo.search(filter=GROUP_FILTER, attr=["uniqueMember", "ucsschoolSchool"])
