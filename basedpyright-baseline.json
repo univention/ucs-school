@@ -103862,14 +103862,6 @@
                 }
             },
             {
-                "code": "reportUnknownVariableType",
-                "range": {
-                    "startColumn": 15,
-                    "endColumn": 34,
-                    "lineCount": 1
-                }
-            },
-            {
                 "code": "reportTypeCommentUsage",
                 "range": {
                     "startColumn": 29,
@@ -129795,23 +129787,63 @@
                 "code": "reportTypeCommentUsage",
                 "range": {
                     "startColumn": 12,
-                    "endColumn": 52,
+                    "endColumn": 56,
                     "lineCount": 1
                 }
             },
             {
                 "code": "reportDeprecated",
                 "range": {
-                    "startColumn": 18,
-                    "endColumn": 22,
+                    "startColumn": 13,
+                    "endColumn": 17,
                     "lineCount": 1
                 }
             },
             {
                 "code": "reportDeprecated",
                 "range": {
-                    "startColumn": 34,
-                    "endColumn": 38,
+                    "startColumn": 23,
+                    "endColumn": 27,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportDeprecated",
+                "range": {
+                    "startColumn": 40,
+                    "endColumn": 45,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportTypeCommentUsage",
+                "range": {
+                    "startColumn": 12,
+                    "endColumn": 65,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportDeprecated",
+                "range": {
+                    "startColumn": 13,
+                    "endColumn": 18,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportDeprecated",
+                "range": {
+                    "startColumn": 31,
+                    "endColumn": 35,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportDeprecated",
+                "range": {
+                    "startColumn": 47,
+                    "endColumn": 51,
                     "lineCount": 1
                 }
             },
@@ -130340,6 +130372,86 @@
                 "range": {
                     "startColumn": 60,
                     "endColumn": 66,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportTypeCommentUsage",
+                "range": {
+                    "startColumn": 12,
+                    "endColumn": 78,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportDeprecated",
+                "range": {
+                    "startColumn": 13,
+                    "endColumn": 17,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportDeprecated",
+                "range": {
+                    "startColumn": 18,
+                    "endColumn": 23,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportDeprecated",
+                "range": {
+                    "startColumn": 29,
+                    "endColumn": 33,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportDeprecated",
+                "range": {
+                    "startColumn": 39,
+                    "endColumn": 43,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportDeprecated",
+                "range": {
+                    "startColumn": 58,
+                    "endColumn": 62,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportDeprecated",
+                "range": {
+                    "startColumn": 68,
+                    "endColumn": 72,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportTypeCommentUsage",
+                "range": {
+                    "startColumn": 44,
+                    "endColumn": 64,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportDeprecated",
+                "range": {
+                    "startColumn": 44,
+                    "endColumn": 48,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportDeprecated",
+                "range": {
+                    "startColumn": 54,
+                    "endColumn": 58,
                     "lineCount": 1
                 }
             },

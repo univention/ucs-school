@@ -38,14 +38,29 @@ GROUP_FILTER = "(&(univentionObjectType=groups/group)(cn=admins-*))"
 NON_ADMIN_GROUP_MEMBER_WARN_STR = "non-admin group member"
 MISSING_GROUP_WARN_STR = "missing group"
 FORBIDDEN_GROUPS_WARN_STR = "forbidden group"
+MALFORMED_GROUP_WARN_STR = "malformed group"
+
+
+def get_group_school(attrs):
+    # type: (Dict[str, List[bytes]]) -> Union[str, None]
+    """
+    Returns the group's ucsschoolSchool value, or None if the attribute
+    is missing or empty (e.g. for a group with an inconsistent LDAP entry).
+    """
+    school = attrs.get("ucsschoolSchool")
+    if not school:
+        return None
+    return school[0].decode("UTF-8")
 
 
 def is_forbidden_group(grp_school, admin_schools, admin_dn, grp_unique_mems):
-    # type: (str, List[str], str, List[str]) -> bool
+    # type: (Union[str, None], List[str], str, List[str]) -> bool
     """
     If the admin is listed in the admin group of a school the
     corresponding school must be part of its schools.
     """
+    if grp_school is None:
+        return False
     return grp_school not in admin_schools and admin_dn in grp_unique_mems
 
 
@@ -54,7 +69,7 @@ def get_forbidden_group_dns(admin, groups):
     forbidden = []
     for dn, attrs in groups:
         if is_forbidden_group(
-            attrs["ucsschoolSchool"][0].decode("UTF-8"),
+            get_group_school(attrs),
             admin["schools"],
             admin["dn"].encode("UTF-8"),
             attrs.get("uniqueMember", []),
@@ -104,9 +119,10 @@ def is_missing_group(group_attrs, admin_dn, school):
     Returns true if the group's ucsschoolSchool property is the school of admin,
     but admin is not registered in the group.
     """
-    return group_attrs["ucsschoolSchool"][0].decode("UTF-8") == school and admin_dn.encode(
-        "UTF-8"
-    ) not in group_attrs.get("uniqueMember", [])
+    grp_school = get_group_school(group_attrs)
+    if grp_school is None:
+        return False
+    return grp_school == school and admin_dn.encode("UTF-8") not in group_attrs.get("uniqueMember", [])
 
 
 def get_missing_group_dns(admin, groups):
@@ -139,6 +155,24 @@ def record_non_admin_group_members(admin_dns, groups):
     return detected_non_admin_group_members
 
 
+def record_malformed_groups(groups):
+    # type: (List[Tuple[str, Dict[str, List[bytes]]]]) -> Dict[str, List[str]]
+    """
+    Checks whether each group has a ucsschoolSchool attribute and
+    records and returns a problem description correspondingly.
+    """
+    detected_malformed_groups = {}  # type: Dict[str, List[str]]
+    for dn, attrs in groups:
+        if get_group_school(attrs) is None:
+            detected_malformed_groups.setdefault(dn, []).append(
+                _(
+                    "is missing the required 'ucsschoolSchool' attribute and could not be "
+                    "checked for admin group membership consistency."
+                )
+            )
+    return detected_malformed_groups
+
+
 def run(_umc_instance):
     detected_missing_group_dns = {}  # type: Dict[str, List[str]]
     detected_forbidden_group_dns = {}  # type: Dict[str, List[str]]
@@ -146,6 +180,7 @@ def run(_umc_instance):
     admins, admin_dns = search_admin_objects(lo, USER_FILTER)
     groups = lo.search(filter=GROUP_FILTER, attr=["uniqueMember", "ucsschoolSchool"])
     detected_non_admin_group_members = record_non_admin_group_members(admin_dns, groups)
+    detected_malformed_groups = record_malformed_groups(groups)
     # check if found admins are member in corresponding admins-ou group
     for admin in admins:
         missing_group_dns = get_missing_group_dns(admin, groups)
@@ -174,6 +209,8 @@ def run(_umc_instance):
         warn_msg += make_warning_message(detected_missing_group_dns, MISSING_GROUP_WARN_STR)
     if detected_forbidden_group_dns:
         warn_msg += make_warning_message(detected_forbidden_group_dns, FORBIDDEN_GROUPS_WARN_STR)
+    if detected_malformed_groups:
+        warn_msg += make_warning_message(detected_malformed_groups, MALFORMED_GROUP_WARN_STR)
     if warn_msg:
         raise Warning(warn_msg)
 

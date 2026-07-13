@@ -1,0 +1,20 @@
+product: ucsschool
+release: "5.2"
+released:
+version: [0]
+scope: ucs_5.2-0-ucs-school-5.2
+src: ucs-school-umc-diagnostic
+fix: 3.0.2
+bugs:
+  59604:
+    en: >
+      Diagnostic module robustness improvement: When running the school admin
+      accounts check, the module was raising a traceback when an admins-*
+      group does not have the attribute `ucsschoolSchool`. Such groups are now
+      reported as malformed groups instead.
+    de: >
+      Verbesserung der Robustheit des Diagnosemoduls: Bei der Prüfung der
+      Schuladministratorkonten löste das Modul einen unbehandelten Fehlerfall
+      aus, wenn eine admins-*-Gruppe nicht über das Attribut `ucsschoolSchool`
+      verfügte. Solche Gruppen werden jetzt stattdessen als fehlerhafte
+      Gruppen gemeldet.

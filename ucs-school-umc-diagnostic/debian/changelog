@@ -1,3 +1,10 @@
+ucs-school-umc-diagnostic (3.0.2) unstable; urgency=medium
+
+  * Bug #59604: fix traceback in diagnostic module 908 when an admins-*
+    group is missing the ucsschoolSchool attribute
+
+ -- Jan Gietzel <jan.gietzel@univention.de>  Mon, 13 Jul 2026 12:00:00 +0200
+
 ucs-school-umc-diagnostic (3.0.1) unstable; urgency=medium
 
   * Bug #58432: fix wrong use of uldap.access
