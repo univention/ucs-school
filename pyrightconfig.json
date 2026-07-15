@@ -1,6 +1,7 @@
 {
   "venvPath": ".",
   "pythonVersion": "3.11",
+  "baselineFile": "./basedpyright-baseline.json",
   "extraPaths": [
     "ucs-school-import-lusd/modules",
     "ucs-school-import/modules",
@@ -17,5 +18,18 @@
     "ucs-school-umc-wizards/umc/python",
     "ucs-test-ucsschool/modules"
   ],
-  "reportImplicitStringConcatenation": "none"
+  "reportImplicitStringConcatenation": "none",
+  "reportUnusedCallResult": "none",
+  "executionEnvironments": [
+    {
+      "root": "ucs-test-ucsschool",
+      "reportAny": "hint",
+      "reportExplicitAny": "hint",
+      "reportUnknownLambdaType": "hint",
+      "reportUnusedParameter": "hint"
+    },
+    {
+      "root": "."
+    }
+  ]
 }
