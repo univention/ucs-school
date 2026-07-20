@@ -8,6 +8,7 @@ Consistency-Checker
 Consistency-Checkers
 Cross-Site-Scripting
 CSS-Dateien
+daemon
 delegativen
 Django
 e.g.
@@ -40,6 +41,7 @@ Sorgeberechtigte
 Sorgeberechtigten
 Sorgeberechtigter
 Stylesheet
+systemd
 UCR-Variable
 UCS-Logo
 UDM-Hooks

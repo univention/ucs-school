@@ -6,6 +6,8 @@
 # SPDX-FileCopyrightText: 2007-2026 Univention GmbH
 # SPDX-License-Identifier: AGPL-3.0-only
 
+from __future__ import annotations
+
 import argparse
 import copy
 import logging
@@ -18,6 +20,7 @@ import stat
 import sys
 import time
 import traceback
+from typing import TYPE_CHECKING
 
 import ldap
 from ldap.filter import filter_format
@@ -25,6 +28,9 @@ from ldap.filter import filter_format
 import univention.uldap
 from ucsschool.netlogon import SqliteQueue
 from univention.config_registry import ConfigRegistry
+
+if TYPE_CHECKING:
+    from univention.uldap import access
 
 
 class Log(object):
@@ -93,7 +99,7 @@ class QueueHandler:
         except ValueError:
             Log.error("invalid value in UCR variable ucsschool/userlogon/daemon/debug/level (%r)", val)
 
-        self.lo = univention.uldap.getMachineConnection(ldap_master=False)
+        self.lo = self.get_machine_connection()
         self.setup_config()
         self.user_queue = SqliteQueue(logger=Log)
         self.shutdown_requested = False
@@ -104,6 +110,14 @@ class QueueHandler:
             if not os.path.exists(path):
                 Log.error("missing template file %r.", path)
                 sys.exit(1)
+
+    def get_machine_connection(self) -> access:
+        """Open a machine LDAP connection, exiting the daemon on invalid credentials."""
+        try:
+            return univention.uldap.getMachineConnection(ldap_master=False)
+        except ldap.INVALID_CREDENTIALS as exc:
+            Log.error("Failed to connect to LDAP, invalid credentials: %s", exc)
+            sys.exit(13)
 
     @staticmethod
     def _mkdir(path):

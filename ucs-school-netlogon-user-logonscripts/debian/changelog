@@ -1,3 +1,12 @@
+ucs-school-netlogon-user-logonscripts (17.0.1) unstable; urgency=medium
+
+  * fix: exit daemon with code 13 on invalid LDAP credentials instead of
+    retrying internally; wait for the domain join to finish and let systemd
+    restart the daemon
+    Issue univention/dev/education/ucsschool#1125
+
+ -- Jan Gietzel <jan.gietzel@univention.de>  Mon, 20 Jul 2026 16:28:13 +0200
+
 ucs-school-netlogon-user-logonscripts (17.0.0) unstable; urgency=medium
 
   * UCS@school 5.2

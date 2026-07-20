@@ -1,0 +1,28 @@
+product: ucsschool
+release: "5.2"
+version: [0]
+scope: ucs_5.2-0-ucs-school-5.2
+src: ucs-school-netlogon-user-logonscripts
+fix: 17.0.1
+bugs:
+  59646:
+    en: |
+      A brief LDAP outage, or the ``netlogon-user-logon-script`` daemon being
+      started before the domain join had finished, could cause it to give up
+      on setting up users' logon scripts entirely instead of just delaying it.
+      The daemon's systemd service now waits for the domain join to complete
+      before starting, and if the LDAP connection still fails due to invalid
+      credentials, the daemon logs a clear error and exits; systemd
+      automatically restarts it a few seconds later, so temporary LDAP
+      outages no longer prevent logon scripts from being generated.
+    de: |
+      Ein kurzzeitiger LDAP-Ausfall oder ein Start des Dienstes
+      ``netlogon-user-logon-script`` vor Abschluss des Domänenbeitritts
+      konnte dazu führen, dass die Erstellung der Anmeldeskripte für
+      Benutzer vollständig abbrach, anstatt sie nur zu verzögern. Der
+      :spelling:ignore:`systemd-Dienst`` wartet nun den Abschluss des
+      Domänenbeitritts ab, bevor er startet. Schlägt der Aufbau der
+      LDAP-Verbindung dennoch wegen ungültiger Anmeldedaten fehl, protokolliert
+      der Dienst einen eindeutigen Fehler und beendet sich; systemd startet ihn
+      wenige Sekunden später automatisch neu, sodass vorübergehende
+      LDAP-Ausfälle die Erstellung der Anmeldeskripte nicht mehr verhindern.
