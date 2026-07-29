@@ -31,7 +31,7 @@ description = "\n".join(
 )
 
 USER_FILTER = "(&(univentionObjectType=users/user)(objectClass=ucsschoolAdministrator))"
-GROUP_FILTER = "(&(univentionObjectType=groups/group)(cn=admins-*))"
+GROUP_FILTER = "(&(univentionObjectType=groups/group)(objectClass=ucsschoolAdministratorGroup))"
 
 NON_ADMIN_GROUP_MEMBER_WARN_STR = "non-admin group member"
 MISSING_GROUP_WARN_STR = "missing group"

@@ -9,12 +9,22 @@ bugs:
   59604:
     en: >
       Diagnostic module robustness improvement: When running the school admin
-      accounts check, the module was raising a traceback when an admins-*
-      group does not have the attribute `ucsschoolSchool`. Such groups are now
-      reported as malformed groups instead.
+      accounts check, the module was raising a traceback when an
+      :spelling:ignore:`admins-*` group does not have the attribute
+      :spelling:ignore:`ucsschoolSchool`. Such groups are now reported as
+      malformed groups instead. Additionally, the check now only considers
+      actual UCS@school admin groups instead of any group whose name happens to
+      match the :spelling:ignore:`admins-*` pattern, so unrelated,
+      end-user-created groups (:spelling:ignore:`e.g.`
+      :spelling:ignore:`admins-nextcloud`) are no longer flagged.
     de: >
       Verbesserung der Robustheit des Diagnosemoduls: Bei der Prüfung der
       Schuladministratorkonten löste das Modul einen unbehandelten Fehlerfall
-      aus, wenn eine admins-*-Gruppe nicht über das Attribut `ucsschoolSchool`
-      verfügte. Solche Gruppen werden jetzt stattdessen als fehlerhafte
-      Gruppen gemeldet.
+      aus, wenn eine :spelling:ignore:`admins-*-Gruppe` nicht über das Attribut
+      :spelling:ignore:`ucsschoolSchool` verfügte. Solche Gruppen werden jetzt
+      stattdessen als fehlerhafte Gruppen gemeldet. Zusätzlich berücksichtigt
+      die Prüfung nun nur noch tatsächliche UCS@school-Administratorgruppen
+      anstelle jeder Gruppe, deren Name zufällig dem Muster
+      :spelling:ignore:`admins-*` entspricht, sodass unabhängige, vom Anwender
+      angelegte Gruppen (z. B. :spelling:ignore:`admins-nextcloud`) nicht mehr
+      gemeldet werden.
