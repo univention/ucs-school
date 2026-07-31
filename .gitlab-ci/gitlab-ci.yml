@@ -50,6 +50,12 @@ include:
             - "doc/errata/**/*"
         when: always
 
+# Run inside the basedpyright-ucs image (UCS packages + prek preinstalled) so
+# the basedpyright-native-baseline hook resolves UCS imports without needing
+# docker-in-docker.
+run_pre_commit:
+  image: gitregistry.knut.univention.de/univention/dev/education/ucsschool/basedpyright-ucs:latest
+
 integration_tests:
   extends: .run_openstack_cfg
   stage: test

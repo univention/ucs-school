@@ -209,10 +209,7 @@ repos:
         name: basedpyright (relative to baseline, native)
         language: system
         entry: |
-          sh -c 'uvx \
-            --from basedpyright==1.39.8 \
-            --with-requirements requirements-typecheck.txt \
-            basedpyright \
+          sh -c 'basedpyright \
             --project pyrightconfig.json \
             --baselinefile basedpyright-baseline.json \
             --baselinemode=auto' --

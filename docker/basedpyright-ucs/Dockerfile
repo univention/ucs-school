@@ -50,14 +50,15 @@ RUN if [ -n "$UCS_DEV_BRANCH" ]; then \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements-typecheck.txt /tmp/requirements-typecheck.txt
-# uv is installed into the same venv for the python-type-hint-coverage-basedpyright
-# CI component, which calls "uv venv"/"uv pip install"/"uv run" directly. Its
-# "uv run" shadows PATH with its own isolated venv, so that job resolves UCS
-# imports via basedpyright's own "--pythonpath /usr/bin/python3" flag instead
-# of relying on this venv.
+
+# uv and prek are installed into this same --system-site-packages venv so the image can
+# serve both the python-type-hint-coverage-basedpyright CI component and the run_pre_commit
+# job (see .gitlab-ci/gitlab-ci.yml).
 RUN python3 -m venv --system-site-packages /opt/basedpyright-venv \
     && /opt/basedpyright-venv/bin/pip install --no-cache-dir \
-         "basedpyright==1.39.8" uv -r /tmp/requirements-typecheck.txt \
+         "basedpyright==1.39.8" uv prek -r /tmp/requirements-typecheck.txt \
     && rm /tmp/requirements-typecheck.txt \
     && ln -s /opt/basedpyright-venv/bin/uv /usr/local/bin/uv \
-    && ln -s /opt/basedpyright-venv/bin/uvx /usr/local/bin/uvx
+    && ln -s /opt/basedpyright-venv/bin/uvx /usr/local/bin/uvx \
+    && ln -s /opt/basedpyright-venv/bin/prek /usr/local/bin/prek \
+    && ln -s /opt/basedpyright-venv/bin/basedpyright /usr/local/bin/basedpyright
