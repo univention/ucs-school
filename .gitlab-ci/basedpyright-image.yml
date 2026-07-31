@@ -2,10 +2,24 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 
 include:
-  - project: "univention/dev/nubus-for-k8s/common-ci"
-    ref: "main"
-    file:
-      - "templates/kaniko.yaml"
+  - component: $CI_SERVER_FQDN/univention/dev/tooling/ci-components/buildkit@2
+    inputs:
+      job_name: "build_basedpyright_image"
+      stage: build
+      build_context: "."
+      dockerfile_path: "docker/basedpyright-ucs/Dockerfile"
+      image_name: "basedpyright-ucs"
+      registry_image: "$CI_REGISTRY_IMAGE/basedpyright-ucs"
+      build_args: |
+        UCS_DEV_BRANCH=$UCS_DEV_BRANCH
+      job_rules:
+        - if: $UCS_DEV_BRANCH != ""
+        - if: $CI_MERGE_REQUEST_ID
+          changes:
+            - docker/basedpyright-ucs/Dockerfile
+            - requirements-typecheck.txt
+        - if: $CI_COMMIT_REF_PROTECTED == "true"
+        - if: $CI_COMMIT_TAG
 
 variables:
   UCS_DEV_BRANCH:
@@ -15,20 +29,3 @@ variables:
       (see docker/basedpyright-ucs/Dockerfile, ARG UCS_DEV_BRANCH) instead of
       the released errata channel. Leave empty for the normal, reproducible
       build.
-
-build_basedpyright_image:
-  extends: ".kaniko"
-  stage: build
-  variables:
-    IMAGE_NAME: "basedpyright-ucs"
-    KANIKO_BUILD_CONTEXT: "."
-    DOCKERFILE_PATH: "docker/basedpyright-ucs/Dockerfile"
-    KANIKO_ARGS: "--build-arg UCS_DEV_BRANCH=${UCS_DEV_BRANCH}"
-  rules:
-    - if: $UCS_DEV_BRANCH != ""
-    - if: $CI_MERGE_REQUEST_ID
-      changes:
-        - docker/basedpyright-ucs/Dockerfile
-        - requirements-typecheck.txt
-    - if: $CI_COMMIT_REF_PROTECTED == "true"
-    - if: $CI_COMMIT_TAG
