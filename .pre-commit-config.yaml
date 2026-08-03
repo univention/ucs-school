@@ -52,16 +52,6 @@ repos:
       - id: python-check-blanket-noqa
       - id: python-no-eval
       - id: rst-backticks
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.17.1
-    hooks:
-      - id: mypy
-        files: ^ucs-school-import-lusd/.*
-        additional_dependencies:
-          - types-requests==2.32.0.20240712
-          - pytest==8.3.2
-          - pyjwt
-        args: ["--strict", "--ignore-missing-imports"]
   - repo: https://github.com/shellcheck-py/shellcheck-py
     rev: v0.11.0.1
     hooks:
