@@ -1,5 +1,14 @@
 # SPDX-FileCopyrightText: 2025-2026 Univention GmbH
 # SPDX-License-Identifier: AGPL-3.0-only
+
+#
+# # IMPORTANT
+#
+# After a rebuild, update the pinned digest in IMAGE_BASEDPYRIGHT_UCS
+# (.gitlab-ci/gitlab-ci.yml) and the basedpyright-container-* hooks
+# (.pre-commit-config.yaml), e.g. via `docker buildx imagetools inspect`.
+# and refresh the baseline (`./basedpyright-baseline.json`)!
+
 ARG UCS_VERSION=526
 ARG UCS_BASE_IMAGE_TAG=latest
 

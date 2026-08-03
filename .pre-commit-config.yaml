@@ -187,7 +187,7 @@ repos:
         name: basedpyright (relative to baseline)
         language: docker_image
         entry: |
-          gitregistry.knut.univention.de/univention/dev/education/ucsschool/basedpyright-ucs:latest sh -c '
+          gitregistry.knut.univention.de/univention/dev/education/ucsschool/basedpyright-ucs@sha256:ea4e4e4c69cd2541b59cf8ae0536bad70624f540910e4e210d184dda675f245f sh -c '
           /opt/basedpyright-venv/bin/basedpyright \
             --project pyrightconfig.json \
             --baselinefile basedpyright-baseline.json \
@@ -211,7 +211,7 @@ repos:
         name: basedpyright (lint file, no baseline)
         language: docker_image
         entry: |
-          gitregistry.knut.univention.de/univention/dev/education/ucsschool/basedpyright-ucs:latest sh -c '
+          gitregistry.knut.univention.de/univention/dev/education/ucsschool/basedpyright-ucs@sha256:ea4e4e4c69cd2541b59cf8ae0536bad70624f540910e4e210d184dda675f245f sh -c '
           /opt/basedpyright-venv/bin/basedpyright \
             --project pyrightconfig.json \
             --baselinefile /tmp/nonexistent-basedpyright-baseline.json' --
@@ -223,7 +223,7 @@ repos:
         name: basedpyright (write baseline)
         language: docker_image
         entry: |
-          gitregistry.knut.univention.de/univention/dev/education/ucsschool/basedpyright-ucs:latest sh -c '
+          gitregistry.knut.univention.de/univention/dev/education/ucsschool/basedpyright-ucs@sha256:ea4e4e4c69cd2541b59cf8ae0536bad70624f540910e4e210d184dda675f245f sh -c '
           /opt/basedpyright-venv/bin/basedpyright \
             --project pyrightconfig.json \
             --baselinefile basedpyright-baseline.json \

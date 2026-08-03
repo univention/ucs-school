@@ -3,6 +3,7 @@
 
 variables:
   IMAGE_UCS_EC2_TOOLS: "gitregistry.knut.univention.de/univention/dist/ucs-ec2-tools:latest"
+  IMAGE_BASEDPYRIGHT_UCS: "gitregistry.knut.univention.de/univention/dev/education/ucsschool/basedpyright-ucs@sha256:ea4e4e4c69cd2541b59cf8ae0536bad70624f540910e4e210d184dda675f245f"
 
 include:
   - local: .gitlab-ci/basedpyright-image.yml
@@ -16,7 +17,7 @@ include:
       pipeline_stage: build
       python_paths: --pythonpath /usr/bin/python3 .
       python_version: "3.11"
-      uv_image: gitregistry.knut.univention.de/univention/dev/education/ucsschool/basedpyright-ucs:latest
+      uv_image: $IMAGE_BASEDPYRIGHT_UCS
       before_script:
         - uv sync --python 3.11
         - uv pip install --requirements requirements-typecheck.txt
@@ -54,7 +55,7 @@ include:
 # the basedpyright-native-baseline hook resolves UCS imports without needing
 # docker-in-docker.
 run_pre_commit:
-  image: gitregistry.knut.univention.de/univention/dev/education/ucsschool/basedpyright-ucs:latest
+  image: $IMAGE_BASEDPYRIGHT_UCS
 
 integration_tests:
   extends: .run_openstack_cfg
