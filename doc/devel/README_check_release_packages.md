@@ -28,7 +28,7 @@ a bugzilla bug and note the number on the release issue.
 ## Verify whether the release should be or a full release
 
 Not every package should be released as a package update, but instead needs to be released within a full [UCS@school App release](README_Releases.md).
-Consider the [ucs rules](https://univention.gitpages.knut.univention.de/internal/dev-handbook/guidelines/stability.html#errata-updates) as a guideline to help you decide if a package can be released as an errata.
+Consider the [ucs rules](https://univention.gitpages.knut.univention.de/dev/internal/dev-handbook/guidelines/stability.html#errata-updates) as a guideline to help you decide if a package can be released as an errata.
 Basically you should ensure an administrator doesn't need to take manual steps during the update.
 
 For example:

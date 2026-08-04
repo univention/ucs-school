@@ -43,7 +43,7 @@ See [README_Erratum.md](https://git.knut.univention.de/univention/dev/education/
 
 ## Guidelines
 
-How an issue is finished is defined in the [Definition of done](https://univention.gitpages.knut.univention.de/internal/dev-handbook/dev-workflow/dod.html). Always adhere to our [general review guidelines](https://univention.gitpages.knut.univention.de/internal/dev-handbook/dev-workflow/review.html) and the [UCS@school specific guidelines](https://univention.gitpages.knut.univention.de/internal/dev-handbook/dev-workflow/review.html#qa-of-ucs-school-bugs).
+How an issue is finished is defined in the [Definition of done](https://univention.gitpages.knut.univention.de/dev/internal/dev-handbook/dev-workflow/dod.html). Always adhere to our [general review guidelines](https://univention.gitpages.knut.univention.de/dev/internal/dev-handbook/dev-workflow/review.html) and the [UCS@school specific guidelines](https://univention.gitpages.knut.univention.de/dev/internal/dev-handbook/dev-workflow/review.html#qa-of-ucs-school-bugs).
 
 /label ~"Team::ByteBenders"
 
