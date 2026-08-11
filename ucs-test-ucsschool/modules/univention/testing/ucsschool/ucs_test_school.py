@@ -383,21 +383,22 @@ class UCSTestSchool(object):
             # sorted by length, longest first (==> leafs first)
             obj_list.sort(key=lambda x: len(x), reverse=True)
             # delete users 1st, so their primary group can be deleted
-            obj_list.sort(key=lambda x: x.startswith("uid="), reverse=True)
-            obj_list = group_dns + obj_list
-            for obj_dn in obj_list:
-                try:
-                    self.lo.delete(obj_dn)
-                except (ldap.LDAPError, ldapError) as exc:
-                    logger.error("*** Cannot remove %r: %s", obj_dn, exc)
-                    ok = False
-                except noObject as exc:
-                    logger.warning("Trying to remove non-existent object %r: %s", obj_dn, exc)
-                else:
-                    logger.info("*** Removed %s", obj_dn)
-                if not ok and retry:
-                    logger.info("*** Retrying cleanup_ou(%r)...", ou_name)
-                    ok = self.cleanup_ou(ou_name, wait_for_replication, retry=False)
+            user_dns = [dn for dn in obj_list if dn.startswith("uid=")]
+            other_dns = [dn for dn in obj_list if not dn.startswith("uid=")]
+            ok = self._remove_dns(group_dns + user_dns, ou_name, wait_for_replication, retry)
+            if user_dns:
+                # Bug #59576: deleting the users before their primary group is not enough.
+                # Removing a user also triggers a MODIFY of "Domain Users <ou>", which is
+                # queued behind the user deletions. The listener re-reads each changed DN
+                # from LDAP, so if it lags behind, the group is already gone when it gets
+                # to that MODIFY: change_update_dn() sees LDAP_NO_SUCH_OBJECT and turns it
+                # into a DELETE, which reaches the S4 connector at the MODIFY's queue
+                # position - ahead of the remaining user deletions. Samba 4 then refuses it
+                # with "Refusing to delete ... as it is still the primaryGroupID for N
+                # users". Letting the listener catch up while the group still exists keeps
+                # that MODIFY a MODIFY; the connector queue is ordered, so it needs no wait.
+                utils.wait_for_replication()
+            ok = self._remove_dns(other_dns, ou_name, wait_for_replication, retry) and ok
         self.remove_ucsschool_role_from_dcs(ou_name)
         self.cleanup_default_containers(ou_name)
         log_func = logger.info if ok else logger.error
@@ -418,6 +419,25 @@ class UCSTestSchool(object):
         if wait_for_replication:
             utils.wait_for_replication()
 
+        return ok
+
+    def _remove_dns(self, obj_dns, ou_name, wait_for_replication, retry):
+        # type: (List[str], str, Optional[bool], Optional[bool]) -> bool
+        """Delete the given DNs one by one. Returns False if a deletion failed."""
+        ok = True
+        for obj_dn in obj_dns:
+            try:
+                self.lo.delete(obj_dn)
+            except (ldap.LDAPError, ldapError) as exc:
+                logger.error("*** Cannot remove %r: %s", obj_dn, exc)
+                ok = False
+            except noObject as exc:
+                logger.warning("Trying to remove non-existent object %r: %s", obj_dn, exc)
+            else:
+                logger.info("*** Removed %s", obj_dn)
+            if not ok and retry:
+                logger.info("*** Retrying cleanup_ou(%r)...", ou_name)
+                ok = self.cleanup_ou(ou_name, wait_for_replication, retry=False)
         return ok
 
     def remove_dcs_from_global_groups(self, ou_name):  # type: (str) -> None

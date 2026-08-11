@@ -1,3 +1,16 @@
+ucs-test-ucsschool (8.0.55) unstable; urgency=medium
+
+  * Bug #59576: UCSTestSchool.cleanup_ou() now waits for the listener after
+    deleting a school's users and before deleting its groups. Deleting the
+    users first was not enough: a lagging listener rewrites the queued
+    MODIFY of "Domain Users <school>" into a DELETE, which then reaches
+    Samba 4 ahead of the remaining user deletions and is refused ("Refusing
+    to delete ... still the primaryGroupID for N users"). The wait happens
+    regardless of the wait_for_replication argument, since skipping it
+    reintroduces the race.
+
+ -- Jürn Brodersen <brodersen@univention.de>  Tue, 11 Aug 2026 09:56:40 +0200
+
 ucs-test-ucsschool (8.0.54) unstable; urgency=medium
 
   * Bug #59576: add test for remove a school's users before its OU. This relocates
