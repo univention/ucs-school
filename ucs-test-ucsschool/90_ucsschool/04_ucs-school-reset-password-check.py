@@ -8,6 +8,7 @@
 from __future__ import print_function
 
 import contextlib
+import time
 import warnings
 from dataclasses import dataclass
 from enum import Enum
@@ -94,7 +95,35 @@ def _eventually_skip_samba_lockout_tests(request: pytest.FixtureRequest) -> None
             pytest.skip("Samba lockout reset cases require univention-samba4")
 
 
-def lock_user_with_wrong_samba_password(username: str, attempts: int) -> None:
+def wait_for_lockout_in_ldap(userdn: str, timeout: int = 120, delay: float = 1.0) -> None:
+    """
+    Wait until the Samba lockout of `userdn` has arrived in OpenLDAP.
+
+    The failed logins lock the account in the Samba SAM only. UDM derives its `locked`
+    property from `sambaAcctFlags` in OpenLDAP, so a password reset only resets the bad
+    password counters - and with them the lockout in Samba - once the S4 connector has
+    back-synced `lockoutTime`. Resetting before that leaves the account locked out in
+    Samba although the reset itself succeeds.
+    """
+    utils.wait_for_replication_from_local_samba_to_local_openldap()
+
+    # The waits above only warn when the S4 connector does not catch up in time, so poll
+    # for the lock flag instead of relying on them.
+    lo = utils.get_ldap_connection()
+    deadline = time.monotonic() + timeout
+    while True:
+        flags = lo.getAttr(userdn, "sambaAcctFlags")
+        if flags and b"L" in flags[0]:
+            return
+        if time.monotonic() >= deadline:
+            utils.fail(
+                "sambaAcctFlags of %s still lacks the lock flag %r after %d seconds"
+                % (userdn, flags, timeout)
+            )
+        time.sleep(delay)
+
+
+def lock_user_with_wrong_samba_password(username: str, userdn: str, attempts: int) -> None:
     """Lock the given user by attempting to authenticate with a wrong password repeatedly."""
     shares = ad.Shares(settings=ad.ActiveDirectorySettings(is_local_connect=True))
     for _ in range(attempts):
@@ -111,6 +140,8 @@ def lock_user_with_wrong_samba_password(username: str, attempts: int) -> None:
         ad.Shares(settings=ad.ActiveDirectorySettings(is_local_connect=True)).list(
             username, INIT_PASSWORD
         )
+
+    wait_for_lockout_in_ldap(userdn)
 
 
 def validate_samba_login(target_user: str, new_password: str) -> None:
@@ -478,7 +509,7 @@ def test_password_reset(
     client = Client(stack.host, acting_user, INIT_PASSWORD)
 
     if params.lock_target_user_before_reset:
-        lock_user_with_wrong_samba_password(target_user, attempts=LOCKOUT_ATTEMPTS)
+        lock_user_with_wrong_samba_password(target_user, target_userdn, attempts=LOCKOUT_ATTEMPTS)
 
     def reset():
         try:

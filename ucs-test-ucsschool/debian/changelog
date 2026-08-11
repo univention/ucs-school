@@ -1,3 +1,15 @@
+ucs-test-ucsschool (8.0.57) unstable; urgency=medium
+
+  * Bug #58518: 04_ucs-school-reset-password-check now waits until the Samba
+    lockout has been back-synced to OpenLDAP before resetting the password of a
+    locked account. The failed logins lock the account in the Samba SAM only,
+    while UDM derives "locked" from sambaAcctFlags in OpenLDAP. Resetting before
+    the S4 connector caught up left the account locked out in Samba, although
+    the reset itself succeeded, which made "#17: Schooladmin resets password of
+    Samba-locked student" fail sporadically.
+
+ -- Jürn Brodersen <brodersen@univention.de>  Tue, 11 Aug 2026 16:57:16 +0200
+
 ucs-test-ucsschool (8.0.56) unstable; urgency=medium
 
   * 04_ucs-school-reset-password-required-attr: create the student before the
