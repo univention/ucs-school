@@ -30,7 +30,7 @@ repos:
         additional_dependencies: ["ruff==0.11.2"]
       - id: ucr-ruff-format
         additional_dependencies: ["ruff==0.11.2"]
-  - repo: https://github.com/charliermarsh/ruff-pre-commit
+  - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: "v0.12.11"
     hooks:
       - id: ruff-check
@@ -41,7 +41,7 @@ repos:
         args: ["--fix", "--unsafe-fixes"]
       - id: ruff-format
         alias: "ruff-format"
-      - id: ruff
+      - id: ruff-check
         alias: "ruff-statistics"
         stages: [ manual ]
         args: ["--statistics", "--unsafe-fixes"]
