@@ -37,8 +37,17 @@ def test_empty_required_attr():
         schoolenv.ucr.load()
         host = schoolenv.ucr.get("hostname")
         schoolName, _ = schoolenv.create_ou(name_edudc=host)
-        teacher, teacherDn = schoolenv.create_user(schoolName, is_teacher=True)
+        # Only the student must be missing the extended attribute - that is what this test is
+        # about. The attribute below is required for *every* users/user object, so while it
+        # exists, no user lacking it can be modified: ready() raises insufficientInformation
+        # before _ldap_pre_modify() gets a chance to fill in the default. That also hits the
+        # S4 connector, which back-syncs the attributes Samba writes when a user is created or
+        # authenticates, and it then logs a traceback (failing 01_var_log_tracebacks).
+        # So: create the student first and let its back-sync finish before the attribute
+        # exists, and create the teacher afterwards, so UDM gives it the default value.
         student, studentDn = schoolenv.create_user(schoolName)
+        utils.wait_for_replication()
+        utils.wait_for_connector_replication()
         properties_extended_attribute = {
             "position": f"cn=custom attributes,{schoolenv.udm.UNIVENTION_CONTAINER}",
             "name": uts.random_name(),
@@ -55,6 +64,14 @@ def test_empty_required_attr():
         schoolenv.udm.create_object(
             "settings/extended_attribute",
             **properties_extended_attribute,
+        )
+        teacher, teacherDn = schoolenv.create_user(schoolName, is_teacher=True)
+        schoolenv.udm.verify_udm_object(
+            "users/user",
+            teacherDn,
+            expected_properties={
+                properties_extended_attribute["CLIName"]: [properties_extended_attribute["default"]],
+            },
         )
         client = Client(host, teacher, INIT_PASSWORD)
         options = {

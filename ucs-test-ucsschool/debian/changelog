@@ -1,3 +1,14 @@
+ucs-test-ucsschool (8.0.56) unstable; urgency=medium
+
+  * 04_ucs-school-reset-password-required-attr: create the student before the
+    required extended attribute and wait for its back-sync, and create the
+    teacher afterwards so UDM gives it the default value. While the attribute
+    exists, no user lacking it can be modified, which made the S4 connector
+    log insufficientInformation tracebacks when back-syncing what Samba writes
+    on user creation and authentication.
+
+ -- Jürn Brodersen <brodersen@univention.de>  Tue, 11 Aug 2026 16:12:44 +0200
+
 ucs-test-ucsschool (8.0.55) unstable; urgency=medium
 
   * Bug #59576: UCSTestSchool.cleanup_ou() now waits for the listener after
