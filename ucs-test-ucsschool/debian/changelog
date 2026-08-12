@@ -1,3 +1,15 @@
+ucs-test-ucsschool (8.0.58) unstable; urgency=medium
+
+  * 04_ucs-school-reset-password-required-attr: re-initialize the users/user UDM
+    module after creating the extended attribute. ucsschool.lib initializes it
+    only once per process, which already happened while creating the student, so
+    the teacher was created without the new attribute and neither got its
+    default value nor stayed out of the S4 connector's way. This made
+    test_empty_required_attr fail in all configurations of Install Multiserver
+    #608.
+
+ -- Jürn Brodersen <brodersen@univention.de>  Wed, 12 Aug 2026 10:00:00 +0200
+
 ucs-test-ucsschool (8.0.57) unstable; urgency=medium
 
   * Bug #58518: 04_ucs-school-reset-password-check now waits until the Samba

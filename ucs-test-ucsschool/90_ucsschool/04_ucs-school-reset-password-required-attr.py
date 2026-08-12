@@ -9,6 +9,8 @@ from __future__ import print_function
 
 import pytest
 
+import univention.admin.modules
+import univention.admin.uldap
 import univention.testing.strings as uts
 import univention.testing.ucsschool.ucs_test_school as utu
 from univention.config_registry import ucr
@@ -64,6 +66,18 @@ def test_empty_required_attr():
         schoolenv.udm.create_object(
             "settings/extended_attribute",
             **properties_extended_attribute,
+        )
+        # A UDM handler module only knows the extended attributes that existed when it was
+        # initialized, and ucsschool.lib initializes users/user once per process - which
+        # already happened while the student was created above. Without this re-initialization
+        # the teacher would be created without the attribute as well, so it would neither get
+        # the default value nor stay out of the S4 connector's way.
+        users_user = univention.admin.modules.get("users/user")
+        assert users_user is not None
+        univention.admin.modules.init(
+            schoolenv.lo,
+            univention.admin.uldap.position(schoolenv.lo.base),
+            users_user,
         )
         teacher, teacherDn = schoolenv.create_user(schoolName, is_teacher=True)
         schoolenv.udm.verify_udm_object(
