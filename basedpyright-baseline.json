@@ -203896,6 +203896,38 @@
         ],
         "./ucs-test-ucsschool/90_ucsschool/117_display_email_and_search_filter.py": [
             {
+                "code": "reportMissingTypeStubs",
+                "range": {
+                    "startColumn": 5,
+                    "endColumn": 41,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportMissingTypeStubs",
+                "range": {
+                    "startColumn": 5,
+                    "endColumn": 27,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportUnknownMemberType",
+                "range": {
+                    "startColumn": 12,
+                    "endColumn": 29,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportUnknownMemberType",
+                "range": {
+                    "startColumn": 12,
+                    "endColumn": 27,
+                    "lineCount": 1
+                }
+            },
+            {
                 "code": "reportArgumentType",
                 "range": {
                     "startColumn": 28,

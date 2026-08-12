@@ -1,3 +1,14 @@
+ucs-test-ucsschool (8.0.59) unstable; urgency=medium
+
+  * 117_display_email_and_search_filter: drive
+    ucsschool/umc/show-email-instead-of-username from the test instead of
+    expecting LDAP_Filter.forUsers() to search the username and the primary
+    email address at the same time. The filter swaps one for the other, so the
+    two previous assertions contradicted each other and one of them had to
+    fail whichever way the variable was set.
+
+ -- Jürn Brodersen <brodersen@univention.de>  Wed, 12 Aug 2026 12:34:11 +0200
+
 ucs-test-ucsschool (8.0.58) unstable; urgency=medium
 
   * 04_ucs-school-reset-password-required-attr: re-initialize the users/user UDM
