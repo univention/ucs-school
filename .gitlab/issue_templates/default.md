@@ -7,8 +7,8 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 | Product Value || Reasoning |
 |-|-|-|
-| User Impact | 0 | + covered by other issues  |
-| Product Enablement | 0 | + only release |
+| User Impact | 0 | **TODO** |
+| Product Enablement | 0 | **TODO** |
 
 ## Accounting
 
