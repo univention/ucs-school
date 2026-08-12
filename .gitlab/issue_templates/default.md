@@ -3,6 +3,13 @@ SPDX-FileCopyrightText: 2025-2026 Univention GmbH
 SPDX-License-Identifier: AGPL-3.0-only
 -->
 
+# UCS@school package update issue
+
+| Product Value || Reasoning |
+|-|-|-|
+| User Impact | 0 | + covered by other issues  |
+| Product Enablement | 0 | + only release |
+
 ## Accounting
 
 - Univention GmbH (424)
