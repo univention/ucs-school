@@ -43,7 +43,10 @@ include:
   - local: .gitlab-ci/release.yml
     rules:
       - if: $RUN_UPDATE_RELEASE_ISSUE != "yes"
-  - local: .gitlab-ci/SonarQube.yml
+  - component: $CI_SERVER_FQDN/univention/dev/tooling/ci-components/sonarqube@2.12.0
+    inputs:
+      job_name: "build-sonar"
+      stage: build
     rules:
       - if: $RUN_UPDATE_RELEASE_ISSUE != "yes"
   - local: .gitlab-ci/update_release_issue.yml
