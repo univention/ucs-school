@@ -1,3 +1,21 @@
+ucs-test-ucsschool (8.0.60) unstable; urgency=medium
+
+  * 104_delete_computers_delete_related_objects: poll the LDAP checks instead of
+    asserting once. After a computer is removed, the S4 connector syncs the
+    deletion to Samba/AD and the AD -> UCS direction transiently re-creates the
+    DNS host record before a later round removes it again.
+    wait_for_s4connector_replication() gives up after 17 seconds with nothing
+    but a warning, so the test walked into that window.
+    Issue univention/dev/education/ucsschool#850
+  * 03_computerroom_endExam: keep the exam end time on the day the exam starts.
+    The end time is sent as "HH:mm" without a date and the computer room
+    resolves it against the current day, so an exam ending after midnight looked
+    like it had already ended and the module opened a dialogue that no step of
+    the test answers. The test now refuses to run within 15 minutes of midnight.
+    Issue univention/dev/education/ucsschool#1463
+
+ -- Jürn Brodersen <brodersen@univention.de>  Fri, 14 Aug 2026 17:11:49 +0200
+
 ucs-test-ucsschool (8.0.59) unstable; urgency=medium
 
   * 117_display_email_and_search_filter: drive
