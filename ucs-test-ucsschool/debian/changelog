@@ -1,3 +1,15 @@
+ucs-test-ucsschool (8.0.61) unstable; urgency=medium
+
+  * 04_ucs-school-reset-password-check: generate reset passwords that pass the
+    password quality check the test itself enables. uts.random_string() returns
+    ten characters out of [A-Za-z0-9], about one in a thousand of which cracklib
+    rejects as "too simplistic/systematic", so the reset failed with a 400 in
+    the test cases that expect it to succeed. The candidate is now screened with
+    cracklib.VeryFascistCheck(), the same function the server reaches through
+    univention.password.Check.
+
+ -- Jürn Brodersen <brodersen@univention.de>  Fri, 14 Aug 2026 17:21:47 +0200
+
 ucs-test-ucsschool (8.0.60) unstable; urgency=medium
 
   * 104_delete_computers_delete_related_objects: poll the LDAP checks instead of

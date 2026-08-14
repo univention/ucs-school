@@ -177469,6 +177469,14 @@
                 "code": "reportMissingTypeStubs",
                 "range": {
                     "startColumn": 7,
+                    "endColumn": 15,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportMissingTypeStubs",
+                "range": {
+                    "startColumn": 7,
                     "endColumn": 42,
                     "lineCount": 1
                 }
@@ -177526,6 +177534,14 @@
                 "range": {
                     "startColumn": 5,
                     "endColumn": 29,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportUnknownMemberType",
+                "range": {
+                    "startColumn": 12,
+                    "endColumn": 37,
                     "lineCount": 1
                 }
             },

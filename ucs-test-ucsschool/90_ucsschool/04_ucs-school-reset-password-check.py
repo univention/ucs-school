@@ -14,6 +14,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Callable, Dict, Generator, List
 
+import cracklib
 import pytest
 
 import univention.testing.active_directory as ad
@@ -30,7 +31,25 @@ LOCKOUT_ATTEMPTS = 3
 
 
 def random_password() -> str:
-    return uts.random_string()
+    """
+    Random password that passes the quality check this test enables.
+
+    uts.random_string() returns ten characters out of [A-Za-z0-9], and about one
+    in a thousand of those is rejected by cracklib as "too simplistic/systematic"
+    ('gfwbb434cd' in Install Singleserver #643). The reset then fails with a 400
+    in the test cases that expect it to succeed. Making the password longer does
+    not help - the rule looks at the structure, not the length - so screen the
+    candidate with the same function the server uses in
+    univention.password.Check.check().
+    """
+    for _ in range(100):
+        password = uts.random_string()
+        try:
+            cracklib.VeryFascistCheck(password)
+        except ValueError:
+            continue
+        return password
+    raise AssertionError("No candidate passed cracklib.VeryFascistCheck() in 100 attempts")
 
 
 def simple_password() -> str:
