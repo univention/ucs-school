@@ -26,6 +26,27 @@ from univention.testing.ucsschool.exam import (
 translator = localization.translation("ucs-test-selenium")
 _ = translator.translate
 
+# The exam end time is passed as "HH:mm" without a date, and _acquireRoom() in
+# computerroom.js resolves it against the current day. An exam that ends after
+# midnight therefore looks like it ended hours ago, and the computer room opens
+# the "The allowed time for this examination has been reached" dialog as soon as
+# the room is acquired - which no step of this test closes. Keep the end time on
+# the day the exam starts.
+EXAM_DURATION = timedelta(hours=2)
+MIN_EXAM_DURATION = timedelta(minutes=15)
+
+
+def get_exam_end_time(start):
+    """Exam end time for an exam started at `start`, never crossing midnight."""
+    end_of_day = start.replace(hour=23, minute=59, second=0, microsecond=0)
+    if end_of_day - start < MIN_EXAM_DURATION:
+        raise RuntimeError(
+            "This test cannot run within %d minutes of midnight (it is %s): the exam end time "
+            "carries no date, so an exam ending after midnight is treated as already reached by "
+            "the computer room module." % (MIN_EXAM_DURATION.total_seconds() // 60, start)
+        )
+    return min(start + EXAM_DURATION, end_of_day)
+
 
 class UMCTester(object):
     def _open_computer_room(self, school, room_name):
@@ -45,6 +66,8 @@ class UMCTester(object):
         self.selenium.wait_until_all_dialogues_closed()
 
     def test_umc(self):
+        # fail before the setup instead of in the middle of the exam
+        chosen_time = get_exam_end_time(datetime.now())
         with univention.testing.udm.UCSTestUDM() as udm:
             with utu.UCSTestSchool() as schoolenv:
                 with ucr_test.UCSTestConfigRegistry() as ucr:
@@ -92,9 +115,6 @@ class UMCTester(object):
                         _("Close")
                     )  # No exam running, should just close the module
                     self.selenium.wait_for_text(_("Education"))
-
-                    current_time = datetime.now()
-                    chosen_time = current_time + timedelta(hours=2)
 
                     print(" ** After creating the rooms")
                     wait_replications_check_rejected_uniqueMember(existing_rejects)
