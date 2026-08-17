@@ -19,11 +19,11 @@ from univention.uldap import getMachineConnection
 ucr = ucr_test.UCSTestConfigRegistry()
 ucr.load()
 
-# The related objects are not gone the instant the UMC request returns:
-# the S4 connector syncs the deletion to Samba/AD, and the AD -> UCS direction
-# transiently re-creates the DNS host record before a later round removes it again
-# (see univention/ucsschool#850). utils.wait_for_s4connector_replication() gives up
-# after 17 seconds with nothing but a warning, so poll instead of checking once.
+# The related objects are not gone the instant the UMC request returns, and
+# utils.wait_for_s4connector_replication() gives up after 17 seconds with nothing but a
+# warning, so poll instead of checking once. Do not read a lasting leftover as slowness:
+# when the AD -> UCS direction re-creates a DNS record of an already removed computer, it
+# stays for good (see univention/ucsschool#850), and no timeout is long enough for that.
 RETRY_COUNT = 12
 RETRY_DELAY = 5
 

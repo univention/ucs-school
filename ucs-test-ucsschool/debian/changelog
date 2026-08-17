@@ -1,3 +1,21 @@
+ucs-test-ucsschool (8.0.63) unstable; urgency=medium
+
+  * UmcComputer.create(): wait for the S4 connector, like remove() already does.
+    Only listener replication was awaited, so a caller could remove a computer
+    while the connector was still reading its own UCS -> AD writes back. In
+    Install Multiserver #613 the removal of the first of three computers
+    overtook that second pass: the computer object was skipped by the
+    connector's "does not exist in UCS but has already been added in the past"
+    guard, but the DNS mapping has no such guard and re-created the forward and
+    reverse records of the removed computer. Neither listener log shows any
+    later deletion of them, so 104_delete_computers_delete_related_objects kept
+    finding the host record for the full retry minute. The second and third
+    computer were unaffected because the connector wait in remove() had drained
+    the pending round by then.
+    Issue univention/dev/education/ucsschool#850
+
+ -- Jürn Brodersen <brodersen@univention.de>  Mon, 17 Aug 2026 10:41:33 +0200
+
 ucs-test-ucsschool (8.0.62) unstable; urgency=medium
 
   * 04_ucs-school-reset-password-check: make the Samba lockout in the two

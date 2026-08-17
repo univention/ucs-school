@@ -752,6 +752,13 @@ class UmcComputer(object):
         reqResult = self.client.umc_command("schoolwizards/computers/add", param, flavor).result
         if should_succeed and reqResult[0]["result"] is True:
             utils.wait_for_replication()
+            # The S4 connector has to finish the round trip of the new objects before the
+            # caller may change them again: it first syncs them UCS -> AD and then reads
+            # its own writes back AD -> UCS. A removal that overtakes that second pass is
+            # undone for the DNS records, because the AD -> UCS direction re-creates a
+            # host record it still sees in AD, while the computer itself is protected by
+            # the connector's "already been added in the past" guard.
+            utils.wait_for_s4connector_replication()
         elif not should_succeed and reqResult[0]["result"].get("error"):
             print(
                 "Expected creation failed for computer (%r)\nReturn Message: %r"
