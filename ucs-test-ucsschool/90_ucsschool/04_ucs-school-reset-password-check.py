@@ -27,7 +27,12 @@ from univention.testing.umc import Client
 from univention.testing.utils import package_installed
 
 INIT_PASSWORD = "univention"
-LOCKOUT_ATTEMPTS = 3
+LOCKOUT_THRESHOLD = 3
+# One wrong password more than the threshold, so that a single attempt Samba does not
+# count - a login that never reaches the SAM, for example - does not leave the account
+# unlocked. Attempts against an already locked account are answered with
+# NT_STATUS_ACCOUNT_LOCKED_OUT and change nothing.
+LOCKOUT_ATTEMPTS = LOCKOUT_THRESHOLD + 2
 
 
 def random_password() -> str:
@@ -98,7 +103,7 @@ def _samba_lockout_policy_for_test(request: pytest.FixtureRequest) -> Generator[
     callspec = getattr(request.node, "callspec", None)
     params: TestCaseData | None = callspec.params.get("params") if callspec else None
     if params and params.lock_target_user_before_reset:
-        with samba_account_lockout_policy(threshold=LOCKOUT_ATTEMPTS):
+        with samba_account_lockout_policy(threshold=LOCKOUT_THRESHOLD):
             yield
     else:
         yield
@@ -114,7 +119,51 @@ def _eventually_skip_samba_lockout_tests(request: pytest.FixtureRequest) -> None
             pytest.skip("Samba lockout reset cases require univention-samba4")
 
 
-def wait_for_lockout_in_ldap(userdn: str, timeout: int = 120, delay: float = 1.0) -> None:
+def samba_user(username: str) -> ad.UserData:
+    """Read the lockout state of `username` from the local Samba SAM."""
+    return ad.User(settings=ad.ActiveDirectorySettings(is_local_connect=True)).get(username)
+
+
+def wait_for_user_in_samba(username: str, timeout: int = 120, delay: float = 1.0) -> None:
+    """
+    Wait until `username` exists in the local Samba SAM.
+
+    The users are created in OpenLDAP, and the S4 connector and DRS carry them into the
+    local Samba afterwards. `samba-tool user show` neither authenticates nor touches
+    `badPwdCount`, so polling it does not consume any of the wrong password attempts the
+    lockout needs.
+    """
+    deadline = time.monotonic() + timeout
+    while True:
+        try:
+            samba_user(username)
+            return
+        except ad.SambaToolException as exc:
+            if time.monotonic() >= deadline:
+                utils.fail(
+                    "%s did not reach the local Samba within %d seconds: %s" % (username, timeout, exc)
+                )
+        time.sleep(delay)
+
+
+def wait_for_lockout_in_samba(username: str, timeout: int = 60, delay: float = 1.0) -> None:
+    """
+    Wait until the local Samba SAM reports `username` as locked out.
+
+    `lockoutTime` is maintained by the PDC emulator, so on a school replica it takes a
+    moment to show up in the local SAM after the failed logins.
+    """
+    deadline = time.monotonic() + timeout
+    while not samba_user(username).lockout_time:
+        if time.monotonic() >= deadline:
+            utils.fail(
+                "%s is not locked out in Samba %d seconds after the wrong passwords, "
+                "Samba state: %r" % (username, timeout, samba_user(username))
+            )
+        time.sleep(delay)
+
+
+def wait_for_lockout_in_ldap(username: str, userdn: str, timeout: int = 300, delay: float = 1.0) -> None:
     """
     Wait until the Samba lockout of `userdn` has arrived in OpenLDAP.
 
@@ -123,6 +172,12 @@ def wait_for_lockout_in_ldap(userdn: str, timeout: int = 120, delay: float = 1.0
     password counters - and with them the lockout in Samba - once the S4 connector has
     back-synced `lockoutTime`. Resetting before that leaves the account locked out in
     Samba although the reset itself succeeds.
+
+    On a school replica that back-sync runs on the Primary Directory Node: the lockout
+    travels from the local Samba through DRS to the Primary, its S4 connector writes
+    `locked` to the Primary's OpenLDAP, and only then does listener replication bring the
+    flag back here. None of the waits below cover that whole chain, hence the generous
+    timeout.
     """
     utils.wait_for_replication_from_local_samba_to_local_openldap()
 
@@ -136,15 +191,30 @@ def wait_for_lockout_in_ldap(userdn: str, timeout: int = 120, delay: float = 1.0
             return
         if time.monotonic() >= deadline:
             utils.fail(
-                "sambaAcctFlags of %s still lacks the lock flag %r after %d seconds"
-                % (userdn, flags, timeout)
+                "sambaAcctFlags of %s still lacks the lock flag %r after %d seconds, "
+                "Samba state: %r" % (userdn, flags, timeout, samba_user(username))
             )
         time.sleep(delay)
 
 
 def lock_user_with_wrong_samba_password(username: str, userdn: str, attempts: int) -> None:
     """Lock the given user by attempting to authenticate with a wrong password repeatedly."""
+    # The account has to be usable in Samba before it can be locked there. Logging in
+    # while the user or its password is still on its way from OpenLDAP into the local
+    # Samba fails with NT_STATUS_LOGON_FAILURE, which looks exactly like a wrong password
+    # and hides the lockout this function is supposed to provoke.
+    utils.wait_for_replication_from_master_openldap_to_local_samba()
+    wait_for_user_in_samba(username)
+
     shares = ad.Shares(settings=ad.ActiveDirectorySettings(is_local_connect=True))
+    try:
+        shares.list(username, INIT_PASSWORD)
+    except ad.ActiveDirectoryException as exc:
+        utils.fail(
+            "%s cannot authenticate against Samba with its initial password, so the "
+            "lockout below would be meaningless: %s" % (username, exc)
+        )
+
     for _ in range(attempts):
         # We intentionally expect authentication failures here to trigger lockout.
         with contextlib.suppress(
@@ -153,14 +223,16 @@ def lock_user_with_wrong_samba_password(username: str, userdn: str, attempts: in
             ad.SmbClientException,
         ):
             shares.list(username, "wrong_pwd")
+        if samba_user(username).lockout_time:
+            break
+    else:
+        wait_for_lockout_in_samba(username)
 
     # verify that the account is actually locked
     with pytest.raises((ad.AccountLockedOutException)):
-        ad.Shares(settings=ad.ActiveDirectorySettings(is_local_connect=True)).list(
-            username, INIT_PASSWORD
-        )
+        shares.list(username, INIT_PASSWORD)
 
-    wait_for_lockout_in_ldap(userdn)
+    wait_for_lockout_in_ldap(username, userdn)
 
 
 def validate_samba_login(target_user: str, new_password: str) -> None:

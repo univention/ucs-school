@@ -177700,6 +177700,14 @@
             {
                 "code": "reportUnknownMemberType",
                 "range": {
+                    "startColumn": 8,
+                    "endColumn": 19,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportUnknownMemberType",
+                "range": {
                     "startColumn": 12,
                     "endColumn": 23,
                     "lineCount": 1
@@ -177709,7 +177717,7 @@
                 "code": "reportUnknownMemberType",
                 "range": {
                     "startColumn": 8,
-                    "endColumn": 82,
+                    "endColumn": 19,
                     "lineCount": 1
                 }
             },

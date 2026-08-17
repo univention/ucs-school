@@ -1,3 +1,23 @@
+ucs-test-ucsschool (8.0.62) unstable; urgency=medium
+
+  * 04_ucs-school-reset-password-check: make the Samba lockout in the two
+    lockout test cases deterministic. Case #17 is the only lockout case whose
+    target student is created seconds before it runs - case #16 resets a password
+    and thereby invalidates the user stack - and the stack fixture only waits for
+    listener replication, not for the S4 connector and DRS. The student was
+    therefore not always usable in the local Samba yet, all four smbclient logins
+    answered NT_STATUS_LOGON_FAILURE, and the case died on the wrong exception
+    (Install Multiserver #609 and #613). The test now waits for the account to
+    reach the local Samba and verifies that it can authenticate there before
+    locking it, keeps trying wrong passwords until Samba reports lockoutTime
+    instead of relying on exactly as many attempts as the threshold, and reports
+    the Samba lockout state when the lock flag does not arrive in OpenLDAP. The
+    wait for the flag also grew to 300 seconds, because on a school replica it
+    travels through DRS, the S4 connector on the Primary Directory Node and
+    listener replication, and none of the available waits cover that chain.
+
+ -- Jürn Brodersen <brodersen@univention.de>  Mon, 17 Aug 2026 09:59:27 +0200
+
 ucs-test-ucsschool (8.0.61) unstable; urgency=medium
 
   * 04_ucs-school-reset-password-check: generate reset passwords that pass the
