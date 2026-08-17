@@ -1,3 +1,19 @@
+ucs-test-ucsschool (8.0.64) unstable; urgency=medium
+
+  * 105_activate_groupmembers: wait for the S4 connector after each
+    activate_groupmembers run. The four test cases deactivate and activate the
+    same five users about two seconds apart, which is less than the connector
+    needs to read its own UCS -> AD writes back, so it applies the previous
+    status on top of the new one. In Install Singleserver #646 the school admin
+    was deactivated at 01:13:52.416 and re-enabled by the connector at
+    01:13:52.577, and stayed enabled - the retry loop cannot heal that, because
+    no later change resets it. The school admin is always the victim because the
+    script writes the group members in reverse order, so it is written first in
+    every case.
+    Issue univention/dev/internal/product-tests/ucsschool#2
+
+ -- Jürn Brodersen <brodersen@univention.de>  Mon, 17 Aug 2026 11:12:04 +0200
+
 ucs-test-ucsschool (8.0.63) unstable; urgency=medium
 
   * UmcComputer.create(): wait for the S4 connector, like remove() already does.

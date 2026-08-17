@@ -136,6 +136,15 @@ def test_activate_groupmembers(schoolenv, ucr):
         print("Test case = active: %s, change_passwd: %s" % (newStatus, change_passwd))
         outfile = activate_groupmembers("%s-%s" % (school, group.name), newStatus, change_passwd)
 
+        # Let the S4 connector finish the round trip of this test case before checking and
+        # before the next case changes the same users again. The connector reads its own
+        # UCS -> AD writes back afterwards, and the next case is only two seconds away, so
+        # without this wait it applies the previous status on top of the new one. That is
+        # permanent - no later change resets it - and the retries below cannot heal it:
+        # Install Singleserver #646 lost the deactivation of the school admin this way.
+        utils.wait_for_replication()
+        utils.wait_for_s4connector_replication()
+
         def test_func(username, should_pass, passwd):
             checK_status(username, should_pass)
             check_auth(username, passwd, should_pass)
