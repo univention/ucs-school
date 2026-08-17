@@ -73,6 +73,18 @@ class Workgroup(object):
     def __exit__(self, type, value, trace_back):
         self.ucr.revert_to_original_registry()
 
+    def _wait_for_replication(self):
+        """
+        Wait until the change has been through the S4 connector.
+
+        The connector first syncs the group UCS -> AD and then reads its own writes back
+        AD -> UCS. A caller that changes or removes the group before that second pass gets
+        the previous state applied on top of the new one - permanently, because nothing
+        changes the group again afterwards. Retrying the check cannot heal that.
+        """
+        utils.wait_for_replication()
+        utils.wait_for_s4connector_replication()
+
     def create(self, expect_creation_fails_due_to_duplicated_name=False):
         """
         Creates object workgroup\n
@@ -87,7 +99,7 @@ class Workgroup(object):
                     "Workgroup %s already exists, though a new workgroup is created with a the same name"
                     % self.name
                 )
-            utils.wait_for_replication()
+            self._wait_for_replication()
         except HTTPError as exc:
             group_fullname = "%s-%s" % (self.school, self.name)
             exception_strings = [
@@ -136,7 +148,7 @@ class Workgroup(object):
         removingParam = [{"object": [groupdn], "options": options}]
         requestResult = self.client.umc_command("schoolgroups/remove", removingParam, flavor).result
         assert requestResult, "Group %s failed to be removed" % self.name
-        utils.wait_for_replication()
+        self._wait_for_replication()
 
     def addMembers(self, memberListdn, options=None):
         """
@@ -202,7 +214,7 @@ class Workgroup(object):
         self.email = ""
         self.allowed_email_senders_groups = []
         self.allowed_email_senders_users = []
-        utils.wait_for_replication()
+        self._wait_for_replication()
 
     def set_members(self, new_members, options=None):
         """
@@ -232,7 +244,7 @@ class Workgroup(object):
         requestResult = self.client.umc_command("schoolgroups/put", creationParam, flavor).result
         assert requestResult, "Members %s failed to be set" % new_members
         self.members = new_members
-        utils.wait_for_replication()
+        self._wait_for_replication()
 
     def verify_ldap_attributes(self):
         """checking group attributes in ldap"""

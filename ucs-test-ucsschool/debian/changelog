@@ -1,3 +1,26 @@
+ucs-test-ucsschool (8.0.65) unstable; urgency=medium
+
+  * Wait for the S4 connector in the remaining places that change an object the
+    connector still has in flight. The connector first syncs a change UCS -> AD
+    and then reads its own write back AD -> UCS, so a second change that arrives
+    before that gets the previous state applied on top of it, and nothing resets
+    it afterwards.
+    - UmcComputer.edit(): only listener replication was awaited, so
+      71_computers_module changed a computer's IP address and removed it about a
+      second later. That leaves orphaned DNS records behind without failing,
+      because verify_ldap() only looks at the computer object.
+    - 70_users_module: the file already waits for the connector after
+      User.create() for exactly this reason, but not after User.edit(), where the
+      write back can revert the new attributes before they are checked.
+    - Workgroup: create(), remove(), set_members() and deactivate_email() now
+      wait as well, which also covers addMembers() and removeMembers() through
+      set_members(). 05_ucs-school-workinggroup-module-check changes members and
+      deactivates the email address right after creating a group, and the 30
+      second retry loops it grew around those checks cannot heal a reverted
+      state.
+
+ -- Jürn Brodersen <brodersen@univention.de>  Mon, 17 Aug 2026 12:03:47 +0200
+
 ucs-test-ucsschool (8.0.64) unstable; urgency=medium
 
   * 105_activate_groupmembers: wait for the S4 connector after each

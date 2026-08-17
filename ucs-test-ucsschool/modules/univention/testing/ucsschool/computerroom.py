@@ -751,14 +751,7 @@ class UmcComputer(object):
         print("param = %s" % (param,))
         reqResult = self.client.umc_command("schoolwizards/computers/add", param, flavor).result
         if should_succeed and reqResult[0]["result"] is True:
-            utils.wait_for_replication()
-            # The S4 connector has to finish the round trip of the new objects before the
-            # caller may change them again: it first syncs them UCS -> AD and then reads
-            # its own writes back AD -> UCS. A removal that overtakes that second pass is
-            # undone for the DNS records, because the AD -> UCS direction re-creates a
-            # host record it still sees in AD, while the computer itself is protected by
-            # the connector's "already been added in the past" guard.
-            utils.wait_for_s4connector_replication()
+            self._wait_for_replication()
         elif not should_succeed and reqResult[0]["result"].get("error"):
             print(
                 "Expected creation failed for computer (%r)\nReturn Message: %r"
@@ -772,14 +765,26 @@ class UmcComputer(object):
                 "Unable to create computer (%r)\nRequest Result: %r" % (param, reqResult)
             )
 
+    def _wait_for_replication(self):
+        """
+        Wait until the change has been through the S4 connector.
+
+        The connector first syncs the computer UCS -> AD and then reads its own writes
+        back AD -> UCS. A caller that changes or removes it before that second pass gets
+        the previous state applied on top of the new one. The computer object itself is
+        protected by the connector's "already been added in the past" guard, but its DNS
+        records are not: they are re-created and then stay behind for good.
+        """
+        utils.wait_for_replication()
+        utils.wait_for_s4connector_replication()
+
     def remove(self):
         """Remove computer"""
         flavor = "schoolwizards/computers"
         param = [{"object": {"$dn$": self.dn(), "school": self.school}, "options": None}]
         reqResult = self.client.umc_command("schoolwizards/computers/remove", param, flavor).result
         assert reqResult[0] is True, "Unable to remove computer (%s): %r" % (self.name, reqResult)
-        utils.wait_for_replication()
-        utils.wait_for_s4connector_replication()
+        self._wait_for_replication()
 
     def dn(self):
         return "cn=%s,cn=computers,%s" % (self.name, utu.UCSTestSchool().get_ou_base_dn(self.school))
@@ -861,7 +866,7 @@ class UmcComputer(object):
         self.mac_address = mac_address.lower() if mac_address else None
         self.subnet_mask = subnet_mask
         self.inventory_number = inventory_number
-        utils.wait_for_replication()
+        self._wait_for_replication()
 
     def query(self):
         """get the list of existing computer in the school"""

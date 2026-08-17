@@ -63,6 +63,10 @@ def _create_user(user_params: UserCreationParameters, ucr, remove_from_school=No
     user.edit(new_attrs)
     wait_for_drs_replication(filter_format("cn=%s", (user.username,)))
 
+    # The write back above happens after a modification as well, and it would revert the
+    # new attributes before they are checked below.
+    wait_for_s4connector()
+
     # Passwords are not returned via the get request, so it is not expected
     new_attrs["password"] = None
     user.check_get(expected_attrs=new_attrs)
