@@ -45,8 +45,15 @@ COPY --from=ucs-dev-branch-tools /usr/local/bin/ucs-dev-add-branch.sh /usr/local
 # directly, bypassing invoke-rc.d and therefore policy-rc.d. A daemon that
 # outlives this RUN keeps the container's cgroup populated, and buildkit-runc
 # then aborts the build with "unable to remove container's cgroup: device or
-# resource busy". The sweep at the end of the layer kills whatever is left:
-# the RUN shell is PID 1 here, so every other PID is a leftover.
+# resource busy", after apt-get has already finished successfully. The sweep at
+# the end of the layer kills whatever is left over.
+#
+# The sweep must not kill anything but our own leftovers: the buildkit CI
+# component runs the rootless image with --oci-worker-no-process-sandbox, so
+# this RUN shares the job container's PID namespace and sees buildkitd and the
+# runner itself. Our processes are the ones whose /proc/<pid>/root resolves to
+# this container's root filesystem, which is what the marker file below tests -
+# a process we cannot inspect at all is left alone.
 # hadolint ignore=DL3008
 RUN if [ -n "$UCS_DEV_BRANCH" ]; then \
       ucs-dev-add-branch.sh "$UCS_DEV_BRANCH" && apt-get update; \
@@ -65,15 +72,16 @@ RUN if [ -n "$UCS_DEV_BRANCH" ]; then \
       python3-ldap python3-samba python3-pam python3-passlib \
       ucs-test-framework \
     && rm -rf /var/lib/apt/lists/* \
+    && marker=/.build-daemon-sweep \
+    && : > "$marker" \
     && for proc in /proc/[0-9]*; do \
          pid="${proc#/proc/}"; \
-         [ "$pid" = "$$" ] || kill -9 "$pid" 2>/dev/null || :; \
+         { [ "$pid" = "$$" ] || [ "$pid" = 1 ]; } && continue; \
+         [ -e "$proc/root$marker" ] && kill -9 "$pid" 2>/dev/null; \
+         :; \
        done \
-    && for _ in 1 2 3 4 5 6 7 8 9 10; do \
-         set -- /proc/[0-9]*; \
-         [ "$#" -le 1 ] && break; \
-         sleep 0.5; \
-       done
+    && rm -f "$marker" \
+    && sleep 1
 
 COPY requirements-typecheck.txt /tmp/requirements-typecheck.txt
 
