@@ -39,6 +39,14 @@ COPY --from=ucs-dev-branch-tools /usr/local/bin/ucs-dev-add-branch.sh /usr/local
 # base image. Running "apt-get update" in that case would pull in newer
 # errata and make this image non-reproducible against a rolling errata
 # channel, so we only do it when a dev branch was actually added.
+#
+# Some UCS postinsts start daemons inside the build container - for example
+# univention-nagios-client runs "/etc/init.d/nagios-nrpe-server restart"
+# directly, bypassing invoke-rc.d and therefore policy-rc.d. A daemon that
+# outlives this RUN keeps the container's cgroup populated, and buildkit-runc
+# then aborts the build with "unable to remove container's cgroup: device or
+# resource busy". The sweep at the end of the layer kills whatever is left:
+# the RUN shell is PID 1 here, so every other PID is a leftover.
 # hadolint ignore=DL3008
 RUN if [ -n "$UCS_DEV_BRANCH" ]; then \
       ucs-dev-add-branch.sh "$UCS_DEV_BRANCH" && apt-get update; \
@@ -56,7 +64,16 @@ RUN if [ -n "$UCS_DEV_BRANCH" ]; then \
       univention-directory-listener \
       python3-ldap python3-samba python3-pam python3-passlib \
       ucs-test-framework \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && for proc in /proc/[0-9]*; do \
+         pid="${proc#/proc/}"; \
+         [ "$pid" = "$$" ] || kill -9 "$pid" 2>/dev/null || :; \
+       done \
+    && for _ in 1 2 3 4 5 6 7 8 9 10; do \
+         set -- /proc/[0-9]*; \
+         [ "$#" -le 1 ] && break; \
+         sleep 0.5; \
+       done
 
 COPY requirements-typecheck.txt /tmp/requirements-typecheck.txt
 
