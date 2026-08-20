@@ -1,0 +1,16 @@
+@startuml
+!include _style.iuml
+
+rectangle "Benutzer, Admins,\nFachverfahren" as Clients
+rectangle "UMC, Management UI,\nKelvin API, Import" as UIs
+rectangle "UCS@school-Fachlogik" as Logic
+rectangle "UDM / UDM REST API" as UDM
+rectangle "OpenLDAP" as LDAP
+rectangle "Schulserver, Samba, Proxy,\nRADIUS, Veyon, Portal" as Services
+
+Clients --> UIs
+UIs --> Logic
+Logic --> UDM
+UDM --> LDAP
+LDAP --> Services
+@enduml

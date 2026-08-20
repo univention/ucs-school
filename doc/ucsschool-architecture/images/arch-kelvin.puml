@@ -1,0 +1,21 @@
+@startuml
+!include _style.iuml
+
+rectangle "HTTP Client" as Client
+rectangle "Kelvin REST API" as Kelvin
+rectangle "UCS@school-Bibliotheken\nund Importlogik" as Lib
+rectangle "UDM REST API" as UDM
+rectangle "OpenLDAP" as LDAP
+rectangle "Provisioning Events" as Events
+rectangle "Provisioning Consumer" as Consumer
+rectangle "SQL-Lesecache\n(Kelvin v2)" as Cache
+
+Client --> Kelvin
+Kelvin --> Lib
+Lib --> UDM
+UDM --> LDAP
+LDAP --> Events
+Events --> Consumer
+Consumer --> Cache
+Kelvin --> Cache
+@enduml

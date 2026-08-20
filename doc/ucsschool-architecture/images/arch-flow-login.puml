@@ -1,0 +1,15 @@
+@startuml
+!include _style.iuml
+left to right direction
+
+rectangle "Benutzer" as User
+rectangle "Windows-/Linux-Client" as Client
+rectangle "Schulserver" as SchoolServer
+rectangle "Lokaler\nLDAP-Replikatbestand" as LocalLDAP
+rectangle "Samba /\nAnmeldedienste" as Samba
+
+User --> Client
+Client --> SchoolServer
+SchoolServer --> LocalLDAP
+SchoolServer --> Samba
+@enduml

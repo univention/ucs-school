@@ -1,0 +1,20 @@
+@startuml
+!include _style.iuml
+left to right direction
+
+rectangle "UCS@school-Schulmodell" as School
+rectangle "UCS/Nubus IAM" as IAM
+rectangle "Identity Provider" as IdP
+rectangle "Provisioning /\nConnectoren" as Prov
+rectangle "Zentrale Dienste" as Apps
+rectangle "Microsoft 365" as M365
+rectangle "OX App Suite" as OX
+
+School --> IAM
+IAM --> IdP
+IAM --> Prov
+IdP --> Apps
+Prov --> Apps
+Prov --> M365
+Prov --> OX
+@enduml

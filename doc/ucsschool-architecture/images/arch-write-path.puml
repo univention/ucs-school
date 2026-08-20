@@ -1,0 +1,18 @@
+@startuml
+!include _style.iuml
+
+participant "Client oder Fachverfahren" as Client
+participant "Kelvin API / Import / UMC" as API
+participant "UCS@school-Fachlogik" as Logic
+participant "UDM REST API" as UDM
+participant "OpenLDAP" as LDAP
+
+Client -> API: Objekt anlegen oder ändern
+API -> Logic: Validierung und Fachlogik
+Logic -> UDM: UDM-Operation
+UDM -> LDAP: Persistenz im Verzeichnis
+LDAP --> UDM: Ergebnis
+UDM --> Logic: Ergebnis
+Logic --> API: Antwort
+API --> Client: HTTP-/UI-Antwort
+@enduml

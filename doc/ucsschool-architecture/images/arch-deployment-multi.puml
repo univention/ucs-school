@@ -1,0 +1,16 @@
+@startuml
+!include _style.iuml
+
+rectangle "Primary Directory Node" as Central
+rectangle "Backup Directory Node\n(optional)" as Backup
+rectangle "Schulserver Schule A" as SchoolA
+rectangle "Schulserver Schule B" as SchoolB
+rectangle "Clients Schule A" as ClientsA
+rectangle "Clients Schule B" as ClientsB
+
+Central --> Backup
+Central --> SchoolA : selektive LDAP-Replikation
+Central --> SchoolB : selektive LDAP-Replikation
+ClientsA --> SchoolA
+ClientsB --> SchoolB
+@enduml

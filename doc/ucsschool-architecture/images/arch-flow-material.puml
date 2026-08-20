@@ -1,0 +1,16 @@
+@startuml
+!include _style.iuml
+left to right direction
+
+rectangle "Lehrkraft" as Teacher
+rectangle "Materialverteilung" as Module
+rectangle "IAM-Gruppen und\nBerechtigungen" as IAM
+rectangle "Klassen- oder\nArbeitsgruppenfreigabe" as Share
+rectangle "Schülerinnen\nund Schüler" as Students
+
+Teacher --> Module
+Module --> IAM
+Module --> Share
+IAM --> Share
+Share --> Students
+@enduml

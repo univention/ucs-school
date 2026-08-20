@@ -1,0 +1,111 @@
+#!/usr/bin/python3
+#
+# SPDX-FileCopyrightText: 2026 Univention GmbH
+#
+# SPDX-License-Identifier: AGPL-3.0-only
+#
+
+import argparse
+import os
+import subprocess
+import sys
+
+SPHINX_DOCKER_IMAGE = "gitregistry.knut.univention.de/univention/dev/docs/sphinx-docker/base:latest"
+
+
+def goto_project_dir() -> str:
+    if not os.path.exists("index.rst"):
+        print("ERROR: index.rst not found. Check directory.", file=sys.stderr)
+        sys.exit(1)
+    while os.getcwd() != "/" and not os.path.exists("pyproject.toml") and not os.path.exists("doc"):
+        os.chdir("..")
+    return os.getcwd()
+
+
+def call_sphinx(project: str, workdir: str, cmds: list[str]) -> None:
+    uid = os.getuid()
+    cmdline = [
+        "docker",
+        "run",
+        "-ti",
+        "--rm",
+        "-v",
+        f"{project}:/project",
+        "-w",
+        "/project",
+        "--network=host",
+        "-u",
+        str(uid),
+        SPHINX_DOCKER_IMAGE,
+        "env",
+        "--chdir",
+        workdir,
+        *cmds,
+    ]
+    print(cmdline)
+    subprocess.run(cmdline, check=False)
+
+
+def call_ucsschool(cmds: list[list[str]]) -> None:
+    cur_dir = os.getcwd()
+    project = goto_project_dir()
+    workdir = os.path.relpath(cur_dir, project)
+    for cmd in cmds:
+        call_sphinx(project, workdir, cmd)
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="unidoc: helper for building UCS@school docs")
+    parser.add_argument(
+        "task",
+        metavar="TASK",
+        type=str,
+        choices=[
+            "clean",
+            "livehtml_de",
+            "livehtml_en",
+            "spelling_de",
+            "spelling_en",
+            "translate",
+        ],
+        help="Task to perform on doc directory "
+        "(clean,livehtml_de,livehtml_en,spelling_de,spelling_en,translate)",
+    )
+    args = parser.parse_args()
+
+    if args.task == "clean":
+        call_ucsschool([["make", "clean"]])
+    elif args.task == "livehtml_en":
+        call_ucsschool([["make", "clean"], ["make", "livehtml"]])
+    elif args.task == "livehtml_de":
+        call_ucsschool(
+            [
+                ["make", "clean"],
+                ["make", "-e", "SPHINXOPTS=-W -D language=de", "livehtml"],
+            ]
+        )
+    elif args.task == "spelling_en":
+        call_ucsschool(
+            [
+                ["make", "clean"],
+                ["make", "-e", "SPHINXOPTS=-W --keep-going -D language=en", "spelling"],
+            ]
+        )
+    elif args.task == "spelling_de":
+        call_ucsschool(
+            [
+                ["make", "clean"],
+                ["make", "-e", "SPHINXOPTS=-W --keep-going -D language=de", "spelling"],
+            ]
+        )
+    elif args.task == "translate":
+        call_ucsschool(
+            [
+                ["make", "gettext"],
+                ["sphinx-intl", "update", "-p", "_build/gettext/", "-l", "de"],
+            ]
+        )
+
+
+if __name__ == "__main__":
+    main()

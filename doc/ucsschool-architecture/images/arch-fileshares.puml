@@ -1,0 +1,15 @@
+@startuml
+!include _style.iuml
+left to right direction
+
+rectangle "Lehrkraft" as Teacher
+rectangle "UCS@school-UMC-Modul" as UMC
+rectangle "Fileshare / Samba" as Share
+rectangle "Klasse oder\nArbeitsgruppe" as Group
+rectangle "Schülerinnen\nund Schüler" as Students
+
+Teacher --> UMC
+UMC --> Share
+Group --> Share
+Share --> Students
+@enduml

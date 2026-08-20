@@ -1,0 +1,19 @@
+@startuml
+!include _style.iuml
+
+rectangle "Führendes System /\nSchulverwaltung" as Source
+rectangle "Import oder Connector" as Import
+rectangle "UCS@school-Fachlogik" as School
+rectangle "UCS/Nubus IAM" as IAM
+rectangle "SSO über IdP" as Auth
+rectangle "Provisioning Events /\nConnector" as Provisioning
+rectangle "Zentraler Dienst" as Service
+
+Source --> Import
+Import --> School
+School --> IAM
+IAM --> Auth
+IAM --> Provisioning
+Auth --> Service
+Provisioning --> Service
+@enduml

@@ -1,0 +1,14 @@
+@startuml
+!include _style.iuml
+
+rectangle "Primary Directory Node" as Server
+rectangle "OpenLDAP" as LDAP
+rectangle "UDM / UMC" as UDM
+rectangle "UCS@school-Komponenten" as School
+rectangle "Clients" as Clients
+
+Server --> LDAP
+Server --> UDM
+Server --> School
+Clients --> Server
+@enduml

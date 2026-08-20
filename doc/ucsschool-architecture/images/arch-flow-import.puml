@@ -1,0 +1,16 @@
+@startuml
+!include _style.iuml
+
+rectangle "Schulverwaltung / CSV" as Source
+rectangle "UCS@school-Import" as Import
+rectangle "UCS@school-Fachlogik" as Logic
+rectangle "UDM REST API" as UDM
+rectangle "OpenLDAP" as LDAP
+rectangle "Schulserver-Replikation" as Replica
+
+Source --> Import
+Import --> Logic
+Logic --> UDM
+UDM --> LDAP
+LDAP --> Replica
+@enduml

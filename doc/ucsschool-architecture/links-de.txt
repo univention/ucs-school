@@ -1,0 +1,8 @@
+.. SPDX-FileCopyrightText: 2025-2026 Univention GmbH
+..
+.. SPDX-License-Identifier: AGPL-3.0-only
+
+.. _nubus-components: https://docs.software-univention.de/nubus-kubernetes-architecture/latest/en/overview/components.html
+.. _nubus-interfaces: https://docs.software-univention.de/nubus-kubernetes-architecture/latest/en/overview/interfaces-protocols.html
+.. _nubus-connectors: https://docs.software-univention.de/nubus-kubernetes-architecture/latest/en/components/connectors.html
+.. _gh-ucsschool-kelvin: https://github.com/univention/ucsschool-kelvin-rest-api

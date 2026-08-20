@@ -1,0 +1,27 @@
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName Helvetica
+skinparam defaultFontSize 13
+skinparam roundCorner 6
+skinparam nodesep 25
+skinparam ranksep 35
+skinparam rectangle {
+    BackgroundColor #EFF3F7
+    BorderColor #14568C
+    BorderThickness 1
+    FontColor #1A1A1A
+}
+skinparam ArrowColor #14568C
+skinparam ArrowFontColor #1A1A1A
+skinparam ArrowFontSize 12
+skinparam sequence {
+    ArrowColor #14568C
+    ArrowFontColor #1A1A1A
+    LifeLineBorderColor #14568C
+    LifeLineBackgroundColor #EFF3F7
+    ParticipantBorderColor #14568C
+    ParticipantBackgroundColor #EFF3F7
+    ParticipantFontColor #1A1A1A
+    ActorBorderColor #14568C
+    ActorBackgroundColor #EFF3F7
+}
