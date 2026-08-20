@@ -48,12 +48,17 @@ COPY --from=ucs-dev-branch-tools /usr/local/bin/ucs-dev-add-branch.sh /usr/local
 # resource busy", after apt-get has already finished successfully. The sweep at
 # the end of the layer kills whatever is left over.
 #
-# The sweep must not kill anything but our own leftovers: the buildkit CI
+# Stopping them through the init scripts that started them needs no guesswork
+# about which process belongs to us. That matters here: the buildkit CI
 # component runs the rootless image with --oci-worker-no-process-sandbox, so
 # this RUN shares the job container's PID namespace and sees buildkitd and the
-# runner itself. Our processes are the ones whose /proc/<pid>/root resolves to
-# this container's root filesystem, which is what the marker file below tests -
-# a process we cannot inspect at all is left alone.
+# runner itself - killing by PID once took the whole job down with SIGKILL.
+#
+# The kill sweep is kept as a backstop for daemons without an init script. It
+# only touches processes whose /proc/<pid>/root resolves to this container's
+# root filesystem, which is what the marker file tests; a process we cannot
+# inspect at all is left alone. Both steps report what they find, because this
+# only ever reproduces in CI - if the cgroup is busy again, the log says why.
 # hadolint ignore=DL3008
 RUN if [ -n "$UCS_DEV_BRANCH" ]; then \
       ucs-dev-add-branch.sh "$UCS_DEV_BRANCH" && apt-get update; \
@@ -72,16 +77,35 @@ RUN if [ -n "$UCS_DEV_BRANCH" ]; then \
       python3-ldap python3-samba python3-pam python3-passlib \
       ucs-test-framework \
     && rm -rf /var/lib/apt/lists/* \
+    && for script in /etc/init.d/*; do \
+         [ -x "$script" ] || continue; \
+         timeout 10 "$script" stop >/dev/null 2>&1 \
+           && echo "build-sweep: stopped ${script##*/}"; \
+         :; \
+       done \
     && marker=/.build-daemon-sweep \
     && : > "$marker" \
     && for proc in /proc/[0-9]*; do \
          pid="${proc#/proc/}"; \
          { [ "$pid" = "$$" ] || [ "$pid" = 1 ]; } && continue; \
-         [ -e "$proc/root$marker" ] && kill -9 "$pid" 2>/dev/null; \
-         :; \
+         [ -e "$proc/root$marker" ] || continue; \
+         echo "build-sweep: killing pid=$pid comm=$(cat "$proc/comm" 2>/dev/null)"; \
+         kill -9 "$pid" || echo "build-sweep: kill $pid failed"; \
        done \
     && rm -f "$marker" \
-    && sleep 1
+    && sleep 2 \
+    && echo "build-sweep: own cgroup: $(cat /proc/self/cgroup 2>&1)" \
+    && echo "build-sweep: cgroup mounts: $(grep cgroup /proc/self/mountinfo 2>&1 | tr '\n' '|')" \
+    && echo "build-sweep: nested cgroups: $(ls /sys/fs/cgroup 2>&1 | tr '\n' ' ')" \
+    && echo "build-sweep: processes still alive:" \
+    && for proc in /proc/[0-9]*; do \
+         echo "  pid=${proc#/proc/}" \
+           "comm=$(cat "$proc/comm" 2>/dev/null)" \
+           "state=$(awk '{print $3}' "$proc/stat" 2>/dev/null)" \
+           "ppid=$(awk '{print $4}' "$proc/stat" 2>/dev/null)" \
+           "uid=$(awk '/^Uid:/{print $2}' "$proc/status" 2>/dev/null)" \
+           "root=$(readlink "$proc/root" 2>&1)"; \
+       done
 
 COPY requirements-typecheck.txt /tmp/requirements-typecheck.txt
 
