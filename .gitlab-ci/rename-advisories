@@ -1,23 +1,255 @@
-#!/usr/bin/env bash
+#!/usr/bin/env python3
 
-set -e
-git config user.name "${GIT_AUTHOR_NAME:?}"
-git config user.email "${GIT_AUTHOR_EMAIL:?}"
-git remote set-url --push origin "$CI_SERVER_PROTOCOL://pipeline_token:$GITLAB_PROJECT_TOKEN@$CI_SERVER_FQDN/$CI_PROJECT_PATH"
-git switch -c releasebot/release
-release_files=$(find doc/errata/staging/ -name "*.yaml" -not -name "0template.yaml")
-# move advisories from staging to published
-for file in $release_files; do
-  sed -i "s/^released:.*/released: $APP_VERSION/" "$file"
-  git mv "$file" "doc/errata/published/$(date +%Y-%m-%d)-$(basename "$file")"
-done
-git add doc/errata
-git commit -m "chore: move yaml advisories to published" -m "Issue univention/ucsschool#1406"
-# TODO: merge_when_pipeline_succeeds is deprecated with 17.11, but we are still on gitlab 17.10, replace with auto_merge
-git push -u \
-    -o merge_request.remove_source_branch \
-    -o merge_request.title="Automatic Merge: UCS@school Release - Move of yaml advisories" \
-    -o merge_request.merge_when_pipeline_succeeds \
-    -o merge_request.create \
-    -o merge_request.target="$APP_UCS_VERSION" \
-    -o merge_request.assign="$GITLAB_USER_LOGIN" origin "$(git branch --show-current)"
+# SPDX-FileCopyrightText: 2025-2026 Univention GmbH
+# SPDX-License-Identifier: AGPL-3.0-only
+
+"""
+Move the staged advisories to ``doc/errata/published`` after a release.
+
+Every advisory in ``doc/errata/staging`` gets the released version stamped into its
+``released:`` field and is renamed to ``doc/errata/published/<date>-<name>.yaml``.
+The result is committed on a branch of its own and, in CI, pushed with the push
+options that open the merge request back into the release branch.
+
+Run it locally to see what a release would do, without touching the checkout::
+
+    .gitlab-ci/rename-advisories --version 5.2v7 --dry-run
+
+Nothing is pushed unless ``--push`` is given (which is the default inside CI), and
+the script never writes to the git configuration of the checkout it runs in.
+"""
+
+import argparse
+import datetime
+import os
+import re
+import subprocess
+import sys
+from typing import List, Optional, Sequence
+
+STAGING_PATH = "doc/errata/staging"
+PUBLISHED_PATH = "doc/errata/published"
+TEMPLATE_NAME = "0template.yaml"
+BOT_BRANCH_PREFIX = "releasebot/"
+RELEASED_RE = re.compile(r"^released:.*$", re.MULTILINE)
+
+
+def env(name: str) -> Optional[str]:
+    """Return an environment variable, treating an empty value as unset"""
+    value = os.environ.get(name, "").strip()
+    return value or None
+
+
+def run(args: Sequence[str], dry_run: bool = False, **kwargs) -> "subprocess.CompletedProcess":
+    """Run a git command, printing it first so a failing job shows what was attempted"""
+    printable = " ".join(mask_secrets(arg) for arg in args)
+    if dry_run:
+        print(f"would run: {printable}")
+        return subprocess.CompletedProcess(args, 0, "", "")
+    print(f"+ {printable}")
+    return subprocess.run(args, check=True, **kwargs)  # noqa: S603
+
+
+def mask_secrets(text: str) -> str:
+    """Replace the credentials of a push URL, so no token ends up in the job log"""
+    return re.sub(r"://[^/@\s]+@", "://***@", text)
+
+
+def git_output(args: Sequence[str]) -> str:
+    return subprocess.run(  # noqa: S603
+        ["git", *args], check=True, capture_output=True, text=True
+    ).stdout.strip()
+
+
+def staged_advisories() -> List[str]:
+    """Return the advisories to publish, sorted, without the template"""
+    if not os.path.isdir(STAGING_PATH):
+        return []
+    return sorted(
+        os.path.join(STAGING_PATH, name)
+        for name in os.listdir(STAGING_PATH)
+        if name.endswith(".yaml") and name != TEMPLATE_NAME
+    )
+
+
+def stamp_released(path: str, version: str, dry_run: bool = False) -> None:
+    """Set ``released:`` to the released version, adding the field if it is missing"""
+    with open(path) as advisory:
+        content = advisory.read()
+    replacement = f"released: {version}"
+    new_content, count = RELEASED_RE.subn(replacement, content, count=1)
+    if not count:
+        separator = "" if not content or content.endswith("\n") else "\n"
+        new_content = f"{content}{separator}{replacement}\n"
+        print(f"{path}: adding missing 'released' field")
+    if new_content == content:
+        return
+    if dry_run:
+        print(f"would set '{replacement}' in {path}")
+        return
+    with open(path, "w") as advisory:
+        advisory.write(new_content)
+
+
+def git_identity_args() -> List[str]:
+    """
+    Pass the release bot identity to a single command instead of writing it to
+    the git configuration, which would outlive the script in a local checkout.
+    """
+    name = env("GIT_AUTHOR_NAME")
+    email = env("GIT_AUTHOR_EMAIL")
+    args = []
+    if name:
+        args += ["-c", f"user.name={name}"]
+    if email:
+        args += ["-c", f"user.email={email}"]
+    return args
+
+
+def push_url() -> str:
+    """
+    Return the URL to push to: the tokenized CI URL if a project token is
+    available, and otherwise plain ``origin`` as configured in the checkout.
+    """
+    token = env("GITLAB_PROJECT_TOKEN")
+    fqdn = env("CI_SERVER_FQDN")
+    path = env("CI_PROJECT_PATH")
+    if not (token and fqdn and path):
+        return "origin"
+    protocol = env("CI_SERVER_PROTOCOL") or "https"
+    return f"{protocol}://pipeline_token:{token}@{fqdn}/{path}"
+
+
+def push(branch: str, target: str, dry_run: bool = False) -> None:
+    args = ["git", "push"]
+    if branch.startswith(BOT_BRANCH_PREFIX):
+        # The branch belongs to this script alone, so a repeated release job may
+        # overwrite what an earlier attempt left behind instead of being rejected.
+        args.append("--force")
+    args += [
+        "-o",
+        "merge_request.create",
+        "-o",
+        "merge_request.remove_source_branch",
+        "-o",
+        "merge_request.title=Automatic Merge: UCS@school Release - Move of yaml advisories",
+        "-o",
+        "merge_request.auto_merge",
+        "-o",
+        f"merge_request.target={target}",
+    ]
+    assignee = env("GITLAB_USER_LOGIN")
+    if assignee:
+        args += ["-o", f"merge_request.assign={assignee}"]
+    args += [push_url(), f"HEAD:refs/heads/{branch}"]
+    run(args, dry_run=dry_run)
+
+
+def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[1])
+    parser.add_argument(
+        "--version",
+        default=env("APP_VERSION"),
+        help="released app version stamped into the advisories, e.g. 5.2v7 [$APP_VERSION]",
+    )
+    parser.add_argument(
+        "--date",
+        default=datetime.date.today().isoformat(),
+        help="date prefix of the published file names [today]",
+    )
+    parser.add_argument(
+        "--branch",
+        default=None,
+        help=(
+            f"branch to commit on "
+            f"[{BOT_BRANCH_PREFIX}$CI_COMMIT_TAG or {BOT_BRANCH_PREFIX}release-<version>]"
+        ),
+    )
+    parser.add_argument(
+        "--target",
+        default=env("APP_UCS_VERSION"),
+        help="branch the merge request targets [$APP_UCS_VERSION]",
+    )
+    parser.add_argument(
+        "--push",
+        dest="push",
+        action="store_true",
+        default=bool(env("CI")),
+        help="push the branch and open the merge request [default: only in CI]",
+    )
+    parser.add_argument(
+        "--no-push",
+        dest="push",
+        action="store_false",
+        help="only commit locally, do not push and do not open a merge request",
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="report what would change without touching the checkout",
+    )
+    args = parser.parse_args(argv)
+
+    if not args.version:
+        parser.error("no released version: pass --version or set APP_VERSION")
+    if not args.branch:
+        tag = env("CI_COMMIT_TAG")
+        args.branch = BOT_BRANCH_PREFIX + (tag or f"release-{args.version}")
+    if args.push and not args.target:
+        parser.error("no merge request target: pass --target or set APP_UCS_VERSION")
+    return args
+
+
+def main(argv: Optional[Sequence[str]] = None) -> int:
+    # Keep the output of this script and of the git commands it runs in order,
+    # even when the job log is a pipe rather than a terminal.
+    sys.stdout.reconfigure(line_buffering=True)
+    args = parse_args(argv)
+
+    advisories = staged_advisories()
+    if not advisories:
+        print(f"No advisories in {STAGING_PATH}, nothing to publish.")
+        return 0
+
+    print(f"Publishing {len(advisories)} advisories as released in {args.version}:")
+    # git switch -C so that a repeated run reuses the branch instead of failing
+    run(["git", "switch", "-C", args.branch], dry_run=args.dry_run)
+    if not args.dry_run:
+        os.makedirs(PUBLISHED_PATH, exist_ok=True)
+    for advisory in advisories:
+        published = os.path.join(PUBLISHED_PATH, f"{args.date}-{os.path.basename(advisory)}")
+        stamp_released(advisory, args.version, dry_run=args.dry_run)
+        run(["git", "mv", advisory, published], dry_run=args.dry_run)
+    run(["git", "add", "--", "doc/errata"], dry_run=args.dry_run)
+
+    if not args.dry_run and not git_output(["diff", "--cached", "--name-only"]):
+        print("Advisories are already published, nothing to commit.")
+        return 0
+    run(
+        [
+            "git",
+            *git_identity_args(),
+            "commit",
+            "-m",
+            "chore: move yaml advisories to published",
+            "-m",
+            "Issue univention/ucsschool#1406",
+        ],
+        dry_run=args.dry_run,
+    )
+
+    if not args.push:
+        print(f"Not pushing. The commit is on '{args.branch}', return with 'git switch -'.")
+        return 0
+    push(args.branch, args.target, dry_run=args.dry_run)
+    return 0
+
+
+if __name__ == "__main__":
+    try:
+        sys.exit(main())
+    except subprocess.CalledProcessError as error:
+        # Report the command instead of a traceback, which would spell out the
+        # push URL including its token.
+        command = " ".join(mask_secrets(arg) for arg in error.cmd)
+        sys.exit(f"'{command}' failed with exit code {error.returncode}")
