@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 
 include:
-  - component: $CI_SERVER_FQDN/univention/dev/tooling/ci-components/app-release@2
+  - component: $CI_SERVER_FQDN/univention/dev/tooling/ci-components/app-release@2.16.1
     inputs:
       app_id: "ucsschool"
       mail_sender: "ucsschool-team@univention.de"
@@ -15,7 +15,7 @@ include:
       release_tag_constraint: '\d.\d+v\d+'
       app_staging_version: "999.0.0-staging"
       release_text_file: "release_text.txt"
-  - component: $CI_SERVER_FQDN/univention/dev/tooling/ci-components/debian-package@2
+  - component: $CI_SERVER_FQDN/univention/dev/tooling/ci-components/debian-package@2.16.1
     inputs:
       ucs_base_version: "5.2"
       scope: "ucs-school-5.2"

@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 
 include:
-  - component: $CI_SERVER_FQDN/univention/dev/tooling/ci-components/buildkit@2
+  - component: $CI_SERVER_FQDN/univention/dev/tooling/ci-components/buildkit@2.16.1
     inputs:
       job_name: "build_basedpyright_image"
       stage: build
