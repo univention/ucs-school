@@ -60,9 +60,13 @@ include:
     rules:
       - if: $RUN_UPDATE_RELEASE_ISSUE == "yes"
   # Gated on the same variable as the job it brings, so that a renovate run
-  # consists of nothing but the renovate job: GitLab's default stages apply
-  # and the component's default 'deploy' stage fits, even though this
-  # pipeline's own 'stages' has no 'deploy'.
+  # consists of nothing but the renovate job and does not build the packages
+  # and images along the way. The component's default 'stage: deploy' does not
+  # fit even so: 'stages' above is part of this file, not of a gated include,
+  # so it applies to a renovate run too and GitLab rejects the pipeline with
+  # "chosen stage deploy does not exist". '.post' exists in every pipeline.
   - component: $CI_SERVER_FQDN/univention/dev/tooling/ci-components/renovate@2.16.1
+    inputs:
+      stage: .post
     rules:
       - if: $RUN_RENOVATE == "yes"
