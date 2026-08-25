@@ -122,7 +122,7 @@ repos:
         entry: '.*\n(\n(Issue ([a-zA-Z_/-]+)#\d+|Bug #\d+))+\n?(\n#.*)*\Z'
         args: ["--multiline", "--negate"]
   - repo: https://git.knut.univention.de/univention/infrastructure/pre-commit-hooks/pre-commit-copyright
-    rev: 0.2.0
+    rev: 0.2.1
     hooks:
       - id: reuse-toml-dry-run
       - id: reuse-toml
