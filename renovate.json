@@ -1,0 +1,7 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "local>univention/dev/tooling/ci-components//templates/renovate/default.json"
+  ],
+  "commitBody": "Issue univention/dev/education/ucsschool#1569"
+}
