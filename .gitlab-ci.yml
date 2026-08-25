@@ -9,6 +9,7 @@ workflow:
     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_REF_PROTECTED == "true"
     - if: $CI_COMMIT_TAG
     - if: $RUN_UPDATE_RELEASE_ISSUE == "yes"
+    - if: $RUN_RENOVATE == "yes"
 
 stages:
   - prepare
@@ -35,20 +36,33 @@ variables:
     options:
       - "yes"
       - "no"
+  RUN_RENOVATE:
+    value: "no"
+    options:
+      - "yes"
+      - "no"
+    description: "Set to yes if you want to run renovate"
 
 include:
   - local: .gitlab-ci/gitlab-ci.yml
     rules:
-      - if: $RUN_UPDATE_RELEASE_ISSUE != "yes"
+      - if: $RUN_UPDATE_RELEASE_ISSUE != "yes" && $RUN_RENOVATE != "yes"
   - local: .gitlab-ci/release.yml
     rules:
-      - if: $RUN_UPDATE_RELEASE_ISSUE != "yes"
+      - if: $RUN_UPDATE_RELEASE_ISSUE != "yes" && $RUN_RENOVATE != "yes"
   - component: $CI_SERVER_FQDN/univention/dev/tooling/ci-components/sonarqube@2.12.0
     inputs:
       job_name: "build-sonar"
       stage: build
     rules:
-      - if: $RUN_UPDATE_RELEASE_ISSUE != "yes"
+      - if: $RUN_UPDATE_RELEASE_ISSUE != "yes" && $RUN_RENOVATE != "yes"
   - local: .gitlab-ci/update_release_issue.yml
     rules:
       - if: $RUN_UPDATE_RELEASE_ISSUE == "yes"
+  # Gated on the same variable as the job it brings, so that a renovate run
+  # consists of nothing but the renovate job: GitLab's default stages apply
+  # and the component's default 'deploy' stage fits, even though this
+  # pipeline's own 'stages' has no 'deploy'.
+  - component: $CI_SERVER_FQDN/univention/dev/tooling/ci-components/renovate@2.16.1
+    rules:
+      - if: $RUN_RENOVATE == "yes"
