@@ -1,0 +1,30 @@
+product: ucsschool
+release: "5.2"
+released:
+version: [0]
+scope: ucs_5.2-0-ucs-school-5.2
+src: ucs-school-radius-802.1x
+fix: 9.1.0
+bugs:
+  59894:
+    en: >
+      The RADIUS 802.1X integration now uses the rewritten
+      :spelling:ignore:`univention-radius-ntlm-auth` helper shipped with UCS
+      5.2-7. The separate UCS@school implementation of the network access
+      check has been removed; the helper evaluates the UCS@school internet
+      rules itself. The package activates this evaluation through the
+      Univention Configuration Registry variable
+      :envvar:`freeradius/auth/helper/ntlm/network-access/internet-rules/enabled`,
+      which is set when the package is installed and unset when it is
+      removed. The behavior of the WLAN access decision is unchanged.
+    de: >
+      Die RADIUS-802.1X-Integration verwendet jetzt das neu geschriebene
+      Hilfsprogramm :spelling:ignore:`univention-radius-ntlm-auth` aus UCS
+      5.2-7. Die eigene UCS@school-Implementierung der
+      Netzwerkzugriffsprüfung wurde entfernt; das Hilfsprogramm wertet die
+      UCS@school-Internetregeln selbst aus. Das Paket aktiviert diese
+      Auswertung über die UCR-Variable
+      :envvar:`freeradius/auth/helper/ntlm/network-access/internet-rules/enabled`,
+      die beim Installieren des Pakets gesetzt und beim Entfernen wieder
+      gelöscht wird. Das Verhalten der WLAN-Zugangsentscheidung bleibt
+      unverändert.

@@ -103,6 +103,20 @@ bestehende editiert werden, in der die Option
 Weiterführende Dokumentation zur Freigabe des WLAN-Zugriffs finden sich in
 :cite:t:`ucsschool-teacher`.
 
+Ob die Internetregeln bei der WLAN-Zugangsentscheidung berücksichtigt werden,
+steuert die |UCSUCRV|
+:envvar:`freeradius/auth/helper/ntlm/network-access/internet-rules/enabled`.
+Das Paket :program:`ucs-school-radius-802.1x` setzt sie bei der Installation
+auf ``true`` und entfernt sie bei der Deinstallation wieder;
+ein abweichend gesetzter Wert bleibt bei Paketaktualisierungen erhalten.
+Ist die Variable aktiviert,
+werden zuerst die Internetregeln ausgewertet.
+Erlaubt keine der zugewiesenen Regeln mit der höchsten Priorität die
+WLAN-Authentifizierung,
+wird ersatzweise die reguläre Netzwerkzugriffsprüfung verwendet.
+Ist die Variable deaktiviert,
+werden die Internetregeln nicht berücksichtigt.
+
 .. _radius-error:
 
 Fehlersuche

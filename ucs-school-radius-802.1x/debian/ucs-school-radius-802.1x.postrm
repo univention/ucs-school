@@ -1,0 +1,13 @@
+#!/bin/bash
+# SPDX-FileCopyrightText: 2026 Univention GmbH
+# SPDX-License-Identifier: AGPL-3.0-only
+
+#DEBHELPER#
+
+case "$1" in
+    remove|purge)
+        ucr unset freeradius/auth/helper/ntlm/network-access/internet-rules/enabled
+        ;;
+esac
+
+exit 0
