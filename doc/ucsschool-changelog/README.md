@@ -10,8 +10,20 @@ This directory contains the release notes and changelog document for
 UCS@school. It's a distinct document that lists all the changes for the
 respective version since the last version.
 
-The changelog is manually written as opposed to the past when it was automatically generated from YAML files in the [/doc/errata/published](../errata/published) directory.
-The changelog is now independent of the advisories.
+The per-package entries are generated from the advisories:
+`changelog.rst` contains nothing but the `uv-advisories` directive,
+which renders one section per release date
+from the YAML files in [/doc/errata/staging](../errata/staging) and [/doc/errata/published](../errata/published).
+Write the entry for a package in its advisory, in both `en:` and `de:`,
+not in `changelog.rst`.
+The rendered sections are marked as not translatable,
+so they never appear in `locales/de/LC_MESSAGES/changelog.po`.
+
+Prose that is not tied to a single package,
+such as the "What's new?" section of an app release,
+is written by hand in `index.rst`
+and translated in `locales/de/LC_MESSAGES/index.po`.
+
 During the work on an issue, the implementer uses this guide to update the changelog.
 
 ## Create and translate a changelog
@@ -38,13 +50,15 @@ It might help to run `make clean` inside the docker container when you are doing
 
 The commands in this section are aliases, use `source ./doc/ucsschool-changelog/changelog_commands.sh` to load them.
 
-1. Add the entry for your current issue to the `changelog.rst`.
+1. Add the entry for your current issue to `doc/errata/staging/<__PACKAGE__>.yaml`,
+   in both `en:` and `de:`.
+   For an app release, also add the release section to `index.rst`.
 
    **Note: Currently, the new `pre-commit` hooks have some known limitations which will be fixed with https://git.knut.univention.de/univention/ucsschool/-/issues/1262 . Therefore, manual double checking of the existence of changes within the following files is advised:**
 
    * `<__PACKAGE__>/debian/changelog`
-   * `doc/errata/staging/<__PACKAGE__>.yml`
-   * `changelog.rst`
+   * `doc/errata/staging/<__PACKAGE__>.yaml`
+   * `index.rst`, for an app release
 
 2. From the repository root, generate the English livehtml with
 
@@ -74,8 +88,9 @@ The commands in this section are aliases, use `source ./doc/ucsschool-changelog/
    translate
    ```
 
-5. Edit the `locales/de/LC_MESSAGES/changelog.po` file.
+5. Edit the `locales/de/LC_MESSAGES/index.po` file.
    Add a German translation for each string, and remove any comments with `fuzzy` when you have manually confirmed that the package name and version are correct.
+   The advisory entries are not translated here; their German text comes from the `de:` key of the advisory.
    For more information, see the  [Translate Sphinx documents](https://hutten.knut.univention.de/mediawiki/index.php/Translate_Sphinx_documents#Translation).
 
 6. Run the spell checker for the German changelog. From the repository root directory, run:
