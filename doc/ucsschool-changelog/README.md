@@ -16,6 +16,11 @@ which renders one section per release date
 from the YAML files in [/doc/errata/staging](../errata/staging) and [/doc/errata/published](../errata/published).
 Write the entry for a package in its advisory, in both `en:` and `de:`,
 not in `changelog.rst`.
+The texts are parsed as reStructuredText,
+so write the product name as the substitution `|UCSUAS|`
+and never as the literal `UCS@school`,
+which docutils turns into a `mailto:` link.
+`validate-advisories` rejects the literal.
 The rendered sections are marked as not translatable,
 so they never appear in `locales/de/LC_MESSAGES/changelog.po`.
 

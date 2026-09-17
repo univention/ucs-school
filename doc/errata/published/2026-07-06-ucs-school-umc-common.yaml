@@ -9,14 +9,14 @@ bugs:
   59515:
     en: |
       A new UCR variable ``ucsschool/umc/show-email-instead-of-username``
-      is added. If set, the grid views of the UCS@school UMC modules
+      is added. If set, the grid views of the |UCSUAS| UMC modules
       display the primary email address instead of the username. Additionally a
       shared style sheet is shipped that widens the MultiObjectSelect "add object"
-      selection dialog uniformly across the UCS@school UMC modules.
+      selection dialog uniformly across the |UCSUAS| UMC modules.
     de: |
       Die UCR-Variable ``ucsschool/umc/show-email-instead-of-username``
       wurde hinzugefügt. Ist sie gesetzt, zeigen die UMC-Listenansichten der
-      UCS@school-Module die primäre E-Mail-Adresse anstelle des Benutzernamens an.
+      |UCSUAS|-Module die primäre E-Mail-Adresse anstelle des Benutzernamens an.
       Zusätzlich wird ein gemeinsames Stylesheet ausgeliefert, das den
-      MultiObjectSelect-Dialog zum Hinzufügen von Objekten in den UCS@school-UMC-Modulen
+      MultiObjectSelect-Dialog zum Hinzufügen von Objekten in den |UCSUAS|-UMC-Modulen
       einheitlich verbreitert.

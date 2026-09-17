@@ -10,8 +10,8 @@ bugs:
     en: >
       The RADIUS 802.1X integration now uses the rewritten
       :spelling:ignore:`univention-radius-ntlm-auth` helper shipped with UCS
-      5.2-7. The separate UCS@school implementation of the network access
-      check has been removed; the helper evaluates the UCS@school internet
+      5.2-7. The separate |UCSUAS| implementation of the network access
+      check has been removed; the helper evaluates the |UCSUAS| internet
       rules itself. The package activates this evaluation through the
       Univention Configuration Registry variable
       :envvar:`freeradius/auth/helper/ntlm/network-access/internet-rules/enabled`,
@@ -20,9 +20,9 @@ bugs:
     de: >
       Die RADIUS-802.1X-Integration verwendet jetzt das neu geschriebene
       Hilfsprogramm :spelling:ignore:`univention-radius-ntlm-auth` aus UCS
-      5.2-7. Die eigene UCS@school-Implementierung der
+      5.2-7. Die eigene |UCSUAS|-Implementierung der
       Netzwerkzugriffsprüfung wurde entfernt; das Hilfsprogramm wertet die
-      UCS@school-Internetregeln selbst aus. Das Paket aktiviert diese
+      |UCSUAS|-Internetregeln selbst aus. Das Paket aktiviert diese
       Auswertung über die UCR-Variable
       :envvar:`freeradius/auth/helper/ntlm/network-access/internet-rules/enabled`,
       die beim Installieren des Pakets gesetzt und beim Entfernen wieder

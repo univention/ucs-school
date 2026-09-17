@@ -117,6 +117,12 @@ def check_yaml_content(filename: str) -> List[str]:
                     errors.append(f"A bug must contain an english text: {bug}")
                 if not text.get("de", None):
                     errors.append(f"A bug must contain a german text: {bug}")
+                for lang in ("en", "de"):
+                    if "UCS@school" in (text.get(lang) or ""):
+                        errors.append(
+                            "Use the substitution |UCSUAS| instead of the literal "
+                            f"UCS@school in the {lang} text of bug {bug}"
+                        )
 
     return errors
 
