@@ -9,45 +9,38 @@
 ***************
 
 This document contains the changelogs with the detailed change information for
-the update of |UCSUAS| from version 5.2v6 to 5.2v7.
+the update of |UCSUAS| from version 5.2v7 to 5.2v8.
 
 The change information for previous version jumps can be found at :external+uv-navigation:ref:`the changelog overview page <ucsschool-changelog>`.
 
-.. _changelog-new-role:
+.. _changelog-radius-rust-helper:
 
-Release 5.2v7
+Release 5.2v8
 =============
 
 What's new?
 
-* The |UCSUAS| UMC modules can now identify users by their primary email address instead of their username, controlled by the new UCR variable ``ucsschool/umc/show-email-instead-of-username`` (:uv:bug:`59515`).
+* The RADIUS 802.1X integration now uses the rewritten
+  :spelling:ignore:`univention-radius-ntlm-auth` helper from UCS 5.2-7 and no
+  longer ships its own network access check (:uv:bug:`59894`).
 
-.. _changelog-show-email:
+.. _changelog-radius-internet-rules:
 
-Showing the primary email address instead of the username
----------------------------------------------------------
+RADIUS 802.1X uses the rewritten NTLM authentication helper
+-----------------------------------------------------------
 
-By default, the |UCSUAS| UMC modules identify users by their username, for example ``Doe, John (jdoe)``.
-Environments that use the email address as the primary identifier for their users can now switch the displayed identifier by setting the new UCR variable ``ucsschool/umc/show-email-instead-of-username``:
+|UCSUAS| 5.2v8 requires UCS 5.2-7,
+which ships the rewritten :spelling:ignore:`univention-radius-ntlm-auth` helper.
+The separate |UCSUAS| implementation of the network access check has been removed;
+the helper evaluates the |UCSUAS| internet rules itself.
 
-.. code-block:: console
+The package :program:`ucs-school-radius-802.1x` activates this evaluation through the
+|UCSUCRV| :envvar:`freeradius/auth/helper/ntlm/network-access/internet-rules/enabled`.
+The variable is set during the installation of the package and unset when the package is removed.
+A value set by the administrator is kept during package updates.
 
-   $ ucr set ucsschool/umc/show-email-instead-of-username=yes
-
-When the variable is set, the affected views show the primary email address in place of the username, for example ``Doe, John (john.doe@example.com)``.
-Users without a primary email address keep being shown with their username.
-
-The setting changes the user identifier in the following |UCSUAS| UMC modules:
-
-* *Passwords (students)* and *Passwords (teachers)*
-* The class and workgroup modules (*Assign teachers*, *Assign classes*, *Edit/Administrate workgroups*)
-* The school wizards (*Users (schools)*)
-* Printer moderation module (*Moderate printers*)
-
-.. note::
-
-   The UCR variable ``ucsschool/umc/show-email-instead-of-username`` is not fully supported in
-   the Computer Room, Exam Mode, and Distribution modules and may show inconsistencies.
+The WLAN access decision itself does not change.
+For more information, see :external+uv-ucsschool-admin:ref:`radius`.
 
 .. _changelog-prepare:
 

@@ -3,9 +3,9 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 msgid ""
 msgstr ""
-"Project-Id-Version: UCS@school - 5.2v7 Changelog \n"
+"Project-Id-Version: UCS@school - 5.2v8 Changelog \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-29 15:20+0000\n"
+"POT-Creation-Date: 2026-09-17 10:00+0000\n"
 "PO-Revision-Date: 2023-02-06 09:57+0100\n"
 "Last-Translator: Univention GmbH <packages@univention.de>\n"
 "Language-Team: Univention GmbH <packages@univention.de>\n"
@@ -21,11 +21,11 @@ msgstr "|UCSUAS|-Update"
 #: ../../index.rst:11
 msgid ""
 "This document contains the changelogs with the detailed change "
-"information for the update of |UCSUAS| from version 5.2v6 to 5.2v7."
+"information for the update of |UCSUAS| from version 5.2v7 to 5.2v8."
 msgstr ""
 "Dieses Dokument enthält die Changelogs mit den detaillierten "
-"Änderungsinformationen zum Update von |UCSUAS| von Version 5.2v6 nach "
-"5.2v7."
+"Änderungsinformationen zum Update von |UCSUAS| von Version 5.2v7 nach "
+"5.2v8."
 
 #: ../../index.rst:14
 msgid ""
@@ -37,9 +37,9 @@ msgstr ""
 ":external+uv-navigation:ref:`der Changelog-Übersichtsseite<ucsschool-"
 "changelog>`."
 
-#: ../../index.rst:19
-msgid "Release 5.2v7"
-msgstr "Release 5.2v7"
+#: ../../index.rst:18
+msgid "Release 5.2v8"
+msgstr "Release 5.2v8"
 
 #: ../../index.rst:21
 msgid "What's new?"
@@ -47,88 +47,61 @@ msgstr "Was ist neu?"
 
 #: ../../index.rst:23
 msgid ""
-"The |UCSUAS| UMC modules can now identify users by their primary email "
-"address instead of their username, controlled by the new UCR variable "
-"``ucsschool/umc/show-email-instead-of-username`` (:uv:bug:`59515`)."
+"The RADIUS 802.1X integration now uses the rewritten "
+":spelling:ignore:`univention-radius-ntlm-auth` helper from UCS 5.2-7 and "
+"no longer ships its own network access check (:uv:bug:`59894`)."
 msgstr ""
-"Die |UCSUAS|-UMC-Module können Benutzer nun anhand ihrer primären E"
-"-Mail-Adresse anstelle des Benutzernamens kennzeichnen. Dies wird über "
-"die neue UCR-Variable ``ucsschool/umc/show-email-instead-of-username`` "
-"gesteuert (:uv:bug:`59515`)."
+"Die RADIUS-802.1X-Integration verwendet jetzt das neu geschriebene "
+"Hilfsprogramm :spelling:ignore:`univention-radius-ntlm-auth` aus UCS "
+"5.2-7 und liefert keine eigene Netzwerkzugriffsprüfung mehr "
+"(:uv:bug:`59894`)."
 
-#: ../../index.rst:28
-msgid "Showing the primary email address instead of the username"
-msgstr "Anzeige der primären E-Mail-Adresse anstelle des Benutzernamens"
+#: ../../index.rst:29
+msgid "RADIUS 802.1X uses the rewritten NTLM authentication helper"
+msgstr ""
+"RADIUS 802.1X verwendet das neu geschriebene Hilfsprogramm zur "
+"NTLM-Authentifizierung"
 
-#: ../../index.rst:30
+#: ../../index.rst:32
 msgid ""
-"By default, the |UCSUAS| UMC modules identify users by their username, "
-"for example ``Doe, John (jdoe)``. Environments that use the email address"
-" as the primary identifier for their users can now switch the displayed "
-"identifier by setting the new UCR variable ``ucsschool/umc/show-email-"
-"instead-of-username``:"
+"|UCSUAS| 5.2v8 requires UCS 5.2-7, which ships the rewritten "
+":spelling:ignore:`univention-radius-ntlm-auth` helper. The separate "
+"|UCSUAS| implementation of the network access check has been removed; the"
+" helper evaluates the |UCSUAS| internet rules itself."
 msgstr ""
-"Standardmäßig kennzeichnen die |UCSUAS|-UMC-Module Benutzer anhand ihres "
-"Benutzernamens, zum Beispiel ``Doe, John (jdoe)``. Umgebungen, die die "
-"E-Mail-Adresse als primären Bezeichner für ihre Benutzer verwenden, können "
-"den angezeigten Bezeichner nun umstellen, indem sie die neue UCR-Variable "
-"``ucsschool/umc/show-email-instead-of-username`` setzen:"
+"|UCSUAS| 5.2v8 setzt UCS 5.2-7 voraus, das das neu geschriebene "
+"Hilfsprogramm :spelling:ignore:`univention-radius-ntlm-auth` mitbringt. "
+"Die eigene |UCSUAS|-Implementierung der Netzwerkzugriffsprüfung wurde "
+"entfernt; das Hilfsprogramm wertet die |UCSUAS|-Internetregeln selbst "
+"aus."
 
 #: ../../index.rst:37
 msgid ""
-"When the variable is set, the affected views show the primary email "
-"address in place of the username, for example ``Doe, John "
-"(john.doe@example.com)``. Users without a primary email address keep "
-"being shown with their username."
+"The package :program:`ucs-school-radius-802.1x` activates this evaluation"
+" through the |UCSUCRV| :envvar:`freeradius/auth/helper/ntlm/network-"
+"access/internet-rules/enabled`. The variable is set during the "
+"installation of the package and unset when the package is removed. A "
+"value set by the administrator is kept during package updates."
 msgstr ""
-"Ist die Variable gesetzt, zeigen die betroffenen Ansichten die primäre E"
-"-Mail-Adresse anstelle des Benutzernamens an, zum Beispiel ``Doe, John "
-"(john.doe@example.com)``. Benutzer ohne primäre E-Mail-Adresse werden "
-"weiterhin mit ihrem Benutzernamen angezeigt."
-
-#: ../../index.rst:40
-msgid ""
-"The setting changes the user identifier in the following |UCSUAS| UMC "
-"modules:"
-msgstr ""
-"Die Einstellung ändert den Benutzerbezeichner in den folgenden "
-"|UCSUAS|-UMC-Modulen:"
+"Das Paket :program:`ucs-school-radius-802.1x` aktiviert diese Auswertung "
+"über die |UCSUCRV| :envvar:`freeradius/auth/helper/ntlm/network-access"
+"/internet-rules/enabled`. Die Variable wird bei der Installation des "
+"Pakets gesetzt und beim Entfernen des Pakets wieder gelöscht. Ein vom "
+"Administrator gesetzter Wert bleibt bei Paketaktualisierungen erhalten."
 
 #: ../../index.rst:42
-msgid "*Passwords (students)* and *Passwords (teachers)*"
-msgstr "*Passwörter (Schüler)* und *Passwörter (Lehrer)*"
-
-#: ../../index.rst:43
 msgid ""
-"The class and workgroup modules (*Assign teachers*, *Assign classes*, "
-"*Edit/Administrate workgroups*)"
+"The WLAN access decision itself does not change. For more information, "
+"see :external+uv-ucsschool-admin:ref:`radius`."
 msgstr ""
-"Die Klassen- und Arbeitsgruppenmodule (*Lehrer zuordnen*, *Klassen "
-"zuordnen*, *Arbeitsgruppen bearbeiten/verwalten*)"
+"Die WLAN-Zugangsentscheidung selbst ändert sich nicht. Weitere "
+"Informationen finden sich in :external+uv-ucsschool-admin:ref:`radius`."
 
-#: ../../index.rst:44
-msgid "The school wizards (*Users (schools)*)"
-msgstr "Die Schulassistenten (*Benutzer (Schulen)*)"
-
-#: ../../index.rst:45
-msgid "Printer moderation module (*Moderate printers*)"
-msgstr "Modul zur Druckermoderation (*Drucker moderieren*)"
-
-#: ../../index.rst:49
-msgid ""
-"The UCR variable ``ucsschool/umc/show-email-instead-of-username`` is not "
-"fully supported in the Computer Room, Exam Mode, and Distribution modules"
-" and may show inconsistencies."
-msgstr ""
-"Die UCR-Variable ``ucsschool/umc/show-email-instead-of-username`` wird in"
-" den Modulen Computerraum, Klassenarbeiten und Materialverteilung nicht "
-"vollständig unterstützt und kann zu Inkonsistenzen führen."
-
-#: ../../index.rst:55
+#: ../../index.rst:47
 msgid "General notes on the update"
 msgstr "Generelle Hinweise zum Update"
 
-#: ../../index.rst:57
+#: ../../index.rst:50
 msgid ""
 "During the update, services within the domain may fail. For this reason, "
 "the update should be performed within a maintenance window. It is "
@@ -142,7 +115,7 @@ msgstr ""
 "zunächst in einer Testumgebung einzuspielen und zu testen. Die "
 "Testumgebung sollte dabei identisch zur Produktivumgebung sein."
 
-#: ../../index.rst:62
+#: ../../index.rst:55
 msgid ""
 "Please note that depending on the size of the |UCSUAS| environment, this "
 "update may take longer than usual to complete."
@@ -150,11 +123,11 @@ msgstr ""
 "Bitte beachten Sie, dass diese Aktualisierung je nach Größe der "
 "|UCSUAS|-Umgebung länger als gewöhnlich dauern kann."
 
-#: ../../index.rst:68
+#: ../../index.rst:60
 msgid "Update process"
 msgstr "Update-Prozess"
 
-#: ../../index.rst:70
+#: ../../index.rst:63
 msgid ""
 "Major updates for |UCSUAS| are released in the Univention App Center as a"
 " standalone app update. Minor updates and bug fixes (errata for |UCSUAS|)"
