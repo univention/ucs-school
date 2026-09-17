@@ -13,4 +13,8 @@ def config_value_no_spelling(name, rawtext, text, lineno, inliner, options={}, c
 
 def setup(app):
     roles.register_local_role("config-value-no-spelling", config_value_no_spelling)
-    return {"version": "1.0.0"}
+    return {
+        "version": "1.0.0",
+        "parallel_read_safe": True,
+        "parallel_write_safe": True,
+    }
