@@ -152,9 +152,6 @@ linkcheck_allowed_redirects = {
     r"https://help\.univention\.com/t/\d+": r"https://help\.univention\.com/t/[\w-]+/\d+",
 }
 
-univention_changelog_previous_release = "5.0 v7"
-univention_changelog_builder = "ucsschool"
-
 # See Univention Sphinx Extension for its options.
 # https://git.knut.univention.de/univention/documentation/univention_sphinx_extension
 # Information about the feedback link.

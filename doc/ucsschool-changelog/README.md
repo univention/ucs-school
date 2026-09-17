@@ -19,20 +19,20 @@ During the work on an issue, the implementer uses this guide to update the chang
 This document uses Sphinx for building the artifacts from the reStructeredText
 (reST) documents.
 
-### Update configuration settings
+### Update the version references
 
 **NOTE:** If you are doing an errata release, skip this step.
 
-The following example illustrates the procedure on the example for the
-UCS@school 5.2 v2 release version.
+The document version is not configured in `conf.py`.
+`release` is taken from the `CHANGELOG_TARGET_VERSION` environment variable,
+which [base-doc.yml](../../.gitlab-ci/base-doc.yml) sets to the app version of the release pipeline.
 
-Update configuration settings in `doc/ucsschool-changelog/conf.py`:
+For an app release, update the version references in the `*.rst` files:
 
-* Set `univention_changelog_previous_release` to `"5.2 v1"`.
-* Set `release` to `5.2 v2`. It may also have to be adapted in [base-doc.yml](../../.gitlab-ci/base-doc.yml).
-* Keep `version` at `5.2`.
+* In `index.rst`, adjust the version jump ("from version 5.2v7 to 5.2v8")
+  and replace the section of the previous release with one for the new release.
 
-Add additional update information in the `*.rst` files. It might help to run `make clean` inside the docker container when your are doing a release.
+It might help to run `make clean` inside the docker container when you are doing a release.
 
 ### Editing and building the changelog
 
