@@ -97,7 +97,10 @@ validate-advisories:
 
 rename-advisories:
   stage: cleanup
-  needs: []
+  needs:
+    - job: check_release
+      artifacts: false
+    - job: create_app_version
   variables:
     GIT_AUTHOR_EMAIL: "ucsschool-team@univention.de"
     GIT_AUTHOR_NAME: "UCS@school team"
