@@ -18,6 +18,7 @@ from debian.deb822 import Deb822
 from debian.debian_support import version_compare
 
 RELEASE_EXCEPTIONS = ["ucs-test-ucsschool"]
+STAGING_VERSION = "999.0.0-staging"
 
 
 class RelaeseIssue:
@@ -29,6 +30,20 @@ class RelaeseIssue:
 
     version_regex = r"(?P<ucsversion>\d+.\d+) ?v(?P<schoolversion>\d+)"
 
+    staging_warning_re = r"<!-- missing-in-staging:start -->.*?<!-- missing-in-staging:end -->\n*"
+    staging_warning_template = (
+        "<!-- missing-in-staging:start -->\n"
+        "> [!caution]\n"
+        "> **Packages missing in {staging}**\n"
+        ">\n"
+        "> A new app version is copied from `{staging}`, so a release now would ship the\n"
+        "> older versions below. Upload the packages to `{staging}` before tagging the release;\n"
+        "> the `check-component-complete` job fails until then.\n"
+        ">\n"
+        "{packages}\n"
+        "<!-- missing-in-staging:end -->\n\n"
+    )
+
     def __init__(self):
         token = os.environ["GITLAB_PROJECT_TOKEN"]
         self.headers = {"PRIVATE-TOKEN": token}
@@ -38,11 +53,19 @@ class RelaeseIssue:
             f"https://appcenter.software-univention.de/meta-inf/{self.ucsversion}/index.json.gz"
         )
         self.app_repo = f"https://appcenter.software-univention.de/univention-repository/{self.ucsversion}/maintained/component/"
+        self.test_apps_index_link = (
+            f"https://appcenter-test.software-univention.de/meta-inf/{self.ucsversion}/index.json.gz"
+        )
+        self.test_app_repo = f"https://appcenter-test.software-univention.de/univention-repository/{self.ucsversion}/maintained/component/"
+        self.git_versions = self._get_git_versions()
         self.latest_app = self._get_latest_app()
         self.unreleased_packages = self._get_unreleased_packages()
+        self.missing_in_staging = self._get_missing_in_staging()
 
     def update(self):
-        if not [pkg for pkg in self.unreleased_packages if pkg not in RELEASE_EXCEPTIONS]:
+        if not self.missing_in_staging and not [
+            pkg for pkg in self.unreleased_packages if pkg not in RELEASE_EXCEPTIONS
+        ]:
             return
         issue = self._get_release_issue()
         self._update_release_issue(issue)
@@ -89,26 +112,59 @@ class RelaeseIssue:
                     src_pkgs[src_name] = package["Version"]
         return src_pkgs
 
+    def _get_git_versions(self):
+        git_versions = {}
+        for changelog_path in self.changelogs:
+            changelog = Changelog(changelog_path.read_text())
+            pkg_name = changelog.get_package()
+            if pkg_name in git_versions:
+                double_package_name_error = f"Package: {pkg_name} exists multiple times!"
+                raise RuntimeError(double_package_name_error)
+            git_versions[pkg_name] = changelog.full_version
+        return git_versions
+
     def _get_unreleased_packages(self):
         latest_school_package_source = self._get_latest_school_package_source()
         released_sources_pkgs = self._get_released_sources_pkgs(latest_school_package_source)
         unreleased_packages = {}
-        for changelog_path in self.changelogs:
-            changelog = Changelog(changelog_path.read_text())
-            pkg_name = changelog.get_package()
-            if pkg_name in unreleased_packages:
-                double_package_name_error = f"Package: {pkg_name} exists multiple times!"
-                raise RuntimeError(double_package_name_error)
+        for pkg_name, new_version in self.git_versions.items():
             # A brand-new source package is not part of any published app version,
             # so it has no "old" version (None) instead of raising a KeyError.
             old_version = released_sources_pkgs.get(pkg_name)
-            if old_version is None or not old_version.startswith(changelog.full_version):
+            if old_version is None or not old_version.startswith(new_version):
                 unreleased_packages[pkg_name] = {
                     "old": old_version,
-                    "new": changelog.full_version,
+                    "new": new_version,
                     "bugs": self._get_bugs(pkg_name),
                 }
         return unreleased_packages
+
+    def _get_staging_component_id(self):
+        index_appcenter = json.loads(gzip.decompress(requests.get(self.test_apps_index_link).content))
+        for component_id, app in index_appcenter.items():
+            if component_id.startswith("ucsschool_"):
+                app_config = ConfigParser()
+                app_config.read_string(requests.get(app["ini"]["url"]).text)
+                if app_config.get("Application", "Version") == STAGING_VERSION:
+                    return component_id
+        err_msg = f"Could not find app version {STAGING_VERSION}"
+        raise ValueError(err_msg)
+
+    def _get_missing_in_staging(self):
+        """
+        Return the source packages whose git version is not in the staging component.
+
+        A new app version is copied from the staging version, so a package missing
+        there is silently left out of the next release.
+        """
+        staging_link = urllib.parse.urljoin(self.test_app_repo, f"{self._get_staging_component_id()}/")
+        staging_sources_pkgs = self._get_released_sources_pkgs(staging_link)
+        missing = {}
+        for pkg_name, git_version in self.git_versions.items():
+            staging_version = staging_sources_pkgs.get(pkg_name)
+            if staging_version is None or version_compare(staging_version, git_version) < 0:
+                missing[pkg_name] = {"staging": staging_version, "git": git_version}
+        return missing
 
     def _get_bugs(self, pkg_name):
         try:
@@ -271,6 +327,7 @@ mutation($noteableId: NoteableID!, $body: String!) {
             ),
             description,
         )
+        description = self._apply_staging_warning(description)
         resp = requests.put(
             f"https://git.knut.univention.de/api/v4/projects/1574/issues/{issue['iid']}",
             headers=self.headers,
@@ -279,6 +336,19 @@ mutation($noteableId: NoteableID!, $body: String!) {
             },
         )
         resp.raise_for_status()
+
+    def _apply_staging_warning(self, description):
+        description = re.sub(self.staging_warning_re, "", description, flags=re.DOTALL)
+        if not self.missing_in_staging:
+            return description
+        packages = "\n".join(
+            f"> - `{package}`: staging **{v['staging'] or 'missing'}**, git **{v['git']}**"
+            for package, v in self.missing_in_staging.items()
+        )
+        return (
+            self.staging_warning_template.format(staging=STAGING_VERSION, packages=packages)
+            + description
+        )
 
     def _get_bug_string(self, pkg_name):
         bugs = self.unreleased_packages[pkg_name]["bugs"]
