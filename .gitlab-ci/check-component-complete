@@ -11,18 +11,26 @@ listed in the matching ``debian/control`` must be present in the component with 
 least that version. A missing or older package fails the check.
 Source packages given with ``--ignore`` are skipped.
 
-In CI the component is ``$APP_COMPONENT_ID`` from ``create_app_version``. Run it
-locally against any component::
+No package of the checkout may go backwards either: its version must be at least
+the one in the latest released app version in the production App Center. For a
+release tag that is the latest version up to the one being released, so an errata
+is compared with the app version it updates.
+
+In CI the component is ``$APP_COMPONENT_ID`` and the app version is ``$APP_VERSION``,
+both from ``create_app_version``. Run it locally against any component::
 
     .gitlab-ci/check-component-complete --component ucsschool_20260922132844
 """
 
 import argparse
 import gzip
+import json
 import os
+import re
 import sys
+from configparser import ConfigParser
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 
 import requests
 from debian.changelog import Changelog
@@ -30,6 +38,10 @@ from debian.deb822 import Deb822, Packages
 from debian.debian_support import version_compare
 
 REPO_URL = "https://appcenter-test.software-univention.de/univention-repository/{ucs}/maintained/component/{component}/"
+RELEASED_REPO_URL = "https://appcenter.software-univention.de/univention-repository/{ucs}/maintained/component/{component}/"
+RELEASED_INDEX_URL = "https://appcenter.software-univention.de/meta-inf/{ucs}/index.json.gz"
+APP_ID = "ucsschool"
+VERSION_RE = re.compile(r"(?P<ucs>\d+\.\d+) ?v(?P<school>\d+)$")
 ARCHITECTURES = ("all", "amd64")
 
 
@@ -58,12 +70,48 @@ def component_packages(url: str) -> Dict[str, List[str]]:
     return available
 
 
+def released_component(ucs_version: str, app_version: str) -> Tuple[str, str]:
+    """Return component id and version of the latest released app version up to ``app_version``."""
+    limit: Optional[int] = None
+    match = VERSION_RE.match(app_version or "")
+    if match and match.group("ucs") == ucs_version:
+        limit = int(match.group("school"))
+    response = requests.get(RELEASED_INDEX_URL.format(ucs=ucs_version), timeout=60)
+    response.raise_for_status()
+    index = json.loads(gzip.decompress(response.content))
+    latest: Optional[Tuple[int, str, str]] = None
+    for component_id, app in index.items():
+        if not component_id.startswith(f"{APP_ID}_"):
+            continue
+        response = requests.get(app["ini"]["url"], timeout=60)
+        response.raise_for_status()
+        ini = ConfigParser(interpolation=None)
+        ini.read_string(response.text)
+        version = ini.get("Application", "Version")
+        match = VERSION_RE.match(version)
+        if not match or match.group("ucs") != ucs_version:
+            continue
+        school = int(match.group("school"))
+        if limit is not None and school > limit:
+            continue
+        if latest is None or latest[0] < school:
+            latest = (school, component_id, version)
+    if latest is None:
+        raise SystemExit(f"No released {APP_ID} version for UCS {ucs_version} found")
+    return latest[1], latest[2]
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
     parser.add_argument("--component", default=os.environ.get("APP_COMPONENT_ID"))
     parser.add_argument("--ucs-version", default=os.environ.get("APP_UCS_VERSION", "5.2"))
+    parser.add_argument(
+        "--app-version",
+        default=os.environ.get("APP_VERSION", ""),
+        help="compare with the latest released version up to this one, e.g. '5.2 v8'",
+    )
     parser.add_argument("--root", type=Path, default=Path("."))
     parser.add_argument("--ignore", action="append", default=[], metavar="SOURCE_DIR")
     args = parser.parse_args()
@@ -82,12 +130,30 @@ def main() -> int:
         found = max(versions, key=_VersionKey) if versions else "<missing>"
         problems.append(f"  {package:<50} {found:<12} expected {version}  ({srcdir})")
 
-    if not problems:
-        print("All packages of the checkout are in the component.")
-        return 0
-    print(f"{len(problems)} package(s) missing or outdated in {args.component}:")
-    print("\n".join(problems))
-    return 1
+    released_id, released_version = released_component(args.ucs_version, args.app_version)
+    released_url = RELEASED_REPO_URL.format(ucs=args.ucs_version, component=released_id)
+    print(f"Comparing with released {released_version}: {released_url}")
+    released = component_packages(released_url)
+
+    backwards = []
+    for package, (version, srcdir) in sorted(expected_packages(args.root, []).items()):
+        versions = released.get(package)
+        if not versions:
+            continue
+        found = max(versions, key=_VersionKey)
+        if version_compare(version, found) < 0:
+            backwards.append(f"  {package:<50} {version:<12} released {found}  ({srcdir})")
+
+    if problems:
+        print(f"{len(problems)} package(s) missing or outdated in {args.component}:")
+        print("\n".join(problems))
+    if backwards:
+        print(f"{len(backwards)} package(s) older than in released {released_version}:")
+        print("\n".join(backwards))
+    if problems or backwards:
+        return 1
+    print("All packages of the checkout are in the component and none goes backwards.")
+    return 0
 
 
 class _VersionKey:
