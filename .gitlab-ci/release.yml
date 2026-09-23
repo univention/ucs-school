@@ -84,6 +84,24 @@ deb_repo_import:
 deb_build_git:
   needs: [parse-advisories]
 
+check-component-complete:
+  stage: build
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_REF_PROTECTED == "true"
+  needs:
+    - create_app_version
+    - job: upload_from_build_system
+      artifacts: false
+  image: gitregistry.knut.univention.de/univention/dev/tooling/ci-components/python:latest
+  script:
+    - |
+      if [ "$IS_ERRATA" == "true" ]; then
+        .gitlab-ci/check-component-complete --ignore ucs-test-ucsschool
+      else
+        .gitlab-ci/check-component-complete
+      fi
+
 validate-advisories:
   stage: build
   rules:

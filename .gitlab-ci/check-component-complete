@@ -1,0 +1,102 @@
+#!/usr/bin/env python3
+
+# SPDX-FileCopyrightText: 2026 Univention GmbH
+# SPDX-License-Identifier: AGPL-3.0-only
+
+"""
+Check that an App Center component carries every package version of the checkout.
+
+For each ``*/debian/changelog`` the top version is taken, and every binary package
+listed in the matching ``debian/control`` must be present in the component with at
+least that version. A missing or older package fails the check.
+Source packages given with ``--ignore`` are skipped.
+
+In CI the component is ``$APP_COMPONENT_ID`` from ``create_app_version``. Run it
+locally against any component::
+
+    .gitlab-ci/check-component-complete --component ucsschool_20260922132844
+"""
+
+import argparse
+import gzip
+import os
+import sys
+from pathlib import Path
+from typing import Dict, List, Tuple
+
+import requests
+from debian.changelog import Changelog
+from debian.deb822 import Deb822, Packages
+from debian.debian_support import version_compare
+
+REPO_URL = "https://appcenter-test.software-univention.de/univention-repository/{ucs}/maintained/component/{component}/"
+ARCHITECTURES = ("all", "amd64")
+
+
+def expected_packages(root: Path, ignore: List[str]) -> Dict[str, Tuple[str, str]]:
+    expected = {}
+    for changelog_path in sorted(root.glob("*/debian/changelog")):
+        if changelog_path.parts[-3] in ignore:
+            continue
+        with changelog_path.open() as fd:
+            version = str(Changelog(fd, max_blocks=1).version)
+        with (changelog_path.parent / "control").open() as fd:
+            for paragraph in Deb822.iter_paragraphs(fd):
+                if "Package" in paragraph:
+                    expected[paragraph["Package"]] = (version, changelog_path.parts[-3])
+    return expected
+
+
+def component_packages(url: str) -> Dict[str, List[str]]:
+    available: Dict[str, List[str]] = {}
+    for arch in ARCHITECTURES:
+        response = requests.get(f"{url}{arch}/Packages.gz", timeout=60)
+        response.raise_for_status()
+        content = gzip.decompress(response.content).decode()
+        for paragraph in Packages.iter_paragraphs(content.splitlines(), use_apt_pkg=False):
+            available.setdefault(paragraph["Package"], []).append(paragraph["Version"])
+    return available
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    parser.add_argument("--component", default=os.environ.get("APP_COMPONENT_ID"))
+    parser.add_argument("--ucs-version", default=os.environ.get("APP_UCS_VERSION", "5.2"))
+    parser.add_argument("--root", type=Path, default=Path("."))
+    parser.add_argument("--ignore", action="append", default=[], metavar="SOURCE_DIR")
+    args = parser.parse_args()
+    if not args.component:
+        parser.error("--component or APP_COMPONENT_ID is required")
+
+    url = REPO_URL.format(ucs=args.ucs_version, component=args.component)
+    print(f"Checking {url}")
+    available = component_packages(url)
+
+    problems = []
+    for package, (version, srcdir) in sorted(expected_packages(args.root, args.ignore).items()):
+        versions = available.get(package, [])
+        if any(version_compare(v, version) >= 0 for v in versions):
+            continue
+        found = max(versions, key=_VersionKey) if versions else "<missing>"
+        problems.append(f"  {package:<50} {found:<12} expected {version}  ({srcdir})")
+
+    if not problems:
+        print("All packages of the checkout are in the component.")
+        return 0
+    print(f"{len(problems)} package(s) missing or outdated in {args.component}:")
+    print("\n".join(problems))
+    return 1
+
+
+class _VersionKey:
+    def __init__(self, version: str) -> None:
+        self.version = version
+
+    def __lt__(self, other: "_VersionKey") -> bool:
+        return version_compare(self.version, other.version) < 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
