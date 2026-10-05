@@ -153,6 +153,10 @@ intersphinx_mapping = {
         "https://docs.software-univention.de/ucsschool-manual/5.2/de/",
         None,
     ),
+    "uv-ucsschool-accounts": (
+        "https://docs.software-univention.de/ucsschool-accounts/",
+        None,
+    ),
 }
 
 linkcheck_allowed_redirects = {

@@ -55,6 +55,16 @@ Minimale Systemvoraussetzungen:
 
 * 100 GB Speicherplatz
 
+.. note::
+
+   Ist auf dem |UCSPRIMARYDN| die |UCSUAS| App :program:`School Accounts`
+   zusammen mit allen von ihr benötigten Apps installiert, steigen die
+   minimalen Systemvoraussetzungen auf 12 GB RAM
+   statt 8 GB RAM und 150 GB Speicherplatz statt 100 GB Speicherplatz. Welche
+   Apps School Accounts benötigt, beschreibt
+   :external+uv-ucsschool-accounts:ref:`installation` in der Dokumentation zu
+   School Accounts.
+
 Die primären Lastszenarien des |UCSPRIMARYDN| sind:
 
 * Viele lesende Zugriffe auf die LDAP-Datenbank, da neben der Administration
