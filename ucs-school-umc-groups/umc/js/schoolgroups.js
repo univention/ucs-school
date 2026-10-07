@@ -312,9 +312,9 @@ define([
 		autosearchVariable: 'ucsschool/workgroups/autosearch',
 		autosearchOnChangeVariable: 'ucsschool/workgroups/autosearch_on_change',
 		DetailPage: WorkgroupDetailPage,
-		helpText: _('This module allows to modify class comprehensive workgroups. Arbitrary students and teacher of the school can be selected as group members.'),
+		helpText: _('This module allows to modify class comprehensive workgroups. Students of the school can be selected as group members.'),
 		detailPageHeaderText: _('Edit workgroup'),
-		detailPageHelpText: _('This module allows to modify class comprehensive workgroups. Arbitrary students and teacher of the school can be selected as group members.'),
+		detailPageHelpText: _('This module allows to modify class comprehensive workgroups. Students of the school can be selected as group members.'),
 		getGridColumns: function() {
 			return [{
 				name: 'name',
@@ -330,6 +330,7 @@ define([
 		// keep multi selection here, the delete action operates on multiple objects
 		multiSelect: true,
 		helpText: _('This module allows to create, modify and delete class comprehensive workgroups. Arbitrary students and teacher of the school can be selected as group members.'),
+		detailPageHelpText: _('This module allows to modify class comprehensive workgroups. Arbitrary students and teacher of the school can be selected as group members.'),
 		getGridActions: function() {
 			var actions = this.inherited(arguments);
 

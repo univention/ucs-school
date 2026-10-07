@@ -28,6 +28,7 @@ from univention.management.console.log import MODULE
 from univention.management.console.modules import UMC_Error
 from univention.management.console.modules.decorators import sanitize
 from univention.management.console.modules.sanitizers import (
+    ChoicesSanitizer,
     DictSanitizer,
     LDAPSearchSanitizer,
     ListSanitizer,
@@ -152,16 +153,18 @@ class Instance(SchoolBaseModule):
     @sanitize(
         school=SchoolSanitizer(required=True),
         pattern=LDAPSearchSanitizer(required=False, default="", use_asterisks=True, add_asterisks=False),
+        user_type=ChoicesSanitizer(["student", "teacher"], required=False),
     )
     @LDAP_Connection()
     def users(self, request, ldap_user_read=None, ldap_position=None):
         # parse group parameter
         group = request.options.get("group")
-        user_type = None
+        # the group drop-down must not widen a user type the member field requires
+        user_type = request.options.get("user_type")
         if not group or group == "None":
             group = None
         elif group.lower() in ("teacher", "student"):
-            user_type = group.lower()
+            user_type = user_type or group.lower()
             group = None
 
         result = [

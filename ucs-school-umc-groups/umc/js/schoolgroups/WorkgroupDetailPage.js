@@ -174,12 +174,8 @@ define([
 			return lang.mixin(this.inherited(arguments), {
 				label: this.moduleFlavor == 'workgroup' ? _('Students') : _('Members'),
 				description: this.moduleFlavor == 'workgroup' ? _('Students that belong to the current workgroup') : _('Teachers and students that belong to the current workgroup'),
-				queryOptions: lang.hitch(this, function() {
-					if (this.moduleFlavor == 'workgroup') {
-						return { group: 'student' };
-					}
-					return {};
-				})
+				// MultiObjectSelect mixes in a plain object, and the dialog's "group" value overrides it
+				queryOptions: this.moduleFlavor == 'workgroup' ? {user_type: 'student'} : {}
 			});
 		},
 		getMultiSelectGroup: function() {

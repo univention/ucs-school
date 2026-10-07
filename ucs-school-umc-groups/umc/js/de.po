@@ -188,6 +188,10 @@ msgstr "Nach dieser Zeichenkette soll in den angezeigten Namen gesucht werden"
 msgid "Students"
 msgstr "Schüler"
 
+#: umc/js/schoolgroups/WorkgroupDetailPage.js:176
+msgid "Students that belong to the current workgroup"
+msgstr "Schüler, die zu der aktuellen Arbeitsgruppe gehören"
+
 #: umc/js/schoolgroups/TeacherDetailPage.js:53
 msgid "Teacher"
 msgstr "Lehrer"
@@ -242,6 +246,15 @@ msgstr ""
 "Dieses Modul erlaubt das Bearbeiten von klassenübergreifenden "
 "Arbeitsgruppen. Als Gruppenmitglieder können beliebige Schüler und Lehrer "
 "der Schule ausgewählt werden."
+
+#: umc/js/schoolgroups.js:315 umc/js/schoolgroups.js:317
+msgid ""
+"This module allows to modify class comprehensive workgroups. Students of the "
+"school can be selected as group members."
+msgstr ""
+"Dieses Modul erlaubt das Bearbeiten von klassenübergreifenden "
+"Arbeitsgruppen. Als Gruppenmitglieder können Schüler der Schule ausgewählt "
+"werden."
 
 #: umc/js/schoolgroups/DetailPage.js:121
 msgid "User group or class"
