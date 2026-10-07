@@ -226,16 +226,23 @@ Helpdesk kontaktieren
    Schulträger bereitgestellt wird. Über das Modul *Helpdesk kontaktieren*
    können Lehrer und Schuladministratoren eine Anfrage stellen.
 
-Arbeitsgruppen bearbeiten
-   Jeder Schüler ist Mitglied seiner Klasse. Darüber hinaus gibt es die
-   Möglichkeit mit dem Modul *Arbeitsgruppen bearbeiten* Schüler in
-   klassenübergreifende Arbeitsgruppen einzuordnen. Das Anlegen einer
-   Arbeitsgruppe legt automatisch einen Datenbereich auf dem Schulserver an, auf
-   den alle Mitglieder der Arbeitsgruppe Zugriff haben. Lehrer können Schüler zu
-   Arbeitsgruppen hinzufügen oder entfernen, aber keine neuen Arbeitsgruppen
-   anlegen. Dies muss von einem Schuladministrator vorgenommen werden. Das Modul
-   *Arbeitsgruppen bearbeiten* erlaubt Schuladministratoren neue
-   Arbeitsgruppen anzulegen und diesen neben Schülern auch Lehrer zuzuweisen.
+Arbeitsgruppen verwalten
+   Jeder Schüler ist Mitglied seiner Klasse.
+   Darüber hinaus gibt es die Möglichkeit,
+   mit dem Modul *Arbeitsgruppen verwalten*
+   Schüler und Lehrer in klassenübergreifende Arbeitsgruppen einzuordnen.
+   Das Anlegen einer Arbeitsgruppe legt automatisch
+   einen Datenbereich auf dem Schulserver an,
+   auf den alle Mitglieder der Arbeitsgruppe Zugriff haben.
+   Lehrer und Schuladministratoren können Arbeitsgruppen anlegen,
+   bearbeiten und löschen.
+
+   Sollen Lehrer nur Schüler zu bestehenden Arbeitsgruppen
+   hinzufügen oder entfernen dürfen,
+   kann ein Administrator ihnen stattdessen
+   das Modul *Arbeitsgruppen bearbeiten* zuweisen.
+   Siehe Abschnitt *Arbeitsgruppen-Rechte für Lehrer einschränken*
+   im Kapitel :external+uv-ucsschool-manual:ref:`school-setup-generic`.
 
 Drucker moderieren
    Mit dem Modul *Drucker moderieren* können Ausdrucke der Schüler geprüft

@@ -480,6 +480,67 @@ Ist der Wert der |UCSUCRV| beispielsweise
 Namen ``AG1`` an der Schule ``DEMOSCHOOL`` die E-Mailadresse
 ``DEMOSCHOOL-AG1@schule-univention.de`` berechnet.
 
+.. _school-setup-generic-configure-workgroup-teachers:
+
+Arbeitsgruppen-Rechte für Lehrer einschränken
+=============================================
+
+Für Arbeitsgruppen gibt es zwei UMC-Module:
+
+*Arbeitsgruppen verwalten*
+   Arbeitsgruppen anlegen, bearbeiten und löschen.
+   Als Mitglieder können Schüler, Lehrer, Mitarbeiter,
+   Schuladministratoren und Erziehungsberechtigte der Schule
+   ausgewählt werden.
+
+*Arbeitsgruppen bearbeiten*
+   Nur die Schüler bestehender Arbeitsgruppen hinzufügen und entfernen.
+   Arbeitsgruppen können weder angelegt noch gelöscht werden,
+   Name und Beschreibung sind schreibgeschützt.
+   Andere Mitglieder als Schüler werden nicht angezeigt
+   und bleiben beim Speichern erhalten.
+
+Die UMC-Richtlinie ``ucsschool-umc-teachers-default``
+erlaubt Lehrern standardmäßig beide Module.
+Ist *Arbeitsgruppen verwalten* erlaubt,
+blendet die |UCSUMC| *Arbeitsgruppen bearbeiten* aus.
+Lehrer sehen daher standardmäßig nur *Arbeitsgruppen verwalten*.
+
+Sollen Lehrer nur die Schüler bestehender Arbeitsgruppen verwalten,
+entfernt ein Domänenadministrator
+das UMC-Operationsset ``schoolgroups-workgroup-admin``
+(Beschreibung *Workgroup administration*) aus der Richtlinie:
+
+#. Im UMC-Modul *Richtlinien* die UMC-Richtlinie
+   ``ucsschool-umc-teachers-default`` unter ``cn=UMC,cn=policies`` öffnen.
+
+#. Aus der *Liste der erlaubten UMC Operationen*
+   den Eintrag ``schoolgroups-workgroup-admin`` entfernen.
+   Der Eintrag ``schoolgroups-workgroup`` (*Workgroup editing*)
+   muss erhalten bleiben.
+
+Alternativ auf dem |UCSPRIMARYDN|:
+
+.. code-block:: console
+
+   $ eval "$(ucr shell ldap/base)"
+   $ udm policies/umc modify \
+       --dn "cn=ucsschool-umc-teachers-default,cn=UMC,cn=policies,$ldap_base" \
+       --remove allow="cn=schoolgroups-workgroup-admin,cn=operations,cn=UMC,cn=univention,$ldap_base"
+
+Die Änderung wirkt ab der nächsten Anmeldung der Lehrer an der |UCSUMC|.
+
+.. warning::
+
+   Das Joinskript von :program:`ucs-school-umc-groups`
+   fügt ``schoolgroups-workgroup-admin`` bei jeder Ausführung
+   wieder zur Richtlinie hinzu,
+   zum Beispiel nach einem Update des Pakets.
+   Prüfen Sie die Richtlinie nach Updates.
+
+Allgemeine Informationen zu UMC-Richtlinien und Operationssets enthält
+:external+uv-manual:ref:`delegated-administration`.
+
 .. _school-setup-generic-apple-school-manager:
 
 Provisionierung von Benutzern zu Apple School Manager
