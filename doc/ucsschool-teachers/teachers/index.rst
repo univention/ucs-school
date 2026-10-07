@@ -16,6 +16,7 @@ Verwaltungsfunktionen für Lehrer
    exam-mode
    helpdesk
    workgroups
+   edit-workgroups
    class-lists
    printers
    materials

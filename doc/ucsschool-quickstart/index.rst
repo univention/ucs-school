@@ -237,8 +237,7 @@ Arbeitsgruppen verwalten
    Lehrer und Schuladministratoren können Arbeitsgruppen anlegen,
    bearbeiten und löschen.
 
-   Sollen Lehrer nur Schüler zu bestehenden Arbeitsgruppen
-   hinzufügen oder entfernen dürfen,
+   Sollen Lehrer nur bestehende Arbeitsgruppen bearbeiten dürfen,
    kann ein Administrator ihnen stattdessen
    das Modul *Arbeitsgruppen bearbeiten* zuweisen.
    Siehe Abschnitt *Arbeitsgruppen-Rechte für Lehrer einschränken*

@@ -492,15 +492,14 @@ msgstr ""
 
 #: ../../index.rst:240
 msgid ""
-"Sollen Lehrer nur Schüler zu bestehenden Arbeitsgruppen hinzufügen oder "
-"entfernen dürfen, kann ein Administrator ihnen stattdessen das Modul "
-"*Arbeitsgruppen bearbeiten* zuweisen. Siehe Abschnitt *Arbeitsgruppen-"
+"Sollen Lehrer nur bestehende Arbeitsgruppen bearbeiten dürfen, kann ein "
+"Administrator ihnen stattdessen das Modul *Arbeitsgruppen bearbeiten* "
+"zuweisen. Siehe Abschnitt *Arbeitsgruppen-"
 "Rechte für Lehrer einschränken* im Kapitel :external+uv-ucsschool-"
 "manual:ref:`school-setup-generic`."
 msgstr ""
-"If teachers should only add students to or remove students from existing "
-"workgroups, an administrator can assign them the module *Edit workgroups* "
-"instead. See section *Arbeitsgruppen-Rechte für Lehrer einschränken* in "
+"If teachers should only edit existing workgroups, an administrator can "
+"assign them the module *Edit workgroups* instead. See section *Arbeitsgruppen-Rechte für Lehrer einschränken* in "
 "chapter :external+uv-ucsschool-manual:ref:`school-setup-generic`."
 
 #: ../../index.rst:244

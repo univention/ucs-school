@@ -494,7 +494,8 @@ Für Arbeitsgruppen gibt es zwei UMC-Module:
    ausgewählt werden.
 
 *Arbeitsgruppen bearbeiten*
-   Nur die Schüler bestehender Arbeitsgruppen hinzufügen und entfernen.
+   Nur die Schüler bestehender Arbeitsgruppen hinzufügen und entfernen
+   und die E-Mail-Adresse der Arbeitsgruppe verwalten.
    Arbeitsgruppen können weder angelegt noch gelöscht werden,
    Name und Beschreibung sind schreibgeschützt.
    Andere Mitglieder als Schüler werden nicht angezeigt
@@ -506,7 +507,7 @@ Ist *Arbeitsgruppen verwalten* erlaubt,
 blendet die |UCSUMC| *Arbeitsgruppen bearbeiten* aus.
 Lehrer sehen daher standardmäßig nur *Arbeitsgruppen verwalten*.
 
-Sollen Lehrer nur die Schüler bestehender Arbeitsgruppen verwalten,
+Sollen Lehrer nur bestehende Arbeitsgruppen bearbeiten,
 entfernt ein Domänenadministrator
 das UMC-Operationsset ``schoolgroups-workgroup-admin``
 (Beschreibung *Workgroup administration*) aus der Richtlinie:
