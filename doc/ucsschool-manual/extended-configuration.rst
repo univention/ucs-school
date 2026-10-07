@@ -531,14 +531,6 @@ Alternativ auf dem |UCSPRIMARYDN|:
 
 Die Änderung wirkt ab der nächsten Anmeldung der Lehrer an der |UCSUMC|.
 
-.. warning::
-
-   Das Joinskript von :program:`ucs-school-umc-groups`
-   fügt ``schoolgroups-workgroup-admin`` bei jeder Ausführung
-   wieder zur Richtlinie hinzu,
-   zum Beispiel nach einem Update des Pakets.
-   Prüfen Sie die Richtlinie nach Updates.
-
 Allgemeine Informationen zu UMC-Richtlinien und Operationssets enthält
 :external+uv-manual:ref:`delegated-administration`.
 
