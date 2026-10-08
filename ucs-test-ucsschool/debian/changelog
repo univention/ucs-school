@@ -1,3 +1,12 @@
+ucs-test-ucsschool (8.0.66) unstable; urgency=medium
+
+  * Bug #55267: add 91_ucsschool-selenium/08_umc_groups, which clicks through
+    every flavor of the UMC module schoolgroups ("Assigning teachers",
+    "Assigning classes", "Administrate workgroups" and, as a teacher, "Edit
+    workgroups") and checks the result in LDAP.
+
+ -- Jan Gietzel <jan.gietzel@univention.de>  Fri, 09 Oct 2026 10:00:00 +0200
+
 ucs-test-ucsschool (8.0.65) unstable; urgency=medium
 
   * Wait for the S4 connector in the remaining places that change an object the
