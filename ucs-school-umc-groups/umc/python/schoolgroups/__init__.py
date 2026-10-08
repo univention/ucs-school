@@ -65,6 +65,15 @@ def get_exception_msg(e):
     return msg
 
 
+def group_label(dn: str) -> str:
+    """Label a group like SchoolBaseModule._groups() does for the group search dialog."""
+    name = SchoolGroup.get_name_from_dn(dn)
+    school = SchoolGroup.get_school_from_dn(dn)
+    if school and name.lower().startswith("%s-" % school.lower()):
+        return name[len(school) + 1 :]
+    return name
+
+
 def _filter_users(
     input_users,
     school,
@@ -225,14 +234,16 @@ class Instance(SchoolBaseModule):
 
             umc_users = []
             for user_dn in result["allowed_email_senders_users"]:
-                user = User.from_dn(user_dn, None, ldap_user_read)
-                umc_users.append(
-                    {"id": user_dn, "label": Display.user(user.get_udm_object(ldap_user_read))}
-                )
+                try:
+                    user = User.from_dn(user_dn, None, ldap_user_read)
+                    label = Display.user(user.get_udm_object(ldap_user_read))
+                except (udm_exceptions.noObject, WrongObjectType):
+                    # deleted or not readable: still list it, put() keeps only the senders sent back
+                    label = explode_rdn(user_dn, True)[0]
+                umc_users.append({"id": user_dn, "label": label})
             result["allowed_email_senders_users"] = umc_users
             result["allowed_email_senders_groups"] = [
-                {"id": dn, "label": explode_rdn(dn, True)[0]}
-                for dn in result["allowed_email_senders_groups"]
+                {"id": dn, "label": group_label(dn)} for dn in result["allowed_email_senders_groups"]
             ]
 
         if request.flavor == "workgroup-admin":
