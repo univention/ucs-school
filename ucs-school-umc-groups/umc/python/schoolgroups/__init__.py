@@ -24,6 +24,7 @@ from ucsschool.lib.school_umc_ldap_connection import (
     LDAP_Connection,
 )
 from univention.lib.i18n import Translation
+from univention.management.console.config import ucr
 from univention.management.console.log import MODULE
 from univention.management.console.modules import UMC_Error
 from univention.management.console.modules.decorators import sanitize
@@ -53,6 +54,12 @@ def get_group_class(request):
     elif request.flavor == "teacher":
         return Teacher
     return SchoolClass
+
+
+def calculate_workgroup_email(group):
+    """Server-side twin of calculateEmail() in WorkgroupDetailPage.js."""
+    pattern = ucr.get("ucsschool/workgroups/mailaddress", "")
+    return pattern.replace("{ou}", group.school).replace("{name}", group.get_relative_name())
 
 
 # TODO: remove once this is implemented in uexceptions, see Bug #30088
@@ -297,7 +304,47 @@ class Instance(SchoolBaseModule):
             members.append({"id": user.dn, "label": Display.user(user.get_udm_object(ldap_user_read))})
         return members
 
-    @sanitize(DictSanitizer({"object": DictSanitizer({}, required=True)}))
+    @staticmethod
+    def _kept_members(request, group_from_ldap, ldap_machine_write):
+        """Return the members of `group_from_ldap` the current flavor must not change."""
+        # Workgroup admin view → update teachers, admins, students, (staff)
+        # Class view → update only the group's teachers (keep all non teachers)
+        # Workgroup teacher view → update only the group's students
+        users = []
+        for userdn in group_from_ldap.users:
+            try:
+                user = User.from_dn(userdn, None, ldap_machine_write)
+            except udm_exceptions.noObject:
+                # no permissions/is not a user/does not exists → keep the old value
+                users.append(userdn)
+                continue
+            if not user.schools or not set(user.schools) & {group_from_ldap.school}:
+                users.append(userdn)
+                continue
+            if (
+                (request.flavor == "class" and not user.is_teacher(ldap_machine_write))
+                or (request.flavor == "workgroup" and not user.is_student(ldap_machine_write))
+                or request.flavor == "workgroup-admin"
+            ):
+                users.append(userdn)
+        return users
+
+    @staticmethod
+    def _apply_email_settings(request, group_from_umc, group_from_ldap):
+        if not group_from_umc.get("create_email", False):
+            group_from_ldap.email = ""
+            group_from_ldap.allowed_email_senders_groups = []
+            group_from_ldap.allowed_email_senders_users = []
+            return
+        if request.flavor == "workgroup":
+            # the address field is read-only in the browser only
+            group_from_ldap.email = group_from_ldap.email or calculate_workgroup_email(group_from_ldap)
+        else:
+            group_from_ldap.email = group_from_umc["email"]
+        group_from_ldap.allowed_email_senders_groups = group_from_umc["allowed_email_senders_groups"]
+        group_from_ldap.allowed_email_senders_users = group_from_umc["allowed_email_senders_users"]
+
+    @sanitize(DictSanitizer({"object": DictSanitizer({}, required=True)}), min_elements=1)
     @LDAP_Connection(USER_READ, MACHINE_WRITE)
     def put(self, request, ldap_machine_write=None, ldap_user_read=None, ldap_position=None):
         """
@@ -312,10 +359,8 @@ class Instance(SchoolBaseModule):
             return self.add_teacher_to_classes(request)
 
         klass = get_group_class(request)
-        for group_from_umc in request.options:
-            group_from_umc = group_from_umc["object"]
-            group_from_umc_dn = group_from_umc["$dn$"]
-            break
+        group_from_umc = request.options[0]["object"]
+        group_from_umc_dn = group_from_umc["$dn$"]
 
         try:
             group_from_ldap = klass.from_dn(group_from_umc_dn, None, ldap_machine_write)
@@ -339,29 +384,7 @@ class Instance(SchoolBaseModule):
             if "description" in group_from_umc:
                 group_from_ldap.description = group_from_umc["description"]
 
-        # Workgroup admin view → update teachers, admins, students, (staff)
-        # Class view → update only the group's teachers (keep all non teachers)
-        # Workgroup teacher view → update only the group's students
-
-        users = []
-        # keep specific users from the group
-        for userdn in group_from_ldap.users:
-            try:
-                user = User.from_dn(userdn, None, ldap_machine_write)
-            except udm_exceptions.noObject:
-                # no permissions/is not a user/does not exists → keep the old value
-                users.append(userdn)
-                continue
-            if not user.schools or not set(user.schools) & {group_from_ldap.school}:
-                users.append(userdn)
-                continue
-            if (
-                (request.flavor == "class" and not user.is_teacher(ldap_machine_write))
-                or (request.flavor == "workgroup" and not user.is_student(ldap_machine_write))
-                or request.flavor == "workgroup-admin"
-            ):
-                users.append(userdn)
-
+        users = self._kept_members(request, group_from_ldap, ldap_machine_write)
         users += _filter_users(
             group_from_umc["members"],
             group_from_ldap.school,
@@ -370,14 +393,7 @@ class Instance(SchoolBaseModule):
         )
 
         group_from_ldap.users = list(set(users) - removed_members)
-        if group_from_umc.get("create_email", False):
-            group_from_ldap.email = group_from_umc["email"]
-            group_from_ldap.allowed_email_senders_groups = group_from_umc["allowed_email_senders_groups"]
-            group_from_ldap.allowed_email_senders_users = group_from_umc["allowed_email_senders_users"]
-        else:
-            group_from_ldap.email = ""
-            group_from_ldap.allowed_email_senders_groups = []
-            group_from_ldap.allowed_email_senders_users = []
+        self._apply_email_settings(request, group_from_umc, group_from_ldap)
         try:
             success = group_from_ldap.modify(ldap_machine_write)
             MODULE.info("Modified, group has now members: %s" % (group_from_ldap.users,))
