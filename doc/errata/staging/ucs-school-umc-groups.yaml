@@ -4,11 +4,60 @@ released:
 version: [0]
 scope: ucs_5.2-0-ucs-school-5.2
 src: ucs-school-umc-groups
-fix: 11.2.1
+fix: 12.0.0
 bugs:
   55267:
-    en: Fixed multiple issues with the edit workgroup flavor for teachers.
-    de: Mehrere Fehler mit dem Modul "Arbeitsgruppen verwalten" für Lehrer wurden behoben.
+    en: >
+      The UMC module *Edit workgroups* for teachers showed no icon,
+      did not show the email settings of a workgroup,
+      and removed the email address of a workgroup when saving.
+
+
+      When a teacher added groups that may send emails to the workgroup,
+      the search for groups failed with *Forbidden*.
+
+
+      When a teacher added members to a workgroup and selected a class,
+      the dialog also offered the teachers of that class,
+      and saving the workgroup then failed with *User ... is not a student*.
+      The dialog now offers only students.
+
+
+      A teacher could change the email address of a workgroup with a crafted request.
+      The module now ignores the email address in the request.
+
+
+      Workgroups whose allowed email senders included a deleted user could not be opened.
+
+
+      Package updates and joining systems gave teachers the module *Administrate workgroups*
+      again after an administrator had removed it.
+    de: >
+      Das UMC-Modul *Arbeitsgruppen bearbeiten* für Lehrer zeigte kein Symbol,
+      zeigte die E-Mail-Einstellungen einer Arbeitsgruppe nicht an
+      und entfernte beim Speichern die E-Mail-Adresse der Arbeitsgruppe.
+
+
+      Wenn ein Lehrer Gruppen hinzufügte, die E-Mails an die Arbeitsgruppe senden dürfen,
+      schlug die Suche nach Gruppen mit *Forbidden* fehl.
+
+
+      Wenn ein Lehrer einer Arbeitsgruppe Mitglieder hinzufügte und eine Klasse auswählte,
+      bot der Dialog auch die Lehrer dieser Klasse an,
+      und das Speichern der Arbeitsgruppe schlug dann mit *Benutzer ... ist kein Schüler* fehl.
+      Der Dialog bietet nun nur noch Schüler an.
+
+
+      Ein Lehrer konnte die E-Mail-Adresse einer Arbeitsgruppe über eine manipulierte Anfrage ändern.
+      Das Modul ignoriert nun die E-Mail-Adresse in der Anfrage.
+
+
+      Arbeitsgruppen, deren erlaubte E-Mail-Absender einen gelöschten Benutzer enthielten,
+      ließen sich nicht öffnen.
+
+
+      Paket-Updates und neu beigetretene Systeme wiesen Lehrern das Modul *Arbeitsgruppen verwalten*
+      erneut zu, nachdem ein Administrator es entfernt hatte.
   60027:
     en: >
       The UMC module *Assigning teachers* also offered students as new members of a class,
