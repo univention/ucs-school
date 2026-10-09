@@ -4,6 +4,8 @@ ucs-test-ucsschool (8.0.66) unstable; urgency=medium
     every flavor of the UMC module schoolgroups ("Assigning teachers",
     "Assigning classes", "Administrate workgroups" and, as a teacher, "Edit
     workgroups") and checks the result in LDAP.
+  * Bug #55267: replace 91_ucsschool-selenium/04_workgroups_with_email_addresses
+    with 08_umc_groups::test_administrate_workgroups_shows_email_address.
 
  -- Jan Gietzel <jan.gietzel@univention.de>  Fri, 09 Oct 2026 10:00:00 +0200
 

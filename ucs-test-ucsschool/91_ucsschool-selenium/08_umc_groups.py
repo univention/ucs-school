@@ -6,7 +6,7 @@
 ##  "Edit workgroups". Each test reopens the saved object and checks the result in LDAP.
 ## roles: [domaincontroller_master, domaincontroller_slave]
 ## tags: [apptest, ucsschool,ucsschool_selenium,ucs-school-umc-groups]
-## bugs: [55267]
+## bugs: [55267, 56589]
 ## exposure: dangerous
 ## packages:
 ##   - ucs-school-multiserver | ucs-school-singleserver
@@ -25,7 +25,7 @@ import univention.testing.ucsschool.ucs_test_school as utu
 from ucsschool.lib.models.group import SchoolClass, WorkGroup
 from ucsschool.lib.models.share import WorkGroupShare
 from univention.admin.uldap import access
-from univention.config_registry import handler_set
+from univention.config_registry import handler_set, handler_unset
 from univention.testing import utils
 from univention.testing.browser.lib import UCSLanguage, UMCBrowserTest
 from univention.testing.ucsschool.importusers import get_mail_domain
@@ -344,6 +344,36 @@ def test_administrate_workgroups(umc_browser_test: UMCBrowserTest, groups_env: E
     page.get_by_role("dialog", name="Confirmation").get_by_label("Delete").click()
     expect(page.get_by_text("The workgroups have been deleted successfully")).to_be_visible()
     assert not WorkGroup(name=full_name, school=env.school).exists(env.lo)
+
+
+@pytest.mark.parametrize("group_mail", [True, False], ids=["with_group_mail", "without_group_mail"])
+def test_administrate_workgroups_shows_email_address(
+    umc_browser_test: UMCBrowserTest, groups_env: Env, group_mail: bool
+) -> None:
+    """
+    Edit a workgroup with an email address in "Administrate workgroups" (Bug #56589).
+
+    "Email address" shows the address of the workgroup. "Activate Email Address" is checked if
+    ucsschool/workgroups/mailaddress is set, and hidden if not.
+    """
+    env = groups_env
+    with ucr_test.UCSTestConfigRegistry():
+        if not group_mail:
+            handler_unset(["ucsschool/workgroups/mailaddress"])
+        umc_browser_test.set_language(UCSLanguage.EN_US)
+        umc_browser_test.login()
+        page = open_module(umc_browser_test, "Administrate workgroups", env.school)
+
+        select_and_edit(page, relative(env.wg, env.school))
+        expect(page.get_by_role("textbox", name="Email address")).to_have_value(
+            "%s@%s" % (env.wg, env.mail_domain)
+        )
+        checkbox = page.get_by_role("checkbox", name="Activate Email Address", include_hidden=True)
+        expect(checkbox).to_be_attached()
+        if group_mail:
+            expect(checkbox).to_be_checked()
+        else:
+            expect(checkbox).to_be_hidden()
 
 
 def test_edit_workgroups_as_teacher(umc_browser_test: UMCBrowserTest, groups_env: Env) -> None:
