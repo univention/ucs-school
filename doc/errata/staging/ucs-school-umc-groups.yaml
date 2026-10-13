@@ -9,3 +9,12 @@ bugs:
   55267:
     en: Fixed multiple issues with the edit workgroup flavor for teachers.
     de: Mehrere Fehler mit dem Modul "Arbeitsgruppen verwalten" für Lehrer wurden behoben.
+  60027:
+    en: >
+      The UMC module *Assigning teachers* also offered students as new members of a class,
+      and saving the class then failed with *User ... is not a teacher*.
+      The module now offers only teachers.
+    de: >
+      Das UMC-Modul *Lehrer zuordnen* bot auch Schüler als neue Mitglieder einer Klasse an,
+      und das Speichern der Klasse schlug dann mit *Benutzer ... ist kein Lehrer* fehl.
+      Das Modul bietet nun nur noch Lehrer an.

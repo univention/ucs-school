@@ -38,9 +38,7 @@ define([
 			return lang.mixin(this.inherited(arguments), {
 				label: _('Teachers'),
 				description: _('List of teachers which are member of the specified class'),
-				queryOptions: function() {
-					return { group: 'teacher' };
-				}
+				queryOptions: {user_type: 'teacher'}
 			});
 		},
 
