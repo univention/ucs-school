@@ -53,6 +53,7 @@ class Env(NamedTuple):
     teacher_cls: User
     student_member: User
     student_free: User
+    sender_deleted: User
 
 
 def _restart_umc():
@@ -116,6 +117,7 @@ def groups_env():
         student_free = User(*schoolenv.create_user(school))
         klass, klass_dn = schoolenv.create_school_class(school, users=[student_member.dn, teacher_wg.dn])
         klass_free, _ = schoolenv.create_school_class(school, users=[student_free.dn, teacher_free.dn])
+        sender_deleted_dn, sender_deleted_name = schoolenv.udm.create_user()
         # create_workgroup() can't set the email attributes
         wg = "%s-%s" % (school, uts.random_name())
         wg_obj = WorkGroup(
@@ -123,10 +125,11 @@ def groups_env():
             school=school,
             users=[student_member.dn, teacher_wg.dn],
             email="%s@%s" % (wg, mail_domain),
-            allowed_email_senders_users=[teacher_wg.dn],
+            allowed_email_senders_users=[teacher_wg.dn, sender_deleted_dn],
             allowed_email_senders_groups=[klass_dn],
         )
         wg_obj.create(schoolenv.lo)
+        schoolenv.udm.remove_object("users/user", dn=sender_deleted_dn)
 
         swapped = _restrict_teachers_to_edit_workgroups(schoolenv, school, ou_dn)
         try:
@@ -149,6 +152,7 @@ def groups_env():
                     teacher_cls,
                     student_member,
                     student_free,
+                    User(sender_deleted_name, sender_deleted_dn),
                 )
         finally:
             for group_dn, old, new in swapped:
@@ -354,7 +358,8 @@ def test_administrate_workgroups_shows_email_address(
     Edit a workgroup with an email address in "Administrate workgroups" (Bug #56589).
 
     "Email address" shows the address of the workgroup. "Activate Email Address" is checked if
-    ucsschool/workgroups/mailaddress is set, and hidden if not.
+    ucsschool/workgroups/mailaddress is set, and hidden if not. The allowed senders list a deleted
+    user by its username (Bug #55267).
     """
     env = groups_env
     with ucr_test.UCSTestConfigRegistry():
@@ -374,6 +379,7 @@ def test_administrate_workgroups_shows_email_address(
             expect(checkbox).to_be_checked()
         else:
             expect(checkbox).to_be_hidden()
+        expect(row(multi_select(page, SENDER_USERS), env.sender_deleted.name)).to_be_visible()
 
 
 def test_edit_workgroups_as_teacher(umc_browser_test: UMCBrowserTest, groups_env: Env) -> None:
@@ -384,7 +390,8 @@ def test_edit_workgroups_as_teacher(umc_browser_test: UMCBrowserTest, groups_env
     - Edit the workgroup: name and description are disabled. "Students" lists the student
       member, but not the teacher member. "Activate Email Address" is checked and "Email address"
       shows the address. The allowed senders list the teacher by name and the class by its name
-      without the school prefix, not by DN.
+      without the school prefix, not by DN,
+      and a deleted user by its username.
     - "Add" in "Students": "User group or class" offers "All students", but neither "All teachers"
       nor "All users". With another class selected, the dialog offers its student, but not its
       teacher.
@@ -416,6 +423,7 @@ def test_edit_workgroups_as_teacher(umc_browser_test: UMCBrowserTest, groups_env
     )
     sender_users = multi_select(page, SENDER_USERS)
     expect(row(sender_users, "(%s)" % env.teacher_wg.name)).to_be_visible()
+    expect(row(sender_users, env.sender_deleted.name)).to_be_visible()
     sender_groups = multi_select(page, SENDER_GROUPS)
     expect_class_cell(sender_groups, env)
 
@@ -447,7 +455,7 @@ def test_edit_workgroups_as_teacher(umc_browser_test: UMCBrowserTest, groups_env
     wg = WorkGroup.from_dn(env.wg_dn, env.school, env.lo)
     assert {env.student_member.dn, env.teacher_wg.dn, env.student_free.dn} == set(wg.users), wg.users
     assert wg.email == "%s@%s" % (env.wg, env.mail_domain)
-    assert wg.allowed_email_senders_users == [env.teacher_wg.dn]
+    assert set(wg.allowed_email_senders_users) == {env.teacher_wg.dn, env.sender_deleted.dn}
     assert wg.allowed_email_senders_groups == [env.klass_dn]
 
     select_and_edit(page, relative(env.wg, env.school))
