@@ -58,6 +58,8 @@ def get_group_class(request):
 
 def calculate_workgroup_email(group):
     """Server-side twin of calculateEmail() in WorkgroupDetailPage.js."""
+    # the module process outlives changes of the pattern
+    ucr.load()
     pattern = ucr.get("ucsschool/workgroups/mailaddress", "")
     return pattern.replace("{ou}", group.school).replace("{name}", group.get_relative_name())
 
