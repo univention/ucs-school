@@ -89,8 +89,7 @@ define([
 							this._form.getWidget('email').set('value', this.calculateEmail());
 						}
 						this._form.getWidget('email').set('visible', newValue);
-						this._form.getWidget('allowed_email_senders_users').set('visible', newValue);
-						this._form.getWidget('allowed_email_senders_groups').set('visible', newValue);
+						this._setEmailSendersVisible(newValue);
 					}));
 				})
 			}, {
@@ -161,6 +160,17 @@ define([
 			var shareWidget = this._form.getWidget('create_share');
 			shareWidget.set('disabled', true);
 			shareWidget.set('label', _('Share created'));
+		},
+
+		_setEmailSendersVisible: function(visible) {
+			for (const name of ['allowed_email_senders_users', 'allowed_email_senders_groups']) {
+				const widget = this._form.getWidget(name);
+				widget.set('visible', visible);
+				if (visible) {
+					// a grid sized while hidden builds its rows with a zero width and shows no labels
+					widget._multiSelect.resize();
+				}
+			}
 		},
 
 		calculateEmail: function() {

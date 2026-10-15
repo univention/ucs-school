@@ -181,10 +181,15 @@ def row(scope: Page | Locator, text: str) -> Locator:
     return scope.get_by_role("row").filter(has_text=text).first
 
 
+def cell(scope: Page | Locator, text: str) -> Locator:
+    # unlike its row, a cell of zero width is hidden, which a grid sized while hidden produces
+    return scope.get_by_role("gridcell").filter(has_text=text).first
+
+
 def expect_class_cell(scope: Locator, env: Env) -> None:
     """The class is labeled like in the group search dialog, without the school prefix."""
-    expect(row(scope, relative(env.klass, env.school))).to_be_visible()
-    expect(row(scope, env.klass)).to_have_count(0)
+    expect(cell(scope, relative(env.klass, env.school))).to_be_visible()
+    expect(cell(scope, env.klass)).to_have_count(0)
 
 
 def select_and_edit(page: Page, row_text: str) -> None:
@@ -379,7 +384,7 @@ def test_administrate_workgroups_shows_email_address(
             expect(checkbox).to_be_checked()
         else:
             expect(checkbox).to_be_hidden()
-        expect(row(multi_select(page, SENDER_USERS), env.sender_deleted.name)).to_be_visible()
+        expect(cell(multi_select(page, SENDER_USERS), env.sender_deleted.name)).to_be_visible()
 
 
 def test_edit_workgroups_as_teacher(umc_browser_test: UMCBrowserTest, groups_env: Env) -> None:
@@ -422,8 +427,8 @@ def test_edit_workgroups_as_teacher(umc_browser_test: UMCBrowserTest, groups_env
         "%s@%s" % (env.wg, env.mail_domain)
     )
     sender_users = multi_select(page, SENDER_USERS)
-    expect(row(sender_users, "(%s)" % env.teacher_wg.name)).to_be_visible()
-    expect(row(sender_users, env.sender_deleted.name)).to_be_visible()
+    expect(cell(sender_users, "(%s)" % env.teacher_wg.name)).to_be_visible()
+    expect(cell(sender_users, env.sender_deleted.name)).to_be_visible()
     sender_groups = multi_select(page, SENDER_GROUPS)
     expect_class_cell(sender_groups, env)
 
@@ -466,7 +471,7 @@ def test_edit_workgroups_as_teacher(umc_browser_test: UMCBrowserTest, groups_env
     expect(page.get_by_role("textbox", name="Email address")).to_have_value(
         "%s@%s" % (env.wg, env.mail_domain)
     )
-    expect(row(multi_select(page, SENDER_USERS), "(%s)" % env.teacher_wg.name)).to_be_visible()
+    expect(cell(multi_select(page, SENDER_USERS), "(%s)" % env.teacher_wg.name)).to_be_visible()
     expect_class_cell(multi_select(page, SENDER_GROUPS), env)
 
 

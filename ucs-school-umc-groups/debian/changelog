@@ -12,6 +12,8 @@ ucs-school-umc-groups (12.0.0) unstable; urgency=medium
     ucsschool/workgroups/mailaddress instead of the request.
   * Bug #55267: Workgroups whose allowed senders include a deleted user
     can be opened again.
+  * Bug #55267: "Administrate workgroups" and "Edit workgroups" show the
+    names of the users allowed to send emails instead of empty rows.
   * Bug #60027: "Assigning teachers" offers only teachers as new members.
 
  -- Johannes Königer <koeniger@univention.de>  Tue, 20 Oct 2026 12:00:00 +0200
