@@ -12,9 +12,6 @@ ucs-school-umc-groups (12.0.0) unstable; urgency=medium
     ucsschool/workgroups/mailaddress instead of the request.
   * Bug #55267: Workgroups whose allowed senders include a deleted user
     can be opened again.
-  * Bug #55267: The join script no longer adds the operation set
-    schoolgroups-workgroup-admin to ucsschool-umc-teachers-default again
-    after an administrator removed it.
   * Bug #60027: "Assigning teachers" offers only teachers as new members.
 
  -- Johannes Königer <koeniger@univention.de>  Tue, 20 Oct 2026 12:00:00 +0200

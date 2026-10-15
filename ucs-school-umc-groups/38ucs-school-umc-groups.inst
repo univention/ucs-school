@@ -19,14 +19,6 @@ joinscript_init
 
 umc_init
 
-# The teacher policy is domain-wide, but the join status is per host:
-# append only operation sets this run creates, so an admin's removal survives updates and new hosts.
-missing_teacher_opsets=""
-for opset in schoolgroups-workgroup schoolgroups-workgroup-admin; do
-	[ -n "$(umc_udm settings/umc_operationset list --filter name="$opset" | sed -ne 's/^DN: //p')" ] ||
-		missing_teacher_opsets="$missing_teacher_opsets $opset"
-done
-
 # operation sets for admins (class and workgroup administration) and teachers
 # (only the workgroup administration or editing)
 umc_operation_create "schoolgroups-all" "Group administration" "" "schoolgroups/*"
@@ -63,8 +55,7 @@ umc_policy_append "default-umc-all" "schoolgroups-all"
 # policy for school admins (not allowed to teachers)
 umc_policy_append "ucsschool-umc-admins-default" "schoolgroups-workgroup-admin" "schoolgroups-class" "schoolgroups-teacher"
 # policy for teachers
-# shellcheck disable=SC2086 # word splitting of the operation set list is intended
-[ -z "$missing_teacher_opsets" ] || umc_policy_append "ucsschool-umc-teachers-default" $missing_teacher_opsets
+umc_policy_append "ucsschool-umc-teachers-default" "schoolgroups-workgroup" "schoolgroups-workgroup-admin"
 
 joinscript_save_current_version
 

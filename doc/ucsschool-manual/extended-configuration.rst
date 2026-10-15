@@ -508,28 +508,59 @@ blendet die |UCSUMC| *Arbeitsgruppen bearbeiten* aus.
 Lehrer sehen daher standardmäßig nur *Arbeitsgruppen verwalten*.
 
 Sollen Lehrer nur bestehende Arbeitsgruppen bearbeiten,
-entfernt ein Domänenadministrator
-das UMC-Operationsset ``schoolgroups-workgroup-admin``
-(Beschreibung *Workgroup administration*) aus der Richtlinie:
+legt ein Domänenadministrator eine eigene UMC-Richtlinie
+ohne das UMC-Operationsset ``schoolgroups-workgroup-admin``
+(Beschreibung *Workgroup administration*) an
+und verknüpft sie anstelle von ``ucsschool-umc-teachers-default``
+mit den Lehrergruppen.
+Die Richtlinie ``ucsschool-umc-teachers-default`` selbst nicht ändern:
+Das Joinskript von :program:`ucs-school-umc-groups`
+fügt ihr bei jeder Ausführung beide Operationssets wieder hinzu,
+zum Beispiel nach einem Paket-Update.
 
-#. Im UMC-Modul *Richtlinien* die UMC-Richtlinie
-   ``ucsschool-umc-teachers-default`` unter ``cn=UMC,cn=policies`` öffnen.
+#. Im UMC-Modul *Richtlinien* unter ``cn=UMC,cn=policies``
+   eine neue UMC-Richtlinie anlegen,
+   zum Beispiel ``teachers-edit-workgroups``.
 
-#. Aus der *Liste der erlaubten UMC Operationen*
-   den Eintrag ``schoolgroups-workgroup-admin`` entfernen.
+#. In die *Liste der erlaubten UMC Operationen*
+   alle Einträge von ``ucsschool-umc-teachers-default`` übernehmen
+   außer ``schoolgroups-workgroup-admin``.
    Der Eintrag ``schoolgroups-workgroup`` (*Workgroup editing*)
-   muss erhalten bleiben.
+   muss enthalten sein.
 
-Alternativ auf dem |UCSPRIMARYDN|:
+#. Im UMC-Modul *Gruppen* für jede Schule die Gruppe :samp:`lehrer-{OU}` öffnen
+   und auf dem Reiter *Richtlinien* als UMC-Richtlinie
+   ``teachers-edit-workgroups`` auswählen.
+
+Alternativ auf dem |UCSPRIMARYDN|, hier für die Schule ``gym17``:
 
 .. code-block:: console
 
    $ eval "$(ucr shell ldap/base)"
-   $ udm policies/umc modify \
-       --dn "cn=ucsschool-umc-teachers-default,cn=UMC,cn=policies,$ldap_base" \
-       --remove allow="cn=schoolgroups-workgroup-admin,cn=operations,cn=UMC,cn=univention,$ldap_base"
+   $ policies="cn=UMC,cn=policies,$ldap_base"
+   $ allow="$(udm policies/umc list --filter name=ucsschool-umc-teachers-default \
+       | sed -ne 's/^  allow: /--append allow=/p' \
+       | grep -v '=cn=schoolgroups-workgroup-admin,')"
+   $ udm policies/umc create --position "$policies" \
+       --set name=teachers-edit-workgroups $allow
+   $ udm groups/group modify \
+       --dn "cn=lehrer-gym17,cn=groups,ou=gym17,$ldap_base" \
+       --policy-dereference "cn=ucsschool-umc-teachers-default,$policies" \
+       --policy-reference "cn=teachers-edit-workgroups,$policies"
 
 Die Änderung wirkt ab der nächsten Anmeldung der Lehrer an der |UCSUMC|.
+
+.. note::
+
+   Lehrer an mehreren Schulen erhalten die Rechte aller ihrer Lehrergruppen.
+   Ist an einer ihrer Schulen noch ``ucsschool-umc-teachers-default`` verknüpft,
+   sehen sie dort weiterhin *Arbeitsgruppen verwalten*.
+
+   Neue Schulen verknüpfen ihre Lehrergruppe mit ``ucsschool-umc-teachers-default``.
+   Fügen Paket-Updates dieser Richtlinie Operationssets hinzu,
+   etwa für neue UMC-Module,
+   erhält die eigene Richtlinie sie nicht.
+   Beides muss ein Domänenadministrator selbst nachtragen.
 
 Allgemeine Informationen zu UMC-Richtlinien und Operationssets enthält
 :external+uv-manual:ref:`delegated-administration`.

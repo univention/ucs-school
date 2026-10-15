@@ -28,10 +28,6 @@ bugs:
 
 
       Workgroups whose allowed email senders included a deleted user could not be opened.
-
-
-      Package updates and joining systems gave teachers the module *Administrate workgroups*
-      again after an administrator had removed it.
     de: >
       Das UMC-Modul *Arbeitsgruppen bearbeiten* für Lehrer zeigte kein Symbol,
       zeigte die E-Mail-Einstellungen einer Arbeitsgruppe nicht an
@@ -54,10 +50,6 @@ bugs:
 
       Arbeitsgruppen, deren erlaubte E-Mail-Absender einen gelöschten Benutzer enthielten,
       ließen sich nicht öffnen.
-
-
-      Paket-Updates und neu beigetretene Systeme wiesen Lehrern das Modul *Arbeitsgruppen verwalten*
-      erneut zu, nachdem ein Administrator es entfernt hatte.
   60027:
     en: >
       The UMC module *Assigning teachers* also offered students as new members of a class,
