@@ -9,7 +9,7 @@
 ## bugs: [55267, 56589]
 ## exposure: dangerous
 ## packages:
-##   - ucs-school-multiserver | ucs-school-singleserver
+##   - ucs-school-multiserver | ucs-school-singleserver | ucs-school-replica
 
 import subprocess
 import time
