@@ -468,3 +468,31 @@ def test_edit_workgroups_as_teacher(umc_browser_test: UMCBrowserTest, groups_env
     )
     expect(row(multi_select(page, SENDER_USERS), "(%s)" % env.teacher_wg.name)).to_be_visible()
     expect_class_cell(multi_select(page, SENDER_GROUPS), env)
+
+
+def test_edit_workgroups_activates_email_address(
+    umc_browser_test: UMCBrowserTest, groups_env: Env
+) -> None:
+    """
+    Activate the email address of a workgroup without one as a teacher in "Edit workgroups".
+
+    The pattern in ucsschool/workgroups/mailaddress changes after the module opened. "Email address"
+    shows the address from the new pattern, and the workgroup gets it (Bug #55267).
+    """
+    env = groups_env
+    name = uts.random_name()
+    wg = WorkGroup(name="%s-%s" % (env.school, name), school=env.school, users=[env.student_member.dn])
+    wg.create(env.lo)
+    email = "new-%s-%s@%s" % (env.school, name, env.mail_domain)
+    with ucr_test.UCSTestConfigRegistry():
+        umc_browser_test.set_language(UCSLanguage.EN_US)
+        umc_browser_test.login(env.teacher_wg.name, "univention")
+        page = open_module(umc_browser_test, "Edit workgroups")
+        expect(row(page, name)).to_be_visible()
+        handler_set(["ucsschool/workgroups/mailaddress=new-{ou}-{name}@%s" % env.mail_domain])
+
+        select_and_edit(page, name)
+        page.get_by_role("checkbox", name="Activate Email Address").click()
+        expect(page.get_by_role("textbox", name="Email address")).to_have_value(email)
+        save(page)
+        assert WorkGroup.from_dn(wg.dn, env.school, env.lo).email == email

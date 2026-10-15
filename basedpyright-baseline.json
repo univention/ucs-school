@@ -366050,6 +366050,22 @@
                     "endColumn": 42,
                     "lineCount": 1
                 }
+            },
+            {
+                "code": "reportUnknownMemberType",
+                "range": {
+                    "startColumn": 15,
+                    "endColumn": 32,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportUnknownMemberType",
+                "range": {
+                    "startColumn": 15,
+                    "endColumn": 65,
+                    "lineCount": 1
+                }
             }
         ],
         "./ucs-test-ucsschool/92_ucsschool-veyon/001_test_connections.py": [
