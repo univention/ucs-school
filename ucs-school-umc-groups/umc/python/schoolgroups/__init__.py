@@ -240,6 +240,8 @@ class Instance(SchoolBaseModule):
             if result["email"]:
                 result["create_email"] = True
                 result["email_exists"] = True
+            elif request.flavor == "workgroup":
+                result["calculated_email"] = calculate_workgroup_email(group)
 
             umc_users = []
             for user_dn in result["allowed_email_senders_users"]:

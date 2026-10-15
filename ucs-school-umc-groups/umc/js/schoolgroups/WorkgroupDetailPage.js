@@ -71,6 +71,11 @@ define([
 				visible: false,
 				value: false
 			}, {
+				// the address the backend saves in flavor "workgroup"
+				type: TextBox,
+				name: 'calculated_email',
+				visible: false
+			}, {
 				type: CheckBox,
 				name: 'create_email',
 				label: _('Activate Email Address'),
@@ -159,6 +164,10 @@ define([
 		},
 
 		calculateEmail: function() {
+			if (this.moduleFlavor == 'workgroup') {
+				// mailAddressPattern dates from module start and may differ from the backend's
+				return this._form.getWidget('calculated_email').get('value');
+			}
 			var emailString = this.mailAddressPattern;
 			var replacementDict = {
 				'{ou}': this._form.getWidget('school').value || '{ou}',
