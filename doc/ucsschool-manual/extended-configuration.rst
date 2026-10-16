@@ -550,17 +550,35 @@ Alternativ auf dem |UCSPRIMARYDN|, hier für die Schule ``gym17``:
 
 Die Änderung wirkt ab der nächsten Anmeldung der Lehrer an der |UCSUMC|.
 
+Beim Anlegen einer Schule verknüpft |UCSUAS| deren Lehrergruppe mit der UMC-Richtlinie
+aus der folgenden |UCSUCRV| auf dem |UCSPRIMARYDN|:
+
+.. envvar:: ucsschool/ldap/default/policy/umc/teachers
+
+   DN der UMC-Richtlinie,
+   die beim Anlegen einer Schule mit der Gruppe :samp:`lehrer-{OU}` verknüpft wird.
+   Ohne Wert gilt ``ucsschool-umc-teachers-default``.
+   Der Wert ``None`` verknüpft keine Richtlinie.
+   Bestehende Schulen bleiben unverändert.
+
+Damit neue Schulen die eigene Richtlinie erhalten,
+setzt ein Domänenadministrator die Variable:
+
+.. code-block:: console
+
+   $ eval "$(ucr shell ldap/base)"
+   $ ucr set ucsschool/ldap/default/policy/umc/teachers="cn=teachers-edit-workgroups,cn=UMC,cn=policies,$ldap_base"
+
 .. note::
 
    Lehrer an mehreren Schulen erhalten die Rechte aller ihrer Lehrergruppen.
    Ist an einer ihrer Schulen noch ``ucsschool-umc-teachers-default`` verknüpft,
    sehen sie dort weiterhin *Arbeitsgruppen verwalten*.
 
-   Neue Schulen verknüpfen ihre Lehrergruppe mit ``ucsschool-umc-teachers-default``.
-   Fügen Paket-Updates dieser Richtlinie Operationssets hinzu,
+   Fügen Paket-Updates ``ucsschool-umc-teachers-default`` Operationssets hinzu,
    etwa für neue UMC-Module,
    erhält die eigene Richtlinie sie nicht.
-   Beides muss ein Domänenadministrator selbst nachtragen.
+   Ein Domänenadministrator muss sie selbst nachtragen.
 
 Allgemeine Informationen zu UMC-Richtlinien und Operationssets enthält
 :external+uv-manual:ref:`delegated-administration`.
