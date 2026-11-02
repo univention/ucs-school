@@ -1,0 +1,50 @@
+#!/bin/sh
+# SPDX-FileCopyrightText: 2026 Univention GmbH
+# SPDX-License-Identifier: AGPL-3.0-only
+set -e -u
+
+cd "${1:-out}"
+
+escape () {
+    printf '%s' "$1" | sed -e 's/&/\&amp;/g' -e 's/</\&lt;/g' -e 's/>/\&gt;/g' -e 's/"/\&quot;/g'
+}
+
+{
+    cat <<'EOF'
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UCS@school documentation preview</title>
+<style>
+  body { font-family: sans-serif; margin: 2em auto; max-width: 60em; padding: 0 1em; }
+  table { border-collapse: collapse; width: 100%; }
+  th, td { padding: .4em .8em; text-align: left; border-bottom: 1px solid #ccc; }
+</style>
+<h1>UCS@school documentation preview</h1>
+EOF
+    printf '<p>Built from <code>%s</code> at <code>%s</code>.</p>\n' \
+        "$(escape "${CI_COMMIT_REF_NAME:-unknown}")" "$(escape "${CI_COMMIT_SHORT_SHA:-unknown}")"
+    echo '<table>'
+    echo '<thead><tr><th>Document</th><th>Language</th><th>PDF</th></tr></thead>'
+    echo '<tbody>'
+    find . -name objects.inv | sort | while read -r inventory
+    do
+        dir="${inventory#./}"
+        dir="${dir%/objects.inv}"
+        name="${dir%%/*}"
+        language="${dir##*/}"
+        title="$(sed -n 's:.*<title>.* &#8212; \(.*\)</title>.*:\1:p' "$dir/index.html" | head -n 1)"
+        [ -n "$title" ] || title="$(escape "$name")"
+        href="$(escape "$dir")"
+        printf '<tr><td><a href="%s/index.html">%s</a></td><td>%s</td>' "$href" "$title" "$(escape "$language")"
+        if [ -f "$dir/$name.pdf" ]
+        then
+            printf '<td><a href="%s/%s.pdf">PDF</a></td></tr>\n' "$href" "$(escape "$name")"
+        else
+            echo '<td></td></tr>'
+        fi
+    done
+    echo '</tbody>'
+    echo '</table>'
+} >index.html

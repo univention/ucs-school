@@ -45,9 +45,55 @@ merge_one_artifact () {
     echo
     echo 'docs-merge-to-one-artifact:'
     echo '  extends: .sphinx-merge-template'
+    echo '  script:'
+    echo '    - !reference [.sphinx-merge-template, script]'
+    echo '    - sed -i "s|/artifacts/out/.*|/artifacts/out/index.html|" doc.env'
+    echo '    - |'
+    echo "      cat >docs-index <<'DOCS_INDEX'"
+    sed 's/^/      /' "${0%/*}/docs-index"
+    echo '      DOCS_INDEX'
+    echo '    - sh docs-index out'
     echo '  rules:'
     echo '    - changes:'
     document_paths
+}
+
+review_environment () {
+    echo
+    echo 'docs-review:'
+    echo '  extends: .sphinx-review-template'
+    echo '  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/busybox:latest'
+    echo '  variables:'
+    echo '    GIT_STRATEGY: none'
+    echo '  needs:'
+    echo '    - job: docs-merge-to-one-artifact'
+    echo '  environment:'
+    echo '    on_stop: docs-review-stop'
+    echo '    auto_stop_in: 1 week'
+    echo '  rules:'
+    echo '    - if: $PARENT_CI_PIPELINE_SOURCE == "merge_request_event"'
+    echo '      changes:'
+    document_paths
+    echo
+    echo 'docs-review-stop:'
+    echo '  stage: merge'
+    echo '  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/busybox:latest'
+    echo '  variables:'
+    echo '    GIT_STRATEGY: none'
+    echo '  needs:'
+    echo '    - job: docs-review'
+    echo '      artifacts: false'
+    echo '  script:'
+    echo '    - "true"'
+    echo '  environment:'
+    echo '    name: review/docs/$CI_COMMIT_REF_SLUG'
+    echo '    action: stop'
+    echo '  allow_failure: true'
+    echo '  rules:'
+    echo '    - if: $PARENT_CI_PIPELINE_SOURCE == "merge_request_event"'
+    echo '      changes:'
+    document_paths
+    echo '      when: manual'
 }
 
 create_production_merge_request () {
@@ -95,4 +141,5 @@ do
     fi
 done
 merge_one_artifact
+review_environment
 create_production_merge_request
