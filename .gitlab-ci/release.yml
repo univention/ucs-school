@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 
 include:
-  - component: $CI_SERVER_FQDN/univention/dev/tooling/ci-components/app-release@2.16.1
+  - component: $CI_SERVER_FQDN/univention/dev/tooling/ci-components/app-release@2.25.2
     inputs:
       app_id: "ucsschool"
       mail_sender: "ucsschool-team@univention.de"
