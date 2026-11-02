@@ -52,13 +52,9 @@ include:
         when: never
       - changes:
           paths:
-            - "doc/ucsschool-import/**/*"
-            - "doc/ucsschool-manual/**/*"
-            - "doc/ucsschool-quickstart/**/*"
-            - "doc/ucsschool-scenarios/**/*"
-            - "doc/ucsschool-umc-user-import/**/*"
-            - "doc/ucsschool-changelog/**/*"
-            - "doc/errata/**/*"
+            - "doc/**/*"
+            - ".gitlab-ci.yml"
+            - ".gitlab-ci/**/*"
         when: always
 
 # Run inside the basedpyright-ucs image (UCS packages + prek preinstalled) so

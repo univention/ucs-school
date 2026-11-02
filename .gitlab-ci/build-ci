@@ -22,23 +22,13 @@ doc_job () { # <extends> [<suffix> [<language>]]
     echo "  extends: ${1:?extends}"
     echo '  rules:'
     echo '    - changes:'
-    echo "      - ${path}/**/*"
-    echo '      - doc/errata/**/*'
-    if [ "$pkg" != "ucsschool-changelog" ]
-    then
-        echo '      - doc/ucsschool-changelog/**/*'
-    fi
-    echo '      - doc/bibliography-de.bib'
-    echo '      - doc/substitutions-de.txt'
+    document_paths
 }
 
 document_paths () {
-    for p in doc/*/conf.py
-    do
-        [ -f "$p" ] || continue
-        path="${p%/conf.py}"
-        echo "      - $path/**/*"
-    done
+    echo '      - doc/**/*'
+    echo '      - .gitlab-ci.yml'
+    echo '      - .gitlab-ci/**/*'
 }
 
 merge_one_artifact () {
