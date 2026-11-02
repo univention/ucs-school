@@ -86,6 +86,36 @@ review_environment () {
     echo '      when: manual'
 }
 
+publish_pages () {
+    echo
+    echo 'docs-pages:'
+    echo '  stage: production'
+    echo '  image: ${CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX}/busybox:latest'
+    echo '  variables:'
+    echo '    GIT_STRATEGY: none'
+    echo '    DOCS_PAGES_PREFIX: ""'
+    echo '  needs:'
+    echo '    - job: docs-merge-to-one-artifact'
+    echo '  script:'
+    echo '    - echo "Publishing the documentation to ${CI_PAGES_URL}"'
+    echo '  pages:'
+    echo '    publish: out'
+    echo '    path_prefix: $DOCS_PAGES_PREFIX'
+    echo '    expire_in: never'
+    echo '  environment:'
+    echo '    name: pages/docs/$CI_COMMIT_REF_SLUG'
+    echo '    url: $CI_PAGES_URL'
+    echo '  rules:'
+    echo '    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+    echo '      changes:'
+    document_paths
+    echo '    - if: $CI_COMMIT_BRANCH && $CI_COMMIT_REF_PROTECTED == "true"'
+    echo '      changes:'
+    document_paths
+    echo '      variables:'
+    echo '        DOCS_PAGES_PREFIX: docs-$CI_COMMIT_REF_SLUG'
+}
+
 create_production_merge_request () {
     echo
     echo 'docs-create-production-merge-request:'
@@ -132,4 +162,5 @@ do
 done
 merge_one_artifact
 review_environment
+publish_pages
 create_production_merge_request

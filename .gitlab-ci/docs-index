@@ -15,13 +15,13 @@ escape () {
 <html lang="en">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>UCS@school documentation preview</title>
+<title>UCS@school documentation</title>
 <style>
   body { font-family: sans-serif; margin: 2em auto; max-width: 60em; padding: 0 1em; }
   table { border-collapse: collapse; width: 100%; }
   th, td { padding: .4em .8em; text-align: left; border-bottom: 1px solid #ccc; }
 </style>
-<h1>UCS@school documentation preview</h1>
+<h1>UCS@school documentation</h1>
 EOF
     printf '<p>Built from <code>%s</code> at <code>%s</code>.</p>\n' \
         "$(escape "${CI_COMMIT_REF_NAME:-unknown}")" "$(escape "${CI_COMMIT_SHORT_SHA:-unknown}")"
