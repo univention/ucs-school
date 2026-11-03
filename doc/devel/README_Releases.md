@@ -98,20 +98,23 @@ Adjust the previous release by adding the `date_maintenance` item.
 
 ### Update the overview pages
 
-The [overview pages](https://git.knut.univention.de/univention/documentation/ucs-doc-overview-pages) need to be updated when a new app version has been released.
-See the README in that repository. You'll need to update the `conf.py`, `ucsschool-changelog.rst` and `ucsschool-maintained.txt`.
+The [overview pages](https://git.knut.univention.de/univention/dev/docs/docs-overview-pages) need a tile for the changelog of a new app version.
+After `check_release`,
+the job `navigation-create-tile` of the release pipeline triggers that project,
+which opens a merge request with the tile,
+the intersphinx mappings in `conf.py`,
+and the German translation.
+The merge request is assigned to you and merges itself once its pipeline passes.
+Errata releases don't trigger it,
+because the changelog of the app version already has its tile.
 
-Additionally, update the translation:
+The pipeline of that merge request fails
+as long as the changelog isn't published on docs.software-univention.de,
+because the navigation can't read the inventory of the changelog.
+Retry the pipeline after the changelog has been published.
 
-```bash
-docker run -ti --rm -v "$PWD:/project" -w /project -u $UID --network=host --pull always docker-registry.knut.univention.de/sphinx:latest make -C navigation gettext
-docker run -ti --rm -v "$PWD:/project" -w /project -u $UID --network=host --pull always docker-registry.knut.univention.de/sphinx:latest bash -c 'cd navigation && sphinx-intl update -l de'
-```
-
-A commit that shows the necessary changes is [50442cff63066603b3fbc4e7f73cb39c26ea8e72](https://git.knut.univention.de/univention/dev/docs/docs-overview-pages/-/commit/50442cff63066603b3fbc4e7f73cb39c26ea8e72).
-
-After merging the MR, follow the [doc pipeline](https://git.knut.univention.de/univention/documentation/ucs-doc-overview-pages/-/pipelines),
-and then check that the links appear under the [UCS@school changelogs](https://docs.software-univention.de/release-notes_5.2.html.en).
+After the merge,
+check that the links appear under the [UCS@school changelogs](https://docs.software-univention.de/release-notes_5.2.html.en).
 
 ### Add new document to search index
 

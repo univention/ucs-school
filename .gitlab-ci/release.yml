@@ -128,6 +128,28 @@ rename-advisories:
   script:
     - .gitlab-ci/rename-advisories
 
+navigation-create-tile:
+  stage: release
+  needs:
+    - job: check_release
+      artifacts: false
+    - job: create_app_version
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^release-\d+\.\d+v\d+$/
+  inherit:
+    variables: false
+  variables:
+    TILE_DOCUMENT: ucsschool-changelog
+    TILE_VERSION: $APP_VERSION
+    TILE_SOURCE_PROJECT: $CI_PROJECT_PATH
+    TILE_SOURCE_PIPELINE_URL: $CI_PIPELINE_URL
+    GIT_USER_LOGIN: $GITLAB_USER_LOGIN
+  trigger:
+    project: univention/dev/docs/docs-overview-pages
+    branch: master
+    strategy: depend
+  allow_failure: true
+
 close-bugzilla:
   stage: cleanup
   when: manual
