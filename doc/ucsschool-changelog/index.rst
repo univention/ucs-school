@@ -9,38 +9,45 @@
 ***************
 
 This document contains the changelogs with the detailed change information for
-the update of |UCSUAS| from version 5.2v7 to 5.2v8.
+the update of |UCSUAS| from version 5.2v8 to 5.2v9.
 
 The change information for previous version jumps can be found at :external+uv-navigation:ref:`the changelog overview page <ucsschool-changelog>`.
 
-.. _changelog-radius-rust-helper:
+.. _changelog-edit-workgroups:
 
-Release 5.2v8
+Release 5.2v9
 =============
 
 What's new?
 
-* The RADIUS 802.1X integration now uses the rewritten
-  :spelling:ignore:`univention-radius-ntlm-auth` helper from UCS 5.2-7 and no
-  longer ships its own network access check (:uv:bug:`59894`).
+* Teachers can again use the UMC module *Edit workgroups*,
+  and the |UCSUAS| manual describes how to restrict teachers to this module
+  (:uv:bug:`55267`).
 
-.. _changelog-radius-internet-rules:
+.. _changelog-edit-workgroups-teachers:
 
-RADIUS 802.1X uses the rewritten NTLM authentication helper
------------------------------------------------------------
+Restricting teachers to editing workgroups
+------------------------------------------
 
-|UCSUAS| 5.2v8 requires UCS 5.2-7,
-which ships the rewritten :spelling:ignore:`univention-radius-ntlm-auth` helper.
-The separate |UCSUAS| implementation of the network access check has been removed;
-the helper evaluates the |UCSUAS| internet rules itself.
+The UMC module *Edit workgroups* lets teachers add and remove the students of existing workgroups
+and manage the email address of a workgroup,
+without creating or deleting workgroups.
+|UCSUAS| 5.2v9 fixes several errors that made the module unusable.
 
-The package :program:`ucs-school-radius-802.1x` activates this evaluation through the
-|UCSUCRV| :envvar:`freeradius/auth/helper/ntlm/network-access/internet-rules/enabled`.
-The variable is set during the installation of the package and unset when the package is removed.
-A value set by the administrator is kept during package updates.
+The UMC policy ``ucsschool-umc-teachers-default`` still allows teachers
+both *Administrate workgroups* and *Edit workgroups*,
+and the |UCSUMC| then shows only *Administrate workgroups*.
+To restrict teachers to *Edit workgroups*,
+create a UMC policy of your own without the operation set ``schoolgroups-workgroup-admin``
+and link it to the teacher groups in place of ``ucsschool-umc-teachers-default``.
+Don't change ``ucsschool-umc-teachers-default`` itself:
+the join script of :program:`ucs-school-umc-groups` adds both operation sets to it again on every run.
+The |UCSUCRV| :envvar:`ucsschool/ldap/default/policy/umc/teachers`
+links a policy of your own to the teacher groups of new schools.
+For the steps, see :external+uv-ucsschool-admin:ref:`school-setup-generic-configure-workgroup-teachers`.
 
-The WLAN access decision itself does not change.
-For more information, see :external+uv-ucsschool-admin:ref:`radius`.
+The join script now resets the operation set ``schoolgroups-workgroup`` to the shipped commands on every run.
+Commands that an administrator added to this operation set are removed.
 
 .. _changelog-prepare:
 

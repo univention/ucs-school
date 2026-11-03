@@ -3,9 +3,9 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 msgid ""
 msgstr ""
-"Project-Id-Version: UCS@school - 5.2v8 Changelog \n"
+"Project-Id-Version: UCS@school - 5.2v9 Changelog \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-17 10:00+0000\n"
+"POT-Creation-Date: 2026-11-03 14:24+0000\n"
 "PO-Revision-Date: 2023-02-06 09:57+0100\n"
 "Last-Translator: Univention GmbH <packages@univention.de>\n"
 "Language-Team: Univention GmbH <packages@univention.de>\n"
@@ -21,11 +21,11 @@ msgstr "|UCSUAS|-Update"
 #: ../../index.rst:11
 msgid ""
 "This document contains the changelogs with the detailed change "
-"information for the update of |UCSUAS| from version 5.2v7 to 5.2v8."
+"information for the update of |UCSUAS| from version 5.2v8 to 5.2v9."
 msgstr ""
 "Dieses Dokument enthält die Changelogs mit den detaillierten "
-"Änderungsinformationen zum Update von |UCSUAS| von Version 5.2v7 nach "
-"5.2v8."
+"Änderungsinformationen zum Update von |UCSUAS| von Version 5.2v8 nach "
+"5.2v9."
 
 #: ../../index.rst:14
 msgid ""
@@ -37,9 +37,9 @@ msgstr ""
 ":external+uv-navigation:ref:`der Changelog-Übersichtsseite<ucsschool-"
 "changelog>`."
 
-#: ../../index.rst:18
-msgid "Release 5.2v8"
-msgstr "Release 5.2v8"
+#: ../../index.rst:19
+msgid "Release 5.2v9"
+msgstr "Release 5.2v9"
 
 #: ../../index.rst:21
 msgid "What's new?"
@@ -47,61 +47,77 @@ msgstr "Was ist neu?"
 
 #: ../../index.rst:23
 msgid ""
-"The RADIUS 802.1X integration now uses the rewritten "
-":spelling:ignore:`univention-radius-ntlm-auth` helper from UCS 5.2-7 and "
-"no longer ships its own network access check (:uv:bug:`59894`)."
+"Teachers can again use the UMC module *Edit workgroups*, and the |UCSUAS|"
+" manual describes how to restrict teachers to this module "
+"(:uv:bug:`55267`)."
 msgstr ""
-"Die RADIUS-802.1X-Integration verwendet jetzt das neu geschriebene "
-"Hilfsprogramm :spelling:ignore:`univention-radius-ntlm-auth` aus UCS "
-"5.2-7 und liefert keine eigene Netzwerkzugriffsprüfung mehr "
-"(:uv:bug:`59894`)."
+"Lehrer können das UMC-Modul *Arbeitsgruppen bearbeiten* wieder verwenden,"
+" und das |UCSUAS|-Handbuch beschreibt, wie Lehrer auf dieses Modul "
+"beschränkt werden (:uv:bug:`55267`)."
 
-#: ../../index.rst:29
-msgid "RADIUS 802.1X uses the rewritten NTLM authentication helper"
-msgstr ""
-"RADIUS 802.1X verwendet das neu geschriebene Hilfsprogramm zur "
-"NTLM-Authentifizierung"
+#: ../../index.rst:30
+msgid "Restricting teachers to editing workgroups"
+msgstr "Lehrer auf das Bearbeiten von Arbeitsgruppen beschränken"
 
 #: ../../index.rst:32
 msgid ""
-"|UCSUAS| 5.2v8 requires UCS 5.2-7, which ships the rewritten "
-":spelling:ignore:`univention-radius-ntlm-auth` helper. The separate "
-"|UCSUAS| implementation of the network access check has been removed; the"
-" helper evaluates the |UCSUAS| internet rules itself."
+"The UMC module *Edit workgroups* lets teachers add and remove the "
+"students of existing workgroups and manage the email address of a "
+"workgroup, without creating or deleting workgroups. |UCSUAS| 5.2v9 fixes "
+"several errors that made the module unusable."
 msgstr ""
-"|UCSUAS| 5.2v8 setzt UCS 5.2-7 voraus, das das neu geschriebene "
-"Hilfsprogramm :spelling:ignore:`univention-radius-ntlm-auth` mitbringt. "
-"Die eigene |UCSUAS|-Implementierung der Netzwerkzugriffsprüfung wurde "
-"entfernt; das Hilfsprogramm wertet die |UCSUAS|-Internetregeln selbst "
-"aus."
+"Mit dem UMC-Modul *Arbeitsgruppen bearbeiten* fügen Lehrer bestehenden "
+"Arbeitsgruppen Schüler hinzu, entfernen sie und verwalten die "
+"E-Mail-Adresse einer Arbeitsgruppe, ohne Arbeitsgruppen anzulegen oder "
+"zu löschen. |UCSUAS| 5.2v9 behebt mehrere Fehler, die das Modul "
+"unbenutzbar machten."
 
 #: ../../index.rst:37
 msgid ""
-"The package :program:`ucs-school-radius-802.1x` activates this evaluation"
-" through the |UCSUCRV| :envvar:`freeradius/auth/helper/ntlm/network-"
-"access/internet-rules/enabled`. The variable is set during the "
-"installation of the package and unset when the package is removed. A "
-"value set by the administrator is kept during package updates."
+"The UMC policy ``ucsschool-umc-teachers-default`` still allows teachers "
+"both *Administrate workgroups* and *Edit workgroups*, and the |UCSUMC| "
+"then shows only *Administrate workgroups*. To restrict teachers to *Edit "
+"workgroups*, create a UMC policy of your own without the operation set "
+"``schoolgroups-workgroup-admin`` and link it to the teacher groups in "
+"place of ``ucsschool-umc-teachers-default``. Don't change ``ucsschool-"
+"umc-teachers-default`` itself: the join script of :program:`ucs-school-"
+"umc-groups` adds both operation sets to it again on every run. The "
+"|UCSUCRV| :envvar:`ucsschool/ldap/default/policy/umc/teachers` links a "
+"policy of your own to the teacher groups of new schools. For the steps, "
+"see :external+uv-ucsschool-admin:ref:`school-setup-generic-configure-"
+"workgroup-teachers`."
 msgstr ""
-"Das Paket :program:`ucs-school-radius-802.1x` aktiviert diese Auswertung "
-"über die |UCSUCRV| :envvar:`freeradius/auth/helper/ntlm/network-access"
-"/internet-rules/enabled`. Die Variable wird bei der Installation des "
-"Pakets gesetzt und beim Entfernen des Pakets wieder gelöscht. Ein vom "
-"Administrator gesetzter Wert bleibt bei Paketaktualisierungen erhalten."
+"Die UMC-Richtlinie ``ucsschool-umc-teachers-default`` erlaubt Lehrern "
+"weiterhin sowohl *Arbeitsgruppen verwalten* als auch *Arbeitsgruppen "
+"bearbeiten*, und die |UCSUMC| zeigt dann nur *Arbeitsgruppen verwalten* "
+"an. Um Lehrer auf *Arbeitsgruppen bearbeiten* zu beschränken, legen Sie "
+"eine eigene UMC-Richtlinie ohne das Operationsset ``schoolgroups-"
+"workgroup-admin`` an und verknüpfen sie anstelle von ``ucsschool-umc-"
+"teachers-default`` mit den Lehrergruppen. Ändern Sie ``ucsschool-umc-"
+"teachers-default`` selbst nicht: Das Joinskript von :program:`ucs-"
+"school-umc-groups` fügt ihr bei jeder Ausführung beide Operationssets "
+"wieder hinzu. Die |UCSUCRV| "
+":envvar:`ucsschool/ldap/default/policy/umc/teachers` verknüpft eine "
+"eigene Richtlinie mit den Lehrergruppen neuer Schulen. Die einzelnen "
+"Schritte beschreibt :external+uv-ucsschool-admin:ref:`school-setup-"
+"generic-configure-workgroup-teachers`."
 
-#: ../../index.rst:42
+#: ../../index.rst:49
 msgid ""
-"The WLAN access decision itself does not change. For more information, "
-"see :external+uv-ucsschool-admin:ref:`radius`."
+"The join script now resets the operation set ``schoolgroups-workgroup`` "
+"to the shipped commands on every run. Commands that an administrator "
+"added to this operation set are removed."
 msgstr ""
-"Die WLAN-Zugangsentscheidung selbst ändert sich nicht. Weitere "
-"Informationen finden sich in :external+uv-ucsschool-admin:ref:`radius`."
+"Das Joinskript setzt das Operationsset ``schoolgroups-workgroup`` nun "
+"bei jeder Ausführung auf die mitgelieferten Befehle zurück. Befehle, "
+"die ein Administrator diesem Operationsset hinzugefügt hat, werden "
+"entfernt."
 
-#: ../../index.rst:47
+#: ../../index.rst:55
 msgid "General notes on the update"
 msgstr "Generelle Hinweise zum Update"
 
-#: ../../index.rst:50
+#: ../../index.rst:57
 msgid ""
 "During the update, services within the domain may fail. For this reason, "
 "the update should be performed within a maintenance window. It is "
@@ -115,7 +131,7 @@ msgstr ""
 "zunächst in einer Testumgebung einzuspielen und zu testen. Die "
 "Testumgebung sollte dabei identisch zur Produktivumgebung sein."
 
-#: ../../index.rst:55
+#: ../../index.rst:62
 msgid ""
 "Please note that depending on the size of the |UCSUAS| environment, this "
 "update may take longer than usual to complete."
@@ -123,11 +139,11 @@ msgstr ""
 "Bitte beachten Sie, dass diese Aktualisierung je nach Größe der "
 "|UCSUAS|-Umgebung länger als gewöhnlich dauern kann."
 
-#: ../../index.rst:60
+#: ../../index.rst:68
 msgid "Update process"
 msgstr "Update-Prozess"
 
-#: ../../index.rst:63
+#: ../../index.rst:70
 msgid ""
 "Major updates for |UCSUAS| are released in the Univention App Center as a"
 " standalone app update. Minor updates and bug fixes (errata for |UCSUAS|)"
@@ -147,3 +163,4 @@ msgstr ""
 "werden dann entsprechend um einen neuen Abschnitt erweitert, aus dem "
 "ersichtlich wird, zu welchem Zeitpunkt welche Pakete veröffentlicht und "
 "welche Fehler dabei behoben wurden."
+
