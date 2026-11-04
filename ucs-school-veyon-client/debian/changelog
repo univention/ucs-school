@@ -1,3 +1,10 @@
+ucs-school-veyon-client (3.0.1) unstable; urgency=medium
+
+  * Bug #60129: Accept user information without a session field, as
+    returned by Veyon 4.10 and later.
+
+ -- Jürn Brodersen <brodersen@univention.de>  Wed, 04 Nov 2026 16:10:00 +0100
+
 ucs-school-veyon-client (3.0.0) unstable; urgency=medium
 
   * UCS@school 5.2

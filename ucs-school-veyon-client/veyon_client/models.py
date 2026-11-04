@@ -5,6 +5,7 @@
 
 import enum
 from collections import namedtuple
+from typing import NamedTuple
 
 
 class VeyonConnectionError(Exception):
@@ -57,6 +58,10 @@ class Feature(enum.Enum):
         return str(self.value)
 
 
-VeyonUser = namedtuple("VeyonUser", ["login", "fullName", "session"])
+class VeyonUser(NamedTuple):
+    login: str
+    fullName: str
+
+
 VeyonSession = namedtuple("VeyonSession", ["connection_uid", "valid_until"])
 Dimension = namedtuple("Dimension", ["width", "height"])

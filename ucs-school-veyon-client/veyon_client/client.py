@@ -9,7 +9,7 @@ import time
 from collections import defaultdict
 from datetime import datetime
 from threading import Lock
-from typing import TYPE_CHECKING, Dict, Optional  # noqa: F401
+from typing import TYPE_CHECKING, Dict, Optional, TypedDict, cast  # noqa: F401
 
 import requests
 
@@ -25,6 +25,12 @@ from .utils import check_veyon_error
 
 if TYPE_CHECKING:
     from .models import Dimension, Feature  # noqa: F401
+
+
+class _UserInfo(TypedDict):
+    login: str
+    fullName: str
+
 
 if not hasattr(threading, "get_ident"):
     threading.get_ident = lambda: threading.current_thread().ident
@@ -259,8 +265,8 @@ class VeyonClient:
 
         :param host: The host to fetch the user info for. If not specified the default host is used.
 
-        :returns: The info about the logged in user. If no user is logged in the session field of the
-            result will be -1
+        :returns: The info about the logged in user. If no user is logged in, login and fullName
+            are empty.
         :rtype: VeyonUser
         """
         try:
@@ -270,4 +276,5 @@ class VeyonClient:
         except requests.RequestException as exc:
             raise VeyonConnectionError(exc)
         check_veyon_error(result)
-        return VeyonUser(**result.json())
+        user_data = cast("_UserInfo", result.json())
+        return VeyonUser(user_data["login"], user_data["fullName"])

@@ -32,7 +32,10 @@ def monkey_get(*args, **kwargs):
         raise ConnectionError()
     elif domain in ["user_info"]:
         response.status_code = 200
-        response._content = b'{ "login":"LOGIN", "fullName":"FULLNAME", "session":"SESSION" }'
+        response._content = b'{ "login":"LOGIN", "fullName":"FULLNAME", "session":1 }'
+    elif domain in ["user_info_without_session"]:
+        response.status_code = 200
+        response._content = b'{ "login":"LOGIN", "fullName":"FULLNAME", "unknown":"UNKNOWN" }'
     elif domain in ["get_feature"]:
         response.status_code = 200
         feature = url_parts[2]
@@ -81,6 +84,7 @@ def monkey_post(*args, **kwargs):
             "invalid_feature",
             "get_feature",
             "user_info",
+            "user_info_without_session",
             "idle_timeout",
             "remove_session",
         ]
@@ -220,12 +224,19 @@ def test_get_feature_status(monkeypatch, feature, expected):
     assert client.get_feature_status(feature) == expected
 
 
-def test_get_user_info(monkeypatch):
+@pytest.mark.parametrize(
+    "domain,expected",
+    [
+        ("user_info", VeyonUser("LOGIN", "FULLNAME")),
+        ("user_info_without_session", VeyonUser("LOGIN", "FULLNAME")),
+    ],
+)
+def test_get_user_info(monkeypatch, domain: str, expected: VeyonUser):
     monkeypatch.setattr(requests.Session, "get", monkey_get)
     monkeypatch.setattr(requests.Session, "post", monkey_post)
     monkeypatch.setattr(requests.Session, "delete", monkey_delete)
-    client = VeyonClient("user_info", {}, auth_method=AuthenticationMethod.AUTH_LOGON)
-    assert client.get_user_info() == VeyonUser("LOGIN", "FULLNAME", "SESSION")
+    client = VeyonClient(domain, {}, auth_method=AuthenticationMethod.AUTH_LOGON)
+    assert client.get_user_info() == expected
 
 
 def test_idle_timeout(monkeypatch):

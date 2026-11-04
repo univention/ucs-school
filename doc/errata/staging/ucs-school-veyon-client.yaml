@@ -1,0 +1,15 @@
+product: ucsschool
+release: "5.2"
+released:
+version: [0]
+scope: ucs_5.2-0-ucs-school-5.2
+src: ucs-school-veyon-client
+fix: 3.0.1
+bugs:
+  60129:
+    en: >
+      The UMC module *Computer room* has been made compatible
+      with the app |UCSUAS| Veyon Proxy in version ``4.11.4.0-ucs1``.
+    de: >
+      Das UMC-Modul *Computerraum* ist jetzt kompatibel
+      mit der App |UCSUAS| Veyon Proxy in Version ``4.11.4.0-ucs1``.
