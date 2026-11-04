@@ -1,0 +1,17 @@
+product: ucsschool
+release: "5.2"
+released:
+version: [0]
+scope: ucs_5.2-0-ucs-school-5.2
+src: ucs-school-import
+fix: 20.0.1
+bugs:
+  60101:
+    en: >
+      The job list in the UMC module *User import* failed with an internal server error
+      when import jobs were deleted while the list was loading,
+      for example by the cleanup of old jobs after an import had finished.
+    de: >
+      Die Auftragsliste im UMC-Modul *Benutzerimport* schlug mit einem internen Serverfehler fehl,
+      wenn während des Ladens Importaufträge gelöscht wurden,
+      zum Beispiel durch das Aufräumen alter Aufträge nach Abschluss eines Imports.

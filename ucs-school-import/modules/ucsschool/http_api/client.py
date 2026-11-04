@@ -141,7 +141,7 @@ class ResourceRepresentationIterator(object):
             params = parse_qs(parse_result.query)
             self._paginated_resource_list = self._resource_client._resource_from_url(url, **params)
             self.index = 0
-            resource = self._paginated_resource_list["results"][self.index]
+            return self.__next__()
         self.index += 1
         return ResourceRepresentation.get_repr(self._resource_client, resource)
 

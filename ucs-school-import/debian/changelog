@@ -1,3 +1,10 @@
+ucs-school-import (20.0.1) unstable; urgency=medium
+
+  * fix: stop iterating import jobs when a follow-up page is empty
+    Issue univention/dev/education/ucsschool#1585
+
+ -- Ole Schwiegert <ole.schwiegert.extern@univention.de>  Wed, 04 Nov 2026 02:58:56 +0000
+
 ucs-school-import (20.0.0) unstable; urgency=medium
 
   * fix: use new hook method map/unmap to fix issues with the
