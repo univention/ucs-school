@@ -1,3 +1,12 @@
+ucs-test-ucsschool (8.0.67) unstable; urgency=medium
+
+  * Bug #55403: add 90_ucsschool/281_replica_keycloak_spn, which checks that
+    the local Samba of a school replica has the servicePrincipalName of
+    krbkeycloak, and that 98ucs-school-replica-keycloak-spn.inst adds it again
+    when it is missing.
+
+ -- Lars Richter <lars.richter@univention.de>  Mon, 09 Nov 2026 12:00:00 +0100
+
 ucs-test-ucsschool (8.0.66) unstable; urgency=medium
 
   * Bug #55267: add 91_ucsschool-selenium/08_umc_groups, which clicks through

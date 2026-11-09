@@ -1,3 +1,10 @@
+ucs-school-metapackage (17.1.1) unstable; urgency=medium
+
+  * Bug #55403: add the Kerberos SPN of Keycloak on Replica Directory Nodes
+    after the S4 connector synchronized krbkeycloak
+
+ -- Lars Richter <lars.richter@univention.de>  Wed, 21 Oct 2026 17:03:58 +0200
+
 ucs-school-metapackage (17.1.0) unstable; urgency=medium
 
   * Bug #55911: consider localized names for well known SIDs

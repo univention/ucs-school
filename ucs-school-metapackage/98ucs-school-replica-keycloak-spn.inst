@@ -1,0 +1,61 @@
+#!/bin/bash
+#
+# UCS@school
+#  join script
+#
+# SPDX-FileCopyrightText: 2026 Univention GmbH
+# SPDX-License-Identifier: AGPL-3.0-only
+
+## joinscript api: bindpwdfile
+
+VERSION=1
+. /usr/share/univention-join/joinscripthelper.lib
+joinscript_init
+
+. /usr/share/univention-lib/all.sh
+
+eval "$(univention-config-registry shell)"
+
+LDB_URI="tdb:///var/lib/samba/private/sam.ldb"
+domaindn="DC=${kerberos_realm//./,DC=}" # that's what /usr/share/pyshared/samba/provision.py uses
+if ! ldbsearch -H "$LDB_URI" -b "$domaindn" -s base dn 2>/dev/null| grep -qi ^"dn: $domaindn"; then
+	die "Samba4 backend database not available yet, exiting joinscript $(basename "$0")."
+fi
+
+keycloak_dn="$(set -o pipefail; univention-ldapsearch -LLL "(&(uid=krbkeycloak)(objectClass=person))" dn | sed -ne 's|^dn: ||p')" || die "ERROR: LDAP search for krbkeycloak failed"
+if [ -z "$keycloak_dn" ]; then
+	echo "INFO: No Keycloak service account found in UDM"
+	echo "INFO: Cannot register a servicePrincipalName"
+	joinscript_save_current_version
+	exit 0
+fi
+
+# Since UCS 5.2, the Keycloak app distributes its URI to all hosts with
+# ucs/server/sso/uri. keycloak/server/sso/fqdn is only set on the Keycloak host.
+keycloak_fqdn="$(sed -e 's,^https\?://,,' -e 's,[/:].*,,' <<<"${ucs_server_sso_uri:-}")"
+keycloak_spn="HTTP/${keycloak_fqdn:-ucs-sso-ng.$domainname}"
+
+# The S4 connector creates krbkeycloak in the local Samba only after the
+# 62ucs-school-*replica.inst join scripts ran (Bug #55403)
+/usr/share/univention-s4-connector/resync_object_from_ucs.py --filter "uid=krbkeycloak" --first
+timeout=1200
+for i in $(seq 1 10 $timeout); do
+	echo "looking for spn account \"krbkeycloak\" in local samba"
+	service_account_dn=$(ldbsearch -H "$LDB_URI" samAccountName=krbkeycloak dn | sed -n 's/^dn: \(.*\)/\1/p')
+	[ -n "$service_account_dn" ] && break
+	sleep 10
+done
+
+if [ -z "$service_account_dn" ]; then
+	echo "ERROR: samAccountName not found for service account krbkeycloak"
+	echo "ERROR: cannot add attribute \"servicePrincipalName: $keycloak_spn\""
+	exit 1
+fi
+
+if samba-tool spn list "krbkeycloak" | grep -q 'no servicePrincipalName'; then
+	samba-tool spn add "$keycloak_spn" "krbkeycloak" || die
+fi
+
+joinscript_save_current_version
+
+exit 0

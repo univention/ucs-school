@@ -287296,6 +287296,48 @@
                 }
             }
         ],
+        "./ucs-test-ucsschool/90_ucsschool/281_replica_keycloak_spn.py": [
+            {
+                "code": "reportMissingTypeStubs",
+                "range": {
+                    "startColumn": 5,
+                    "endColumn": 23,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportMissingTypeStubs",
+                "range": {
+                    "startColumn": 9,
+                    "endColumn": 31,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportUnknownVariableType",
+                "range": {
+                    "startColumn": 4,
+                    "endColumn": 6,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportUnknownMemberType",
+                "range": {
+                    "startColumn": 9,
+                    "endColumn": 34,
+                    "lineCount": 1
+                }
+            },
+            {
+                "code": "reportUnknownMemberType",
+                "range": {
+                    "startColumn": 11,
+                    "endColumn": 22,
+                    "lineCount": 1
+                }
+            }
+        ],
         "./ucs-test-ucsschool/90_ucsschool/28_klassen_module.py": [
             {
                 "code": "reportMissingImports",
