@@ -186,11 +186,13 @@ mit Vorgaben zu Gateway, DNS-Server oder WINS-Server manuell anlegen.
 
 .. seealso::
 
-   :cite:t:`ucs-manual`:
+   :cite:t:`nubus-manual`:
 
-   :ref:`networks-dhcp-policies`
+   :ref:`nubus-domain-dhcp-policies`
       zum Anlegen einer DHCP Richtlinie mit Vorgaben zu Gateway, DNS-Server
       oder WINS-Server
+
+   :cite:t:`ucs-manual`:
 
    :ref:`computers-hostaccounts`
       zum Anlegen von Rechnerkonten
