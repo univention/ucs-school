@@ -159,6 +159,10 @@ mitinstalliert.
 Nach der UCS-Installation und erfolgreichem Domänenbeitritt ist auf dem System
 auch die App |UCSUAS_p| installiert.
 
+Wenn Sie die App Keycloak erst nach dem Domänenbeitritt des Schulservers installieren,
+müssen Sie den Schulserver für die Kerberos-Anmeldung an Keycloak nachträglich einrichten.
+:ref:`school-windows-samba-keycloak-kerberos` beschreibt die notwendigen Schritte.
+
 Jedes UCS-System bietet ein webbasiertes Konfigurationsinterface an, Univention
 Management Console, kurz UMC. Dies ist via Webbrowser erreichbar, dazu kann
 einfach der Name oder die IP-Adresse des Servers in die Adresszeile des

@@ -93,6 +93,54 @@ URI dokumentiert: :uv:help:`UCS\@school Samba 3 to Samba 4 Migration
 Weiterführende Hinweise zur Konfiguration von Samba finden sich in
 :ref:`windows-services-for-windows` in :cite:t:`ucs-manual`.
 
+.. _school-windows-samba-keycloak-kerberos:
+
+Kerberos-Anmeldung an Keycloak auf Schulservern und Verwaltungsservern einrichten
+---------------------------------------------------------------------------------
+
+Benutzer an Windows-Clients können sich mit ihrem Kerberos-Ticket
+ohne erneute Passworteingabe an Keycloak anmelden,
+zum Beispiel im Univention Portal.
+Dafür muss das Samba auf dem Schulserver oder Verwaltungsserver
+den Service Principal Name (SPN) von Keycloak kennen.
+Beim Domänenbeitritt eines Schulservers oder Verwaltungsservers
+trägt das Join-Skript :file:`98ucs-school-replica-keycloak-spn.inst`
+den SPN automatisch ein.
+
+Jeder Schulserver und Verwaltungsserver betreibt ein eigenes Samba.
+Der S4-Connector überträgt den SPN nicht in dieses Samba,
+und das Join-Skript der App Keycloak trägt ihn dort ebenfalls nicht ein.
+Wenn Sie die App Keycloak erst installieren,
+nachdem die Schulserver und Verwaltungsserver der Domäne beigetreten sind,
+müssen Sie den SPN deshalb auf jedem dieser Server nachtragen:
+
+#. Führen Sie das Join-Skript auf dem Server als Benutzer ``root`` erneut aus:
+
+   .. code-block:: console
+
+      $ univention-run-join-scripts --force --run-scripts 98ucs-school-replica-keycloak-spn.inst
+
+   Das Kommando fragt nach dem Benutzernamen und dem Passwort eines Join-Accounts,
+   zum Beispiel ``Administrator``.
+
+#. Prüfen Sie, ob der SPN eingetragen ist:
+
+   .. code-block:: console
+
+      $ samba-tool spn list krbkeycloak
+
+   Die Ausgabe enthält den Eintrag :samp:`HTTP/{FQDN}`.
+   ``FQDN`` steht dabei für den vollqualifizierten Namen von Keycloak
+   aus der UCR-Variable :envvar:`ucs/server/sso/uri`,
+   in der Standardeinstellung :samp:`ucs-sso-ng.{Domänenname}`.
+
+.. seealso::
+
+   :cite:t:`keycloak-app`:
+
+   :ref:`kerberos-authentication`
+      zum Einrichten der Webbrowser für die Kerberos-Anmeldung an Keycloak
+
 .. _school-windows-shares:
 
 Server für Dateifreigaben

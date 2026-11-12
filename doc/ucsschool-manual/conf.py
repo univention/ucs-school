@@ -141,6 +141,7 @@ univention_pdf_show_source_license = True
 intersphinx_mapping = {
     "uv-manual": ("https://docs.software-univention.de/manual/5.2/de", None),
     "uv-nubus-manual": ("https://docs.software-univention.de/nubus-manual/latest/de/", None),
+    "uv-keycloak": ("https://docs.software-univention.de/keycloak-app/latest/", None),
     "uv-kelvin": (
         "https://docs.software-univention.de/ucsschool-kelvin-rest-api/",
         None,

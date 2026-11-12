@@ -8,12 +8,16 @@ fix: 17.1.1
 bugs:
   55403:
     en: >
-      On newly joined school servers, Kerberos SSO with Keycloak did not work for Windows clients,
-      because the Samba of the school server missed the service principal name of Keycloak.
+      On newly joined educational and administrative school servers, Kerberos SSO with Keycloak did not work for Windows clients,
+      because the Samba of the server missed the service principal name of Keycloak.
       The join script now adds it after Samba is set up.
-      On existing school servers, run the pending join scripts with `univention-run-join-scripts` to add it.
+      On existing educational and administrative school servers, run the pending join scripts with `univention-run-join-scripts` to add it.
+      If you install Keycloak after these servers joined the domain,
+      the |UCSUAS| manual describes how to add the service principal name.
     de: >
-      Auf neu gejointen Schulservern funktionierte :spelling:ignore:`Kerberos-SSO` mit Keycloak für Windows-Clients nicht,
-      weil im Samba des Schulservers der Service :spelling:ignore:`Principal` Name von Keycloak fehlte.
-      Das :spelling:ignore:`Joinskript` fügt ihn jetzt hinzu, nachdem Samba eingerichtet ist.
-      Auf bestehenden Schulservern muss dazu das ausstehende :spelling:ignore:`Joinskript` mit `univention-run-join-scripts` ausgeführt werden.
+      Auf neu gejointen Schulservern und Verwaltungsservern funktionierte :spelling:ignore:`Kerberos-SSO` mit Keycloak für Windows-Clients nicht,
+      weil im Samba des Servers der Service :spelling:ignore:`Principal` Name von Keycloak fehlte.
+      Das Join-Skript fügt ihn jetzt hinzu, nachdem Samba eingerichtet ist.
+      Auf bestehenden Schulservern und Verwaltungsservern muss dazu das ausstehende Join-Skript mit `univention-run-join-scripts` ausgeführt werden.
+      Wird Keycloak erst nach dem Domänenbeitritt dieser Server installiert,
+      beschreibt das |UCSUAS|-Handbuch, wie der Service :spelling:ignore:`Principal` Name nachgetragen wird.
