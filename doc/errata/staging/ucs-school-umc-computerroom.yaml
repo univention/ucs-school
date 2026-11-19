@@ -1,0 +1,25 @@
+product: ucsschool
+release: "5.2"
+released:
+version: [0]
+scope: ucs_5.2-0-ucs-school-5.2
+src: ucs-school-umc-computerroom
+fix: 14.0.5
+bugs:
+  60161:
+    en: >
+      In the UMC module *Computer room*, the tooltip of the *Watch* link
+      showed no screenshot of the computer.
+      The fix changes a CSS file. Because web browsers cache this file,
+      the change may not be visible immediately.
+      It is therefore advisable to invalidate the browser cache.
+      Otherwise, web browsers can keep using the old version of the file
+      for up to 1 hour.
+    de: >
+      Im UMC-Modul *Computerraum* zeigte der Tooltip des Links *Beobachten*
+      keinen Screenshot des Rechners an.
+      Für die Korrektur wurde eine CSS-Datei angepasst. Da Webbrowser diese Datei
+      zwischenspeichern, ist die Änderung möglicherweise nicht sofort sichtbar.
+      Es empfiehlt sich daher, den Webbrowsercache zu invalidieren.
+      Anderenfalls können Webbrowser bis zu 1 Stunde lang
+      die alte Version der Datei verwenden.

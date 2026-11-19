@@ -136,6 +136,9 @@
 .screenShotView__img {
 	width: 100%;
 }
+.screenShotView__imgTooltip--grid {
+	width: 240px;
+}
 .screenShotView__noComputersText {
 	display: flex;
 	justify-content: center;

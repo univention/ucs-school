@@ -1,3 +1,10 @@
+ucs-school-umc-computerroom (14.0.5) unstable; urgency=medium
+
+  * Bug #60161: Show the screenshot in the tooltip of the "Watch" link
+    again.
+
+ -- Johannes Königer <koeniger@univention.de>  Thu, 19 Nov 2026 11:01:18 +0100
+
 ucs-school-umc-computerroom (14.0.4) unstable; urgency=low
 
   * Bug #58209: fix escaping of backend data to prevent XSS
