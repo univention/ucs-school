@@ -1,3 +1,9 @@
+ucs-school-veyon-windows (4.11.4.0-ucs5.2-0) unstable; urgency=medium
+
+  * Bug #60129: update veyon windows installer to 4.11.4
+
+ -- Johannes Königer <koeniger@univention.de>  Thu, 19 Nov 2026 10:39:09 +0000
+
 ucs-school-veyon-windows (4.9.1.0-ucs5.2-0) unstable; urgency=medium
 
   * UCS@school 5.2

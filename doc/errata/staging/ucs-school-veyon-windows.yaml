@@ -1,0 +1,28 @@
+product: ucsschool
+release: "5.2"
+released:
+version: [0]
+scope: ucs_5.2-0-ucs-school-5.2
+src: ucs-school-veyon-windows
+fix: 4.11.4.0-ucs5.2-0
+bugs:
+  60129:
+    en: >
+      The Veyon installer for Windows on the share *Veyon-Installation*
+      has been updated to version 4.11.4,
+      the version that the app |UCSUAS| Veyon Proxy uses.
+      Veyon installations on existing Windows clients are not updated automatically.
+      There are no known compatibility issues between Veyon 4.9 on the Windows clients
+      and the app |UCSUAS| Veyon Proxy in version ``4.11.4.0-ucs1``.
+      Administrators should install the new version on the Windows clients,
+      because the same Veyon version on the Windows clients and in the app is better tested.
+    de: >
+      Das Installationsprogramm von Veyon für Windows auf der Freigabe *Veyon-Installation*
+      wurde auf Version 4.11.4 aktualisiert,
+      die Version, die die App |UCSUAS| Veyon Proxy verwendet.
+      Bestehende Installationen von Veyon auf den Windows-Clients werden nicht automatisch aktualisiert.
+      Zwischen Veyon 4.9 auf den Windows-Clients
+      und der App |UCSUAS| Veyon Proxy in Version ``4.11.4.0-ucs1``
+      sind keine Kompatibilitätsprobleme bekannt.
+      Administratoren sollten die neue Version auf den Windows-Clients installieren,
+      da dieselbe Version von Veyon auf den Windows-Clients und in der App besser getestet ist.

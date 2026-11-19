@@ -4,8 +4,8 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 
 PACKAGE := ucs-school-veyon-windows
-SOURCE := veyon-4.9.1.0-win64-setup.exe
-TARGET := veyon-4.9.1.0-win64-setup.exe
+SOURCE := veyon-4.11.4.0-win64-setup.exe
+TARGET := veyon-4.11.4.0-win64-setup.exe
 
 empty :=
 space := $(empty) $(empty)
@@ -23,7 +23,7 @@ install: $(SOURCE)
 get-orig-source: $(SOURCE)
 veyon-%-win64-setup.exe:
 	wget -O "$@" "https://updates.software-univention.de/download/large-build-files/ucsschool/$@"
-	echo "4684f045d5c6fdd8c1b2551932d73320ea2d28351b8d5625f7d1ec824796f682035492c3e1f7d6531b6cb81b2e9057dcbf473d0f8a80657ecd03dc31f62e47cb $@" | sha512sum -c
+	echo "617fcde8a8bce0f71685bdabcd47055faba16884b9939f8e634a17f5615150971f949d4f9d25a021609d25820120640be36a7ee3cefc3908c13f27a9edfbdca1 $@" | sha512sum -c
 
 clean:
 	rm -f veyon-*-win64-setup.exe
