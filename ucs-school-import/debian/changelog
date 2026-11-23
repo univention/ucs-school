@@ -1,6 +1,8 @@
 ucs-school-import (20.0.1) unstable; urgency=medium
 
-  * fix: stop iterating import jobs when a follow-up page is empty
+  * fix: the Python client of the Import HTTP API no longer raises IndexError
+    when a paginated listing shrinks while it is read, which broke the job
+    list of the UMC module User Import
     Issue univention/dev/education/ucsschool#1585
 
  -- Ole Schwiegert <ole.schwiegert.extern@univention.de>  Wed, 04 Nov 2026 02:58:56 +0000

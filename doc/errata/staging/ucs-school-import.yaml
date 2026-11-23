@@ -8,7 +8,7 @@ fix: 20.0.1
 bugs:
   60101:
     en: >
-      The job list in the UMC module *User import* failed with an internal server error
+      The job list in the UMC module *User Import* failed with an internal server error
       when import jobs were deleted while the list was loading,
       for example by the cleanup of old jobs after an import had finished.
     de: >
