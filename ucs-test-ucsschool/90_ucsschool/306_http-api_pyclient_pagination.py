@@ -5,6 +5,7 @@
 ## exposure: safe
 ## packages:
 ##   - ucs-school-import-http-api-client
+## bugs: [60101]
 
 from typing import Any
 
@@ -55,3 +56,15 @@ def test_empty_follow_up_page_raises_stop_iteration() -> None:
     assert next(jobs) == {"id": 2}
     with pytest.raises(StopIteration):
         next(jobs)
+
+
+def test_empty_follow_up_page_with_next_is_skipped() -> None:
+    client = StubResourceClient(
+        [
+            {"count": 3, "next": NEXT_URL, "previous": None, "results": []},
+            {"count": 3, "next": None, "previous": None, "results": [{"id": 3}]},
+        ]
+    )
+    jobs = ResourceRepresentationIterator(client, dict(FIRST_PAGE))
+
+    assert list(jobs) == [{"id": 1}, {"id": 2}, {"id": 3}]

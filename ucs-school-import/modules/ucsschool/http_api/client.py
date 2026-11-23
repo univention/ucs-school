@@ -131,17 +131,22 @@ class ResourceRepresentationIterator(object):
         return self
 
     def __next__(self):
-        try:
-            resource = self._paginated_resource_list["results"][self.index]
-        except IndexError:
+        while self.index >= len(self._paginated_resource_list["results"]):
             if self._paginated_resource_list["next"] is None:
                 raise StopIteration()
-            parse_result = urlparse(self._paginated_resource_list["next"])
+            next_url = self._paginated_resource_list["next"]
+            parse_result = urlparse(next_url)
             url = parse_result._replace(query=None).geturl()
             params = parse_qs(parse_result.query)
             self._paginated_resource_list = self._resource_client._resource_from_url(url, **params)
             self.index = 0
-            return self.__next__()
+            if not self._paginated_resource_list["results"]:
+                logging.getLogger(__name__).debug(
+                    "Follow-up page %s is empty, the listing shrank to %d entries while it was read.",
+                    next_url,
+                    self._paginated_resource_list["count"],
+                )
+        resource = self._paginated_resource_list["results"][self.index]
         self.index += 1
         return ResourceRepresentation.get_repr(self._resource_client, resource)
 
