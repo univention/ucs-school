@@ -1,3 +1,12 @@
+ucs-test-ucsschool (8.0.68) unstable; urgency=medium
+
+  * Bug #60101: add 90_ucsschool/306_http-api_pyclient_pagination, which checks
+    that the Import HTTP API Python client follows pages and stops when a
+    follow-up page is empty.
+    Issue univention/dev/education/ucsschool#1585
+
+ -- Ole Schwiegert <ole.schwiegert.extern@univention.de>  Mon, 23 Nov 2026 07:11:08 +0000
+
 ucs-test-ucsschool (8.0.67) unstable; urgency=medium
 
   * Bug #55403: add 90_ucsschool/281_replica_keycloak_spn, which checks that
