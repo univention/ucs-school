@@ -154,7 +154,7 @@ intersphinx_mapping = {
         None,
     ),
     "uv-ucsschool-accounts": (
-        "https://docs.software-univention.de/ucsschool-accounts/",
+        "https://docs.software-univention.de/ucsschool-accounts/latest/en/",
         None,
     ),
 }
